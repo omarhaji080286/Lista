@@ -1,0 +1,251 @@
+package com.winservices.wingoods.activities;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.util.Util;
+import com.winservices.wingoods.R;
+import com.winservices.wingoods.adapters.CitiesAdapter;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.models.City;
+import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
+import com.winservices.wingoods.models.ShopsFilter;
+import com.winservices.wingoods.utils.UtilsFunctions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FilterShopsActivity extends AppCompatActivity {
+
+    private static final String TAG = "FilterShopsActivity";
+    private RelativeLayout rlCity;
+    private ImageView arrowCity;
+    private RecyclerView rvCities;
+    private Button btShowResult;
+    private CitiesAdapter citiesAdapter;
+    private ArrayList<City> cities = new ArrayList<>();
+    private Dialog dialog;
+    private boolean isExpanded = false;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_filter_shops);
+        setTitle(getString(R.string.filters));
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        rlCity = findViewById(R.id.rl_city);
+        arrowCity = findViewById(R.id.arrow_city);
+        rvCities = findViewById(R.id.rv_cities);
+        btShowResult = findViewById(R.id.bt_showResult);
+
+        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        dialog.show();
+
+        loadFilterInputs(this);
+
+        btShowResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ShopsFilter shopsFilter = new ShopsFilter();
+                shopsFilter.setSelectedCities(citiesAdapter.getSelectedCities());
+                Intent shopsReturnIntent = new Intent();
+                shopsReturnIntent.putExtra("filter", shopsFilter);
+                setResult(Activity.RESULT_OK,shopsReturnIntent);
+                finish();
+            }
+        });
+
+    }
+
+    private void prepareCitiesSection(){
+
+        //Section "CITY"
+        //Parent
+        rlCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isExpanded){
+                    FilterShopsActivity.collapse(rvCities);
+                    arrowCity.setImageResource(R.drawable.ic_arrow_down_black);
+                    isExpanded = false;
+                } else {
+                    FilterShopsActivity.expand(rvCities);
+                    arrowCity.setImageResource(R.drawable.ic_arrow_up_black);
+                    isExpanded = true;
+                }
+
+            }
+        });
+
+        //Child
+        citiesAdapter = new CitiesAdapter(cities,this);
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false );
+        rvCities.setLayoutManager(llm);
+        rvCities.setAdapter(citiesAdapter);
+
+    }
+
+
+    private void loadFilterInputs(final Context context) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_GET_CITIES,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                JSONArray JSONCities = jsonObject.getJSONArray("cities");
+
+                                for (int i = 0; i < JSONCities.length(); i++) {
+                                    JSONObject JSONCity = JSONCities.getJSONObject(i);
+
+                                    int serverCountryId = JSONCity.getInt("server_country_id");
+                                    String countryName = JSONCity.getString("country_name");
+                                    Country country = new Country(serverCountryId, countryName);
+
+                                    int serverCityId = JSONCity.getInt("server_city_id");
+                                    String cityName = JSONCity.getString("city_name");
+                                    City city = new City(serverCityId,cityName, country );
+
+                                    cities.add(city);
+
+                                }
+
+                                dialog.dismiss();
+
+                                prepareCitiesSection();
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //adding coUser failed
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonData", "" );
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+    }
+
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public static void expand(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+
+}

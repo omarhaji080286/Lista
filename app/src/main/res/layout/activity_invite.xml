@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    tools:context="com.winservices.wingoods.activities.InviteActivity">
+
+    <TextView
+        android:id="@+id/txtInvitation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:text="@string/invitation"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/txtTeam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:text="@string/team"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/editGroupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="30"
+        android:ems="10"
+        android:textSize="15sp"
+        android:hint="@string/team_s_name"
+        android:inputType="textEmailAddress"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
+    <TextView
+        android:id="@+id/txtMembers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:textSize="15sp"
+        android:text="@string/members"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/txtMembersList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/txtInvite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:textSize="15sp"
+        android:text="@string/invite_a_friend"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/linearInvite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+
+        <EditText
+            android:id="@+id/editEmailInvitation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="95"
+            android:ems="10"
+            android:hint="@string/email_hint"
+            android:inputType="textEmailAddress"
+            android:textSize="15sp"/>
+
+        <ImageButton
+            android:id="@+id/btnSendIntivation"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="10"
+            android:background="@drawable/send"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="TODO" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

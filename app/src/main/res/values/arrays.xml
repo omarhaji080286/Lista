@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="colors">
+        <item>@color/deepOrange</item>
+        <item>@color/blueGrey</item>
+        <item>@color/brown</item>
+        <item>@color/deepGreen</item>
+        <item>@color/lightGreen</item>
+        <item>@color/lime</item>
+        <item>@color/teal</item>
+        <item>@color/cyan</item>
+        <item>@color/lightBlue</item>
+        <item>@color/pink</item>
+        <item>@color/purple</item>
+        <item>@color/indigo</item>
+    </integer-array>
+
+
+    <integer-array name="icons">
+        <item>@drawable/fruit</item>
+        <item>@drawable/bread</item>
+        <item>@drawable/steak</item>
+        <item>@drawable/spices</item>
+        <item>@drawable/gel</item>
+        <item>@drawable/grocery</item>
+        <item>@drawable/cheese</item>
+        <item>@drawable/others</item>
+    </integer-array>
+
+</resources>

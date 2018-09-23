@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frag_update_good"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:id="@+id/txt_category_select"
+        android:layout_width="match_parent"
+        android:text="@string/select_a_category"
+        style="@style/TextViewLabel"/>
+
+    <Spinner
+        android:id="@+id/spinnerCategories"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:layout_margin="2dp"/>
+
+    <TextView
+        android:id="@+id/txt_good_name"
+        android:layout_width="match_parent"
+        android:text="@string/good_s_name"
+        style="@style/TextViewLabel"/>
+
+    <EditText
+        android:id="@+id/edit_good"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/good_s_name"
+        style="@style/EditText"/>
+
+    <TextView
+        android:id="@+id/txt_good_desc"
+        android:layout_width="match_parent"
+        android:text="@string/good_description"
+        style="@style/TextViewLabel"/>
+
+    <EditText
+        android:id="@+id/edit_good_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/good_description"
+        style="@style/EditText"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:text="@string/cancel"
+            android:layout_weight="50"
+            style="@style/Button"/>
+
+        <Button
+            android:id="@+id/btn_update_good"
+            android:layout_width="wrap_content"
+            android:text="@string/update"
+            android:layout_weight="50"
+            style="@style/Button"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1c3663</color>
+    <color name="colorPrimaryDark">#1c3663</color>
+    <color name="colorAccent">@color/softBlueGreen</color>
+    <color name="colorRedTransparent">#96ff0004</color>
+    <color name="colorOrangeTransparent">#96ff8c00</color>
+    <color name="colorGreenTransparent">#9612b70f</color>
+    <color name="colorGray">#a7c2c2c2</color>
+    <color name="colorBlue1">#a7c0d6ff</color>
+    <color name="colorBlueSky">#05acff</color>
+    <color name="white">#ffffff</color>
+    <color name="colorGreen1">#97bc97</color>
+    <color name="softBlueGreen">#1c3b63</color>
+    <color name="colorGrayTransparent">#c1d2d2d2</color>
+    <color name="colorRed">#f10101</color>
+    <color name="colorWhiteRed">#fccccc</color>
+    <color name="softBlueGreenEnd">#56bbc4</color>
+    <color name="colorGrrenFluo">#8dfc7c</color>
+    <color name="black">#000000</color>
+
+
+    <color name="blueGrey">#455a64</color>
+    <color name="deepOrange">#E64A19</color>
+    <color name="brown">#5D4037</color>
+    <color name="deepGreen">#388E3C</color>
+    <color name="lightGreen">#689F38</color>
+    <color name="lime">#827717</color>
+    <color name="teal">#00796B</color>
+    <color name="cyan">#0097A7</color>
+    <color name="lightBlue">#0288D1</color>
+    <color name="pink">#C2185B</color>
+    <color name="purple">#7B1FA2</color>
+    <color name="indigo">#303F9F</color>
+
+
+</resources>

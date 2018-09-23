@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frag_add_category"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:id="@+id/txt_category_name"
+        android:layout_width="match_parent"
+        android:text="@string/adding_a_category"
+        style="@style/TextViewLabel"/>
+
+    <EditText
+        android:id="@+id/edit_category"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/category_to_add"
+        style="@style/EditText"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:text="@string/cancel"
+            android:layout_weight="50"
+            style="@style/Button"/>
+
+        <Button
+            android:id="@+id/btn_add_category"
+            android:layout_width="wrap_content"
+            android:text="@string/add"
+            android:layout_weight="50"
+            style="@style/Button"/>
+
+    </LinearLayout>
+
+</LinearLayout>
