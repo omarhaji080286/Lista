@@ -1,0 +1,50 @@
+{
+    "currentServerUserId":"3",
+	
+	"jsonUpdatedCategories": [
+        
+            {
+                "serverCategoryId": "25",
+                "categoryName": "QSDQSDQSDQSD",
+                "color": "2131099751",
+                "icon": "2131230867",
+                "sync": "1",
+                "email": "omar.haji@gmail.com"
+            },
+            {
+                "serverCategoryId": "26",
+                "categoryName": "QSDQSWXCWXCWXCWXC",
+                "color": "2131099751",
+                "icon": "2131230867",
+                "sync": "1",
+                "email": "omar.haji@gmail.com"
+            }
+
+        ],
+	"jsonUpdatedGoods": [
+        
+            {
+                "serverGoodId": "32",
+                "goodName": "Kiri de luxe",
+                "quantityLevelId": "3",
+				"isToBuy":"1",
+				"sync":"0",
+				"email": "omar.haji@gmail.com",
+                "serverCategoryId": "9",
+				"goodDesc":"aazdazd"				
+            },
+            {
+                "serverGoodId": "33",
+                "goodName": "Lampe de luxe",
+                "quantityLevelId": "3",
+				"isToBuy":"1",
+				"sync":"0",
+				"email": "omar.haji@gmail.com",
+                "serverCategoryId": "10",
+				"goodDesc":"azazeaze"
+            }
+
+        ]
+		
+
+}

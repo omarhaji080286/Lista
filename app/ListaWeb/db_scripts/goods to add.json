@@ -1,0 +1,31 @@
+{
+    "currentServerUserId":"3",
+	
+	"jsonGoods": [
+        
+            {
+                "goodName": "azeaze",
+                "quantityLevelId": "1",
+                "isToBuy": "1",
+                "sync": "1",
+                "goodId": "1",
+				"categoryId":"1",
+				"email":"karimamrani0909@gmail",
+				"crud_status":"0",
+				"goodDesc":"zeaze"
+            },
+            {
+                "goodName": "azeaze",
+                "quantityLevelId": "1",
+                "isToBuy": "1",
+                "sync": "1",
+                "goodId": "2",
+				"categoryId":"2",
+				"email":"karimamrani0909@gmail",
+				"crud_status":"0",
+				"goodDesc":"zeaze"
+            }
+
+        ]
+		
+}
