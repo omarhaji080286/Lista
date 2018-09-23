@@ -73,7 +73,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
     private DataBaseHelper newDB;
 
-    //this is a test for github
+    //test commit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
