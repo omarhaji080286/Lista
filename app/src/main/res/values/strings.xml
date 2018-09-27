@@ -1,17 +1,11 @@
 <resources>
     <string name="app_name">Lista</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="overview">Overview</string>
     <string name="my_goods">My goods</string>
-    <string name="search_goods">Search goods</string>
+    <string name="search_goods">بحث عن البضائع</string>
     <string name="add_goods">Add goods</string>
     <string name="add_categories">Add categories</string>
-    <string name="title_activity_manage_goods">ManageGoodsActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="category_name">Category name :</string>
     <string name="add_category_btn">Add Category</string>
     <string name="existing_categories">Existing categories</string>
@@ -34,7 +28,6 @@
     <string name="item_deleted">Item deleted with success</string>
     <string name="delete_icon">delete icon</string>
     <string name="delete">Delete</string>
-    <string name="quantity_level">Quantity level</string>
     <string name="update">Update</string>
     <string name="cancel">Cancel</string>
     <string name="good_updated">Good updated successfully</string>
@@ -43,15 +36,12 @@
     <string name="delete_category_confirmation">Are you sure you want to delete this category and all associated goods ?!</string>
     <string name="category_deleted">Category and all associated goods deleted</string>
     <string name="do_not_delete">Do not delete</string>
-    <string name="manage_goods">Manage goods</string>
-    <string name="manage_categories">Manage categories</string>
     <string name="hint_good_search">What good are you looking for ?</string>
     <string name="hint_good_to_add">A good to add ?</string>
     <string name="indicator">indicator</string>
     <string name="empty_goods"> empty good(s)</string>
     <string name="deleted">has been deleted</string>
     <string name="undo">UNDO</string>
-    <string name="manage_items">Manage items</string>
     <string name="add_a_category">Add a category</string>
     <string name="add_a_good">Add a good</string>
     <string name="category_to_add">What category do you want to add ?</string>
@@ -61,9 +51,7 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="remove_from_purchases_list">Remove from Purchases list</string>
-    <string name="my_purchases_list">My purchases list</string>
     <string name="good_removed_from_PL">has been removed from purchases list.</string>
-    <string name="PL_instruction">click on item to remove it from the list. This will set its quantity level to full.</string>
     <string name="to_buy">To buy ?</string>
     <string name="empty_list_message">No items to be displayed</string>
     <string name="category_icon">category icon</string>
@@ -81,7 +69,6 @@
     <string name="invitation_sent">Invitation sent</string>
     <string name="send_invite">Send invitation</string>
     <string name="received_invites">Received invitation</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sender_email">sender email</string>
     <string name="decline">Decline</string>
     <string name="accept">Accept</string>
@@ -92,8 +79,6 @@
     <string name="team_created_invitation_sent">Team created and invitation sent</string>
     <string name="no_invitations_received">No Invitations received</string>
     <string name="new_here_sign_up">New here ?  <u> Sign Up </u></string>
-    <string name="facebook_app_id">247070192572725</string>
-    <string name="fb_login_protocol_scheme">fb247070192572725</string>
     <string name="synchronize">Synchronize</string>
     <string name="cant_invite_your_self">You can\'t invite yourself&#8230;</string>
     <string name="team">Team</string>
@@ -121,12 +106,8 @@
     <string name="lista_shops">Lista shops</string>
     <string name="error_play_services">Can\'t connect to play services</string>
     <string name="error_current_location">Can\'t get current Location</string>
-
-    <string name="permission_preference">PERMISSION_PREFERENCE</string>
-    <string name="permission_access_fine_location">PERMISSION_ACCESS_FINE_LOCATION</string>
-    <string name="permission_access_coarse_location">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="allow_location_permission_in_settings">Please allow location permission in your app settings</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="shop_selection">Shop Selection</string>
     <string name="filter">Filter</string>
     <string name="search">search</string>
@@ -136,6 +117,14 @@
     <string name="my_orders">My Orders</string>
     <string name="invite_friends">Invite friends</string>
     <string name="my_invitations">My invitations</string>
+
+
+    <string name="facebook_app_id">247070192572725</string>
+    <string name="fb_login_protocol_scheme">fb247070192572725</string>
+
+    <string name="permission_preference">PERMISSION_PREFERENCE</string>
+    <string name="permission_access_fine_location">PERMISSION_ACCESS_FINE_LOCATION</string>
+    <string name="permission_access_coarse_location">PERMISSION_ACCESS_COARSE_LOCATION</string>
 
 
 </resources>

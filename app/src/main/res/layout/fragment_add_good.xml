@@ -50,7 +50,7 @@
     <TextView
         android:id="@+id/txt_level"
         android:layout_width="match_parent"
-        android:text="@string/quantity_level"
+        android:text="quantity level"
         style="@style/TextViewLabel"/>
 
     <GridLayout

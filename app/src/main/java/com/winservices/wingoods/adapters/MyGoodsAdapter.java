@@ -28,6 +28,7 @@ import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
+import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
@@ -226,9 +227,14 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.caddy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            if(NetworkMonitor.checkNetworkConnection(context)){
                 Intent intent = new Intent(context, ShopsActivity.class);
                 intent.putExtra(Constants.CATEGORY_TO_ORDER, category.getServerCategoryId());
                 context.startActivity(intent);
+            } else {
+                Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+
             }
         });
 
