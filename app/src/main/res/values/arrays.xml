@@ -24,7 +24,7 @@
         <item>@drawable/bread</item>
         <item>@drawable/spices</item>
         <item>@drawable/gel</item>
-        <item>@drawable/cheese</item>
+        <item>@drawable/fish</item>
         <item>@drawable/others</item>
     </integer-array>
 
