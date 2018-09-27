@@ -115,4 +115,5 @@
     <string name="my_orders">Me commandes</string>
     <string name="invite_friends">Inviter des amis</string>
     <string name="my_invitations">Mes invitations</string>
+    <string name="sync_finished">sync finished</string>
 </resources>

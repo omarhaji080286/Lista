@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity
     FrameLayout mInterceptorFrame;
     int fragmentId = R.id.nav_my_goods;
     MyGoods myGoodsFragment;
-
     private SyncReceiver syncReceiver;
+    private boolean syncTriggeredByUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,6 +319,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.sync:
+                syncTriggeredByUser = true;
                 Synchronizer sync = new Synchronizer();
                 sync.synchronizeAll(this);
                 break;
@@ -465,6 +466,11 @@ public class MainActivity extends AppCompatActivity
                     myGoodsFragment.reloadMainList();
                     myGoodsFragment.mAdapter.refreshList();
                     myGoodsFragment.categoriesToChooseAdapter.refreshList();
+
+                    if (syncTriggeredByUser){
+                        Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
+                        syncTriggeredByUser = false;
+                    }
 
                     Log.d(TAG, "Sync BroadCast received and sync finished");
                 }
