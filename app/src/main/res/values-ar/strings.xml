@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Lista</string>
-    <string name="my_goods">أشيائي</string>
-    <string name="search_goods">Rechercher un article</string>
+    <string name="my_goods">قائمة التسوق</string>
+    <string name="search_goods">البحث عن سلعة</string>
     <string name="add_goods">Ajouter un article</string>
     <string name="add_categories">Ajouter des catégories</string>
     <string name="category_name">Nom de la catégorie :</string>
