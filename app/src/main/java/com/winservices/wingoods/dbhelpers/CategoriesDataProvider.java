@@ -213,7 +213,6 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
 
-
         return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
     }
 
