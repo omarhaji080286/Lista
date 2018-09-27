@@ -96,7 +96,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 } else {
                     holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.blue_button));
                 }
-                //refreshList();
+                notifyDataSetChanged();
             }
         });
 
