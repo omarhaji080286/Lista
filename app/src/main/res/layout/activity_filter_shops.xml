@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="50"
-            android:text="Reset all filters"
+            android:text="@string/reset_all_filters"
             android:layout_marginStart="10dp"
             style="@style/Button"/>
 
@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="50"
-            android:text="Show results"
+            android:text="@string/show_results"
             android:layout_marginEnd="10dp"
             style="@style/Button"/>
 

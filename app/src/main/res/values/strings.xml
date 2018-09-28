@@ -126,6 +126,8 @@
     <string name="permission_access_fine_location">PERMISSION_ACCESS_FINE_LOCATION</string>
     <string name="permission_access_coarse_location">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="sync_finished">sync finished</string>
+    <string name="reset_all_filters">Reset all filters</string>
+    <string name="show_results">Show results</string>
 
 
 </resources>

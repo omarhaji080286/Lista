@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,15 +24,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CitiesAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Country;
-import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -51,12 +47,11 @@ public class FilterShopsActivity extends AppCompatActivity {
     private RelativeLayout rlCity;
     private ImageView arrowCity;
     private RecyclerView rvCities;
-    private Button btShowResult;
+    private Button btShowResult, btResetFilters;
     private CitiesAdapter citiesAdapter;
     private ArrayList<City> cities = new ArrayList<>();
     private Dialog dialog;
-    private boolean isExpanded = false;
-
+    private boolean sectionCitiesIsExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +66,9 @@ public class FilterShopsActivity extends AppCompatActivity {
         arrowCity = findViewById(R.id.arrow_city);
         rvCities = findViewById(R.id.rv_cities);
         btShowResult = findViewById(R.id.bt_showResult);
+        btResetFilters = findViewById(R.id.bt_reSetFilters);
+
+
 
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
@@ -80,13 +78,20 @@ public class FilterShopsActivity extends AppCompatActivity {
         btShowResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 ShopsFilter shopsFilter = new ShopsFilter();
                 shopsFilter.setSelectedCities(citiesAdapter.getSelectedCities());
                 Intent shopsReturnIntent = new Intent();
                 shopsReturnIntent.putExtra("filter", shopsFilter);
                 setResult(Activity.RESULT_OK,shopsReturnIntent);
                 finish();
+            }
+        });
+
+        btResetFilters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //shopsFilter.reset();
+                Toast.makeText(FilterShopsActivity.this, "Filters have been removed", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,14 +104,14 @@ public class FilterShopsActivity extends AppCompatActivity {
         rlCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isExpanded){
+                if(sectionCitiesIsExpanded){
                     FilterShopsActivity.collapse(rvCities);
                     arrowCity.setImageResource(R.drawable.ic_arrow_down_black);
-                    isExpanded = false;
+                    sectionCitiesIsExpanded = false;
                 } else {
                     FilterShopsActivity.expand(rvCities);
                     arrowCity.setImageResource(R.drawable.ic_arrow_up_black);
-                    isExpanded = true;
+                    sectionCitiesIsExpanded = true;
                 }
 
             }

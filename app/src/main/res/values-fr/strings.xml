@@ -116,4 +116,6 @@
     <string name="invite_friends">Inviter des amis</string>
     <string name="my_invitations">Mes invitations</string>
     <string name="sync_finished">sync finished</string>
+    <string name="reset_all_filters">Réinitialiser les filtres</string>
+    <string name="show_results">Résultats</string>
 </resources>

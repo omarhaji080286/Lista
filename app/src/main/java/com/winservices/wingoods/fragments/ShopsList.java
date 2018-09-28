@@ -47,6 +47,12 @@ public class ShopsList extends Fragment {
     public void onStart() {
         super.onStart();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         Bundle bundle = getArguments();
         shops = new ArrayList<>();
         if (bundle != null) {
@@ -63,15 +69,15 @@ public class ShopsList extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(getContext());
             shopsRecyclerView.setLayoutManager(llm);
             shopsRecyclerView.setAdapter(adapter);
-        }
 
+            message.setVisibility(View.GONE);
+            shopsRecyclerView.setVisibility(View.VISIBLE);
+
+        }
     }
 
     public void setShopNameFilter(ArrayList<Shop> newList){
         adapter.setShopNameFilter(newList);
     }
 
-    public ShopsListAdapter getAdapter() {
-        return adapter;
-    }
 }

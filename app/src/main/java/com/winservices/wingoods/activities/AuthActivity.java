@@ -581,9 +581,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 DataManager dataManager = new DataManager(this);
                 dataManager.addGood(good);
 
-                //category.setCrudStatus(0);
-
-                //dataManager.updateCategory(category);
                 dataManager.closeDB();
 
             }

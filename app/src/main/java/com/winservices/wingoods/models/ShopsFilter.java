@@ -16,4 +16,8 @@ public class ShopsFilter implements Serializable {
     public void setSelectedCities(ArrayList<City> selectedCities) {
         this.selectedCities = selectedCities;
     }
+
+    public void reset(){
+        this.selectedCities = new ArrayList<>();
+    }
 }
