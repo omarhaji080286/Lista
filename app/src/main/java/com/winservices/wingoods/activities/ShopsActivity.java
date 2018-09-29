@@ -64,6 +64,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     private ShopsList shopsList;
     private ActionBar actionBar;
     public static final int REQUEST_FOR_FILTERS = 101;
+    private ShopsFilter shopsFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
         shops = new ArrayList<>();
         shopsFirstList = new ArrayList<>();
+        shopsFilter = new ShopsFilter();
 
         if (getSupportActionBar()!=null) {
             actionBar = getSupportActionBar();
@@ -153,10 +155,13 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
         if (requestCode == REQUEST_FOR_FILTERS) {
             if(resultCode == Activity.RESULT_OK){
-                ShopsFilter shopsFilter = (ShopsFilter) data.getSerializableExtra("filter");
+                shopsFilter = (ShopsFilter) data.getSerializableExtra("filter");
                 shopsList.adapter.setShops(shopsFirstList);
-                shopsList.adapter.setShopsFilter(shopsFilter);
-                shopsMap.setShopsFilter(shopsFilter);
+                shopsMap.setShops(shopsFirstList);
+                if (shopsFilter.isEnable()){
+                    shopsList.adapter.setShopsFilter(shopsFilter);
+                    shopsMap.setShopsFilter(shopsFilter);
+                }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -301,6 +306,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 //Activity for filtering the list using different creterias
                 if (NetworkMonitor.checkNetworkConnection(this)){
                     Intent filtersIntent = new Intent(ShopsActivity.this, FilterShopsActivity.class);
+                    filtersIntent.putExtra("shopsFilter",shopsFilter);
                     startActivityForResult(filtersIntent, REQUEST_FOR_FILTERS);
                 } else {
                     Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();

@@ -27,11 +27,12 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityInFilterShopsViewHol
     public CitiesAdapter(ArrayList<City> cities, Context context) {
         this.cities = cities;
         this.context = context;
-        this.selectedCities = new ArrayList<>();
         this.cityStateArray = new SparseBooleanArray();
         for (int i = 0; i < cities.size(); i++) {
-            cityStateArray.put(cities.get(i).getServerCityId(),false);
+            cityStateArray.put(cities.get(i).getServerCityId(),true);
         }
+        this.selectedCities = new ArrayList<>();
+        this.selectedCities.addAll(cities);
     }
 
     @Override
@@ -99,5 +100,24 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityInFilterShopsViewHol
 
     public ArrayList<City> getSelectedCities() {
         return selectedCities;
+    }
+
+    public void setSelectedCities(ArrayList<City> selectedCities) {
+        this.selectedCities = selectedCities;
+        for (int i = 0; i < cities.size(); i++) {
+            City city = cities.get(i);
+            boolean selected = false;
+            for (int j = 0; j < selectedCities.size(); j++) {
+                City selectedCity = selectedCities.get(j);
+                if (selectedCity.getServerCityId() == city.getServerCityId()) {
+                    cityStateArray.put(cities.get(i).getServerCityId(), true);
+                    selected = true;
+                }
+            }
+            if (!selected) {
+                cityStateArray.put(cities.get(i).getServerCityId(), false);
+            }
+        }
+        notifyDataSetChanged();
     }
 }

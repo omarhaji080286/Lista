@@ -118,4 +118,6 @@
     <string name="sync_finished">sync finished</string>
     <string name="reset_all_filters">Réinitialiser les filtres</string>
     <string name="show_results">Résultats</string>
+    <string name="select_city">Choisissez au moins une ville</string>
+    <string name="filters_removed">Filtres réinitialisés</string>
 </resources>

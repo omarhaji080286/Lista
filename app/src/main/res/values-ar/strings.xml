@@ -118,4 +118,5 @@
     <string name="sync_finished">sync finished</string>
     <string name="reset_all_filters">Reset all filters</string>
     <string name="show_results">Show results</string>
+    <string name="select_city">Select at least one city</string>
 </resources>

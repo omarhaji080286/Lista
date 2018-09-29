@@ -309,5 +309,10 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         addShopsMarkers(newList);
     }
 
+    public void setShops(ArrayList<Shop> shops){
+        mGoogleMap.clear();
+        addShopsMarkers(shops);
+    }
+
 
 }

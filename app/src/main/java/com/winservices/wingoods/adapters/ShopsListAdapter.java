@@ -88,5 +88,6 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
     public void setShops(ArrayList<Shop> shops) {
         this.shops.clear();
         this.shops.addAll(shops);
+        notifyDataSetChanged();
     }
 }

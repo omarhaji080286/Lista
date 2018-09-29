@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -47,9 +46,7 @@ public class FilterShopsActivity extends AppCompatActivity {
     private RelativeLayout rlCity;
     private ImageView arrowCity;
     private RecyclerView rvCities;
-    private Button btShowResult, btResetFilters;
     private CitiesAdapter citiesAdapter;
-    private ArrayList<City> cities = new ArrayList<>();
     private Dialog dialog;
     private boolean sectionCitiesIsExpanded = false;
 
@@ -65,39 +62,50 @@ public class FilterShopsActivity extends AppCompatActivity {
         rlCity = findViewById(R.id.rl_city);
         arrowCity = findViewById(R.id.arrow_city);
         rvCities = findViewById(R.id.rv_cities);
-        btShowResult = findViewById(R.id.bt_showResult);
-        btResetFilters = findViewById(R.id.bt_reSetFilters);
-
-
+        Button btShowResult = findViewById(R.id.bt_showResult);
+        Button btResetFilters = findViewById(R.id.bt_reSetFilters);
 
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
 
-        loadFilterInputs(this);
+        loadCitiesFromServer(this);
 
         btShowResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ShopsFilter shopsFilter = new ShopsFilter();
-                shopsFilter.setSelectedCities(citiesAdapter.getSelectedCities());
-                Intent shopsReturnIntent = new Intent();
-                shopsReturnIntent.putExtra("filter", shopsFilter);
-                setResult(Activity.RESULT_OK,shopsReturnIntent);
-                finish();
+                ArrayList<City> selectedCities = citiesAdapter.getSelectedCities();
+
+                if (selectedCities.size()>0){
+                    shopsFilter.setSelectedCities(selectedCities);
+                    shopsFilter.setFilterState(ShopsFilter.ENABLE);
+                    Intent shopsReturnIntent = new Intent();
+                    shopsReturnIntent.putExtra("filter", shopsFilter);
+                    setResult(Activity.RESULT_OK,shopsReturnIntent);
+                    finish();
+                } else {
+                    Toast.makeText(FilterShopsActivity.this, R.string.select_city, Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         btResetFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //shopsFilter.reset();
-                Toast.makeText(FilterShopsActivity.this, "Filters have been removed", Toast.LENGTH_SHORT).show();
+                ShopsFilter shopsFilter = new ShopsFilter();
+                shopsFilter.setFilterState(ShopsFilter.DISABLE);
+                Intent shopsReturnIntent = new Intent();
+                shopsReturnIntent.putExtra("filter", shopsFilter);
+                setResult(Activity.RESULT_OK,shopsReturnIntent);
+                finish();
+                Toast.makeText(FilterShopsActivity.this, R.string.filters_removed, Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    private void prepareCitiesSection(){
+    private void prepareCitiesSection(ArrayList<City> cities){
 
         //Section "CITY"
         //Parent
@@ -119,6 +127,10 @@ public class FilterShopsActivity extends AppCompatActivity {
 
         //Child
         citiesAdapter = new CitiesAdapter(cities,this);
+        ShopsFilter shopsFilterFromIntent = (ShopsFilter) getIntent().getSerializableExtra("shopsFilter");
+        if (shopsFilterFromIntent.isEnable()){
+            citiesAdapter.setSelectedCities(shopsFilterFromIntent.getSelectedCities());
+        }
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false );
         rvCities.setLayoutManager(llm);
         rvCities.setAdapter(citiesAdapter);
@@ -126,7 +138,7 @@ public class FilterShopsActivity extends AppCompatActivity {
     }
 
 
-    private void loadFilterInputs(final Context context) {
+    private void loadCitiesFromServer(final Context context) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_CITIES,
@@ -142,6 +154,7 @@ public class FilterShopsActivity extends AppCompatActivity {
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                             } else {
                                 JSONArray JSONCities = jsonObject.getJSONArray("cities");
+                                ArrayList<City> cities = new ArrayList<>();
 
                                 for (int i = 0; i < JSONCities.length(); i++) {
                                     JSONObject JSONCity = JSONCities.getJSONObject(i);
@@ -160,7 +173,7 @@ public class FilterShopsActivity extends AppCompatActivity {
 
                                 dialog.dismiss();
 
-                                prepareCitiesSection();
+                                prepareCitiesSection(cities);
 
                             }
                         } catch (JSONException e) {
