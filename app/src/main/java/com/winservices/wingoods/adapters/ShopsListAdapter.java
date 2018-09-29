@@ -43,9 +43,11 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopEmail.setText(shop.getShopEmail());
         holder.shopPhone.setText(shop.getShopPhone());
         holder.shopAdress.setText(shop.getShopAdress());
+        holder.btnOrder.setVisibility(View.GONE);
 
         if (serverCategoryIdToOrder != 0) {
-            holder.container.setOnClickListener(new View.OnClickListener() {
+            holder.btnOrder.setVisibility(View.VISIBLE);
+            holder.btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TO DO

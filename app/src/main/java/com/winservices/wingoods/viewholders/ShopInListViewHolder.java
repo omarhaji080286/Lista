@@ -2,6 +2,7 @@ package com.winservices.wingoods.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ public class ShopInListViewHolder extends RecyclerView.ViewHolder {
 
     public TextView shopName, shopType, shopAdress, shopPhone, shopEmail;
     public RelativeLayout container;
+    public Button btnOrder;
 
     public ShopInListViewHolder(View itemView) {
         super(itemView);
@@ -22,6 +24,7 @@ public class ShopInListViewHolder extends RecyclerView.ViewHolder {
         shopAdress = itemView.findViewById(R.id.txt_shop_adress);
         shopPhone = itemView.findViewById(R.id.txt_shop_phone);
         shopEmail = itemView.findViewById(R.id.txt_shop_email);
+        btnOrder = itemView.findViewById(R.id.btn_order);
 
     }
 }
