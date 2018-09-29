@@ -123,6 +123,9 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         categoriesToChooseAdapter.setOnGoodAddedListener(new CategoriesInMyGoodsAdapter.OnGoodAddedListener() {
             @Override
             public void onGoodAdded() {
+                searchView.setText("");
+                searchView.setFocusable(true);
+                imgHighlightOff.setVisibility(View.INVISIBLE);
                 reloadMainList();
                 categoriesToChooseRecyclerView.setVisibility(View.GONE);
                 txtChooseCategory.setVisibility(View.GONE);
