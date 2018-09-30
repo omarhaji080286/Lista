@@ -71,9 +71,9 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.goodDescription.setText(goodItem.getGoodDesc());
 
         if (goodItem.isToBuy()) {
-            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.red_button));
+            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
         } else {
-            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.blue_button));
+            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
         }
 
         holder.viewForeground.setOnClickListener(new View.OnClickListener() {
@@ -216,15 +216,13 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         int goodsToBuyNumber = category.getGoodsToBuyNumber(context);
         if (goodsToBuyNumber!=0) {
-            holder.caddy.setVisibility(View.VISIBLE);
+            holder.cartContainer.setVisibility(View.VISIBLE);
             holder.goodsToBuyNumber.setText(String.valueOf(goodsToBuyNumber));
-            holder.goodsToBuyNumber.setVisibility(View.VISIBLE);
         } else {
-            holder.caddy.setVisibility(View.GONE);
-            holder.goodsToBuyNumber.setVisibility(View.GONE);
+            holder.cartContainer.setVisibility(View.GONE);
         }
 
-        holder.caddy.setOnClickListener(new View.OnClickListener() {
+        holder.cartContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             if(NetworkMonitor.checkNetworkConnection(context)){

@@ -14,18 +14,20 @@ public class CategoryGroupViewHolder extends GroupViewHolder {
 
     public TextView categoryName, goodsToBuyNumber;
     public ImageView arrow;
-    public LinearLayout container;
+    public LinearLayout container, cartContainer;
     public ImageView categoryIcon, caddy;
 
     public CategoryGroupViewHolder(View itemView) {
         super(itemView);
 
+        cartContainer = itemView.findViewById(R.id.ll_cart_container);
         categoryName = itemView.findViewById(R.id.txt_category_name);
         arrow = itemView.findViewById(R.id.img_arrow_in_category);
         container = itemView.findViewById(R.id.item_category_group);
         categoryIcon = itemView.findViewById(R.id.ic_category);
         goodsToBuyNumber = itemView.findViewById(R.id.txt_goods_to_buy_number);
         caddy = itemView.findViewById(R.id.ic_caddy);
+
     }
 
     public void setCategoryName(String name) {

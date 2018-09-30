@@ -91,9 +91,10 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_weight="10"
-            android:background="@drawable/send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_send"
             android:layout_gravity="center_vertical"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/description" />
 
     </LinearLayout>
 
