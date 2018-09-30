@@ -41,6 +41,7 @@ import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.ArrayList;
 
@@ -147,6 +148,15 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
             } else {
                 mGoogleMap.setMyLocationEnabled(true);
 
+                mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        if (cardViewShop.getVisibility()==View.VISIBLE){
+                            UtilsFunctions.collapse(cardViewShop);
+                        }
+                    }
+                });
+
                 mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
                     public View getInfoWindow(Marker marker) {
@@ -191,11 +201,13 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     private void setMarkersClickListener(final ArrayList<Shop> shopsWithMarkers){
 
-
-
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
+                if (cardViewShop.getVisibility()==View.GONE){
+                    UtilsFunctions.expand(cardViewShop);
+                }
 
                 Shop shop = new Shop();
                 for (int i = 0; i < shopsWithMarkers.size(); i++) {
@@ -204,7 +216,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     }
                 }
 
-                cardViewShop.setVisibility(View.VISIBLE);
                 shopName.setText(shop.getShopName());
                 shopType.setText(shop.getShopType().getShopTypeName());
                 shopAdress.setText(shop.getShopAdress());
