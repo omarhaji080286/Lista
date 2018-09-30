@@ -71,9 +71,9 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.goodDescription.setText(goodItem.getGoodDesc());
 
         if (goodItem.isToBuy()) {
-            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.red_button));
+            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
         } else {
-            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.blue_button));
+            holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
         }
 
         holder.viewForeground.setOnClickListener(new View.OnClickListener() {
