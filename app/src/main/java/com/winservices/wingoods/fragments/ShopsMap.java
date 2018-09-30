@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,11 +62,25 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     private ArrayList<Shop> shops;
 
+    private TextView shopName, shopType, shopAdress, shopPhone, shopEmail, shopCity;
+    private CardView cardViewShop;
+    private ImageView shopIcon;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_shops_map, container, false);
+
+        cardViewShop = mView.findViewById(R.id.cardview_shop);
+        shopIcon =  mView.findViewById(R.id.img_shop_icon);
+        shopName = mView.findViewById(R.id.txt_shop_name);
+        shopType = mView.findViewById(R.id.txt_shop_type);
+        shopAdress = mView.findViewById(R.id.txt_shop_adress);
+        shopPhone = mView.findViewById(R.id.txt_shop_phone);
+        shopEmail = mView.findViewById(R.id.txt_shop_email);
+        shopCity = mView.findViewById(R.id.txt_shop_city);
+
         return mView;
     }
 
@@ -173,10 +188,52 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void addShopsMarkers(ArrayList<Shop> shops){
+
+    private void setMarkersClickListener(final ArrayList<Shop> shopsWithMarkers){
+
+
+
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                Shop shop = new Shop();
+                for (int i = 0; i < shopsWithMarkers.size(); i++) {
+                    if (marker.getId().equals(shopsWithMarkers.get(i).getMarkerId())){
+                        shop = shopsWithMarkers.get(i);
+                    }
+                }
+
+                cardViewShop.setVisibility(View.VISIBLE);
+                shopName.setText(shop.getShopName());
+                shopType.setText(shop.getShopType().getShopTypeName());
+                shopAdress.setText(shop.getShopAdress());
+                shopPhone.setText(shop.getShopPhone());
+                shopCity.setText(shop.getCity().getCityName());
+                shopEmail.setText(shop.getShopEmail());
+
+                switch (shop.getShopType().getShopTypeName()){
+                    case Constants.SHOP_TYPE_1:
+                        shopIcon.setImageResource(R.drawable.others);
+                        break;
+                    case Constants.SHOP_TYPE_2:
+                        shopIcon.setImageResource(R.drawable.steak);
+                        break;
+                    case Constants.SHOP_TYPE_3:
+                        shopIcon.setImageResource(R.drawable.fruit);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+    }
+
+    private void addShopsMarkers(final ArrayList<Shop> shops){
 
         for (int i = 0; i < shops.size(); i++) {
-            Shop shop = shops.get(i);
+            final Shop shop = shops.get(i);
             BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
 
             switch (shop.getShopType().getServerShopTypeId()){
@@ -191,14 +248,18 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     break;
             }
 
-            MarkerOptions shopOptions = new MarkerOptions()
+            final MarkerOptions shopOptions = new MarkerOptions()
                     .title(shop.getShopName())
                     .snippet(shop.getShopType().getShopTypeName())
                     .icon(bitmapDescriptor)
                     .position(new LatLng(shop.getLatitude(), shop.getLongitude()));
-            mGoogleMap.addMarker(shopOptions);
 
+            Marker marker = mGoogleMap.addMarker(shopOptions);
+            shops.get(i).setMarkerId(marker.getId());
         }
+
+        setMarkersClickListener(shops);
+
 
     }
 
@@ -271,7 +332,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     buildMapsData();
                 } else {
                     //permission denied
-                    Toast.makeText(getContext(), "The map will not work properly", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.error_map, Toast.LENGTH_LONG).show();
                 }
             }
             // other 'case' lines to check for other
