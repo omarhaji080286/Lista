@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
@@ -244,6 +245,14 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                 if (serverCategoryIdToOrder!=0){
                     btnOrder.setVisibility(View.VISIBLE);
+                    btnOrder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(getActivity(), OrderActivity.class);
+                            intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                            startActivity(intent);
+                        }
+                    });
                 } else {
                     btnOrder.setVisibility(View.GONE);
                 }

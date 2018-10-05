@@ -40,7 +40,7 @@
             android:id="@+id/item_good"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/blue_button">
+            android:background="@drawable/good_to_buy_color">
 
             <TextView
                 android:id="@+id/txt_good_name"

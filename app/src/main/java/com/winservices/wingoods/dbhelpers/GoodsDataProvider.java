@@ -215,4 +215,29 @@ public class GoodsDataProvider {
     }
 
 
+    public List<Good> getGoodsToOrderByServerCategoryId(int serverCategoryIdToOrder) {
+        List<Good> list = new ArrayList<>();
+        Cursor cursor = db.getGoodsToOrderByServerCategory(serverCategoryIdToOrder);
+        while (cursor.moveToNext()) {
+            int goodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+            String goodName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_NAME));
+            String goodDesc = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_DESC));
+            int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_ID));
+            int quantityLevel = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_QUANTITY_LEVEL));
+            boolean isToBuy = (cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_BUY)) == 1);
+            String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
+            int sync = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
+            int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
+            int serverGoodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GOOD_ID));
+
+            Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
+            good.setServerGoodId(serverGoodId);
+            good.setGoodDesc(goodDesc);
+
+            list.add(good);
+        }
+        cursor.close();
+        return list;
+
+    }
 }

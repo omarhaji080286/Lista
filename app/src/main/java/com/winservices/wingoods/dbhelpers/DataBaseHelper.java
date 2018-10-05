@@ -670,38 +670,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    Cursor getCategoriesByGood(String searchGoodName) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("SELECT " + COL_CATEGORY_ID + " as " + _ID + " , * "
-                    + " FROM " + TABLE_CATEGORIES +
-                    " where exists" +
-                        " ( select * from goods " +
-                        " where " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID + " = " + TABLE_GOODS+"."+COL_CATEGORY_ID +
-                        " and " + TABLE_GOODS +"."+COL_GOOD_NAME + " like '%" + searchGoodName + "%'" +
-                        " and " + TABLE_GOODS+"."+COL_CRUD_STATUS + " <> -1 )" +
-                    " and " + COL_CRUD_STATUS + " <> -1" +
-                    " and " + COL_USERID + " = " + currentUser.getUserId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    Cursor getCategoriesNames() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("SELECT " + COL_CATEGORY_ID + " as " + _ID + " , " + COL_CATEGORY_NAME
-                    + " FROM " + TABLE_CATEGORIES
-                    + " WHERE " + COL_CRUD_STATUS + " <> -1"
-                    + " AND " + COL_USERID + " = " + currentUser.getUserId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
 
     Cursor getCategoryById(int categoryId) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -797,24 +765,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    Cursor getGoodsWithCategoryByName(String name) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("select " + COL_GOOD_ID + " as " + _ID + " , "
-                    + COL_GOOD_NAME + " , " + COL_CATEGORY_NAME
-                    + " , * from " + TABLE_GOODS + ", " + TABLE_CATEGORIES
-                    + " WHERE  " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + "=" + TABLE_GOODS + "." + COL_CATEGORY_ID
-                    + " AND " + TABLE_GOODS + "." + COL_GOOD_NAME + " LIKE '%" + name + "%' "
-                    + " AND " + TABLE_GOODS + "." +COL_CRUD_STATUS + " <> -1"
-                    + " AND " + TABLE_CATEGORIES + "." +COL_CRUD_STATUS + " <> -1"
-                    + " AND " + TABLE_CATEGORIES+"."+COL_USERID+"="+currentUser.getUserId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
     Cursor getGoodsByCategory(int categoryId, String searchGoodName) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = null;
@@ -830,31 +780,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    Cursor getGoodsByCategoryAndName(int categoryId, String name) {
-        SQLiteDatabase db = this.getWritableDatabase();
+
+    Cursor getGoodsToOrderByServerCategory(int serverCategoryId) {
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = null;
         try {
-            res = db.rawQuery("SELECT " + COL_GOOD_ID + " as " + _ID + " , " + "  * FROM " + TABLE_GOODS
-                    + " WHERE " + COL_CATEGORY_ID + "=" + categoryId
-                    + " AND " + COL_GOOD_NAME + " LIKE '%" + name + "%'"
-                    + " AND " + COL_CRUD_STATUS + " <> -1"
-                    + " ORDER BY " + COL_IS_TO_BUY + " DESC, " + COL_GOOD_NAME + " ASC", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-
-    Cursor getGoodsToBuy(int categoryId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("SELECT " + COL_GOOD_ID + " as " + _ID + " , " + "  * FROM " + TABLE_GOODS
-                    + " WHERE " + COL_CATEGORY_ID + " = " + categoryId
-                    + " AND " + COL_IS_TO_BUY + " = 1 "
-                    + " AND " + COL_CRUD_STATUS + " <> -1"
-                    + " ORDER BY " + COL_GOOD_ID , null);
+            res = db.rawQuery("SELECT " + TABLE_GOODS+"."+COL_GOOD_ID + " as " + _ID + "," + TABLE_GOODS+".*"
+                    + " FROM " + TABLE_GOODS + "," + TABLE_CATEGORIES
+                    + " WHERE " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID+"="+TABLE_GOODS+"."+COL_CATEGORY_ID
+                    + " AND " + TABLE_CATEGORIES+"."+COL_SERVER_CATEGORY_ID + " = " + serverCategoryId
+                    + " AND " + TABLE_GOODS+"."+COL_IS_TO_BUY + " = 1 "
+                    + " AND " + TABLE_GOODS+"."+COL_CRUD_STATUS + " <> -1"
+                    + " ORDER BY " + TABLE_GOODS+"."+COL_GOOD_NAME , null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -928,19 +865,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return (affectedRows == 1);
     }
     // GOODS
-
-    boolean updateGoodLevel(int goodId, int level) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_QUANTITY_LEVEL, level);
-        int affectedRows = 0;
-        try {
-            affectedRows = db.update(TABLE_GOODS, contentValues, COL_GOOD_ID + " = " + goodId, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return (affectedRows == 1);
-    }
 
     boolean updateGood(Good good) {
         SQLiteDatabase db = this.getWritableDatabase();
