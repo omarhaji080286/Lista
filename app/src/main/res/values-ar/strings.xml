@@ -121,4 +121,6 @@
     <string name="select_city">Select at least one city</string>
     <string name="error_map">لن تعمل الخريطة بشكل صحيح</string>
     <string name="order_my_list">اطلب قائمتي</string>
+    <string name="shops">shops</string>
+    <string name="add_an_item">Add an item</string>
 </resources>

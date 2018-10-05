@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.GoodsToOrderAdapter;
@@ -20,6 +22,7 @@ import java.util.List;
 public class OrderActivity extends AppCompatActivity {
 
     private RecyclerView rvGoodsToOrder;
+    private Button btnSelectShops, btnAddGood, btnOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,9 @@ public class OrderActivity extends AppCompatActivity {
         }
 
         rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
+        btnSelectShops = findViewById(R.id.btn_select_shop);
+        btnAddGood = findViewById(R.id.btn_add_good);
+        btnOrder = findViewById(R.id.btn_order);
 
         int serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
 
@@ -47,6 +53,25 @@ public class OrderActivity extends AppCompatActivity {
         rvGoodsToOrder.setLayoutManager(glm);
         rvGoodsToOrder.setAdapter(goodsToOrderAdapter);
         rvGoodsToOrder.setHasFixedSize(true);
+
+        btnSelectShops.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        btnOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createOrder();
+            }
+        });
+
+    }
+
+    private void createOrder() {
+
 
     }
 

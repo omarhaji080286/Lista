@@ -1,6 +1,7 @@
 package com.winservices.wingoods.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
+import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
@@ -50,11 +53,13 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
             holder.btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TO DO
-                    //Process the order
-                    Toast.makeText(context, "category to order = " + serverCategoryIdToOrder, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, OrderActivity.class);
+                intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                context.startActivity(intent);
                 }
             });
+        } else {
+            holder.btnOrder.setVisibility(View.GONE);
         }
 
     }
