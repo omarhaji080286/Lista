@@ -64,13 +64,13 @@ public class OrderActivity extends AppCompatActivity {
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createOrder();
+                addOrder();
             }
         });
 
     }
 
-    private void createOrder() {
+    private void addOrder() {
 
 
     }
