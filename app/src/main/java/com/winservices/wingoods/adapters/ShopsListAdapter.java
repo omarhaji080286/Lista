@@ -39,7 +39,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
     @Override
     public void onBindViewHolder(ShopInListViewHolder holder, int position) {
 
-        Shop shop = this.shops.get(position);
+        final Shop shop = this.shops.get(position);
 
         holder.shopName.setText(shop.getShopName());
         holder.shopType.setText(shop.getShopType().getShopTypeName());
@@ -55,6 +55,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                 public void onClick(View view) {
                 Intent intent = new Intent(context, OrderActivity.class);
                 intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                 context.startActivity(intent);
                 }
             });

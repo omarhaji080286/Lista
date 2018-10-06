@@ -245,11 +245,13 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                 if (serverCategoryIdToOrder!=0){
                     btnOrder.setVisibility(View.VISIBLE);
+                    final Shop finalShop = shop;
                     btnOrder.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(getActivity(), OrderActivity.class);
                             intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                            intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             startActivity(intent);
                         }
                     });

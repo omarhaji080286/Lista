@@ -31,4 +31,5 @@ public class Constants {
     public static final String ACTION_REFRESH_AFTER_SYNC = "action_refresh_after_sync";
 
 
+    public static final String SELECTED_SHOP_ID = "selectedShopId";
 }

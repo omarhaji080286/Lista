@@ -42,4 +42,8 @@ public class GoodsToOrderAdapter extends RecyclerView.Adapter<GoodItemViewHolder
     public int getItemCount() {
         return goodsToOrder.size();
     }
+
+    public List<Good> getGoodsToOrder() {
+        return goodsToOrder;
+    }
 }

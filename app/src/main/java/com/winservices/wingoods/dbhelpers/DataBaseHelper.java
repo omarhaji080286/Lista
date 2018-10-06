@@ -98,6 +98,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String HOST_URL_ADD_GOODS = HOST + "addGoods.php";
     public static final String HOST_URL_GET_SHOPS = HOST + "getShops.php";
     public static final String HOST_URL_GET_CITIES = HOST + "getCities.php";
+    public static final String HOST_URL_ADD_ORDER = HOST + "addOrder.php";
 
     private final static int DATABASE_VERSION = 1;
 
