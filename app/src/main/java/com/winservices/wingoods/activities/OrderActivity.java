@@ -22,6 +22,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.GoodsToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class OrderActivity extends AppCompatActivity {
@@ -65,7 +67,7 @@ public class OrderActivity extends AppCompatActivity {
 
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
 
-        int serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
+        final int serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
 
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
         List<Good> goodsToOrder = goodsDataProvider.getGoodsToOrderByServerCategoryId(serverCategoryIdToOrder);
@@ -81,6 +83,9 @@ public class OrderActivity extends AppCompatActivity {
         btnSelectShops.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(OrderActivity.this, ShopsActivity.class);
+                intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                startActivity(intent);
                 finish();
             }
         });
@@ -109,7 +114,11 @@ public class OrderActivity extends AppCompatActivity {
                                     //error in server
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                                    updateOrderedGoods();
+                                    Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -127,10 +136,13 @@ public class OrderActivity extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> postData = new HashMap<>();
                     postData.put("jsonData", "" + getJSONForAddOrder());
+                    postData.put("language", "" + Locale.getDefault().getLanguage());
                     return postData;
                 }
             };
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+        } else {
+            Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -164,6 +176,16 @@ public class OrderActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    private void updateOrderedGoods() {
+        DataManager dataManager = new DataManager(this);
+        for (int i = 0; i < goodsToOrderAdapter.getGoodsToOrder().size(); i++) {
+            Good good = goodsToOrderAdapter.getGoodsToOrder().get(i);
+            good.setIsOrdered(1);
+            dataManager.updateGood(good);
+        }
+        dataManager.closeDB();
     }
 
 

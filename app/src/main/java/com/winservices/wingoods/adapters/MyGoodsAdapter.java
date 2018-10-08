@@ -72,9 +72,18 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         if (goodItem.isToBuy()) {
             holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
+            if (goodItem.getIsOrdered()==1){
+                holder.cart.setVisibility(View.VISIBLE);
+            } else {
+                holder.cart.setVisibility(View.GONE);
+            }
         } else {
             holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
+            holder.cart.setVisibility(View.GONE);
         }
+
+
+
 
         holder.viewForeground.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +171,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                             updatedGood.setGoodName(updatedName.trim());
                             updatedGood.setCategoryId(categoryId);
                             updatedGood.setQuantityLevelId(goodItem.getQuantityLevelId());
-                            //updatedGood.setToBuy(true);
                             updatedGood.setGoodDesc(editGoodDesc.getText().toString().trim());
                             updatedGood.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
                             if (!editGoodDesc.getText().toString().trim().isEmpty()){

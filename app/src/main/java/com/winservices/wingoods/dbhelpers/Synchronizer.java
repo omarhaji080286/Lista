@@ -347,6 +347,7 @@ public class Synchronizer {
                                     int crudStatus = goodJSONArray.getJSONObject(9).getInt("crud_status");
                                     String goodDesc = goodJSONArray.getJSONObject(10).getString("good_desc");
                                     int sync = DataBaseHelper.SYNC_STATUS_OK;
+                                    int isOrdered = goodJSONArray.getJSONObject(11).getInt("is_ordered");
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryByServerCategoryIdAndUserId(serverCategoryId, user.getUserId() );
@@ -355,6 +356,7 @@ public class Synchronizer {
                                     Good good = new Good(goodName, category.getCategoryId(), quantityLevelId, isToBuy, sync, email, serverGoodId, serverCategoryId);
                                     good.setCrudStatus(crudStatus);
                                     good.setGoodDesc(goodDesc);
+                                    good.setIsOrdered(isOrdered);
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.addGood( good);
@@ -649,6 +651,7 @@ public class Synchronizer {
                                     good.setEmail(JSONGood.getString("email"));
                                     good.setCrudStatus(JSONGood.getInt("crud_status"));
                                     good.setSync(DataBaseHelper.SYNC_STATUS_OK);
+                                    good.setIsOrdered(JSONGood.getInt("is_ordered"));
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryByServerCategoryIdAndUserId( JSONGood.getInt("server_category_id"), user.getUserId());

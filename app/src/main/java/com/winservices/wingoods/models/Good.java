@@ -20,6 +20,7 @@ public class Good {
     private int crudStatus;
     private int serverGoodId;
     private int serverCategoryId;
+    private int isOrdered;
 
     public Good(String goodName, int categoryId, int quantityLevelId, boolean isToBuy, int sync, String email) {
         this.goodName = goodName;
@@ -167,6 +168,14 @@ public class Good {
 
     public void setSync(int sync) {
         this.sync = sync;
+    }
+
+    public int getIsOrdered() {
+        return isOrdered;
+    }
+
+    public void setIsOrdered(int isOrdered) {
+        this.isOrdered = isOrdered;
     }
 
     public JSONObject toJSONObject(){

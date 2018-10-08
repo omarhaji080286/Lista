@@ -57,6 +57,7 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
                 Good good = new Good(goodName,category.getCategoryId(), Constants.LEVEL_1_EMPTY_INT,
                         true, DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getEmail());
                 good.setGoodDesc("");
+                good.setIsOrdered(0);
 
                 DataManager dataManager = new DataManager(context);
                 int res = dataManager.addGood(good);

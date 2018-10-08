@@ -122,6 +122,6 @@
     <string name="filters_removed">Filtres réinitialisés</string>
     <string name="error_map">La carte ne fonctionnera pas correctement</string>
     <string name="order_my_list">Commander ma liste</string>
-    <string name="shops">shops</string>
-    <string name="add_an_item">Add an item</string>
+    <string name="shops">Boutiques</string>
+    <string name="add_an_item">Ajouter un articles</string>
 </resources>

@@ -83,6 +83,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_RECEIVED_INVITATIONS = "received_invitations";
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
+    public static final String COL_IS_ORDERED = "is_ordered";
     public static final String HOST_URL_ADD_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
@@ -168,6 +169,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "email TEXT, " +
                 "crud_status INTEGER, " +
                 "server_good_id INTEGER, " +
+                "is_ordered INTEGER, " +
                 "FOREIGN KEY (category_id) REFERENCES categories (category_id)) ");
 
         db.execSQL("CREATE TABLE received_invitations ( " +
@@ -792,6 +794,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " AND " + TABLE_CATEGORIES+"."+COL_SERVER_CATEGORY_ID + " = " + serverCategoryId
                     + " AND " + TABLE_GOODS+"."+COL_IS_TO_BUY + " = 1 "
                     + " AND " + TABLE_GOODS+"."+COL_CRUD_STATUS + " <> -1"
+                    + " AND " + TABLE_GOODS+"."+COL_IS_ORDERED + " = 0"
                     + " ORDER BY " + TABLE_GOODS+"."+COL_GOOD_NAME , null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -878,6 +881,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_CRUD_STATUS, good.getCrudStatus());
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
         contentValues.put(COL_GOOD_DESC, good.getGoodDesc());
+        contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
 
         int affectedRows = 0;
         try {
@@ -1179,6 +1183,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_EMAIL, good.getEmail());
         contentValues.put(COL_CRUD_STATUS, good.getCrudStatus());
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
+        contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
 
         long result = db.insert(TABLE_GOODS, null, contentValues);
         return (result != -1);

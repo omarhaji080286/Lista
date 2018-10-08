@@ -253,6 +253,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                             intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             startActivity(intent);
+                            getActivity().finish();
                         }
                     });
                 } else {

@@ -106,7 +106,9 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         }
 
         getShops(this);
+
     }
+
 
     private void initActivityVariables(int tab, String activityTitle){
         this.currentTab = tab;

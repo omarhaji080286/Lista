@@ -555,18 +555,19 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
             for (int i = 0; i < goodsJSONArray.length(); i++) {
                 //insert good
-                JSONObject JsonGood = goodsJSONArray.getJSONObject(i);
+                JSONObject jsonGood = goodsJSONArray.getJSONObject(i);
 
-                String goodName = JsonGood.getString("good_name");
-                int quantityLevelId = JsonGood.getInt("quantity_level");
-                int isToBuyInt = JsonGood.getInt("is_to_buy");
-                int crudStatus = JsonGood.getInt("crud_status");
+                String goodName = jsonGood.getString("good_name");
+                int quantityLevelId = jsonGood.getInt("quantity_level");
+                int isToBuyInt = jsonGood.getInt("is_to_buy");
+                int crudStatus = jsonGood.getInt("crud_status");
                 boolean isToBuy = (isToBuyInt == 1);
                 String goodDesc = "";
                 int sync = DataBaseHelper.SYNC_STATUS_FAILED;
                 String email = currentUser.getEmail();
                 int serverGoodId = 0;
                 int serverCategoryId = 0;
+                int isOrdered = 0;
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
                 Category category = categoriesDataProvider.getCategoryByCrud(crudStatus);
@@ -577,6 +578,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 Good good = new Good(goodName, categoryId, quantityLevelId, isToBuy, sync, email, serverGoodId, serverCategoryId);
                 good.setCrudStatus(0);
                 good.setGoodDesc(goodDesc);
+                good.setIsOrdered(isOrdered);
 
                 DataManager dataManager = new DataManager(this);
                 dataManager.addGood(good);
