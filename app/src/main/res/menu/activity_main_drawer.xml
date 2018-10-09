@@ -12,7 +12,7 @@
             android:title="@string/lista_shops" />
         <item
             android:id="@+id/nav_my_orders"
-            android:icon="@drawable/ic_cart_black"
+            android:icon="@drawable/ic_cart_full_black"
             android:title="@string/my_orders" />
         <item
             android:id="@+id/nav_log_out"

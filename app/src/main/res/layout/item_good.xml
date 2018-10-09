@@ -68,7 +68,7 @@
                 android:id="@+id/img_cart_in_good"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_cart_ok_white"
+                android:src="@drawable/ic_cart_full"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:visibility="gone"/>
