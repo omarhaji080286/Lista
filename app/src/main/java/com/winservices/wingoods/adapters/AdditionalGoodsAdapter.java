@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
@@ -17,6 +18,7 @@ import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.CategoryInOrderVH;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,11 +26,13 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
 
     private Context context;
     private List<CategoryGroup> groups;
+    private List<Good> selectedAdditionalGoods;
 
     public AdditionalGoodsAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
         this.context = context;
         this.groups = groups;
+        selectedAdditionalGoods = new ArrayList<>();
     }
 
     @Override
@@ -58,13 +62,26 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
     }
 
     @Override
-    public void onBindChildViewHolder(AdditionalGoodVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
+    public void onBindChildViewHolder(final AdditionalGoodVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
 
         final Good good = (Good) group.getItems().get(childIndex);
 
         holder.cbAdditionalGood.setText(good.getGoodName());
+        holder.cbAdditionalGood.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                boolean isChecked = holder.cbAdditionalGood.isChecked();
+                if (isChecked){
+                    selectedAdditionalGoods.add(good);
+                } else {
+                    selectedAdditionalGoods.remove(good);
+                }
+            }
+        });
 
     }
 
-
+    public List<Good> getSelectedAdditionalGoods() {
+        return selectedAdditionalGoods;
+    }
 }

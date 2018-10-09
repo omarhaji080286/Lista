@@ -46,4 +46,9 @@ public class GoodsToOrderAdapter extends RecyclerView.Adapter<GoodItemViewHolder
     public List<Good> getGoodsToOrder() {
         return goodsToOrder;
     }
+
+    public void addAdditionalGoods(List<Good> additionalGoods){
+        this.goodsToOrder.addAll(additionalGoods);
+        notifyDataSetChanged();
+    }
 }

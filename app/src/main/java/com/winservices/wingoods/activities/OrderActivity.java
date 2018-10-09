@@ -122,7 +122,7 @@ public class OrderActivity extends AppCompatActivity {
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                 List<CategoryGroup> groups = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
                 categoriesDataProvider.closeDB();
-                AdditionalGoodsAdapter additionalGoodsAdapter = new AdditionalGoodsAdapter(groups, context);
+                final AdditionalGoodsAdapter additionalGoodsAdapter = new AdditionalGoodsAdapter(groups, context);
 
                 LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 rvAdditionalGoodsToOrder.setLayoutManager(llm);
@@ -138,7 +138,8 @@ public class OrderActivity extends AppCompatActivity {
                 btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(OrderActivity.this, "add good to the order", Toast.LENGTH_SHORT).show();
+                        goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
+                        dialog.dismiss();
                     }
                 });
 
