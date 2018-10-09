@@ -40,7 +40,7 @@
             android:id="@+id/item_good"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/blue_button">
+            android:background="@drawable/good_to_buy_color">
 
             <TextView
                 android:id="@+id/txt_good_name"
@@ -63,6 +63,15 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="12sp"
                 android:textColor="@color/white"/>
+
+            <ImageView
+                android:id="@+id/img_cart_in_good"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_cart_full"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 

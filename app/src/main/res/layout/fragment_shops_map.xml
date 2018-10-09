@@ -85,7 +85,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:text="Order"
-                style="@style/Button"/>
+                style="@style/Button"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 

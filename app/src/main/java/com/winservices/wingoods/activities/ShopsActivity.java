@@ -62,7 +62,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     private int currentTab = TAB_MAP;
     private ShopsMap shopsMap;
     private ShopsList shopsList;
-    private ActionBar actionBar;
     public static final int REQUEST_FOR_FILTERS = 101;
     private ShopsFilter shopsFilter;
 
@@ -80,7 +79,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         shopsFilter = new ShopsFilter();
 
         if (getSupportActionBar()!=null) {
-            actionBar = getSupportActionBar();
+            ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -107,7 +106,9 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         }
 
         getShops(this);
+
     }
+
 
     private void initActivityVariables(int tab, String activityTitle){
         this.currentTab = tab;

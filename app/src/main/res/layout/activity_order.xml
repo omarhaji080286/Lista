@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.winservices.wingoods.activities.OrderActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_goods_to_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorGray">
+
+        <Button
+            android:id="@+id/btn_select_shop"
+            style="@style/Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="33"
+            android:text="@string/shops" />
+
+        <Button
+            android:id="@+id/btn_add_good"
+            style="@style/Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="33"
+            android:text="@string/add_an_item" />
+
+        <Button
+            android:id="@+id/btn_order"
+            style="@style/Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="34"
+            android:text="@string/order" />
+
+    </LinearLayout>
+
+
+
+
+</android.support.constraint.ConstraintLayout>

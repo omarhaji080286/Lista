@@ -47,19 +47,17 @@
             android:textStyle="normal"
             android:textColor="@color/black"
             android:layout_weight="1"
-            android:textSize="10sp"
-            android:visibility="visible"/>
+            android:textSize="10sp"/>
 
         <ImageView
             android:id="@+id/ic_caddy"
-            android:layout_width="15dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:contentDescription="@string/arrow"
-            android:src="@drawable/shopping_cart"
+            android:src="@drawable/ic_cart_empty"
             android:layout_marginEnd="5dp"
-            android:layout_weight="1"
-            android:visibility="visible"/>
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

@@ -27,8 +27,9 @@ public class Constants {
     public static final String SHOP_TYPE_2 ="Boucher";
     public static final String SHOP_TYPE_3 ="Fruits & Legumes";
 
-    public static final String CATEGORY_TO_ORDER = "category";
+    public static final String CATEGORY_TO_ORDER = "serverCategoryIdToOrder";
     public static final String ACTION_REFRESH_AFTER_SYNC = "action_refresh_after_sync";
 
 
+    public static final String SELECTED_SHOP_ID = "selectedShopId";
 }

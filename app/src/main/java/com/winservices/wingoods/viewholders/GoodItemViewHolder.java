@@ -32,6 +32,7 @@ public class GoodItemViewHolder extends ChildViewHolder{
     public TextView goodName, goodDescription;
     private RelativeLayout viewBackground;
     public RelativeLayout viewForeground;
+    public ImageView cart;
 
     public GoodItemViewHolder(View itemView) {
         super(itemView);
@@ -39,6 +40,7 @@ public class GoodItemViewHolder extends ChildViewHolder{
         goodDescription = itemView.findViewById(R.id.txt_good_desc);
         viewBackground =  itemView.findViewById(R.id.item_good_view_background);
         viewForeground=  itemView.findViewById(R.id.item_good);
+        cart = itemView.findViewById(R.id.img_cart_in_good);
 
     }
 

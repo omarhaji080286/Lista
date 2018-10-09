@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
@@ -66,6 +68,9 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     private TextView shopName, shopType, shopAdress, shopPhone, shopEmail, shopCity;
     private CardView cardViewShop;
     private ImageView shopIcon;
+    private Button btnOrder;
+
+    private int serverCategoryIdToOrder;
 
 
     @Nullable
@@ -81,6 +86,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         shopPhone = mView.findViewById(R.id.txt_shop_phone);
         shopEmail = mView.findViewById(R.id.txt_shop_email);
         shopCity = mView.findViewById(R.id.txt_shop_city);
+        btnOrder = mView.findViewById(R.id.btn_order);
 
         return mView;
     }
@@ -189,9 +195,11 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         return v;
                     }
                 });
+
                 Bundle bundle = getArguments();
                 if (bundle != null) {
-                    shops = (ArrayList<Shop>) getArguments().getSerializable(ShopsActivity.SHOPS_TAG);
+                    shops = (ArrayList<Shop>) bundle.getSerializable(ShopsActivity.SHOPS_TAG);
+                    serverCategoryIdToOrder = bundle.getInt(Constants.CATEGORY_TO_ORDER);
                 }
                 addShopsMarkers(this.shops);
             }
@@ -234,6 +242,24 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         shopIcon.setImageResource(R.drawable.fruit);
                         break;
                 }
+
+                if (serverCategoryIdToOrder!=0){
+                    btnOrder.setVisibility(View.VISIBLE);
+                    final Shop finalShop = shop;
+                    btnOrder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(getActivity(), OrderActivity.class);
+                            intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                            intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    });
+                } else {
+                    btnOrder.setVisibility(View.GONE);
+                }
+
 
                 return false;
             }
