@@ -26,70 +26,6 @@ public class CategoriesDataProvider {
         db.close();
     }
 
-    /*public List<CategoryGroup> getFilteredCategoriesGroups(MyGoodsFilter filter) {
-
-        List<CategoryGroup> categoryGroupList = new ArrayList<>();
-        Cursor categories = null;
-
-        filter.setGoodName(filter.getGoodName().replaceAll("'", "''"));
-
-        switch (filter.getFilterType()) {
-            case MyGoodsFilter.NO_FILTER:
-                categories = db.getCategoriesByGood(filter.getGoodName());
-                break;
-            case MyGoodsFilter.FILTER_BY_CATEGORYID:
-                categories = db.getCategoryById(filter.getCategoryId());
-                break;
-        }
-
-        if (categories != null) {
-            while (categories.moveToNext()) {
-
-                Cursor goods = null;
-                int categoryId = categories.getInt(categories.getColumnIndex(DataBaseHelper._ID));
-
-                switch (filter.getFilterType()) {
-                    case MyGoodsFilter.NO_FILTER:
-                        goods = db.getGoodsByCategory(categoryId, filter.getGoodName());
-                        break;
-                    case MyGoodsFilter.FILTER_BY_CATEGORYID:
-                        goods = db.getGoodsByCategoryAndName(categoryId, filter.getGoodName());
-                        break;
-                }
-
-                List<GoodItem> goodItemList = new ArrayList<>();
-
-                if (goods != null) {
-                    while (goods.moveToNext()) {
-
-                        int goodId = goods.getInt(goods.getColumnIndexOrThrow(DataBaseHelper._ID));
-                        String goodName = goods.getString(goods.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_NAME));
-                        String goodDesc = goods.getString(goods.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_DESC));
-                        int quantityLevelId = goods.getInt(goods.getColumnIndexOrThrow(DataBaseHelper.COL_QUANTITY_LEVEL));
-                        boolean isToBuy = (goods.getInt(goods.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_BUY)) == 1);
-
-                        GoodItem goodItem = new GoodItem(goodId, goodName, categoryId, quantityLevelId, isToBuy);
-                        goodItem.setGoodDesc(goodDesc);
-                        goodItemList.add(goodItem);
-
-                    }
-                    goods.close();
-                }
-
-                String categoryName = categories.getString(categories.getColumnIndex(DataBaseHelper.COL_CATEGORY_NAME));
-                int catId = categories.getInt(categories.getColumnIndex(DataBaseHelper.COL_CATEGORY_ID));
-
-                CategoryGroup categoryGroup = new CategoryGroup(categoryName, goodItemList);
-                categoryGroup.setCategoryId(catId);
-
-                categoryGroupList.add(categoryGroup);
-            }
-            categories.close();
-        }
-        return categoryGroupList;
-
-    }*/
-
     public List<CategoryGroup> getMainGoodsList(String searchGoodName) {
 
         List<CategoryGroup> mainGoodsList = new ArrayList<>();
@@ -117,42 +53,6 @@ public class CategoriesDataProvider {
 
     }
 
-
-
-    public List<Category> getCategoriesByName(String name) {
-        //DataBaseHelper db = new DataBaseHelper(context);
-        List<Category> list = new ArrayList<>();
-        Cursor cursor = db.getCategoriesByName(name);
-        while (cursor.moveToNext()) {
-            int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
-            String categoryName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_NAME));
-            Category category = new Category(categoryId, categoryName);
-            list.add(category);
-        }
-        cursor.close();
-        return list;
-    }
-
-
-    public List<CategoryItem> getCategoriesOverview() {
-        //DataBaseHelper db = new DataBaseHelper(context);
-        List<CategoryItem> list = new ArrayList<>();
-        Cursor cursor = db.getAllCategoriesOverview();
-        while (cursor.moveToNext()) {
-            int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
-            String categoryName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_NAME));
-            int icon = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_ICON));
-            int redGoods = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.RED_GOODS));
-            int orangeGoods = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.ORANGE_GOODS));
-            int greenGoods = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GREEN_GOODS));
-            CategoryItem category = new CategoryItem(categoryId, categoryName, redGoods, orangeGoods, greenGoods);
-            category.setIcon(icon);
-            list.add(category);
-        }
-        cursor.close();
-        return list;
-    }
-
     public int getGoodsToBuyNumber(int categoryId) {
         return db.getGoodsToBuyNumber(categoryId);
     }
@@ -160,8 +60,6 @@ public class CategoriesDataProvider {
     public int getOrderedGoodsNumber(int categoryId) {
         return db.getOrderedGoodsNumber(categoryId);
     }
-
-
 
 
     public Category getCategoryByName(String categoryName) {

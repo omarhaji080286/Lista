@@ -3,14 +3,19 @@ package com.winservices.wingoods.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -20,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.adapters.AdditionalGoodsAdapter;
 import com.winservices.wingoods.adapters.GoodsToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
@@ -27,6 +33,8 @@ import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
@@ -52,6 +60,7 @@ public class OrderActivity extends AppCompatActivity {
     private int serverCategoryIdToOrder;
     private Dialog dialog;
     private Context context;
+    private ConstraintLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,7 @@ public class OrderActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        container = findViewById(R.id.cl_container);
         rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
         btnAddGood = findViewById(R.id.btn_add_good);
         btnOrder = findViewById(R.id.btn_order);
@@ -97,6 +107,40 @@ public class OrderActivity extends AppCompatActivity {
         btnAddGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+                View mView = LayoutInflater.from(context)
+                        .inflate(R.layout.fragment_additional_goods_to_order, container, false);
+
+                Button btnCancel = mView.findViewById(R.id.btn_cancel);
+                Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
+                RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+                List<CategoryGroup> groups = categoriesDataProvider.getMainGoodsList("");
+                categoriesDataProvider.closeDB();
+                AdditionalGoodsAdapter additionalGoodsAdapter = new AdditionalGoodsAdapter(groups, context);
+
+                LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+                rvAdditionalGoodsToOrder.setLayoutManager(llm);
+                rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
+
+                btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(OrderActivity.this, "add good to the order", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
 
             }
         });

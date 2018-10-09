@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.winservices.wingoods.activities.OrderActivity">
+    tools:context="com.winservices.wingoods.activities.OrderActivity"
+    android:id="@+id/cl_container">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_goods_to_order"
