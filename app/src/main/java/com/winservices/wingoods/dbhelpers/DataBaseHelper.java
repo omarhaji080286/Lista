@@ -557,23 +557,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cnt ;
     }
 
-
-
-    Cursor getCategoriesByName(String name) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("select " + COL_CATEGORY_ID + " as " + _ID + " , " + COL_CATEGORY_NAME
-                    + " from " + TABLE_CATEGORIES
-                    + " where " + COL_CATEGORY_NAME + " LIKE '%" + name + "%' "
-                    + " and " + COL_CRUD_STATUS + " <> -1" +
-                    " and " + COL_USERID + " = " + currentUser.getUserId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
     Cursor getCategoryByName(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = null;
@@ -625,6 +608,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " from " + TABLE_CATEGORIES
                     + " where " + COL_USERID + " = "+ currentUser.getUserId()
                     + " and " + COL_CRUD_STATUS + " <> -1", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public Cursor getCategoriesWithGoodsNotOrdered(int serverCategoryIdToOrder) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID + " AS " + _ID + " , "+TABLE_CATEGORIES+"."+"*"
+                    + " FROM " + TABLE_CATEGORIES + ", " + TABLE_GOODS
+                    + " WHERE " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + " = " + TABLE_GOODS + "." + COL_CATEGORY_ID
+                    + " AND " + TABLE_GOODS+"."+COL_IS_TO_BUY + " = 1"
+                    + " AND " + TABLE_GOODS+"."+COL_IS_ORDERED + " = 0"
+                    + " AND " + TABLE_CATEGORIES+"."+COL_SERVER_CATEGORY_ID + " <> " + serverCategoryIdToOrder
+                    + " GROUP BY " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

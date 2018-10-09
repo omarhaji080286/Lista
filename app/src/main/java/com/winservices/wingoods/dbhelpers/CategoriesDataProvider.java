@@ -53,6 +53,28 @@ public class CategoriesDataProvider {
 
     }
 
+    public List<CategoryGroup> getAdditionalGoodsList(int serverCategoryIdToOrder) {
+
+        List<CategoryGroup> additionalGoodsList = new ArrayList<>();
+        List<Category> categories;
+
+        categories = this.getCategoriesWithGoodsNotOrdered(serverCategoryIdToOrder);
+
+        for (int i = 0; i < categories.size(); i++) {
+
+            Category category = categories.get(i);
+            List<Good> goods = category.getNotOrderedGoods(context);
+            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), goods);
+            categoryGroup.setCategoryId(category.getCategoryId());
+            additionalGoodsList.add(categoryGroup);
+
+        }
+
+        return additionalGoodsList;
+
+    }
+
+
     public int getGoodsToBuyNumber(int categoryId) {
         return db.getGoodsToBuyNumber(categoryId);
     }
@@ -62,8 +84,7 @@ public class CategoriesDataProvider {
     }
 
 
-    public Category getCategoryByName(String categoryName) {
-        //DataBaseHelper db = new DataBaseHelper(context);
+    Category getCategoryByName(String categoryName) {
         Cursor cursor = db.getCategoryByName(categoryName);
 
         if (cursor.getCount()==0) {
@@ -86,7 +107,6 @@ public class CategoriesDataProvider {
     }
 
     Category getCategoryByServerCategoryIdAndUserId(int serverCategoryId, int userId) {
-        //DataBaseHelper db = new DataBaseHelper(context);
         Cursor cursor = db.getCategoryByServerCategoryIdAndUserId(serverCategoryId, userId);
         cursor.moveToNext();
         int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -103,7 +123,6 @@ public class CategoriesDataProvider {
     }
 
     public Category getCategoryByCrud(int crudStatus) {
-        //DataBaseHelper db = new DataBaseHelper(context);
         Cursor cursor = db.getCategoryByCrud(crudStatus);
         cursor.moveToNext();
         int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -121,7 +140,6 @@ public class CategoriesDataProvider {
 
 
     List<Category> getNotSyncCategories() {
-        //DataBaseHelper db = new DataBaseHelper(context);
         List<Category> list = new ArrayList<>();
         Cursor cursor = db.getNotSyncCategories();
         while (cursor.moveToNext()) {
@@ -141,7 +159,6 @@ public class CategoriesDataProvider {
 
 
     List<Category> getExcludedCategoriesFromSync() {
-        //DataBaseHelper db = new DataBaseHelper(context);
         List<Category> categories = new ArrayList<>();
         Cursor cursor = db.getExcludedCategoriesFromSync();
 
@@ -166,8 +183,29 @@ public class CategoriesDataProvider {
         return categories;
     }
 
+    private List<Category> getCategoriesWithGoodsNotOrdered(int serverCategoryIdToOrder){
+        List<Category> categories = new ArrayList<>();
+        Cursor cursor = db.getCategoriesWithGoodsNotOrdered(serverCategoryIdToOrder);
+
+        while (cursor.moveToNext()) {
+            int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+            String categoryName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_NAME));
+            int color = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_COLOR));
+            int icon = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_ICON));
+            int sync = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
+            int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
+            int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
+            int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+
+            Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+            categories.add(category);
+        }
+        cursor.close();
+        return categories;
+    }
+
     public List<Category> getAllcategories() {
-        //DataBaseHelper db = new DataBaseHelper(context);
         List<Category> categories = new ArrayList<>();
         Cursor cursor = db.getAllCategories();
 

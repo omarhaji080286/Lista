@@ -52,6 +52,7 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
         final Category category = categoriesDataProvider.getCategoryById(((CategoryGroup) group).getCategoryId());
         categoriesDataProvider.closeDB();
 
+        holder.container.setClickable(false);
         holder.icon.setImageResource(category.getIcon());
         holder.txtCategoryName.setText(category.getCategoryName());
     }

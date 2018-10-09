@@ -120,13 +120,20 @@ public class OrderActivity extends AppCompatActivity {
                 dialog.show();
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-                List<CategoryGroup> groups = categoriesDataProvider.getMainGoodsList("");
+                List<CategoryGroup> groups = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
                 categoriesDataProvider.closeDB();
                 AdditionalGoodsAdapter additionalGoodsAdapter = new AdditionalGoodsAdapter(groups, context);
 
                 LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 rvAdditionalGoodsToOrder.setLayoutManager(llm);
                 rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
+                for (int i = additionalGoodsAdapter.getGroups().size()-1; i >=0 ; i--) {
+                    if(additionalGoodsAdapter.isGroupExpanded(i)){
+                        return;
+                    }
+                    additionalGoodsAdapter.toggleGroup(i);
+                }
+
 
                 btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -257,6 +264,5 @@ public class OrderActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
 
 }
