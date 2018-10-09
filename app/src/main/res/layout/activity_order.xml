@@ -22,20 +22,11 @@
         android:background="@color/colorGray">
 
         <Button
-            android:id="@+id/btn_select_shop"
-            style="@style/Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:text="@string/shops"
-            android:layout_gravity="center"/>
-
-        <Button
             android:id="@+id/btn_add_good"
             style="@style/Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="33"
+            android:layout_weight="50"
             android:text="@string/add_an_item"
             android:layout_gravity="center"/>
 
@@ -44,7 +35,7 @@
             style="@style/Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="34"
+            android:layout_weight="50"
             android:text="@string/order"
             android:layout_gravity="center"/>
 

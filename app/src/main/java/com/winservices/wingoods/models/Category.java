@@ -3,9 +3,13 @@ package com.winservices.wingoods.models;
 import android.content.Context;
 
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Category {
 
@@ -204,7 +208,23 @@ public class Category {
 
     public int getGoodsToBuyNumber(Context context){
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        int number = categoriesDataProvider.getGoodsToBuyNumber(this.getCategoryId());
+        int number = categoriesDataProvider.getGoodsToBuyNumber(this.categoryId);
+        categoriesDataProvider.closeDB();
+        return number;
+    }
+
+    public List<Good> getNotOrderedGoods(Context context){
+        List<Good> notOrderedGoods;
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+        notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(this.serverCategoryId);
+        goodsDataProvider.closeDB();
+        return notOrderedGoods;
+
+    }
+
+    public int getOrderedGoodsNumber(Context context){
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        int number = categoriesDataProvider.getOrderedGoodsNumber(this.categoryId);
         categoriesDataProvider.closeDB();
         return number;
     }

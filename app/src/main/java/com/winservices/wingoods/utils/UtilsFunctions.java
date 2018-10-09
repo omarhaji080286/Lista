@@ -3,8 +3,10 @@ package com.winservices.wingoods.utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -47,6 +49,7 @@ public class UtilsFunctions {
     }
 
     public static AlertDialog.Builder getDialogBuilder(LayoutInflater layoutInflater, Context context, int msgId){
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = layoutInflater.inflate(R.layout.progress, null);
         TextView msg = view.findViewById(R.id.txt_msg_progress);

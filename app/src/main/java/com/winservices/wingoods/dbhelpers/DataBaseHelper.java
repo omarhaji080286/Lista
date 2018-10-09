@@ -536,6 +536,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cnt ;
     }
 
+     int getOrderedGoodsNumber(int categoryId) {
+        String countQuery = "SELECT * FROM " + TABLE_GOODS
+                + " WHERE " +  COL_CATEGORY_ID+ " = " + categoryId
+                + " AND " +  COL_IS_ORDERED + " = 1 "
+                + " AND " + COL_CRUD_STATUS + " <> " + DELETED;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(countQuery, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("DB", e.toString());
+        }
+        int cnt = 0;
+        if (cursor != null) {
+            cnt = cursor.getCount();
+            cursor.close();
+        }
+        return cnt ;
+    }
+
+
+
     Cursor getCategoriesByName(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = null;
@@ -1230,6 +1253,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_CO_USERS, null, contentValues);
         return (result != -1);
     }
+
 
 
 }

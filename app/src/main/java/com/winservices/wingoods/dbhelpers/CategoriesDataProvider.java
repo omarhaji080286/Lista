@@ -154,9 +154,14 @@ public class CategoriesDataProvider {
     }
 
     public int getGoodsToBuyNumber(int categoryId) {
-        //DataBaseHelper db = new DataBaseHelper(context);
         return db.getGoodsToBuyNumber(categoryId);
     }
+
+    public int getOrderedGoodsNumber(int categoryId) {
+        return db.getOrderedGoodsNumber(categoryId);
+    }
+
+
 
 
     public Category getCategoryByName(String categoryName) {

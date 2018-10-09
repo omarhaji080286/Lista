@@ -226,6 +226,13 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         if (goodsToBuyNumber!=0) {
             holder.cartContainer.setVisibility(View.VISIBLE);
             holder.goodsToBuyNumber.setText(String.valueOf(goodsToBuyNumber));
+
+            if (category.getOrderedGoodsNumber(context)>0){
+                holder.caddy.setImageResource(R.drawable.ic_cart_full_black);
+            } else {
+                holder.caddy.setImageResource(R.drawable.ic_cart_empty);
+            }
+
         } else {
             holder.cartContainer.setVisibility(View.GONE);
         }
@@ -233,14 +240,17 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.cartContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if(NetworkMonitor.checkNetworkConnection(context)){
-                Intent intent = new Intent(context, ShopsActivity.class);
-                intent.putExtra(Constants.CATEGORY_TO_ORDER, category.getServerCategoryId());
-                context.startActivity(intent);
-            } else {
-                Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
-            }
-
+                if (category.getNotOrderedGoods(context).size() > 0) {
+                    if (NetworkMonitor.checkNetworkConnection(context)) {
+                        Intent intent = new Intent(context, ShopsActivity.class);
+                        intent.putExtra(Constants.CATEGORY_TO_ORDER, category.getServerCategoryId());
+                        context.startActivity(intent);
+                    } else {
+                        Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, R.string.all_items_ordered, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

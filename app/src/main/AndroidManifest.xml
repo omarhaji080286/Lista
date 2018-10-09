@@ -87,16 +87,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
-        <!--
-        <receiver android:name=".activities.MainActivity$SyncReceiver">
-            <intent-filter>
-                <action android:name="com.winservices.wingoods.Sync" />
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-        -->
-
         <activity
             android:name=".activities.AuthActivity"
             android:launchMode="singleTask"

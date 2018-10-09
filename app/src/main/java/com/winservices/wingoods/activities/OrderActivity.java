@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
@@ -30,6 +31,7 @@ import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,9 +46,12 @@ public class OrderActivity extends AppCompatActivity {
 
     private final static String TAG = "OrderActivity";
     private RecyclerView rvGoodsToOrder;
-    private Button btnSelectShops, btnAddGood, btnOrder;
+    private Button btnAddGood, btnOrder;
     private GoodsToOrderAdapter goodsToOrderAdapter;
     private int selectedShopId;
+    private int serverCategoryIdToOrder;
+    private Dialog dialog;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,7 @@ public class OrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_order);
 
         setTitle(getString(R.string.order_my_list));
+        context = this;
 
         if (getSupportActionBar()!=null) {
             ActionBar actionBar = getSupportActionBar();
@@ -61,13 +67,12 @@ public class OrderActivity extends AppCompatActivity {
         }
 
         rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
-        btnSelectShops = findViewById(R.id.btn_select_shop);
         btnAddGood = findViewById(R.id.btn_add_good);
         btnOrder = findViewById(R.id.btn_order);
 
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
 
-        final int serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
+        serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
 
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
         List<Good> goodsToOrder = goodsDataProvider.getGoodsToOrderByServerCategoryId(serverCategoryIdToOrder);
@@ -80,20 +85,19 @@ public class OrderActivity extends AppCompatActivity {
         rvGoodsToOrder.setAdapter(goodsToOrderAdapter);
         rvGoodsToOrder.setHasFixedSize(true);
 
-        btnSelectShops.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OrderActivity.this, ShopsActivity.class);
-                intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
-                startActivity(intent);
-                finish();
-            }
-        });
-
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addOrder(getApplicationContext());
+                dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
+                dialog.show();
+                addOrder(context);
+            }
+        });
+
+        btnAddGood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -114,6 +118,7 @@ public class OrderActivity extends AppCompatActivity {
                                     //error in server
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                                 } else {
+                                    dialog.dismiss();
                                     Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                                     updateOrderedGoods();
                                     Intent intent = new Intent(OrderActivity.this, MainActivity.class);
@@ -195,11 +200,18 @@ public class OrderActivity extends AppCompatActivity {
 
         switch (id){
             case android.R.id.home :
-                this.finish();
+                goToShopsActivity();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void goToShopsActivity(){
+        Intent intent = new Intent(OrderActivity.this, ShopsActivity.class);
+        intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+        startActivity(intent);
+        finish();
     }
 
 

@@ -243,7 +243,6 @@ public class GoodsDataProvider {
             int serverGoodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GOOD_ID));
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
 
-
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
             good.setGoodDesc(goodDesc);
@@ -255,4 +254,5 @@ public class GoodsDataProvider {
         return list;
 
     }
+
 }
