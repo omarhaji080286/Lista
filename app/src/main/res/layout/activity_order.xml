@@ -27,7 +27,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="33"
-            android:text="@string/shops" />
+            android:text="@string/shops"
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/btn_add_good"
@@ -35,7 +36,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="33"
-            android:text="@string/add_an_item" />
+            android:text="@string/add_an_item"
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/btn_order"
@@ -43,7 +45,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="34"
-            android:text="@string/order" />
+            android:text="@string/order"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
