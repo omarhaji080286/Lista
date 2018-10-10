@@ -107,9 +107,13 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
-                dialog.show();
-                addOrder(context);
+                if (goodsToOrderAdapter.getGoodsToOrder().size()>0) {
+                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
+                    dialog.show();
+                    addOrder(context);
+                } else {
+                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -117,62 +121,71 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
         categoriesDataProvider.closeDB();
 
+        additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
+
         btnAddGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-                View mView = LayoutInflater.from(context)
-                        .inflate(R.layout.fragment_additional_goods_to_order, container, false);
+                if (groupsAdditionalGoods.size()>0) {
 
-                Button btnCancel = mView.findViewById(R.id.btn_cancel);
-                Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
-                RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+                    View mView = LayoutInflater.from(context)
+                            .inflate(R.layout.fragment_additional_goods_to_order, container, false);
 
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.show();
+                    Button btnCancel = mView.findViewById(R.id.btn_cancel);
+                    Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
+                    RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
 
-                additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
+                    mBuilder.setView(mView);
+                    final AlertDialog dialog = mBuilder.create();
+                    dialog.show();
 
-                LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-                rvAdditionalGoodsToOrder.setLayoutManager(llm);
-                rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
-                for (int i = additionalGoodsAdapter.getGroups().size() - 1; i >= 0; i--) {
-                    if (additionalGoodsAdapter.isGroupExpanded(i)) {
-                        return;
+
+
+                    LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+                    rvAdditionalGoodsToOrder.setLayoutManager(llm);
+                    rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
+                    for (int i = additionalGoodsAdapter.getGroups().size() - 1; i >= 0; i--) {
+                        if (additionalGoodsAdapter.isGroupExpanded(i)) {
+                            return;
+                        }
+                        additionalGoodsAdapter.toggleGroup(i);
                     }
-                    additionalGoodsAdapter.toggleGroup(i);
+
+                    btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
+                                dialog.dismiss();
+                                goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
+                                removeSelectedAdditionalGoods();
+                            } else {
+                                Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(context, R.string.no_additional_items, Toast.LENGTH_LONG).show();
                 }
-
-
-                btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
-                        removeSelectedAdditionalGoods();
-                    }
-                });
-
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
             }
         });
 
     }
 
     public void removeSelectedAdditionalGoods() {
-
         List<CategoryGroup> groups = new ArrayList<>();
         groups.addAll(groupsAdditionalGoods);
-
         List<Good> goodsToRemove = additionalGoodsAdapter.getSelectedAdditionalGoods();
-
         for (int i = 0; i < groups.size(); i++) {
             for (int k = 0; k < goodsToRemove.size(); k++) {
                 Good goodToRemove = goodsToRemove.get(k);
@@ -294,8 +307,20 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-         //remove item
-         goodsToOrderAdapter.remove(position);
+
+        goodsToOrderAdapter.remove(position);
+
+        if (viewHolder instanceof GoodItemViewHolder) {
+            GoodItemViewHolder item = (GoodItemViewHolder) viewHolder;
+
+            GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
+            Good goodToInsert = goodsDataProvider.getGoodById(item.getGoodId());
+            goodsDataProvider.closeDB();
+
+            additionalGoodsAdapter.insertGood(goodToInsert);
+
+        }
+
     }
 
 }

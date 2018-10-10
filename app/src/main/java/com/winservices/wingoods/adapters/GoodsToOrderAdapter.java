@@ -38,6 +38,8 @@ public class GoodsToOrderAdapter extends RecyclerView.Adapter<GoodItemViewHolder
 
         holder.goodName.setText(good.getGoodName());
         holder.goodDescription.setText(good.getGoodDesc());
+        holder.setGoodId(good.getGoodId());
+        holder.cartRemove.setImageResource(R.drawable.ic_cart_remove_white);
 
         setAnimation(holder.itemView, position);
 

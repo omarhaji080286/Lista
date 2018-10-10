@@ -33,4 +33,8 @@ public class CategoryGroup extends ExpandableGroup {
     public void removeItem(Good item){
         this.items.remove(item);
     }
+
+    public void insertItem(Good good){
+        this.items.add(good);
+    }
 }
