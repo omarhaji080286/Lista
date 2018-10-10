@@ -90,7 +90,7 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
 
         for (int i = 0; i < groups.size(); i++) {
             CategoryGroup categoryGroup = groups.get(i);
-            if (categoryGroup.getCategoryId()==goodToInsert.getCategoryId()){
+            if (categoryGroup.getCategoryId() == goodToInsert.getCategoryId()) {
                 groups.get(i).insertItem(goodToInsert);
             }
         }

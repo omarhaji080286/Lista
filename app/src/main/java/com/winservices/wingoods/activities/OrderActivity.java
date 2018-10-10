@@ -140,8 +140,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     final AlertDialog dialog = mBuilder.create();
                     dialog.show();
 
-
-
                     LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                     rvAdditionalGoodsToOrder.setLayoutManager(llm);
                     rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
@@ -155,14 +153,13 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
-                            if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
-                                dialog.dismiss();
-                                goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
-                                removeSelectedAdditionalGoods();
-                            } else {
-                                Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
-                            }
+                        if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
+                            dialog.cancel();
+                            goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
+                            removeSelectedAdditionalGoods();
+                        } else {
+                            Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
+                        }
 
                         }
                     });
@@ -170,7 +167,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            dialog.dismiss();
+                            dialog.cancel();
                         }
                     });
 

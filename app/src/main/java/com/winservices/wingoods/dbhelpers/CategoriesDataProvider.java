@@ -296,23 +296,6 @@ public class CategoriesDataProvider {
 
     }
 
-    /*public static String[] getCategoriesNames(Context context){
-
-
-        String categoriesNames[] = new String[100];
-
-        DataBaseHelper db = new DataBaseHelper(context);
-        Cursor cursor = db.getCategoriesNames();
-        int i=0;
-        while (cursor.moveToNext()) {
-            categoriesNames[i] = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_NAME));
-            i++;
-        }
-        cursor.close();
-
-        return categoriesNames;
-    }*/
-
 
 
 }
