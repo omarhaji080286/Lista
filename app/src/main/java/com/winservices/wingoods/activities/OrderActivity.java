@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,18 +40,21 @@ import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.utils.UtilsFunctions;
+import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class OrderActivity extends AppCompatActivity {
+public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private final static String TAG = "OrderActivity";
     private RecyclerView rvGoodsToOrder;
@@ -61,6 +65,8 @@ public class OrderActivity extends AppCompatActivity {
     private Dialog dialog;
     private Context context;
     private ConstraintLayout container;
+    private List<CategoryGroup> groupsAdditionalGoods;
+    private AdditionalGoodsAdapter additionalGoodsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +76,7 @@ public class OrderActivity extends AppCompatActivity {
         setTitle(getString(R.string.order_my_list));
         context = this;
 
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -90,6 +96,9 @@ public class OrderActivity extends AppCompatActivity {
 
         goodsToOrderAdapter = new GoodsToOrderAdapter(this, goodsToOrder);
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvGoodsToOrder);
+
         GridLayoutManager glm = new GridLayoutManager(this, 3);
         rvGoodsToOrder.setLayoutManager(glm);
         rvGoodsToOrder.setAdapter(goodsToOrderAdapter);
@@ -103,6 +112,10 @@ public class OrderActivity extends AppCompatActivity {
                 addOrder(context);
             }
         });
+
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
+        categoriesDataProvider.closeDB();
 
         btnAddGood.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,16 +132,13 @@ public class OrderActivity extends AppCompatActivity {
                 final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
-                CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-                List<CategoryGroup> groups = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
-                categoriesDataProvider.closeDB();
-                final AdditionalGoodsAdapter additionalGoodsAdapter = new AdditionalGoodsAdapter(groups, context);
+                additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
 
                 LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 rvAdditionalGoodsToOrder.setLayoutManager(llm);
                 rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
-                for (int i = additionalGoodsAdapter.getGroups().size()-1; i >=0 ; i--) {
-                    if(additionalGoodsAdapter.isGroupExpanded(i)){
+                for (int i = additionalGoodsAdapter.getGroups().size() - 1; i >= 0; i--) {
+                    if (additionalGoodsAdapter.isGroupExpanded(i)) {
                         return;
                     }
                     additionalGoodsAdapter.toggleGroup(i);
@@ -138,8 +148,9 @@ public class OrderActivity extends AppCompatActivity {
                 btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
                         dialog.dismiss();
+                        goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
+                        removeSelectedAdditionalGoods();
                     }
                 });
 
@@ -153,6 +164,21 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void removeSelectedAdditionalGoods() {
+
+        List<CategoryGroup> groups = new ArrayList<>();
+        groups.addAll(groupsAdditionalGoods);
+
+        List<Good> goodsToRemove = additionalGoodsAdapter.getSelectedAdditionalGoods();
+
+        for (int i = 0; i < groups.size(); i++) {
+            for (int k = 0; k < goodsToRemove.size(); k++) {
+                Good goodToRemove = goodsToRemove.get(k);
+                groupsAdditionalGoods.get(i).removeItem(goodToRemove);
+            }
+        }
     }
 
     private void addOrder(final Context context) {
@@ -264,6 +290,12 @@ public class OrderActivity extends AppCompatActivity {
         intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+         //remove item
+         goodsToOrderAdapter.remove(position);
     }
 
 }

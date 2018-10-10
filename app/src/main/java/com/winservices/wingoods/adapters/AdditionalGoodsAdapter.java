@@ -84,4 +84,6 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
     public List<Good> getSelectedAdditionalGoods() {
         return selectedAdditionalGoods;
     }
+
+
 }
