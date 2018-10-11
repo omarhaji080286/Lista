@@ -223,11 +223,14 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.categoryIcon.setImageResource(category.getIcon());
 
         int goodsToBuyNumber = category.getGoodsToBuyNumber(context);
+        int orderedGoodsNumber = category.getOrderedGoodsNumber(context);
         if (goodsToBuyNumber!=0) {
             holder.cartContainer.setVisibility(View.VISIBLE);
-            holder.goodsToBuyNumber.setText(String.valueOf(goodsToBuyNumber));
+            //String orderedOfToBuy = String.valueOf(orderedGoodsNumber)+" / "+String.valueOf(goodsToBuyNumber);
+            String orderedOfToBuy = String.valueOf(goodsToBuyNumber);
+            holder.goodsToBuyNumber.setText(orderedOfToBuy);
 
-            if (category.getOrderedGoodsNumber(context)>0){
+            if (orderedGoodsNumber>0){
                 holder.caddy.setImageResource(R.drawable.ic_cart_full_black);
             } else {
                 holder.caddy.setImageResource(R.drawable.ic_cart_empty);
