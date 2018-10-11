@@ -14,9 +14,7 @@ import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.viewholders.AdditionalGoodVH;
-import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.CategoryInOrderVH;
-import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

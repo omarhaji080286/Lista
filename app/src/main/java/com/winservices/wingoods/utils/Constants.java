@@ -32,4 +32,5 @@ public class Constants {
 
 
     public static final String SELECTED_SHOP_ID = "selectedShopId";
+    public static final String SHOP = "shop";
 }

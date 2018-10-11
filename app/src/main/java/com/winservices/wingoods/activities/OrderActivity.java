@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -37,6 +38,7 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
@@ -47,6 +49,7 @@ import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,14 +60,11 @@ import java.util.Map;
 public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private final static String TAG = "OrderActivity";
-    private RecyclerView rvGoodsToOrder;
-    private Button btnAddGood, btnOrder;
     private GoodsToOrderAdapter goodsToOrderAdapter;
     private int selectedShopId;
     private int serverCategoryIdToOrder;
     private Dialog dialog;
     private Context context;
-    private ConstraintLayout container;
     private List<CategoryGroup> groupsAdditionalGoods;
     private AdditionalGoodsAdapter additionalGoodsAdapter;
 
@@ -81,12 +81,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        container = findViewById(R.id.cl_container);
-        rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
-        btnAddGood = findViewById(R.id.btn_add_good);
+        ConstraintLayout container = findViewById(R.id.cl_container);
+        RecyclerView rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
+        Button btnAddGood = findViewById(R.id.btn_add_good);
+        Button btnOrder = findViewById(R.id.btn_order);
         btnOrder = findViewById(R.id.btn_order);
+        TextView txtShopName = findViewById(R.id.txt_shop_name);
 
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
+        Shop shop = (Shop) getIntent().getParcelableExtra(Constants.SHOP);
+
+        txtShopName.setText(shop.getShopName());
 
         serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
 
@@ -141,6 +146,15 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     Button btnCancel = mView.findViewById(R.id.btn_cancel);
                     Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
                     RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
+                    TextView txtNoItems = mView.findViewById(R.id.txt_No_items);
+
+                    if (groupsAdditionalGoods.size()==1 && groupsAdditionalGoods.get(0).getItems().size()==0){
+                        txtNoItems.setVisibility(View.VISIBLE);
+                        btnAddAdditionalGood.setVisibility(View.GONE);
+                    } else {
+                        txtNoItems.setVisibility(View.GONE);
+                        btnAddAdditionalGood.setVisibility(View.VISIBLE);
+                    }
 
                     dialog.show();
 
@@ -335,4 +349,11 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        goodsToOrderAdapter = null;
+        groupsAdditionalGoods = null;
+        additionalGoodsAdapter = null;
+    }
 }

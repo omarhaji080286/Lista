@@ -3,6 +3,7 @@ package com.winservices.wingoods.viewholders;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 import com.winservices.wingoods.R;

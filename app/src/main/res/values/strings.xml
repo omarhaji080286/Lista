@@ -141,6 +141,7 @@
     <string name="no_additional_items">No additional items to order. Please check your main list</string>
     <string name="shop_name">shop name</string>
     <string name="your_order_will_be_sent_to">Your order will be sent to :</string>
+    <string name="additional_good">additional good</string>
 
 
 </resources>

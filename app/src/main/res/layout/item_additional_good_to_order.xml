@@ -8,6 +8,6 @@
         android:id="@+id/cb_additional_good"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="additional good"
+        android:text="@string/additional_good"
         android:textSize="12sp"/>
 </LinearLayout>

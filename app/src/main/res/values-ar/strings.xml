@@ -130,4 +130,5 @@
     <string name="no_additional_items">لا توجد عناصر إضافية للطلب. يرجى التحقق من قائمتك الرئيسية</string>
     <string name="shop_name">shop name</string>
     <string name="your_order_will_be_sent_to">سيتم إرسال طلبك إلى :</string>
+    <string name="additional_good">additional good</string>
 </resources>
