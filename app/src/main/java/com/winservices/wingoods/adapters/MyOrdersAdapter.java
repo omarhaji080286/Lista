@@ -1,0 +1,58 @@
+package com.winservices.wingoods.adapters;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.winservices.wingoods.R;
+import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.utils.UtilsFunctions;
+import com.winservices.wingoods.viewholders.OrderVH;
+
+import java.util.List;
+
+public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
+
+    private Context context;
+    private List<Order> orders;
+
+    public MyOrdersAdapter(Context context, List<Order> orders) {
+        this.context = context;
+        this.orders = orders;
+    }
+
+    @Override
+    public OrderVH onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_order, parent, false);
+        return new OrderVH(view);
+    }
+
+    @Override
+    public void onBindViewHolder(OrderVH holder, int position) {
+
+        Order order = orders.get(position);
+
+        String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/mm/yyyy");
+
+        holder.txtShopName.setText(order.getShop().getShopName());
+        holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
+        holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
+        holder.imgShop.setImageResource(R.drawable.steak);
+        holder.txtDate.setText(dateString);
+        holder.arrowRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "Go to orders details", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return orders.size();
+    }
+}

@@ -19,6 +19,10 @@ import android.support.v7.app.AlertDialog;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class UtilsFunctions {
 
     //Spinner loader
@@ -114,5 +118,21 @@ public class UtilsFunctions {
     }
 
 
+    public static String dateToString(Date date, String pattern){
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(date);
+    }
+
+    public static Date stringToDate(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = format.parse(dateString);
+            System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 
 }

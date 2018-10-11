@@ -345,6 +345,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_my_orders:
                 navigationView.getMenu().getItem(2).setChecked(true);
+                goToOrders();
                 break;
             case R.id.nav_log_out:
                 logOut();
@@ -434,6 +435,18 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    private void goToOrders(){
+        if (NetworkMonitor.checkNetworkConnection(this)){
+            Intent intent = new Intent(MainActivity.this, MyOrdersActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
 
     @Override
     protected void onDestroy() {
