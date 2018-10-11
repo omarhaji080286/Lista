@@ -530,6 +530,7 @@ public class Synchronizer {
                                 }
                                 dataManager.closeDB();
 
+
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
