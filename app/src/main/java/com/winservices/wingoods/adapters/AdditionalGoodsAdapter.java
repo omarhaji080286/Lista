@@ -26,7 +26,7 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
 
     private Context context;
     private List<CategoryGroup> groups;
-    private List<Good> selectedAdditionalGoods;
+    public List<Good> selectedAdditionalGoods;
 
     public AdditionalGoodsAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
@@ -59,6 +59,10 @@ public class AdditionalGoodsAdapter extends ExpandableRecyclerViewAdapter<Catego
         holder.container.setClickable(false);
         holder.icon.setImageResource(category.getIcon());
         holder.txtCategoryName.setText(category.getCategoryName());
+
+        if (group.getItems().size()==0){
+            holder.container.setVisibility(View.GONE);
+        }
     }
 
     @Override

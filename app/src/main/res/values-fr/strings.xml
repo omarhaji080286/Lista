@@ -129,4 +129,6 @@
     <string name="empty_order">la commande ne contient aucun article !</string>
     <string name="no_item_selected">Veuillez sélectionner au moins un élément</string>
     <string name="no_additional_items">Aucun article supplémentaire à commander. Prière de vérifier votre liste principale</string>
+    <string name="shop_name">Nom de la boutique</string>
+    <string name="your_order_will_be_sent_to">Votre commande sera envoyée à :</string>
 </resources>

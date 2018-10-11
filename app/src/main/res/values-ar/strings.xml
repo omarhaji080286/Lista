@@ -128,4 +128,6 @@
     <string name="empty_order">لا يحتوي الطلب على أي عناصر !</string>
     <string name="no_item_selected">يرجى تحديد عنصر واحد على الأقل</string>
     <string name="no_additional_items">لا توجد عناصر إضافية للطلب. يرجى التحقق من قائمتك الرئيسية</string>
+    <string name="shop_name">shop name</string>
+    <string name="your_order_will_be_sent_to">سيتم إرسال طلبك إلى :</string>
 </resources>

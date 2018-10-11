@@ -66,6 +66,7 @@ public class CategoriesDataProvider {
             List<Good> goods = category.getNotOrderedGoods(context);
             CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), goods);
             categoryGroup.setCategoryId(category.getCategoryId());
+            categoryGroup.setServerCategoryId(category.getServerCategoryId());
             additionalGoodsList.add(categoryGroup);
 
         }

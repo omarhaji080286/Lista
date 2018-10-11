@@ -118,26 +118,30 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         });
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(serverCategoryIdToOrder);
+        groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(0);
+        removeGoodsFromList(serverCategoryIdToOrder);
         categoriesDataProvider.closeDB();
 
         additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+
+        final View mView = LayoutInflater.from(context)
+                .inflate(R.layout.fragment_additional_goods_to_order, container, false);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.setCancelable(false);
 
         btnAddGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (groupsAdditionalGoods.size()>0) {
 
-                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-                    View mView = LayoutInflater.from(context)
-                            .inflate(R.layout.fragment_additional_goods_to_order, container, false);
-
                     Button btnCancel = mView.findViewById(R.id.btn_cancel);
                     Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
                     RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
 
-                    mBuilder.setView(mView);
-                    final AlertDialog dialog = mBuilder.create();
                     dialog.show();
 
                     LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
@@ -153,21 +157,21 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                        if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
-                            dialog.cancel();
-                            goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
-                            removeSelectedAdditionalGoods();
-                        } else {
-                            Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
-                        }
-
+                            if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
+                                dialog.dismiss();
+                                goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
+                                removeSelectedAdditionalGoods();
+                                additionalGoodsAdapter.selectedAdditionalGoods.clear();
+                            } else {
+                                Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            dialog.cancel();
+                            dialog.dismiss();
                         }
                     });
 
@@ -176,6 +180,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 }
             }
         });
+
+    }
+
+    private void removeGoodsFromList(int serverCategoryIdToOrder) {
+
+        for (int i = 0; i < groupsAdditionalGoods.size(); i++) {
+            CategoryGroup categoryGroup = groupsAdditionalGoods.get(i);
+            if (categoryGroup.getServerCategoryId()==serverCategoryIdToOrder){
+                groupsAdditionalGoods.get(i).clear();
+            }
+        }
 
     }
 

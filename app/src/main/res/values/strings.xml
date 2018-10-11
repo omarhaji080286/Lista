@@ -139,6 +139,8 @@
     <string name="empty_order">the order does not contain any items !</string>
     <string name="no_item_selected">Please select at least one item</string>
     <string name="no_additional_items">No additional items to order. Please check your main list</string>
+    <string name="shop_name">shop name</string>
+    <string name="your_order_will_be_sent_to">Your order will be sent to :</string>
 
 
 </resources>
