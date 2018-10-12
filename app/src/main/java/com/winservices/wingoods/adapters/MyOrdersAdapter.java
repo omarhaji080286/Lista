@@ -43,13 +43,12 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.imgShop.setImageResource(R.drawable.steak);
         holder.txtDate.setText(dateString);
         holder.txtOrderStatus.setText(order.getCurrentStatusName());
-        holder.arrowRight.setOnClickListener(new View.OnClickListener() {
+        holder.clContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, "Go to orders details", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override

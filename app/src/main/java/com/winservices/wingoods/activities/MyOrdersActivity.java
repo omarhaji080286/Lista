@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
     private List<Order> orders;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class MyOrdersActivity extends AppCompatActivity {
 
         rvOrders = findViewById(R.id.rv_orders);
         orders = new ArrayList<>();
+
+        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        dialog.show();
         getOrders(this);
     }
 
@@ -115,7 +120,7 @@ public class MyOrdersActivity extends AppCompatActivity {
                                 }
 
                                 setRecyclerViewOrders();
-
+                                dialog.dismiss();
 
                             }
 

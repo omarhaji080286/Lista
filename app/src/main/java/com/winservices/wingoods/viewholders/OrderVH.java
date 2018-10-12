@@ -1,5 +1,6 @@
 package com.winservices.wingoods.viewholders;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
 
     public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus;
     public ImageView imgShop, arrowRight, imgOrderStatus;
+    public ConstraintLayout clContainer;
 
     public OrderVH(View itemView) {
         super(itemView);
@@ -24,5 +26,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
         txtDate = itemView.findViewById(R.id.txt_date);
         txtOrderStatus = itemView.findViewById(R.id.txt_order_status);
         imgOrderStatus = itemView.findViewById(R.id.img_order_status);
+        clContainer = itemView.findViewById(R.id.cl_order_container);
+
     }
 }
