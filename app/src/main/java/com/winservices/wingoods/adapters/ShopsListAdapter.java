@@ -1,5 +1,6 @@
 package com.winservices.wingoods.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -58,6 +59,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                 intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                 intent.putExtra(Constants.SHOP, shop);
                 context.startActivity(intent);
+                ((Activity)context).finish();
                 }
             });
         } else {

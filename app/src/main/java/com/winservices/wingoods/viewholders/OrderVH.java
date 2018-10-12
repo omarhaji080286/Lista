@@ -10,8 +10,8 @@ import com.winservices.wingoods.R;
 
 public class OrderVH extends RecyclerView.ViewHolder {
 
-    public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate;
-    public ImageView imgShop, arrowRight;
+    public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus;
+    public ImageView imgShop, arrowRight, imgOrderStatus;
 
     public OrderVH(View itemView) {
         super(itemView);
@@ -22,6 +22,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
         imgShop= itemView.findViewById(R.id.img_shop);
         arrowRight= itemView.findViewById(R.id.ic_arrow_right_black);
         txtDate = itemView.findViewById(R.id.txt_date);
-
+        txtOrderStatus = itemView.findViewById(R.id.txt_order_status);
+        imgOrderStatus = itemView.findViewById(R.id.img_order_status);
     }
 }

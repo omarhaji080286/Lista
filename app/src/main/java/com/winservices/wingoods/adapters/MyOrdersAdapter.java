@@ -35,13 +35,14 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         Order order = orders.get(position);
 
-        String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/mm/yyyy");
+        String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm");
 
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
         holder.imgShop.setImageResource(R.drawable.steak);
         holder.txtDate.setText(dateString);
+        holder.txtOrderStatus.setText(order.getCurrentStatusName());
         holder.arrowRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
