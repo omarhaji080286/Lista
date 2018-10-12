@@ -1,6 +1,7 @@
 package com.winservices.wingoods.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.activities.OrderActivity;
+import com.winservices.wingoods.activities.OrderDetailsActivity;
 import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.OrderVH;
 
@@ -33,7 +38,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     @Override
     public void onBindViewHolder(OrderVH holder, int position) {
 
-        Order order = orders.get(position);
+        final Order order = orders.get(position);
 
         String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm");
 
@@ -42,11 +47,17 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
         holder.imgShop.setImageResource(R.drawable.steak);
         holder.txtDate.setText(dateString);
-        holder.txtOrderStatus.setText(order.getCurrentStatusName());
+        holder.txtOrderStatus.setText(order.getStatusName());
         holder.clContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Go to orders details", Toast.LENGTH_SHORT).show();
+                if (NetworkMonitor.checkNetworkConnection(context)) {
+                    Intent intent = new Intent(context, OrderDetailsActivity.class);
+                    intent.putExtra(Constants.ORDER_ID, order.getServerOrderId());
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

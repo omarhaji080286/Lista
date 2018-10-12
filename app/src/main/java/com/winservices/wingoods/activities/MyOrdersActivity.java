@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -43,6 +45,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     private MyOrdersAdapter myOrdersAdapter;
     private List<Order> orders;
     private Dialog dialog;
+    private TextView txtNoOrders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,8 @@ public class MyOrdersActivity extends AppCompatActivity {
         }
 
         rvOrders = findViewById(R.id.rv_orders);
+        txtNoOrders = findViewById(R.id.txt_no_orders);
+
         orders = new ArrayList<>();
 
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
@@ -112,14 +117,19 @@ public class MyOrdersActivity extends AppCompatActivity {
                                     order.setServerOrderId(JSONShop.getInt("server_order_id"));
                                     order.setCreationDate(date);
                                     order.setOrderedGoodsNumber(JSONShop.getInt("ordered_goods_number"));
-                                    order.setCurrentStatusName(JSONShop.getString("current_status_name"));
+                                    order.setStatusId(JSONShop.getInt("status_id"));
                                     order.setShop(shop);
 
                                     orders.add(order);
 
                                 }
 
-                                setRecyclerViewOrders();
+                                if (orders.size()>0) {
+                                    setRecyclerViewOrders();
+                                } else {
+                                    txtNoOrders.setVisibility(View.VISIBLE);
+                                }
+
                                 dialog.dismiss();
 
                             }

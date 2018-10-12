@@ -128,7 +128,6 @@ public class UtilsFunctions {
         Date date = new Date();
         try {
             date = format.parse(dateString);
-            System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }

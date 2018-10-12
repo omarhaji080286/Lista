@@ -5,19 +5,42 @@ import java.util.Date;
 
 public class Order {
 
+    public static final int SENT = 1;
+    public static final int IN_PREPARATION = 2;
+    public static final int NOT_SUPPORTED = 3;
+    public static final int AVAILABLE = 4;
+    public static final int COMPLETED = 5;
+
     private int serverOrderId;
     private User user;
     private Shop shop;
     private Date creationDate;
     private int orderedGoodsNumber;
-    private String currentStatusName;
+    private int statusId;
 
-    public String getCurrentStatusName() {
-        return currentStatusName;
+    public String getStatusName(){
+        switch (statusId){
+            case SENT :
+                return  "SENT";
+            case IN_PREPARATION :
+                return "IN PREPARATION";
+            case NOT_SUPPORTED :
+                return "NOT SUPPORTED";
+            case AVAILABLE :
+                return "AVAILABLE";
+            case COMPLETED :
+                return "COMPLETED";
+            default:
+                return "SENT";
+        }
     }
 
-    public void setCurrentStatusName(String currentStatusName) {
-        this.currentStatusName = currentStatusName;
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 
     public int getOrderedGoodsNumber() {

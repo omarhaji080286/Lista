@@ -38,6 +38,7 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
@@ -278,7 +279,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
             root.put("serverUserId", currentUser.getServerUserId() );
             root.put("serverShopId", selectedShopId);
-            root.put("currentStatusName", "CREATED");
+            root.put("statusId", Order.SENT);
 
 
             JSONArray jsonGoods = new JSONArray();

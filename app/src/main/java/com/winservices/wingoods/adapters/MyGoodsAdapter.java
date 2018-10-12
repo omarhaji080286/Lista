@@ -252,7 +252,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                         Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(context, R.string.all_items_ordered, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.all_items_ordered, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -275,10 +275,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         notifyDataSetChanged();
     }
 
-    public void initMainList(List<CategoryGroup> mainList){
+    /*public void initMainList(List<CategoryGroup> mainList){
         this.groups.clear();
         this.groups.addAll(mainList);
-    }
+    }*/
 
 
     public void removeChildItem(int position, int goodId) {
@@ -310,10 +310,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     public interface OnGoodUpdatedListener{
-        public void onGoodUpdated();
+         void onGoodUpdated();
     }
 
-    OnGoodUpdatedListener mOnGoodUpdatedListener;
+    private OnGoodUpdatedListener mOnGoodUpdatedListener;
     public void setOnGoodUpdatedListener(OnGoodUpdatedListener onGoodUpdatedListener) {
         this.mOnGoodUpdatedListener = onGoodUpdatedListener;
     }
