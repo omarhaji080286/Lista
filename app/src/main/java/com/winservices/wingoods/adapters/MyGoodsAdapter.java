@@ -33,17 +33,31 @@ import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupViewHolder, GoodItemViewHolder> {
 
     private Context context;
     private List<CategoryGroup> groups;
+    private List<Category> categories;
 
     public MyGoodsAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
         this.context = context;
         this.groups = groups;
+        categories = new ArrayList<>();
+        loadCategories();
+    }
+
+    private void loadCategories() {
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        for (int i = 0; i < groups.size(); i++) {
+            Category category = categoriesDataProvider.getCategoryById(groups.get(i).getCategoryId());
+            categories.add(category);
+        }
+        categoriesDataProvider.closeDB();
+
     }
 
     @Override
@@ -214,16 +228,24 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+
+        Category category = new Category();
+        for (int i = 0; i < categories.size() ; i++) {
+            if (categories.get(i).getCategoryId()==((CategoryGroup) group).getCategoryId()){
+                category = categories.get(i);
+            }
+        }
+
+        /*CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         final Category category = categoriesDataProvider.getCategoryById(((CategoryGroup) group).getCategoryId());
-        categoriesDataProvider.closeDB();
+        categoriesDataProvider.closeDB();*/
 
         holder.setCategoryName(group.getTitle());
 
         holder.categoryIcon.setImageResource(category.getIcon());
 
-        int goodsToBuyNumber = category.getGoodsToBuyNumber(context);
-        int orderedGoodsNumber = category.getOrderedGoodsNumber(context);
+        int goodsToBuyNumber = category.getGoodsToBuyNumber();
+        int orderedGoodsNumber = category.getOrderedGoodsNumber();
         if (goodsToBuyNumber!=0) {
             holder.cartContainer.setVisibility(View.VISIBLE);
             //String orderedOfToBuy = String.valueOf(orderedGoodsNumber)+" / "+String.valueOf(goodsToBuyNumber);
@@ -240,13 +262,16 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             holder.cartContainer.setVisibility(View.GONE);
         }
 
+
+        final int notOrderedGoods = goodsToBuyNumber - orderedGoodsNumber;
+        final Category finalCategory = category;
         holder.cartContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (category.getNotOrderedGoods(context).size() > 0) {
+                if (notOrderedGoods > 0) {
                     if (NetworkMonitor.checkNetworkConnection(context)) {
                         Intent intent = new Intent(context, ShopsActivity.class);
-                        intent.putExtra(Constants.CATEGORY_TO_ORDER, category.getServerCategoryId());
+                        intent.putExtra(Constants.CATEGORY_TO_ORDER, finalCategory.getServerCategoryId());
                         context.startActivity(intent);
                     } else {
                         Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

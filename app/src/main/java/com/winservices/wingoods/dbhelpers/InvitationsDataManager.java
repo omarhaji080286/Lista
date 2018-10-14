@@ -2,6 +2,7 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.ReceivedInvitation;
@@ -12,14 +13,20 @@ import java.util.List;
 
 public class InvitationsDataManager {
 
+    private final static String TAG = "InvitationsDataManager";
     private DataBaseHelper db;
 
     public InvitationsDataManager(Context context) {
         this.db = new DataBaseHelper(context);
+        //this.db = DataBaseHelper.getInstance(context);
+        Log.d(TAG, Constants.TAG_LISTA+"DB opened");
+
     }
 
     public void closDB(){
         db.close();
+        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
+
     }
 
     public int addReceivedInvitation( ReceivedInvitation invitation) {
@@ -33,15 +40,20 @@ public class InvitationsDataManager {
                 result = Constants.ERROR;
             }
         }
+        Log.d(TAG, Constants.TAG_LISTA+"addReceivedInvitation called");
+
         return result;
     }
 
     public boolean updateReceivedInvitation( ReceivedInvitation invitation){
+        Log.d(TAG, Constants.TAG_LISTA+"updateReceivedInvitation called");
+
         return db.updateReceivedInvitation(invitation);
     }
 
     public ReceivedInvitation getReceivedInvitation( String senderEmail) {
-            return db.getReceivedInvitation(senderEmail);
+        Log.d(TAG, Constants.TAG_LISTA+"getReceivedInvitation called");
+        return db.getReceivedInvitation(senderEmail);
         }
 
     List<ReceivedInvitation> getNotSyncResponses(){
@@ -61,6 +73,7 @@ public class InvitationsDataManager {
             list.add(invitation);
         }
         cursor.close();
+        Log.d(TAG, Constants.TAG_LISTA+"getNotSyncResponses called");
         return list;
     }
 

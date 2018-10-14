@@ -3,11 +3,13 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.CategoryItem;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +18,18 @@ public class CategoriesDataProvider {
 
     private DataBaseHelper db;
     private Context context;
+    private final static String TAG = "CategoriesDataProvider";
 
     public CategoriesDataProvider(Context context) {
         this.db = new DataBaseHelper(context);
+        //this.db = DataBaseHelper.getInstance(context);
         this.context = context;
+        Log.d(TAG, Constants.TAG_LISTA+"DB Opened");
     }
 
     public void closeDB(){
         db.close();
+        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
     }
 
     public List<CategoryGroup> getMainGoodsList(String searchGoodName) {
@@ -48,7 +54,7 @@ public class CategoriesDataProvider {
             mainGoodsList.add(categoryGroup);
 
         }
-
+        Log.d(TAG, Constants.TAG_LISTA+"getMainGoodsList called");
         return mainGoodsList;
 
     }
@@ -60,16 +66,23 @@ public class CategoriesDataProvider {
 
         categories = this.getCategoriesWithGoodsNotOrdered(serverCategoryIdToOrder);
 
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+
+
+
         for (int i = 0; i < categories.size(); i++) {
 
             Category category = categories.get(i);
-            List<Good> goods = category.getNotOrderedGoods(context);
-            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), goods);
+            List<Good> notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(category.getServerCategoryId());
+            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
             categoryGroup.setCategoryId(category.getCategoryId());
             categoryGroup.setServerCategoryId(category.getServerCategoryId());
             additionalGoodsList.add(categoryGroup);
 
         }
+        goodsDataProvider.closeDB();
+
+        Log.d(TAG, Constants.TAG_LISTA+"getAdditionalGoodsList called");
 
         return additionalGoodsList;
 
@@ -77,10 +90,12 @@ public class CategoriesDataProvider {
 
 
     public int getGoodsToBuyNumber(int categoryId) {
+        Log.d(TAG, Constants.TAG_LISTA+"getGoodsToBuyNumber called");
         return db.getGoodsToBuyNumber(categoryId);
     }
 
     public int getOrderedGoodsNumber(int categoryId) {
+        Log.d(TAG, Constants.TAG_LISTA+"getOrderedGoodsNumber called");
         return db.getOrderedGoodsNumber(categoryId);
     }
 
@@ -102,6 +117,7 @@ public class CategoriesDataProvider {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
 
+            Log.d(TAG, Constants.TAG_LISTA+"getCategoryByName called");
             return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         }
 
@@ -119,7 +135,7 @@ public class CategoriesDataProvider {
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
 
-
+        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByServerCategoryIdAndUserId called");
         return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
     }
 
@@ -136,6 +152,7 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
 
+        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByCrud called");
         return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
     }
 
@@ -155,6 +172,7 @@ public class CategoriesDataProvider {
             list.add(category);
         }
         cursor.close();
+        Log.d(TAG, Constants.TAG_LISTA+"getNotSyncCategories called");
         return list;
     }
 
@@ -180,7 +198,7 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
-
+        Log.d(TAG, Constants.TAG_LISTA+"getExcludedCategoriesFromSync called");
         return categories;
     }
 
@@ -203,6 +221,7 @@ public class CategoriesDataProvider {
             categories.add(category);
         }
         cursor.close();
+        Log.d(TAG, Constants.TAG_LISTA+"getCategoriesWithGoodsNotOrdered called");
         return categories;
     }
 
@@ -227,13 +246,12 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
-
+        Log.d(TAG, Constants.TAG_LISTA+"getAllcategories called");
         return categories;
     }
 
 
     List<Category> getUpdatedCategories() {
-        //DataBaseHelper db = new DataBaseHelper(context);
         List<Category> categories = new ArrayList<>();
         Cursor cursor = db.getUpdatedCategories();
 
@@ -254,13 +272,13 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
+        Log.d(TAG, Constants.TAG_LISTA+"getUpdatedCategories called");
 
         return categories;
     }
 
 
     public Category getCategoryByGoodId(int goodId) {
-        //DataBaseHelper db = new DataBaseHelper(context);
         Cursor cursor = db.getCategoryByGoodId(goodId);
         cursor.moveToNext();
         int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -273,13 +291,13 @@ public class CategoriesDataProvider {
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
 
+        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByGoodId called");
 
         return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
     }
 
 
     public Category getCategoryById(int categoryId) {
-        //DataBaseHelper db = new DataBaseHelper(context);
         Cursor cursor = db.getCategoryById(categoryId);
         cursor.moveToNext();
         //int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -291,9 +309,17 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+        int goodsToBuyNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GOODS_TO_BUY_NUMBER));
+        int orderedGoodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.ORDERED_GOODS_NUMBER));
+        int goodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GOODS_NUMBER));
 
+        Category category =  new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        category.setGoodsToBuyNumber(goodsToBuyNumber);
+        category.setOrderedGoodsNumber(orderedGoodsNumber);
+        category.setGoodsNumber(goodsNumber);
 
-        return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Log.d(TAG, Constants.TAG_LISTA+"getCategoryById called");
+        return category;
 
     }
 

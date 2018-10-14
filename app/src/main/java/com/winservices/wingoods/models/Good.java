@@ -22,6 +22,10 @@ public class Good {
     private int serverCategoryId;
     private int isOrdered;
 
+    public void setServerCategoryId(int serverCategoryId) {
+        this.serverCategoryId = serverCategoryId;
+    }
+
     public Good(String goodName, int categoryId, int quantityLevelId, boolean isToBuy, int sync, String email) {
         this.goodName = goodName;
         this.categoryId = categoryId;
@@ -105,13 +109,6 @@ public class Good {
 
     public void setServerGoodId(int serverGoodId) {
         this.serverGoodId = serverGoodId;
-    }
-
-
-    public void setServerCategoryId(Context context) {
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        this.serverCategoryId = categoriesDataProvider.getCategoryByGoodId(this.goodId).getServerCategoryId();
-        categoriesDataProvider.closeDB();
     }
 
     public String getEmail() {

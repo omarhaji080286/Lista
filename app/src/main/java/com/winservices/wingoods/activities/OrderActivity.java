@@ -286,7 +286,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             for (int i = 0; i < goodsToOrderAdapter.getGoodsToOrder().size(); i++) {
 
                 Good good = goodsToOrderAdapter.getGoodsToOrder().get(i);
-                good.setServerCategoryId(this);
+                //good.setServerCategoryId(this);
                 JSONObject JSONGood = good.toJSONObject();
                 jsonGoods.put(JSONGood);
             }

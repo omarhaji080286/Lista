@@ -23,6 +23,36 @@ public class Category {
     private int crudStatus;
     private int serverCategoryId = 0;
 
+    private int goodsToBuyNumber;
+    private int orderedGoodsNumber;
+    private int goodsNumber;
+
+    public int getGoodsNumber() {
+        return goodsNumber;
+    }
+
+    public void setGoodsNumber(int goodsNumber) {
+        this.goodsNumber = goodsNumber;
+    }
+
+    public int getOrderedGoodsNumber() {
+        return orderedGoodsNumber;
+    }
+
+    public void setOrderedGoodsNumber(int orderedGoodsNumber) {
+        this.orderedGoodsNumber = orderedGoodsNumber;
+    }
+
+    public int getGoodsToBuyNumber() {
+        return goodsToBuyNumber;
+    }
+
+    public void setGoodsToBuyNumber(int goodsToBuyNumber) {
+        this.goodsToBuyNumber = goodsToBuyNumber;
+    }
+
+    public Category(){}
+
     public Category(String categoryName, int color, int icon, int sync, int userId, String email) {
         this.categoryName = categoryName;
         this.color = color;
@@ -204,29 +234,6 @@ public class Category {
         }
 
         return null;
-    }
-
-    public int getGoodsToBuyNumber(Context context){
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        int number = categoriesDataProvider.getGoodsToBuyNumber(this.categoryId);
-        categoriesDataProvider.closeDB();
-        return number;
-    }
-
-    public List<Good> getNotOrderedGoods(Context context){
-        List<Good> notOrderedGoods;
-        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
-        notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(this.serverCategoryId);
-        goodsDataProvider.closeDB();
-        return notOrderedGoods;
-
-    }
-
-    public int getOrderedGoodsNumber(Context context){
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        int number = categoriesDataProvider.getOrderedGoodsNumber(this.categoryId);
-        categoriesDataProvider.closeDB();
-        return number;
     }
 
 }

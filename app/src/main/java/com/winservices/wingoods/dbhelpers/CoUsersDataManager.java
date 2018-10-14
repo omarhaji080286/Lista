@@ -2,6 +2,7 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.utils.Constants;
@@ -13,9 +14,13 @@ import java.util.List;
 public class CoUsersDataManager {
 
     private DataBaseHelper db;
+    private static final String TAG = "CoUsersDataManager";
 
     public CoUsersDataManager(Context context) {
-        this.db = new DataBaseHelper(context);;
+        this.db = new DataBaseHelper(context);
+        //this.db = DataBaseHelper.getInstance(context);
+        Log.d(TAG, Constants.TAG_LISTA+"DB Opened");
+
     }
 
     List<CoUser> getNotSyncCoUsers() {
@@ -35,11 +40,12 @@ public class CoUsersDataManager {
             list.add(coUser);
         }
         cursor.close();
+        Log.d(TAG, Constants.TAG_LISTA+"getNotSyncCoUsers called");
         return list;
     }
 
     boolean updateCoUserAfterSync(int coUserId, int syncStatus, int serverCoUserId){
-        //DataBaseHelper db = new DataBaseHelper(context);
+        Log.d(TAG, Constants.TAG_LISTA+"updateCoUserAfterSync called");
         return db.updateCoUserAfterSync (coUserId, syncStatus, serverCoUserId);
     }
 
@@ -54,10 +60,13 @@ public class CoUsersDataManager {
                 result = Constants.ERROR;
             }
         }
+        Log.d(TAG, Constants.TAG_LISTA+"addCoUser called");
+
         return result;
     }
 
     public void closeDB(){
+        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
         db.close();
     }
 

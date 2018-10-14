@@ -40,9 +40,12 @@ public class Synchronizer {
     public Synchronizer() {
         this.syncFinished = false;
         this.syncProgress = 0;
+
     }
 
     private void synchronizeGoods(final Context context, final List<Good> goods) {
+
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeGoods begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_ADD_GOODS,
@@ -78,6 +81,8 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"synchronizeGoods ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -132,6 +137,8 @@ public class Synchronizer {
 
     private void synchronizeCoUser(final Context context, final CoUser coUser) {
 
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeCoUser begins");
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_ADD_CO_USER,
                 new Response.Listener<String>() {
@@ -156,6 +163,7 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"synchronizeCoUser ends");
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -188,6 +196,7 @@ public class Synchronizer {
     }
 
     private void sendCoUserResponseToServer(final Context context, final ReceivedInvitation invitation) {
+        Log.d(TAG, Constants.TAG_LISTA+"sendCoUserResponseToServer begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_UPDATE_CO_USER_RESPONSE,
@@ -206,6 +215,8 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"sendCoUserResponseToServer ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -235,6 +246,7 @@ public class Synchronizer {
     }
 
     private void synchronizeGroup(final Context context, final Group group) {
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroup begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_ADD_GROUP,
@@ -264,6 +276,8 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.d(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroup ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -292,6 +306,8 @@ public class Synchronizer {
 
 
     private void synchronizeGroupData(final Context context, final User user) {
+
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroupData begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_GROUP_DATA,
@@ -367,6 +383,8 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroupData ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -429,6 +447,7 @@ public class Synchronizer {
 
 
     public void deleteAllUserDataOnServerAndSyncGroup(final Context context, final User user, final ReceivedInvitation invitation) {
+        Log.d(TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_DELETE_USER_CATEGORIES_AND_GOODS,
@@ -472,6 +491,7 @@ public class Synchronizer {
                                 Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
 
                             }
+                            Log.d(TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup ends");
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -501,6 +521,8 @@ public class Synchronizer {
     private void updateCategoriesAndGoodsOnServer(final Context context,
                                                          final List<Category> updatedCategories,
                                                          final List<Good> updatedGoods) {
+
+        Log.d(TAG, Constants.TAG_LISTA+"updateCategoriesAndGoodsOnServer begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_UPDATE_CATEGORIES_AND_GOODS,
@@ -534,6 +556,8 @@ public class Synchronizer {
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
+                            Log.d(TAG, Constants.TAG_LISTA+"updateCategoriesAndGoodsOnServer ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -596,6 +620,8 @@ public class Synchronizer {
 
 
     private void updateCategoriesAndGoodsFromServer(final Context context, final User user) {
+
+        Log.d(TAG, Constants.TAG_LISTA+"updateCategoriesAndGoodsFromServer begins");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_UPDATE_CATEGORIES_AND_GOODS_FROM_SERVER,
@@ -671,6 +697,9 @@ public class Synchronizer {
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
                             sendSyncBroadCast(context);
+
+                            Log.d(TAG, Constants.TAG_LISTA+"updateCategoriesAndGoodsFromServer ends");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -713,6 +742,8 @@ public class Synchronizer {
     private void synchronizeCategories(final Context context,
                                                          final List<Category> categories) {
 
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeCategories begins");
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_ADD_CATEGORIES,
                 new Response.Listener<String>() {
@@ -750,6 +781,7 @@ public class Synchronizer {
                                 Log.e(TAG,"sync progress = " + syncProgress);
 
                                 syncGoods(context);
+                                Log.d(TAG, Constants.TAG_LISTA+"synchronizeCategories ends");
 
                             }
                         } catch (JSONException e) {
@@ -804,6 +836,9 @@ public class Synchronizer {
 
 
     public void synchronizeAll(final Context context)  {
+
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
+
         if (NetworkMonitor.checkNetworkConnection(context)) {
 
             Thread thread = new Thread() {
@@ -865,6 +900,9 @@ public class Synchronizer {
             thread.start();
 
         }
+
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll ends");
+
 
     }
 
