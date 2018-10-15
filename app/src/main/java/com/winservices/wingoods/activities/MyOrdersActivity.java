@@ -162,7 +162,6 @@ public class MyOrdersActivity extends AppCompatActivity {
 
             UsersDataManager usersDataManager = new UsersDataManager(this);
             User currentUser = usersDataManager.getCurrentUser();
-            usersDataManager.closeDB();
 
             root.put("serverUserId", currentUser.getServerUserId() );
 
@@ -184,6 +183,11 @@ public class MyOrdersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseHelper.closeDB();
+    }
 
 
 }

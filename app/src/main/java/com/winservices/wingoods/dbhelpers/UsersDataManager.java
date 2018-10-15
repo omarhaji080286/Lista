@@ -15,13 +15,7 @@ public class UsersDataManager {
     private DataBaseHelper db;
 
     public UsersDataManager(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB Opened");
-    }
-
-    public void closeDB(){
-        db.close();
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     public User getUserByServerUserId(int serverUserId){

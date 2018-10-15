@@ -87,20 +87,17 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
             ReceivedInvitation invitation = invitationsDataManager.getReceivedInvitation(senderEmail);
             invitation.setResponse(response);
             invitationsDataManager.updateReceivedInvitation( invitation);
-            invitationsDataManager.closDB();
 
             if (invitation.getResponse() == CoUser.ACCEPTED) {
                 UsersDataManager usersDataManager = new UsersDataManager(context);
                 User user = usersDataManager.getCurrentUser();
                 user.setServerGroupId(invitation.getServerGroupeId());
                 usersDataManager.updateUser(user);
-                usersDataManager.closeDB();
                 Toast.makeText(context, R.string.invitation_accepted, Toast.LENGTH_SHORT).show();
 
                 //Delete all local Categories and goods
                 DataManager dataManager = new DataManager(context);
                 dataManager.deleteAllUserCategoriesAndGoods();
-                dataManager.closeDB();
 
                 Synchronizer sync = new Synchronizer();
                 sync.deleteAllUserDataOnServerAndSyncGroup(context, user, invitation);

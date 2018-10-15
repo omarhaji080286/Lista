@@ -66,7 +66,6 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User user = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
 
         getInvitations(this, user);
 
@@ -120,7 +119,6 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
                                             InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
                                             invitationsDataManager.addReceivedInvitation(invitation);
-                                            invitationsDataManager.closDB();
 
                                             invitationsList.add(invitation);
 
@@ -184,6 +182,12 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
         intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
         setResult(MainActivity.FRAGMENT_REQUEST_CODE,intent);
         this.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseHelper.closeDB();
     }
 
 }

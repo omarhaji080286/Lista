@@ -98,7 +98,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
         List<Good> goodsToOrder = goodsDataProvider.getGoodsToOrderByServerCategoryId(serverCategoryIdToOrder);
-        goodsDataProvider.closeDB();
 
         goodsToOrderAdapter = new GoodsToOrderAdapter(this, goodsToOrder);
 
@@ -126,7 +125,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(0);
         removeGoodsFromList(serverCategoryIdToOrder);
-        categoriesDataProvider.closeDB();
 
         additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
 
@@ -275,7 +273,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
             UsersDataManager usersDataManager = new UsersDataManager(this);
             User currentUser = usersDataManager.getCurrentUser();
-            usersDataManager.closeDB();
 
             root.put("serverUserId", currentUser.getServerUserId() );
             root.put("serverShopId", selectedShopId);
@@ -308,7 +305,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             good.setIsOrdered(1);
             dataManager.updateGood(good);
         }
-        dataManager.closeDB();
     }
 
 
@@ -342,7 +338,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
             GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
             Good goodToInsert = goodsDataProvider.getGoodById(item.getGoodId());
-            goodsDataProvider.closeDB();
 
             additionalGoodsAdapter.insertGood(goodToInsert);
 
@@ -356,5 +351,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         goodsToOrderAdapter = null;
         groupsAdditionalGoods = null;
         additionalGoodsAdapter = null;
+        DataBaseHelper.closeDB();
     }
 }

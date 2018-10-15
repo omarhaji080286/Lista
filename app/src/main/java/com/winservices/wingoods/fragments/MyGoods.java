@@ -79,7 +79,6 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
         categories = categoriesDataProvider.getMainGoodsList("");
-        categoriesDataProvider.closeDB();
         initialMainList = new ArrayList<>();
         initialMainList.addAll(categories);
 
@@ -113,7 +112,6 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         //Adapter for categories to choose
         CategoriesDataProvider categoriesDataProvider2 = new CategoriesDataProvider(getContext());
         List<Category> categoriesToChoose = categoriesDataProvider2.getAllcategories();
-        categoriesDataProvider2.closeDB();
 
         categoriesToChooseAdapter = new CategoriesInMyGoodsAdapter(getContext(), categoriesToChoose);
 
@@ -217,7 +215,6 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
     public void reloadMainList(){
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
         initialMainList = categoriesDataProvider.getMainGoodsList("");
-        categoriesDataProvider.closeDB();
 
         List<CategoryGroup> increasedMainList = new ArrayList<>();
         increasedMainList.addAll(getFilteredMainList(searchView.getText().toString()));

@@ -67,14 +67,12 @@ public class Synchronizer {
 
                                     GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                                     Good good = goodsDataProvider.getGoodById(deviceGoodId);
-                                    goodsDataProvider.closeDB();
 
                                     good.setServerGoodId(serverGoodId);
                                     good.setSync(DataBaseHelper.SYNC_STATUS_OK);
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.updateGood(good);
-                                    dataManager.closeDB();
 
                                 }
 
@@ -112,7 +110,6 @@ public class Synchronizer {
 
             UsersDataManager usersDataManager = new UsersDataManager(context);
             int serverUserId = usersDataManager.getCurrentUser().getServerUserId();
-            usersDataManager.closeDB();
 
             root.put("currentServerUserId", serverUserId);
 
@@ -154,7 +151,6 @@ public class Synchronizer {
                                 boolean res = coUsersDataManager.updateCoUserAfterSync(coUser.getCoUserId(),
                                                                                         DataBaseHelper.SYNC_STATUS_OK,
                                                                                         jsonObject.getInt("server_co_user_id"));
-                                coUsersDataManager.closeDB();
                                 if (!res){
                                     Log.d(TAG, "Error while updating couser");
                                 }
@@ -187,7 +183,6 @@ public class Synchronizer {
                 postData.put("email", "" + coUser.getEmail());
                 postData.put("sign_up_type", "" + usersDataManager.getCurrentUser().getSignUpType());
 
-                usersDataManager.closeDB();
                 return postData;
             }
         };
@@ -211,7 +206,6 @@ public class Synchronizer {
                                 invitation.setResponse(CoUser.COMPLETED);
                                 InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
                                 invitationsDataManager.updateReceivedInvitation( invitation);
-                                invitationsDataManager.closDB();
                             }
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
@@ -237,7 +231,6 @@ public class Synchronizer {
                 postData.put("confirmation_status", "" + invitation.getResponse());
                 postData.put("server_user_id", "" + usersDataManager.getCurrentUser().getServerUserId());
                 postData.put("server_group_id", "" + invitation.getServerGroupeId());
-                usersDataManager.closeDB();
                 return postData;
             }
         };
@@ -267,12 +260,10 @@ public class Synchronizer {
                                 if (!res){
                                     Log.d(TAG, "error while updating group" );
                                 }
-                                groupsDataManager.closeDB();
                                 UsersDataManager usersDataManager = new UsersDataManager(context);
                                 User user = usersDataManager.getCurrentUser();
                                 user.setServerGroupId(serverGroupId);
                                 usersDataManager.updateUser(user);
-                                usersDataManager.closeDB();
                             }
                             syncProgress++;
                             Log.d(TAG,"sync progress = " + syncProgress);
@@ -336,14 +327,12 @@ public class Synchronizer {
 
                                     UsersDataManager usersDataManager = new UsersDataManager(context);
                                     int userId = usersDataManager.getCurrentUser().getUserId();
-                                    usersDataManager.closeDB();
 
                                     Category category = new Category(categoryName, color, icon, sync, userId, email, serverCategoryId);
                                     category.setCrudStatus(crudStatus);
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.addCategory(context, category);
-                                    dataManager.closeDB();
 
                                 }
 
@@ -367,7 +356,6 @@ public class Synchronizer {
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryByServerCategoryIdAndUserId(serverCategoryId, user.getUserId() );
-                                    categoriesDataProvider.closeDB();
 
                                     Good good = new Good(goodName, category.getCategoryId(), quantityLevelId, isToBuy, sync, email, serverGoodId, serverCategoryId);
                                     good.setCrudStatus(crudStatus);
@@ -376,7 +364,6 @@ public class Synchronizer {
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.addGood( good);
-                                    dataManager.closeDB();
 
                                 }
 
@@ -417,7 +404,6 @@ public class Synchronizer {
             JSONArray categoriesServerIds = new JSONArray();
             CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
             List<Category> categories = categoriesDataProvider.getExcludedCategoriesFromSync();
-            categoriesDataProvider.closeDB();
 
             for (int i = 0; i < categories.size(); i++) {
                 categoriesServerIds.put(categories.get(i).getServerCategoryId());
@@ -427,7 +413,6 @@ public class Synchronizer {
             JSONArray goodsServerIds = new JSONArray();
             GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
             List<Good> goods = goodsDataProvider.getExcludedGoodsFromSync();
-            goodsDataProvider.closeDB();
             for (int i = 0; i < goods.size(); i++) {
                 goodsServerIds.put(goods.get(i).getServerGoodId());
             }
@@ -435,7 +420,6 @@ public class Synchronizer {
 
             UsersDataManager usersDataManager = new UsersDataManager(context);
             root.put("serverUserId", usersDataManager.getCurrentUser().getServerUserId());
-            usersDataManager.closeDB();
 
             return root.toString(1);
         } catch (JSONException e) {
@@ -477,17 +461,14 @@ public class Synchronizer {
                                     Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
 
                                     groupsDataManager.addGroup( group);
-                                    groupsDataManager.closeDB();
 
                                     ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
                                 }
-                                groupsDataManager.closeDB();
 
                                 UsersDataManager usersDataManager = new UsersDataManager(context);
                                 User currentUser = usersDataManager.getCurrentUser();
                                 currentUser.setGroupId(ownerGroup.getGroupId());
                                 usersDataManager.updateUser(currentUser);
-                                usersDataManager.closeDB();
                                 Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
 
                             }
@@ -550,8 +531,6 @@ public class Synchronizer {
                                     good.setSync(DataBaseHelper.SYNC_STATUS_OK);
                                     dataManager.updateGood(good);
                                 }
-                                dataManager.closeDB();
-
 
                             }
                             syncProgress++;
@@ -589,7 +568,6 @@ public class Synchronizer {
         try {
             UsersDataManager usersDataManager = new UsersDataManager(context);
             root.put("currentServerUserId", usersDataManager.getCurrentUser().getServerUserId());
-            usersDataManager.closeDB();
 
             JSONArray jsonUpdatedCategories = new JSONArray();
             for (int i = 0; i < updatedCategories.size(); i++) {
@@ -646,7 +624,6 @@ public class Synchronizer {
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryByServerCategoryIdAndUserId(serverCategoryId, user.getUserId());
-                                    categoriesDataProvider.closeDB();
 
                                     category.setCategoryName(JSONCategory.getString("category_name"));
                                     category.setColor(JSONCategory.getInt("category_color"));
@@ -657,7 +634,6 @@ public class Synchronizer {
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.updateCategory(category);
-                                    dataManager.closeDB();
 
                                 }
 
@@ -670,7 +646,6 @@ public class Synchronizer {
 
                                     GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                                     Good good = goodsDataProvider.getGoodByServerGoodIdAndUserId(serverGoodId, user.getUserId());
-                                    goodsDataProvider.closeDB();
 
                                     good.setGoodName(JSONGood.getString("good_name"));
                                     good.setQuantityLevelId(JSONGood.getInt("quantity_level"));
@@ -682,13 +657,11 @@ public class Synchronizer {
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryByServerCategoryIdAndUserId( JSONGood.getInt("server_category_id"), user.getUserId());
-                                    categoriesDataProvider.closeDB();
 
                                     good.setCategoryId(category.getCategoryId());
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.updateGood(good);
-                                    dataManager.closeDB();
                                 }
 
 
@@ -766,14 +739,12 @@ public class Synchronizer {
 
                                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                                     Category category = categoriesDataProvider.getCategoryById( deviceCategoryId);
-                                    categoriesDataProvider.closeDB();
 
                                     category.setServerCategoryId(serverCategoryId);
                                     category.setSync(DataBaseHelper.SYNC_STATUS_OK);
 
                                     DataManager dataManager = new DataManager(context);
                                     dataManager.updateCategory(category);
-                                    dataManager.closeDB();
 
                                 }
 
@@ -814,7 +785,6 @@ public class Synchronizer {
         try {
             UsersDataManager usersDataManager = new UsersDataManager(context);
             int serverUserId = usersDataManager.getCurrentUser().getServerUserId();
-            usersDataManager.closeDB();
             root.put("currentServerUserId", serverUserId);
 
             JSONArray jsonUpdatedCategories = new JSONArray();
@@ -855,7 +825,6 @@ public class Synchronizer {
 
                     CoUsersDataManager coUsersDataManager = new CoUsersDataManager(context);
                     List<CoUser> notSyncCoUsers = coUsersDataManager.getNotSyncCoUsers();
-                    coUsersDataManager.closeDB();
 
                     for (int i = 0; i < notSyncCoUsers.size(); i++) {
                         synchronizeCoUser(context, notSyncCoUsers.get(i));
@@ -863,7 +832,6 @@ public class Synchronizer {
 
                     InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
                     List<ReceivedInvitation> notSyncResponses = invitationsDataManager.getNotSyncResponses();
-                    invitationsDataManager.closDB();
 
                     for (int i = 0; i < notSyncResponses.size(); i++) {
                         sendCoUserResponseToServer(context, notSyncResponses.get(i));
@@ -871,7 +839,6 @@ public class Synchronizer {
 
                     UsersDataManager usersDataManager = new UsersDataManager(context);
                     User currentUser = usersDataManager.getCurrentUser();
-                    usersDataManager.closeDB();
                     Group currentGroup = currentUser.getGroup(context);
                     if (currentGroup != null && currentGroup.getSyncStatus() == DataBaseHelper.SYNC_STATUS_FAILED) {
                         synchronizeGroup(context, currentGroup);
@@ -882,11 +849,9 @@ public class Synchronizer {
                     }
 
                     List<Category> updatedCategories = categoriesDataProvider.getUpdatedCategories();
-                    categoriesDataProvider.closeDB();
 
                     GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                     List<Good> updatedGoods = goodsDataProvider.getUpdatedGoods(context);
-                    goodsDataProvider.closeDB();
 
                     if (updatedCategories.size() > 0 || updatedGoods.size() > 0) {
                         updateCategoriesAndGoodsOnServer(context, updatedCategories, updatedGoods);
@@ -909,7 +874,6 @@ public class Synchronizer {
     private void syncGoods(Context context){
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
         List<Good> notSyncGoods = goodsDataProvider.getNotSyncGoods(context);
-        goodsDataProvider.closeDB();
         if (notSyncGoods.size()>0) {
             synchronizeGoods(context, notSyncGoods);
         }

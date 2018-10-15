@@ -72,7 +72,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         user = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
 
         Group group = user.getGroup(this);
         if ( group != null){
@@ -156,7 +155,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         CoUsersDataManager coUsersDataManager = new CoUsersDataManager(this);
         int res1 = coUsersDataManager.addCoUser(this, coUser);
-        coUsersDataManager.closeDB();
 
         switch (res1) {
             case Constants.SUCCESS:
@@ -188,7 +186,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 Group group = groupsDataManager.getGroupByOwnerId(currentUser.getServerUserId() );
                 currentUser.setGroupId(group.getGroupId());
                 usersDataManager.updateUser(currentUser);
-                usersDataManager.closeDB();
                 addCoUserInvitation(editEmailInvitation.getText().toString());
                 break;
             case Constants.DATAEXISTS:
@@ -198,8 +195,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
                 break;
         }
-
-        groupsDataManager.closeDB();
 
     }
 
@@ -305,5 +300,11 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         this.finish();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseHelper.closeDB();
+    }
 
 }

@@ -15,15 +15,7 @@ public class DataManager {
     private final static String TAG = "DataManager";
 
     public DataManager(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB opened");
-
-    }
-
-    public void closeDB(){
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
-        db.close();
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     //CREATE
@@ -43,7 +35,6 @@ public class DataManager {
         } else {
             result = Constants.DATAEXISTS;
         }
-        categoriesDataProvider.closeDB();
         Log.d(TAG, Constants.TAG_LISTA+"addCategory called");
 
         return result;

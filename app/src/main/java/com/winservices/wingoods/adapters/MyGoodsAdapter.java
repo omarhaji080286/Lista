@@ -51,12 +51,12 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     private void loadCategories() {
+        categories.clear();
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         for (int i = 0; i < groups.size(); i++) {
             Category category = categoriesDataProvider.getCategoryById(groups.get(i).getCategoryId());
             categories.add(category);
         }
-        categoriesDataProvider.closeDB();
 
     }
 
@@ -104,7 +104,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             public void onClick(View view) {
                 GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                 Good good = goodsDataProvider.getGoodById(goodItem.getGoodId());
-                goodsDataProvider.closeDB();
 
                 good.setToBuy(!goodItem.isToBuy());
                 goodItem.setToBuy(!goodItem.isToBuy());
@@ -112,7 +111,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
                 DataManager dataManager = new DataManager(context);
                 dataManager.updateGood(good);
-                dataManager.closeDB();
 
                 if (good.isToBuy()){
                     holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.red_button));
@@ -180,7 +178,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
                             GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                             Good updatedGood = goodsDataProvider.getGoodById(goodItem.getGoodId());
-                            goodsDataProvider.closeDB();
 
                             updatedGood.setGoodName(updatedName.trim());
                             updatedGood.setCategoryId(categoryId);
@@ -193,7 +190,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
                             DataManager dataManager = new DataManager(context);
                             int result = dataManager.updateGood(updatedGood);
-                            dataManager.closeDB();
 
                             switch (result) {
                                 case Constants.SUCCESS:
@@ -228,17 +224,13 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-
+        loadCategories();
         Category category = new Category();
         for (int i = 0; i < categories.size() ; i++) {
             if (categories.get(i).getCategoryId()==((CategoryGroup) group).getCategoryId()){
                 category = categories.get(i);
             }
         }
-
-        /*CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        final Category category = categoriesDataProvider.getCategoryById(((CategoryGroup) group).getCategoryId());
-        categoriesDataProvider.closeDB();*/
 
         holder.setCategoryName(group.getTitle());
 
@@ -289,7 +281,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         this.groups.clear();
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         List<CategoryGroup> categories = categoriesDataProvider.getMainGoodsList("");
-        categoriesDataProvider.closeDB();
         this.groups.addAll(categories);
         notifyDataSetChanged();
     }
@@ -309,7 +300,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     public void removeChildItem(int position, int goodId) {
         DataManager dataManager = new DataManager(context);
         Boolean res = dataManager.deleteGoodById(goodId);
-        dataManager.closeDB();
         if (res) {
             ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
             CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
@@ -323,7 +313,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     public void restoreItem(Good deletedItem) {
         DataManager dataManager = new DataManager(context);
         int res = dataManager.restoreGood(deletedItem);
-        dataManager.closeDB();
         switch (res) {
             case Constants.SUCCESS:
                 refreshList();

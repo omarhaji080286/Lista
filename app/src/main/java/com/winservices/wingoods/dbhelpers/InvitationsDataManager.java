@@ -17,16 +17,7 @@ public class InvitationsDataManager {
     private DataBaseHelper db;
 
     public InvitationsDataManager(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB opened");
-
-    }
-
-    public void closDB(){
-        db.close();
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
-
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     public int addReceivedInvitation( ReceivedInvitation invitation) {

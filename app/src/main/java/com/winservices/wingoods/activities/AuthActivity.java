@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
@@ -71,15 +72,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
     private CallbackManager callbackManager;
 
-    private DataBaseHelper newDB;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
         //Create the Data Base
-         newDB = new DataBaseHelper(this);
+        DataBaseHelper.getInstance(this);
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         createShortcut();
@@ -126,7 +125,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User currentUser = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
 
         if (currentUser!=null) {
             startActivity(new Intent(this, MainActivity.class));
@@ -275,7 +273,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                     UsersDataManager usersDataManager = new UsersDataManager(getApplicationContext());
                     User currentUser = usersDataManager.getUserByEmail( email, DataBaseHelper.FACEBOOK);
-                    usersDataManager.closeDB();
 
                     if (currentUser!=null){
                         authentificateUserOnServer(getApplicationContext(), currentUser);
@@ -315,7 +312,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 //Uri personPhoto = account.getPhotoUrl();
                 UsersDataManager usersDataManager = new UsersDataManager(this);
                 User currentUser = usersDataManager.getUserByEmail(personEmail, DataBaseHelper.GOOGLE);
-                usersDataManager.closeDB();
+
                 if (currentUser!=null){
                     authentificateUserOnServer(this, currentUser);
                 } else {
@@ -390,7 +387,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                     user.setServerUserId(serverUserId);
                                     UsersDataManager usersDataManager = new UsersDataManager(context);
                                     usersDataManager.updateLastLoggedIn(serverUserId);
-                                    usersDataManager.closeDB();
+
                                     startActivity(new Intent(context, MainActivity.class));
                                     finish();
                                 }
@@ -483,7 +480,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                                         finish();
                                         startActivity(new Intent(context, MainActivity.class));
                                     }
-                                    usersDataManager.closeDB();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -522,7 +518,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User currentUser = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
 
         try {
             JSONArray categoriesJSONArray = jsonObject.getJSONArray("default_categories");
@@ -547,7 +542,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                 DataManager dataManager = new DataManager(this);
                 dataManager.addCategory(this, category);
-                dataManager.closeDB();
 
             }
 
@@ -571,7 +565,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
                 Category category = categoriesDataProvider.getCategoryByCrud(crudStatus);
-                categoriesDataProvider.closeDB();
 
                 int categoryId = category.getCategoryId();
 
@@ -582,8 +575,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                 DataManager dataManager = new DataManager(this);
                 dataManager.addGood(good);
-
-                dataManager.closeDB();
 
             }
 
@@ -597,6 +588,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        newDB.close();
+        DataBaseHelper.closeDB();
     }
 }

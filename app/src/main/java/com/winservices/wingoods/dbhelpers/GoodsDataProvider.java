@@ -16,14 +16,7 @@ public class GoodsDataProvider {
     private DataBaseHelper db;
 
     public GoodsDataProvider(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB opened");
-    }
-
-    public void closeDB(){
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
-        db.close();
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     public String getMessageToSend() {

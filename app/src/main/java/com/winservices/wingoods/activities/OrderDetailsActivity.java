@@ -171,6 +171,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         orderedGoods = null;
+        DataBaseHelper.closeDB();
     }
 
 }

@@ -342,5 +342,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseHelper.closeDB();
+    }
+
 
 }

@@ -17,10 +17,7 @@ public class CoUsersDataManager {
     private static final String TAG = "CoUsersDataManager";
 
     public CoUsersDataManager(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB Opened");
-
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     List<CoUser> getNotSyncCoUsers() {
@@ -63,11 +60,6 @@ public class CoUsersDataManager {
         Log.d(TAG, Constants.TAG_LISTA+"addCoUser called");
 
         return result;
-    }
-
-    public void closeDB(){
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
-        db.close();
     }
 
 

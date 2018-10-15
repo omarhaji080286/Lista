@@ -27,7 +27,7 @@ public class UtilsFunctions {
 
     //Spinner loader
     public static SimpleCursorAdapter getSpinnerAdapter(Context context){
-        DataBaseHelper db = new DataBaseHelper(context);
+        DataBaseHelper db = DataBaseHelper.getInstance(context);
         Cursor categories = db.getAllCategories();
 
         String[] from = new String[]{DataBaseHelper.COL_CATEGORY_NAME};
@@ -36,9 +36,6 @@ public class UtilsFunctions {
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(context, android.R.layout.simple_spinner_item,
                 categories, from, to, 0);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        //db.close();
-
         return mAdapter;
     }
 

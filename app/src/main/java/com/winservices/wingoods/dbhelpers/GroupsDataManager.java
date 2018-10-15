@@ -12,16 +12,7 @@ public class GroupsDataManager {
     private DataBaseHelper db;
 
     public GroupsDataManager(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
-        Log.d(TAG, Constants.TAG_LISTA+"DB opened");
-
-
-    }
-
-    public void closeDB(){
-        db.close();
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
+        this.db = DataBaseHelper.getInstance(context);
     }
 
     public int addGroup(Group group) {

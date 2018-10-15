@@ -21,15 +21,8 @@ public class CategoriesDataProvider {
     private final static String TAG = "CategoriesDataProvider";
 
     public CategoriesDataProvider(Context context) {
-        this.db = new DataBaseHelper(context);
-        //this.db = DataBaseHelper.getInstance(context);
+        this.db = DataBaseHelper.getInstance(context);
         this.context = context;
-        Log.d(TAG, Constants.TAG_LISTA+"DB Opened");
-    }
-
-    public void closeDB(){
-        db.close();
-        Log.d(TAG, Constants.TAG_LISTA+"DB closed");
     }
 
     public List<CategoryGroup> getMainGoodsList(String searchGoodName) {
@@ -80,7 +73,6 @@ public class CategoriesDataProvider {
             additionalGoodsList.add(categoryGroup);
 
         }
-        goodsDataProvider.closeDB();
 
         Log.d(TAG, Constants.TAG_LISTA+"getAdditionalGoodsList called");
 

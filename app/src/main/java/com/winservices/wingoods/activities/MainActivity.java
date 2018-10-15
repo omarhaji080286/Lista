@@ -114,8 +114,6 @@ public class MainActivity extends AppCompatActivity
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User user = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
-
 
         txtUserEmail.setText(user.getEmail());
 
@@ -174,14 +172,12 @@ public class MainActivity extends AppCompatActivity
                         if (Controlers.inputOk(categoryName)) {
                             UsersDataManager usersDataManager = new UsersDataManager(context);
                             User currentUser = usersDataManager.getCurrentUser();
-                            usersDataManager.closeDB();
 
                             Category category = new Category(categoryName.trim(), Color.getRandomColor(context), R.drawable.others,
                                     DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getUserId(), currentUser.getEmail());
 
                             DataManager dataManager = new DataManager(context);
                             int result = dataManager.addCategory(context, category);
-                            dataManager.closeDB();
 
                             switch (result) {
                                 case Constants.SUCCESS:
@@ -211,7 +207,6 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getApplicationContext());
                 String message = goodsDataProvider.getMessageToSend();
-                goodsDataProvider.closeDB();
                 openWhatsApp(message);
                 collapseFab();
             }
@@ -376,7 +371,6 @@ public class MainActivity extends AppCompatActivity
         User user = usersDataManager.getCurrentUser();
         user.setLastLoggedIn(DataBaseHelper.IS_NOT_LOGGED_IN);
         usersDataManager.updateUser( user);
-        usersDataManager.closeDB();
 
         finish();
         startActivity(new Intent(this, AuthActivity.class));
@@ -452,11 +446,16 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         //clear the job
         super.onDestroy();
+
         //JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
         //jobScheduler.cancel(Constants.JOB_ID);
         //Toast.makeText(this, "Job canceled...", Toast.LENGTH_SHORT).show();
+
+        DataBaseHelper.closeDB();
     }
+
+
 
     @Override
     protected void onPause() {

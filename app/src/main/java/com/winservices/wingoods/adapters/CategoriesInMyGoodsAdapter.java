@@ -53,7 +53,6 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
             public void onClick(View view) {
                 UsersDataManager usersDataManager = new UsersDataManager(context);
                 User currentUser = usersDataManager.getCurrentUser();
-                usersDataManager.closeDB();
                 Good good = new Good(goodName,category.getCategoryId(), Constants.LEVEL_1_EMPTY_INT,
                         true, DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getEmail());
                 good.setGoodDesc("");
@@ -61,7 +60,6 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
 
                 DataManager dataManager = new DataManager(context);
                 int res = dataManager.addGood(good);
-                dataManager.closeDB();
                 if (res == Constants.SUCCESS) {
                     Toast.makeText(context, R.string.good_add_success, Toast.LENGTH_SHORT).show();
                 } else {
@@ -96,7 +94,6 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
         categories.clear();
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         List<Category> categoriesToChoose = categoriesDataProvider.getAllcategories();
-        categoriesDataProvider.closeDB();
         categories.addAll(categoriesToChoose);
         notifyDataSetChanged();
     }
