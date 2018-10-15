@@ -342,5 +342,14 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        shopsMap = null;
+        shopsList = null;
+        shops = null;
+        shopsFirstList = null;
+        shopsFilter = null;
 
+    }
 }

@@ -413,5 +413,11 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         addShopsMarkers(shops);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleMap = null;
+        shops = null;
 
+    }
 }

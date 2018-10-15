@@ -75,7 +75,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     @Override
-    public void onBindChildViewHolder(final GoodItemViewHolder holder, final int flatPosition, ExpandableGroup group, final int childIndex) {
+    public void onBindChildViewHolder(final GoodItemViewHolder holder, final int flatPosition, final ExpandableGroup group, final int childIndex) {
 
         final Good goodItem = (Good) group.getItems().get(childIndex);
         holder.setGoodId(goodItem.getGoodId());
@@ -96,9 +96,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             holder.cart.setVisibility(View.GONE);
         }
 
-
-
-
         holder.viewForeground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,11 +110,27 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 dataManager.updateGood(good);
 
                 if (good.isToBuy()){
-                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.red_button));
+                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
+                    //updates category goods to buy
+                    for (int i = 0; i < categories.size() ; i++) {
+                        if (categories.get(i).getCategoryId()==(good.getCategoryId())){
+                            categories.get(i).setGoodsToBuyNumber(categories.get(i).getGoodsToBuyNumber()+1);
+                        }
+                    }
                 } else {
-                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.blue_button));
+                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
+                    for (int i = 0; i < categories.size() ; i++) {
+                        if (categories.get(i).getCategoryId()==(good.getCategoryId())){
+                            categories.get(i).setGoodsToBuyNumber(categories.get(i).getGoodsToBuyNumber()-1);
+                        }
+                    }
                 }
-                notifyDataSetChanged();
+
+                int groupflatPosition = flatPosition - childIndex - 1;
+                notifyItemChanged(flatPosition);
+                notifyItemChanged(groupflatPosition);
+
+
             }
         });
 
@@ -134,7 +147,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 final EditText editGoodName = mView.findViewById(R.id.edit_good);
                 final EditText editGoodDesc = mView.findViewById(R.id.edit_good_desc);
                 final Spinner spinner = mView.findViewById(R.id.spinnerCategories);
-                //final ToggleButton btnCaddy = mView.findViewById(R.id.btn_caddy);
 
                 //prepare widgets
 
@@ -224,7 +236,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-        loadCategories();
+        //loadCategories();
         Category category = new Category();
         for (int i = 0; i < categories.size() ; i++) {
             if (categories.get(i).getCategoryId()==((CategoryGroup) group).getCategoryId()){
@@ -299,7 +311,8 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
             CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
             cg.remove(listPos.childPos);
-            notifyDataSetChanged();
+            //notifyDataSetChanged();
+            notifyItemChanged(position);
         } else {
             Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
         }
