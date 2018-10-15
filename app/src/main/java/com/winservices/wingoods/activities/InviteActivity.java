@@ -158,8 +158,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (res1) {
             case Constants.SUCCESS:
-                Synchronizer sync = new Synchronizer();
-                sync.synchronizeAll(this);
+                Synchronizer sync = new Synchronizer(this);
+                sync.synchronizeAll();
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:
@@ -300,11 +300,5 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         this.finish();
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DataBaseHelper.closeDB();
-    }
 
 }

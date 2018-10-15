@@ -99,14 +99,14 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
                 DataManager dataManager = new DataManager(context);
                 dataManager.deleteAllUserCategoriesAndGoods();
 
-                Synchronizer sync = new Synchronizer();
+                Synchronizer sync = new Synchronizer(context);
                 sync.deleteAllUserDataOnServerAndSyncGroup(context, user, invitation);
             } else {
                 Toast.makeText(context, R.string.invitation_declined, Toast.LENGTH_SHORT).show();
             }
 
-            Synchronizer sync = new Synchronizer();
-            sync.synchronizeAll(context);
+            Synchronizer sync = new Synchronizer(context);
+            sync.synchronizeAll();
 
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

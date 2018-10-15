@@ -291,11 +291,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         notifyDataSetChanged();
     }
 
-    /*public void initMainList(List<CategoryGroup> mainList){
-        this.groups.clear();
-        this.groups.addAll(mainList);
-    }*/
-
 
     public void removeChildItem(int position, int goodId) {
         DataManager dataManager = new DataManager(context);

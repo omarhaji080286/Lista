@@ -184,10 +184,5 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
         this.finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DataBaseHelper.closeDB();
-    }
 
 }

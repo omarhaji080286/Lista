@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener {
 
     private final static String TAG = "OrderActivity";
     private GoodsToOrderAdapter goodsToOrderAdapter;
@@ -109,18 +109,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         rvGoodsToOrder.setAdapter(goodsToOrderAdapter);
         rvGoodsToOrder.setHasFixedSize(true);
 
-        btnOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (goodsToOrderAdapter.getGoodsToOrder().size()>0) {
-                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
-                    dialog.show();
-                    addOrder(context);
-                } else {
-                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        btnOrder.setOnClickListener(this);
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(0);
@@ -195,6 +184,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         });
 
     }
+
+
 
     private void removeGoodsFromList(int serverCategoryIdToOrder) {
 
@@ -338,7 +329,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
             GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
             Good goodToInsert = goodsDataProvider.getGoodById(item.getGoodId());
-
             additionalGoodsAdapter.insertGood(goodToInsert);
 
         }
@@ -351,6 +341,24 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         goodsToOrderAdapter = null;
         groupsAdditionalGoods = null;
         additionalGoodsAdapter = null;
-        DataBaseHelper.closeDB();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+            case R.id.btn_order :
+
+                if (goodsToOrderAdapter.getGoodsToOrder().size()>0) {
+                    view.setEnabled(false);
+                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
+                    dialog.show();
+                    addOrder(context);
+                } else {
+                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
+                }
+            break;
+
+        }
     }
 }

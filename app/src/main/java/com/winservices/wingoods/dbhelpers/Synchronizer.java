@@ -3,6 +3,7 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,10 +37,13 @@ public class Synchronizer {
     private final static int SYNC_PROGRESS_MAX = 8;
     public boolean syncFinished;
     private int syncProgress;
+    private Context context;
 
-    public Synchronizer() {
+    public Synchronizer(Context context) {
         this.syncFinished = false;
         this.syncProgress = 0;
+        this.context = context;
+        DataBaseHelper.getInstance(context);
 
     }
 
@@ -805,7 +809,7 @@ public class Synchronizer {
     }
 
 
-    public void synchronizeAll(final Context context)  {
+    public void synchronizeAll()  {
 
         Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
 
@@ -814,6 +818,7 @@ public class Synchronizer {
             Thread thread = new Thread() {
                 @Override
                 public void run() {
+
                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
                     List<Category> notSyncCategories = categoriesDataProvider.getNotSyncCategories();
 

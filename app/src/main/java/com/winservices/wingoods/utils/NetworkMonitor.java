@@ -33,8 +33,8 @@ public class NetworkMonitor extends BroadcastReceiver {
 
         if (checkNetworkConnection(context)) {
 
-            Synchronizer sync = new Synchronizer();
-            sync.synchronizeAll(context);
+            Synchronizer sync = new Synchronizer(context);
+            sync.synchronizeAll();
 
         }
 

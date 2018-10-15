@@ -315,8 +315,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.sync:
                 syncTriggeredByUser = true;
-                Synchronizer sync = new Synchronizer();
-                sync.synchronizeAll(this);
+                Synchronizer sync = new Synchronizer(this);
+                sync.synchronizeAll();
                 break;
         }
 
