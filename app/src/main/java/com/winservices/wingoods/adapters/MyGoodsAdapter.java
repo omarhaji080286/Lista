@@ -236,7 +236,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-        //loadCategories();
         Category category = new Category();
         for (int i = 0; i < categories.size() ; i++) {
             if (categories.get(i).getCategoryId()==((CategoryGroup) group).getCategoryId()){
@@ -298,6 +297,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     public void setNewList(List<CategoryGroup> newMainList){
+        loadCategories();
         this.groups.clear();
         this.groups.addAll(newMainList);
         notifyDataSetChanged();

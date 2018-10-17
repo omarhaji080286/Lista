@@ -145,5 +145,8 @@
     <string name="order_details">Order Details</string>
     <string name="no_orders_registered">No orders have been registered</string>
 
+    <string name="sync_account_type">wingoods.winservices.com</string>
+    <string name="content_authority">com.winservices.wingoods</string>
+
 
 </resources>

@@ -19,7 +19,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public static final String COL_CATEGORY_NAME = "category_name";
     public static final String _ID = "_id";
-    static final int SYNC_STATUS_OK = 1;
+    public static final int SYNC_STATUS_OK = 1;
     public static final int SYNC_STATUS_FAILED = 0;
     public static final int IS_LOGGED_IN = 1;
     public static final int IS_NOT_LOGGED_IN = 0;
@@ -97,7 +97,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS_FROM_SERVER = HOST + "updateCategoriesAndGoodsFromServer.php";
     public static final String HOST_URL_GET_TEAM_MEMBERS = HOST + "getTeamMembers.php";
     static final String HOST_URL_ADD_CATEGORIES = HOST + "addCategories.php";
-    static final String HOST_URL_ADD_GOODS = HOST + "addGoods.php";
+    public static final String HOST_URL_ADD_GOODS = HOST + "addGoods.php";
     public static final String HOST_URL_GET_SHOPS = HOST + "getShops.php";
     public static final String HOST_URL_GET_CITIES = HOST + "getCities.php";
     public static final String HOST_URL_ADD_ORDER = HOST + "addOrder.php";

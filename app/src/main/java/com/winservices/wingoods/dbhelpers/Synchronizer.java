@@ -811,7 +811,7 @@ public class Synchronizer {
 
     public void synchronizeAll()  {
 
-        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
+       /* Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
 
@@ -871,7 +871,7 @@ public class Synchronizer {
 
         }
 
-        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll ends");
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll ends");*/
 
 
     }

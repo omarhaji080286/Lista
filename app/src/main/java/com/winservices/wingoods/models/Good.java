@@ -1,6 +1,9 @@
 package com.winservices.wingoods.models;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
+import android.provider.BaseColumns;
 
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 
@@ -202,5 +205,38 @@ public class Good {
 
         return null;
     }
+
+
+    // for sync adapter purpose
+    public static final String CONTENT_AUTHORITY = "com.winservices.wingoods";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_GOODS = "goods-path";
+
+    public static class GoodEntry implements BaseColumns{
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_GOODS);
+
+        public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOODS;
+
+        public static final String TABLE_NAME = "goods";
+
+        public static final String _ID = BaseColumns._ID;
+
+        public static final String COLUMN_GOOD_NAME = "good_name";
+        public static final String COLUMN_QUANTITY_LEVEL = "quantity_level";
+        public static final String COLUMN_CATEGORY_ID = "category_id";
+        public static final String COLUMN_IS_TO_BUY = "is_to_buy";
+        public static final String COLUMN_SYNC_STATUS = "sync_status";
+        public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_CRUD_STATUS = "crud_status";
+        public static final String COLUMN_SERVER_GOOD_ID= "server_good_id";
+        public static final String COLUMN_IS_ORDERED = "is_ordered";
+
+
+    }
+
+
+
+
 
 }

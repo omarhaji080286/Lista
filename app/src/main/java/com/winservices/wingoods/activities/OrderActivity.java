@@ -3,11 +3,11 @@ package com.winservices.wingoods.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +34,6 @@ import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
-import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
@@ -50,7 +48,6 @@ import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,11 +83,10 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         RecyclerView rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
         Button btnAddGood = findViewById(R.id.btn_add_good);
         Button btnOrder = findViewById(R.id.btn_order);
-        btnOrder = findViewById(R.id.btn_order);
         TextView txtShopName = findViewById(R.id.txt_shop_name);
 
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
-        Shop shop = (Shop) getIntent().getParcelableExtra(Constants.SHOP);
+        Shop shop = getIntent().getParcelableExtra(Constants.SHOP);
 
         txtShopName.setText(shop.getShopName());
 

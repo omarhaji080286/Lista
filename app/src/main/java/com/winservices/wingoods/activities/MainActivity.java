@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -47,12 +48,15 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.MyGoods;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
 import com.winservices.wingoods.utils.MJobScheduler;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -252,6 +256,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        //Sync Adapter first call
+        ListaSyncAdapter.initializeSyncAdapter(this);
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
         displaySelectedScreen(fragmentId);
     }
@@ -315,12 +321,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.sync:
                 syncTriggeredByUser = true;
-                Synchronizer sync = new Synchronizer(this);
-                sync.synchronizeAll();
+                //Synchronizer sync = new Synchronizer(this);
+                //sync.synchronizeAll();
+
+                ListaSyncAdapter.syncImmediately(this);
                 break;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 

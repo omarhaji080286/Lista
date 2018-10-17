@@ -115,7 +115,7 @@ public class CategoriesDataProvider {
 
     }
 
-    Category getCategoryByServerCategoryIdAndUserId(int serverCategoryId, int userId) {
+    public Category getCategoryByServerCategoryIdAndUserId(int serverCategoryId, int userId) {
         Cursor cursor = db.getCategoryByServerCategoryIdAndUserId(serverCategoryId, userId);
         cursor.moveToNext();
         int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -169,7 +169,7 @@ public class CategoriesDataProvider {
     }
 
 
-    List<Category> getExcludedCategoriesFromSync() {
+    public List<Category> getExcludedCategoriesFromSync() {
         List<Category> categories = new ArrayList<>();
         Cursor cursor = db.getExcludedCategoriesFromSync();
 

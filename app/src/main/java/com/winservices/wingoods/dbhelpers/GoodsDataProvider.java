@@ -88,7 +88,7 @@ public class GoodsDataProvider {
         return list;
     }
 
-    List<Good> getExcludedGoodsFromSync() {
+    public List<Good> getExcludedGoodsFromSync() {
 
         List<Good> list = new ArrayList<>();
         Cursor cursor = db.getExcludedGoodsFromSync();
@@ -147,7 +147,7 @@ public class GoodsDataProvider {
     }
 
 
-    Good getGoodByServerGoodIdAndUserId(int serverGoodId, int userId) {
+    public Good getGoodByServerGoodIdAndUserId(int serverGoodId, int userId) {
 
         Cursor cursor = db.getGoodByServerGoodId(serverGoodId, userId);
 
