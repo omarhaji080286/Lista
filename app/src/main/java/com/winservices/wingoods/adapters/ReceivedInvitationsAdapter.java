@@ -8,13 +8,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
-import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.NetworkMonitor;
@@ -91,7 +89,7 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
             if (invitation.getResponse() == CoUser.ACCEPTED) {
                 UsersDataManager usersDataManager = new UsersDataManager(context);
                 User user = usersDataManager.getCurrentUser();
-                user.setServerGroupId(invitation.getServerGroupeId());
+                user.setServerGroupId(invitation.getServerGroupId());
                 usersDataManager.updateUser(user);
                 Toast.makeText(context, R.string.invitation_accepted, Toast.LENGTH_SHORT).show();
 

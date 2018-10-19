@@ -3,7 +3,6 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -234,7 +233,7 @@ public class Synchronizer {
                 postData.put("server_co_user_id", "" + invitation.getServerCoUserId());
                 postData.put("confirmation_status", "" + invitation.getResponse());
                 postData.put("server_user_id", "" + usersDataManager.getCurrentUser().getServerUserId());
-                postData.put("server_group_id", "" + invitation.getServerGroupeId());
+                postData.put("server_group_id", "" + invitation.getServerGroupId());
                 return postData;
             }
         };
@@ -811,36 +810,36 @@ public class Synchronizer {
 
     public void synchronizeAll()  {
 
-       /* Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll begins");
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
 
-            Thread thread = new Thread() {
+           Thread thread = new Thread() {
                 @Override
                 public void run() {
 
                     CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-                    List<Category> notSyncCategories = categoriesDataProvider.getNotSyncCategories();
+                    /*List<Category> notSyncCategories = categoriesDataProvider.getNotSyncCategories();
 
                     if (notSyncCategories.size() > 0) {
                         synchronizeCategories(context, notSyncCategories);
                     } else {
                         syncGoods(context);
-                    }
+                    }*/
 
-                    CoUsersDataManager coUsersDataManager = new CoUsersDataManager(context);
+                   /* CoUsersDataManager coUsersDataManager = new CoUsersDataManager(context);
                     List<CoUser> notSyncCoUsers = coUsersDataManager.getNotSyncCoUsers();
 
                     for (int i = 0; i < notSyncCoUsers.size(); i++) {
                         synchronizeCoUser(context, notSyncCoUsers.get(i));
-                    }
+                    }*/
 
-                    InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
-                    List<ReceivedInvitation> notSyncResponses = invitationsDataManager.getNotSyncResponses();
+                    //InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
+                    //List<ReceivedInvitation> notSyncResponses = invitationsDataManager.getNotSyncResponses();
 
-                    for (int i = 0; i < notSyncResponses.size(); i++) {
+                   /* for (int i = 0; i < notSyncResponses.size(); i++) {
                         sendCoUserResponseToServer(context, notSyncResponses.get(i));
-                    }
+                    }*/
 
                     UsersDataManager usersDataManager = new UsersDataManager(context);
                     User currentUser = usersDataManager.getCurrentUser();
@@ -871,7 +870,7 @@ public class Synchronizer {
 
         }
 
-        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll ends");*/
+        Log.d(TAG, Constants.TAG_LISTA+"synchronizeAll ends");
 
 
     }

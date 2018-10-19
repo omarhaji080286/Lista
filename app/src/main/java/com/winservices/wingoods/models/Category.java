@@ -5,6 +5,7 @@ import android.content.Context;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -234,6 +235,15 @@ public class Category {
         }
 
         return null;
+    }
+
+    public static JSONArray listToJSONArray(List<Category> categories){
+        JSONArray jsonCategories = new JSONArray();
+        for (int i = 0; i < categories.size(); i++) {
+            JSONObject JSONCategory = categories.get(i).toJSONObject();
+            jsonCategories.put(JSONCategory);
+        }
+        return jsonCategories;
     }
 
 }

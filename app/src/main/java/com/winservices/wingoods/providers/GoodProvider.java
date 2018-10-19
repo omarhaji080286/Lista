@@ -14,10 +14,6 @@ import android.util.Log;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.models.Good;
 
-/**
- * Created by omarh on 17/10/2018.
- */
-
 public class GoodProvider extends ContentProvider {
 
     public static final String LOG_TAG = GoodProvider.class.getSimpleName();

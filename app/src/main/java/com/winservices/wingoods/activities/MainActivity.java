@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         //Sync Adapter first call
-        ListaSyncAdapter.initializeSyncAdapter(this);
+        //ListaSyncAdapter.initializeSyncAdapter(this);
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
         displaySelectedScreen(fragmentId);
     }

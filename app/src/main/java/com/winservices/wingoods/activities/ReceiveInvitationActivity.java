@@ -115,7 +115,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
                                             ReceivedInvitation invitation = new ReceivedInvitation(senderEmail, categories.toString(), CoUser.PENDING);
                                             invitation.setServerCoUserId(serverCoUserId);
-                                            invitation.setServerGroupeId(serverGroupId);
+                                            invitation.setServerGroupId(serverGroupId);
 
                                             InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
                                             invitationsDataManager.addReceivedInvitation(invitation);

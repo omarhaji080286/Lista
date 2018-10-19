@@ -149,7 +149,7 @@ public class CategoriesDataProvider {
     }
 
 
-    List<Category> getNotSyncCategories() {
+    public List<Category> getNotSyncCategories() {
         List<Category> list = new ArrayList<>();
         Cursor cursor = db.getNotSyncCategories();
         while (cursor.moveToNext()) {

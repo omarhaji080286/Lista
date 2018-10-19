@@ -7,8 +7,11 @@ import android.provider.BaseColumns;
 
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class Good {
 
@@ -196,6 +199,7 @@ public class Good {
             JSONGood.put("crud_status", this.crudStatus);
             JSONGood.put("serverGoodId", this.serverGoodId);
             JSONGood.put("serverCategoryId", this.serverCategoryId);
+            JSONGood.put("isOrdered", this.isOrdered);
 
             return JSONGood;
 
@@ -204,6 +208,15 @@ public class Good {
         }
 
         return null;
+    }
+
+    public static JSONArray listToJSONArray(List<Good> goods){
+        JSONArray jsonGoods = new JSONArray();
+        for (int i = 0; i < goods.size(); i++) {
+            JSONObject JSONGood = goods.get(i).toJSONObject();
+            jsonGoods.put(JSONGood);
+        }
+        return jsonGoods;
     }
 
 

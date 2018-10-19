@@ -33,10 +33,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String LISTA = "lista";
 
     //Lista DEV (compte omar.haji@gmail.com)
-    private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
+    //private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+    //
+    // Lista LOCAL (compte root)
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
 
     static final String COL_EMAIL = "email";
@@ -66,7 +69,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_HAS_RESPONDED = "has_responded";
     static final String COL_SENDER_EMAIL = "sender_email";
     static final String COL_INVITATION_RESPONSE = "invitation_response";
-    private static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
+    public static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
     private static final String COL_SIGN_UP_TYPE = "sign_up_type";
     static final String COL_CATEGORY_ID = "category_id";
     static final String COL_GOOD_NAME = "good_name";
@@ -107,6 +110,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
     public static final String TAG = "DataBaseHelper";
+    public static final String HOST_URL_SYNC = HOST + "sync.php";
+
 
 
     private final static int DATABASE_VERSION = 1;
@@ -344,7 +349,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 invitation = new ReceivedInvitation(receivedInvitationID, senderEmail, invitationResponse, userId);
                 invitation.setServerCoUserId(serverCoUserId);
-                invitation.setServerGroupeId(serverGroupId);
+                invitation.setServerGroupId(serverGroupId);
             }
             res.close();
 
@@ -354,7 +359,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return invitation;
     }
 
-    Cursor getNotSyncResponses() {
+    Cursor getNotSyncReceivedInvitations() {
          db = this.getReadableDatabase();
         Cursor res = null;
         try {
@@ -370,7 +375,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    //CO USERS
+    Cursor getReceivedInvitationById(int id) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_RECEIVED_INVITATION_ID + " as " + _ID + " , * "
+                    + " FROM " + TABLE_RECEIVED_INVITATIONS
+                    + " where " + COL_RECEIVED_INVITATION_ID + " = " + id, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //COUSERS
 
     Cursor getNotSyncCoUsers() {
          db = this.getReadableDatabase();
@@ -406,6 +424,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return (cnt > 0);
+    }
+
+    Cursor getCoUserById(int coUserId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_CO_USER_ID + " as " + _ID + " , * "
+                    + " FROM " + TABLE_CO_USERS
+                    + " where " + COL_CO_USER_ID + " = " + coUserId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
 
@@ -818,7 +849,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //GOODS
 
-
     Cursor getGoodById(int goodId) {
          db = this.getReadableDatabase();
         Cursor res = null;
@@ -1039,6 +1069,31 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return (affectedRows == 1);
     }
 
+    boolean updateCoUser(CoUser coUser) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_CO_USER_ID, coUser.getCoUserId());
+        contentValues.put(COL_CO_USER_EMAIL, coUser.getCoUserEmail());
+        contentValues.put(COL_USERID, coUser.getUserId());
+        contentValues.put(COL_EMAIL, coUser.getEmail());
+        contentValues.put(COL_CONFIRMATION_STATUS, coUser.getConfirmationStatus());
+        contentValues.put(COL_HAS_RESPONDED, coUser.getHasResponded());
+        contentValues.put(COL_SERVER_CO_USER_ID, coUser.getServerCoUserId());
+        contentValues.put(COL_SYNC_STATUS, coUser.getSyncStatus());
+
+        int affectedRows = 0;
+        db.beginTransaction();
+        try {
+            affectedRows = db.update(TABLE_CO_USERS, contentValues, COL_CO_USER_ID + " = " + coUser.getCoUserId(), null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+        return (affectedRows == 1);
+    }
+
 
     //DELETE QUERIES
 
@@ -1155,7 +1210,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_INVITATION_RESPONSE, invitation.getResponse());
         contentValues.put(COL_USERID, getCurrentUser().getUserId());
         contentValues.put(COL_SERVER_CO_USER_ID, invitation.getServerCoUserId());
-        contentValues.put(COL_SERVER_GROUP_ID, invitation.getServerGroupeId());
+        contentValues.put(COL_SERVER_GROUP_ID, invitation.getServerGroupId());
 
         long result = db.insert(TABLE_RECEIVED_INVITATIONS, null, contentValues);
         return (result != -1);

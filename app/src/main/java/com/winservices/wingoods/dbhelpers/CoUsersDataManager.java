@@ -20,7 +20,7 @@ public class CoUsersDataManager {
         this.db = DataBaseHelper.getInstance(context);
     }
 
-    List<CoUser> getNotSyncCoUsers() {
+    public List<CoUser> getNotSyncCoUsers() {
         List<CoUser> list = new ArrayList<>();
         Cursor cursor = db.getNotSyncCoUsers();
         while (cursor.moveToNext()) {
@@ -61,6 +61,41 @@ public class CoUsersDataManager {
 
         return result;
     }
+
+    public CoUser getCoUserById(int coUserId) {
+        Cursor cursor = db.getCoUserById(coUserId);
+
+        cursor.moveToNext();
+
+        //int coUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_ID));
+        String coUserEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_EMAIL));
+        int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_ID));
+        String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));;
+        int confirmationStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CONFIRMATION_STATUS));
+        int hasResponded = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_HAS_RESPONDED));
+        int syncStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
+        int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
+
+        CoUser coUser = new CoUser(coUserEmail, userId, email, confirmationStatus, hasResponded, syncStatus);
+        coUser.setCoUserId(coUserId);
+        coUser.setServerCoUserId(serverCoUserId);
+
+        return coUser;
+    }
+
+    public int updateCoUser(CoUser coUser) {
+        int result;
+
+        if (db.updateCoUser(coUser)) {
+            result = Constants.SUCCESS;
+        } else {
+            result = Constants.ERROR;
+        }
+        Log.d(TAG, Constants.TAG_LISTA+"updateCoUser called");
+
+        return result;
+    }
+
 
 
 }

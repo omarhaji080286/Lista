@@ -1,6 +1,11 @@
 package com.winservices.wingoods.models;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class ReceivedInvitation {
 
@@ -10,7 +15,7 @@ public class ReceivedInvitation {
     private int response = CoUser.PENDING;
     private int userId;
     private int serverCoUserId;
-    private int serverGroupeId;
+    private int serverGroupId;
 
     public ReceivedInvitation(String invitationEmail, String invitationCategories, int response) {
         this.invitationEmail = invitationEmail;
@@ -33,12 +38,12 @@ public class ReceivedInvitation {
         this.serverCoUserId = serverCoUserId;
     }
 
-    public int getServerGroupeId() {
-        return serverGroupeId;
+    public int getServerGroupId() {
+        return serverGroupId;
     }
 
-    public void setServerGroupeId(int serverGroupeId) {
-        this.serverGroupeId = serverGroupeId;
+    public void setServerGroupId(int serverGroupId) {
+        this.serverGroupId = serverGroupId;
     }
 
     public int getReceivedInvitationId() {
@@ -88,4 +93,36 @@ public class ReceivedInvitation {
     public void setServerCoUserId(int serverCoUserId) {
         this.serverCoUserId = serverCoUserId;
     }
+
+    public JSONObject toJSONObject(){
+
+        JSONObject jsonRI = new JSONObject();
+
+        try {
+            jsonRI.put("receivedInvitationId", this.receivedInvitationId);
+            jsonRI.put("invitationEmail", this.invitationEmail);
+            jsonRI.put("invitationCategories", this.invitationCategories);
+            jsonRI.put("response", this.response);
+            jsonRI.put("userId", this.userId);
+            jsonRI.put("serverCoUserId", this.serverCoUserId);
+            jsonRI.put("serverGroupId", this.serverGroupId);
+
+            return jsonRI;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static JSONArray listToJSONArray(List<ReceivedInvitation> receivedInvitations){
+        JSONArray jsonRIs = new JSONArray();
+        for (int i = 0; i < receivedInvitations.size(); i++) {
+            JSONObject jsonRI = receivedInvitations.get(i).toJSONObject();
+            jsonRIs.put(jsonRI);
+        }
+        return jsonRIs;
+    }
+
 }

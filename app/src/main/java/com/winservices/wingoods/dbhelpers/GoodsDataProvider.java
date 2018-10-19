@@ -57,7 +57,7 @@ public class GoodsDataProvider {
     }
 
 
-    List<Good> getNotSyncGoods(Context context) {
+    public List<Good> getNotSyncGoods(Context context) {
         List<Good> list = new ArrayList<>();
         Cursor cursor = db.getNotSyncGoods();
         while (cursor.moveToNext()) {

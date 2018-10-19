@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.utils.Constants;
 
@@ -47,9 +46,32 @@ public class InvitationsDataManager {
         return db.getReceivedInvitation(senderEmail);
         }
 
-    List<ReceivedInvitation> getNotSyncResponses(){
+
+    public ReceivedInvitation getReceivedInvitationById(int receivedInvitationId) {
+        Cursor cursor = db.getReceivedInvitationById(receivedInvitationId);
+
+        cursor.moveToNext();
+
+        //int receivedInvitationId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_RECEIVED_INVITATION_ID));
+        String invitationEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_EMAIL));
+        String invitationCategories ="";
+        int response = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_INVITATION_RESPONSE));
+        int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
+        int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
+        int serverGroupId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GROUP_ID));
+
+        ReceivedInvitation invitation = new ReceivedInvitation(invitationEmail, invitationCategories, response);
+        invitation.setUserId(userId);
+        invitation.setServerCoUserId(serverCoUserId);
+        invitation.setServerGroupId(serverGroupId);
+        invitation.setReceivedInvitationId(receivedInvitationId);
+
+        return invitation;
+    }
+
+    public List<ReceivedInvitation> getNotSyncReceivedInvitations(){
         List<ReceivedInvitation> list = new ArrayList<>();
-        Cursor cursor = db.getNotSyncResponses();
+        Cursor cursor = db.getNotSyncReceivedInvitations();
         while (cursor.moveToNext()) {
             int receivedInvitationId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
             String invitationEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_EMAIL));
@@ -60,7 +82,7 @@ public class InvitationsDataManager {
 
 
             ReceivedInvitation invitation = new ReceivedInvitation(receivedInvitationId,  invitationEmail,  invitationResponse,  userId,  serverCoUserId );
-            invitation.setServerGroupeId(serverGroupId);
+            invitation.setServerGroupId(serverGroupId);
             list.add(invitation);
         }
         cursor.close();
