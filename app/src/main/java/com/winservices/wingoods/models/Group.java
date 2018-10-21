@@ -2,6 +2,9 @@ package com.winservices.wingoods.models;
 
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Group {
 
     private int groupId;
@@ -81,4 +84,26 @@ public class Group {
     public void setServerGroupId(int serverGroupId) {
         this.serverGroupId = serverGroupId;
     }
+
+    public JSONObject toJSONObject(){
+
+        JSONObject JSONGroup = new JSONObject();
+
+        try {
+            JSONGroup.put("groupId", this.groupId);
+            JSONGroup.put("groupName", this.groupName);
+            JSONGroup.put("ownerEmail", this.ownerEmail);
+            JSONGroup.put("serverOwnerId", this.serverOwnerId);
+            JSONGroup.put("serverGroupId", this.serverGroupId);
+            JSONGroup.put("syncStatus", this.syncStatus);
+
+            return JSONGroup;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }

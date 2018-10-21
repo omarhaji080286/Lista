@@ -54,7 +54,8 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         categories.clear();
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         for (int i = 0; i < groups.size(); i++) {
-            Category category = categoriesDataProvider.getCategoryById(groups.get(i).getCategoryId());
+            //Category category = categoriesDataProvider.getCategoryById(groups.get(i).getCategoryId());
+            Category category = groups.get(i).getCategory();
             categories.add(category);
         }
 
@@ -244,8 +245,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         }
 
         holder.setCategoryName(group.getTitle());
-
-        holder.categoryIcon.setImageResource(category.getIcon());
+        holder.categoryIcon.setImageResource(((CategoryGroup) group).getCategory().getIcon());
 
         int goodsToBuyNumber = category.getGoodsToBuyNumber();
         int orderedGoodsNumber = category.getOrderedGoodsNumber();
@@ -264,7 +264,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         } else {
             holder.cartContainer.setVisibility(View.GONE);
         }
-
 
         final int notOrderedGoods = goodsToBuyNumber - orderedGoodsNumber;
         final Category finalCategory = category;
@@ -286,7 +285,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         });
 
     }
-
 
     public void refreshList() {
         this.groups.clear();

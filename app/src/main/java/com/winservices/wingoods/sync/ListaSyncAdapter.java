@@ -8,6 +8,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.net.Uri;
@@ -31,13 +32,16 @@ import com.winservices.wingoods.dbhelpers.CoUsersDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 
 import org.json.JSONArray;
@@ -75,12 +79,11 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
 
-        mContentResolver.delete(Good.GoodEntry.CONTENT_URI, null, null);
+        //mContentResolver.delete(Good.GoodEntry.CONTENT_URI, null, null);
         Log.d(LOG_TAG, "Starting sync");
         String response = null;
 
         try {
-
             final String jsonData = getJSONForSync(getContext());
             Log.d(LOG_TAG, "json request : " + jsonData);
 
@@ -104,10 +107,12 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+        } finally {
+            sendSyncBroadCast(getContext());
+            Log.d(LOG_TAG, "Sync finished");
         }
 
     }
-
 
     private String getJSONForSync(Context context) {
 
@@ -143,6 +148,36 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             JSONArray jsonNotSyncReceivedInvitations = ReceivedInvitation.listToJSONArray(notSyncReceivedInvitations);
             root.put("jsonNotSyncReceivedInvitations",jsonNotSyncReceivedInvitations);
 
+            //updated Categories (not Sync yet)
+            /*List<Category> updatedCategories = categoriesDataProvider.getUpdatedCategories();
+            JSONArray jsonUpdatedCategories = Category.listToJSONArray(updatedCategories);
+            root.put("jsonUpdatedCategories",jsonUpdatedCategories);*/
+
+            //updated Goods (not Sync yet)
+            List<Good> notSyncUpdatedGoods = goodsDataProvider.getUpdatedGoods(context);
+            JSONArray jsonNotSyncUpdatedGoods = Good.listToJSONArray(notSyncUpdatedGoods);
+            root.put("jsonNotSyncUpdatedGoods",jsonNotSyncUpdatedGoods);
+
+            //get the current user server group id (0 if does not have a group)
+            int serverGroupId = usersDataManager.getCurrentUser().getServerGroupId();
+            root.put("serverGroupId", serverGroupId);
+
+            //Sync Group Data : getting Excluded Categories from Sync
+            JSONArray excludedServerCategoriesIds = new JSONArray();
+            List<Category> categories = categoriesDataProvider.getExcludedCategoriesFromSync();
+            for (int i = 0; i < categories.size(); i++) {
+                excludedServerCategoriesIds.put(categories.get(i).getServerCategoryId());
+            }
+            root.put("excludedServerCategoriesIds", excludedServerCategoriesIds);
+
+            //Sync Group Data : getting Excluded goods from Sync
+            JSONArray excludedServerGoodsIds = new JSONArray();
+            List<Good> goods = goodsDataProvider.getExcludedGoodsFromSync();
+            for (int i = 0; i < goods.size(); i++) {
+                excludedServerGoodsIds.put(goods.get(i).getServerGoodId());
+            }
+            root.put("excludedServerGoodsIds", excludedServerGoodsIds);
+
             return root.toString(1);
         } catch (JSONException e) {
             Log.d("LISTA", "Can't format JSON");
@@ -161,28 +196,111 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             if (error) {
                 Log.e(LOG_TAG, "Error : " + message);
             } else {
+
+                //updates categories with their server ids
                 JSONArray jsonCategoriesIds = jsonObject.getJSONArray("categoriesIds");
                 updateCategories(jsonCategoriesIds);
                 Log.d(LOG_TAG, "Sync Categories completed. " + jsonCategoriesIds.length() + " updated.");
 
+                //updates goods with their server ids
                 JSONArray jsonGoodsIds = jsonObject.getJSONArray("goodsIds");
                 updateGoods(jsonGoodsIds);
                 Log.d(LOG_TAG, "Sync Goods completed. " + jsonGoodsIds.length() + " updated.");
 
+                //updates coUsers withe their server ids
                 JSONArray jsonCoUsersIds = jsonObject.getJSONArray("coUsersIds");
                 updateCoUsers(jsonCoUsersIds);
                 Log.d(LOG_TAG, "Sync CoUsers completed. " + jsonCoUsersIds.length() + " updated.");
 
+                //updates received invitations status to "completed"
                 JSONArray jsonReceivedInvitationsIds = jsonObject.getJSONArray("receivedInvitationIds");
                 updateRIs(jsonReceivedInvitationsIds);
                 Log.d(LOG_TAG, "Sync Received Invitations completed. " + jsonReceivedInvitationsIds.length() + " updated.");
 
+                //updates goods status to sync ok
+                JSONArray jsonUpdatedGoodsServerIds = jsonObject.getJSONArray("updatedGoodsServerIds");
+                updateUpdatedGoods(jsonUpdatedGoodsServerIds);
+                Log.d(LOG_TAG, "Sync Updated Goods completed. " + jsonUpdatedGoodsServerIds.length() + " updated.");
+
+                //TODO - updates categories status to sync ok
+
+                //inserts categories relative to the group
+                JSONArray jsonGroupCategoriesToSync = jsonObject.getJSONArray("groupCategoriesToSync");
+                insertCategories(jsonGroupCategoriesToSync);
+                Log.d(LOG_TAG, "Sync Categories completed. " + jsonGroupCategoriesToSync.length() + " inserted.");
+
+                //inserts Goods relative to the group
+                JSONArray jsonGroupGoodsToSync = jsonObject.getJSONArray("groupGoodsToSync");
+                insertGoods(jsonGroupGoodsToSync);
+                Log.d(LOG_TAG, "Sync goods completed. " + jsonGroupGoodsToSync.length() + " inserted.");
 
             }
 
         } catch (JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+        }
+    }
+
+    private void insertGoods(JSONArray jsonGroupGoodsToSync) throws JSONException {
+        DataManager dataManager = new DataManager(getContext());
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
+
+        for (int i = 0; i < jsonGroupGoodsToSync.length(); i++) {
+            JSONObject JSONGood = jsonGroupGoodsToSync.getJSONObject(i);
+            String goodName = JSONGood.getString("goodName");
+            String goodDesc = JSONGood.getString("goodDesc");
+            int isToBuy = JSONGood.getInt("isToBuy");
+            int sync = DataBaseHelper.SYNC_STATUS_OK;
+            String email = JSONGood.getString("email");
+            int crudStatus = JSONGood.getInt("crudStatus");
+            int serverGoodId = JSONGood.getInt("serverGoodId");
+            int isOrdered = JSONGood.getInt("isOrdered");
+            int serverCategoryId = JSONGood.getInt("serverCategoryId");
+            int quantityLevelId = 0;
+            int categoryId = categoriesDataProvider.getCategoryByServerCategoryId(serverCategoryId).getCategoryId();
+
+            Good good = new Good(goodName, categoryId, quantityLevelId, (isToBuy==1),
+                                            sync, email, serverGoodId, serverCategoryId);
+            good.setGoodDesc(goodDesc);
+            good.setIsOrdered(isOrdered);
+            good.setCrudStatus(crudStatus);
+
+            dataManager.addGood(good);
+
+        }
+    }
+
+    private void insertCategories(JSONArray jsonGroupCategoriesToSync) throws JSONException {
+        DataManager dataManager = new DataManager(getContext());
+        UsersDataManager usersDataManager = new UsersDataManager(getContext());
+
+        for (int i = 0; i < jsonGroupCategoriesToSync.length(); i++) {
+            JSONObject JSONCategory = jsonGroupCategoriesToSync.getJSONObject(i);
+            int serverCategoryId = JSONCategory.getInt("serverCategoryId");
+            String categoryName = JSONCategory.getString("categoryName");
+            int color = JSONCategory.getInt("categoryColor");
+            int icon = JSONCategory.getInt("categoryIcon");
+            int sync = DataBaseHelper.SYNC_STATUS_OK;
+            String email = JSONCategory.getString("email");
+            int crudStatus = JSONCategory.getInt("crudStatus");
+            int userId = usersDataManager.getCurrentUser().getUserId();
+
+            Category category = new Category(categoryName, color, icon,sync,userId, email, serverCategoryId);
+            category.setCrudStatus(crudStatus);
+            dataManager.addCategory(getContext(), category);
+
+        }
+    }
+
+    private void updateUpdatedGoods(JSONArray jsonUpdatedGoodsServerIds) throws JSONException {
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getContext());
+        DataManager dataManager = new DataManager(getContext());
+        for (int i = 0; i < jsonUpdatedGoodsServerIds.length(); i++) {
+            int serverGoodId = jsonUpdatedGoodsServerIds.getInt(i);
+            Good good = goodsDataProvider.getGoodByServerGoodId(serverGoodId);
+            good.setSync(DataBaseHelper.SYNC_STATUS_OK);
+            dataManager.updateGood(good);
         }
 
     }
@@ -196,7 +314,6 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             ReceivedInvitation receivedInvitation = invitationsDataManager.getReceivedInvitationById(receivedInvitationId);
             receivedInvitation.setResponse(CoUser.COMPLETED);
             invitationsDataManager.updateReceivedInvitation(receivedInvitation);
-
         }
     }
 
@@ -294,5 +411,10 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
         getSyncAccount(context);
     }
 
+    private void sendSyncBroadCast(Context context){
+        Intent intent = new Intent();
+        intent.setAction(Constants.ACTION_REFRESH_AFTER_SYNC);
+        context.sendBroadcast(intent);
+    }
 
 }

@@ -42,7 +42,7 @@ public class Good {
     }
 
     public Good(String goodName, int categoryId, int quantityLevelId, boolean isToBuy,
-                int sync, String email, int serverGoodId, int serverCategoryID) {
+                int sync, String email, int serverGoodId, int serverCategoryId) {
         this.goodName = goodName;
         this.categoryId = categoryId;
         this.quantityLevelId = quantityLevelId;
@@ -50,7 +50,7 @@ public class Good {
         this.sync = sync;
         this.email = email;
         this.serverGoodId = serverGoodId;
-        this.serverCategoryId = serverCategoryID;
+        this.serverCategoryId = serverCategoryId;
     }
 
     public Good(int goodId, String goodName, int categoryId, int quantityLevelId,

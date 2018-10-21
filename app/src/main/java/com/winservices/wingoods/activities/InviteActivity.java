@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,11 +26,11 @@ import com.winservices.wingoods.dbhelpers.CoUsersDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
-import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -49,6 +50,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     EditText editEmailInvitation, editGroupName;
     TextView txtMembersList, txtMembers;
     User user;
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +67,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         editEmailInvitation = findViewById(R.id.editEmailInvitation);
         txtMembersList = findViewById(R.id.txtMembersList);
         txtMembers = findViewById(R.id.txtMembers);
-
-
 
         btnSendIntivation.setOnClickListener(this);
 
@@ -137,7 +137,16 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 }
 
                 if (user.getGroup(this)==null && user.getServerGroupId()==0) {
-                    createGroupAndsendInvitation();
+                    Group groupToAdd = new Group(editGroupName.getText().toString(), user.getEmail(), user.getServerUserId());
+
+                    CoUser coUserToAdd = new CoUser(coUserEmail, user.getUserId(), user.getEmail(),
+                            CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED);
+
+                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+                    dialog.show();
+
+                    createGroupAndSendInvitation(groupToAdd, coUserToAdd);
+
                 } else {
                     addCoUserInvitation(editEmailInvitation.getText().toString());
                 }
@@ -154,12 +163,11 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED);
 
         CoUsersDataManager coUsersDataManager = new CoUsersDataManager(this);
-        int res1 = coUsersDataManager.addCoUser(this, coUser);
+        int res1 = coUsersDataManager.addCoUser(coUser);
 
         switch (res1) {
             case Constants.SUCCESS:
-                Synchronizer sync = new Synchronizer(this);
-                sync.synchronizeAll();
+                ListaSyncAdapter.syncImmediately(this);
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:
@@ -172,30 +180,106 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void createGroupAndsendInvitation(){
-        Group groupToAdd = new Group(editGroupName.getText().toString(), user.getEmail(), user.getServerUserId());
+    private void createGroupAndSendInvitation(final Group groupToAdd, final CoUser coUserToAdd){
+        if (NetworkMonitor.checkNetworkConnection(getApplicationContext())) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                    DataBaseHelper.HOST_URL_ADD_GROUP_AND_CO_USER,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean error = jsonObject.getBoolean("error");
+                                String message = jsonObject.getString("message");
+                                if (error) {
+                                    //error in server
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                } else {
 
-        GroupsDataManager groupsDataManager = new GroupsDataManager(this);
-        int res0 = groupsDataManager.addGroup(groupToAdd);
+                                    GroupsDataManager groupsDataManager = new GroupsDataManager(getApplicationContext());
+                                    int serverGroupId = jsonObject.getInt("serverGroupId");
+                                    groupToAdd.setServerGroupId(serverGroupId);
+                                    groupToAdd.setSyncStatus(DataBaseHelper.SYNC_STATUS_OK);
+                                    int res0 = groupsDataManager.addGroup(groupToAdd);
 
-        switch (res0) {
-            case Constants.SUCCESS:
-                editGroupName.setEnabled(false);
-                UsersDataManager usersDataManager = new UsersDataManager(this);
-                User currentUser = usersDataManager.getCurrentUser();
-                Group group = groupsDataManager.getGroupByOwnerId(currentUser.getServerUserId() );
-                currentUser.setGroupId(group.getGroupId());
-                usersDataManager.updateUser(currentUser);
-                addCoUserInvitation(editEmailInvitation.getText().toString());
-                break;
-            case Constants.DATAEXISTS:
-                Toast.makeText(this, R.string.team_already_created, Toast.LENGTH_SHORT).show();
-                break;
-            case Constants.ERROR:
-                Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
-                break;
+                                    switch (res0) {
+                                        case Constants.SUCCESS:
+                                            editGroupName.setEnabled(false);
+
+                                            UsersDataManager usersDataManager = new UsersDataManager(getApplicationContext());
+                                            User currentUser = usersDataManager.getCurrentUser();
+
+                                            Group group = groupsDataManager.getGroupByOwnerId(currentUser.getServerUserId() );
+                                            currentUser.setGroupId(group.getGroupId());
+                                            currentUser.setServerGroupId(group.getServerGroupId());
+                                            usersDataManager.updateUser(currentUser);
+
+                                            CoUsersDataManager coUsersDataManager = new CoUsersDataManager(getApplicationContext());
+                                            int serverCoUserId = jsonObject.getInt("serverCoUserId");
+                                            coUserToAdd.setServerCoUserId(serverCoUserId);
+                                            coUserToAdd.setSyncStatus(DataBaseHelper.SYNC_STATUS_OK);
+                                            coUsersDataManager.addCoUser(coUserToAdd);
+
+                                            Toast.makeText(InviteActivity.this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
+
+                                            break;
+                                        case Constants.DATAEXISTS:
+                                            Toast.makeText(getApplicationContext(), R.string.team_already_created, Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case Constants.ERROR:
+                                            Toast.makeText(getApplicationContext(), R.string.error, Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } finally {
+                                dialog.dismiss();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //adding coUser failed
+                        }
+                    }
+            ) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> postData = new HashMap<>();
+                    String jsonData = getJsonForCreateGroupAndSendInvitation(groupToAdd, coUserToAdd);
+                    Log.d(TAG, "json request = " +jsonData);
+                    postData.put("jsonData", jsonData );
+                    return postData;
+                }
+            };
+            RequestHandler.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        } else {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private String getJsonForCreateGroupAndSendInvitation(Group groupToAdd, CoUser coUser) {
+        final JSONObject root = new JSONObject();
+        try {
+
+            JSONObject jsonGroupToAdd = groupToAdd.toJSONObject();
+            root.put("jsonGroupToAdd", jsonGroupToAdd);
+
+            JSONObject jsonCoUserToAdd = coUser.toJSONObject();
+            root.put("coUserToAdd", jsonCoUserToAdd);
+
+            return root.toString(1);
+
+        } catch (JSONException e) {
+            Log.d(TAG, "Can't format JSON");
+        }
+
+        return null;
     }
 
 

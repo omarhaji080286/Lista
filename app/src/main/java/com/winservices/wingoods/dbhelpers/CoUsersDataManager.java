@@ -46,7 +46,7 @@ public class CoUsersDataManager {
         return db.updateCoUserAfterSync (coUserId, syncStatus, serverCoUserId);
     }
 
-    public int addCoUser(Context context, CoUser coUser) {
+    public int addCoUser(CoUser coUser) {
         int result;
         if (db.coUserExists(coUser.getCoUserEmail(), coUser.getEmail())) {
             result = Constants.DATAEXISTS;

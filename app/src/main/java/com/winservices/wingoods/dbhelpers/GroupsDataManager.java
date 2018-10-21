@@ -37,9 +37,12 @@ public class GroupsDataManager {
         return db.getGroupByOwnerId(ownerId);
     }
 
-    boolean updateGroup(Group group) {
+    public boolean updateGroup(Group group) {
         Log.d(TAG, Constants.TAG_LISTA+"updateGroup called");
         return db.updateGroup(group);
     }
 
+    public Group getGroupById(int groupId) {
+        return db.getGroupById(groupId);
+    }
 }

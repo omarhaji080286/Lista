@@ -241,63 +241,6 @@ public class Synchronizer {
 
     }
 
-    private void synchronizeGroup(final Context context, final Group group) {
-        Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroup begins");
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                DataBaseHelper.HOST_URL_ADD_GROUP,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            int serverGroupId = jsonObject.getInt("server_group_id");
-                            //String message = jsonObject.getString("message");
-                            if (!error) {
-                                //adding coUser succeded
-                                group.setServerGroupId(serverGroupId);
-                                group.setSyncStatus(DataBaseHelper.SYNC_STATUS_OK);
-                                GroupsDataManager groupsDataManager = new GroupsDataManager(context);
-                                boolean res = groupsDataManager.updateGroup(group);
-                                if (!res){
-                                    Log.d(TAG, "error while updating group" );
-                                }
-                                UsersDataManager usersDataManager = new UsersDataManager(context);
-                                User user = usersDataManager.getCurrentUser();
-                                user.setServerGroupId(serverGroupId);
-                                usersDataManager.updateUser(user);
-                            }
-                            syncProgress++;
-                            Log.d(TAG,"sync progress = " + syncProgress);
-                            Log.d(TAG, Constants.TAG_LISTA+"synchronizeGroup ends");
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> postData = new HashMap<>();
-                postData.put("group_name", "" + group.getGroupName());
-                postData.put("owner_email", "" + group.getOwnerEmail());
-                postData.put("server_owner_id", "" + group.getServerOwnerId());
-                postData.put("sync_status", "" + DataBaseHelper.SYNC_STATUS_OK);
-                return postData;
-            }
-        };
-        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
-
-    }
-
 
     private void synchronizeGroupData(final Context context, final User user) {
 
@@ -648,7 +591,7 @@ public class Synchronizer {
                                     int serverGoodId = JSONGood.getInt("server_good_id");
 
                                     GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
-                                    Good good = goodsDataProvider.getGoodByServerGoodIdAndUserId(serverGoodId, user.getUserId());
+                                    Good good = goodsDataProvider.getGoodByServerGoodId(serverGoodId);
 
                                     good.setGoodName(JSONGood.getString("good_name"));
                                     good.setQuantityLevelId(JSONGood.getInt("quantity_level"));
@@ -672,7 +615,7 @@ public class Synchronizer {
 
                             syncProgress++;
                             Log.e(TAG,"sync progress = " + syncProgress);
-                            sendSyncBroadCast(context);
+                            //sendSyncBroadCast(context);
 
                             Log.d(TAG, Constants.TAG_LISTA+"updateCategoriesAndGoodsFromServer ends");
 
@@ -843,23 +786,23 @@ public class Synchronizer {
 
                     UsersDataManager usersDataManager = new UsersDataManager(context);
                     User currentUser = usersDataManager.getCurrentUser();
-                    Group currentGroup = currentUser.getGroup(context);
+                    /*Group currentGroup = currentUser.getGroup(context);
                     if (currentGroup != null && currentGroup.getSyncStatus() == DataBaseHelper.SYNC_STATUS_FAILED) {
                         synchronizeGroup(context, currentGroup);
-                    }
+                    }*/
 
-                    if (currentUser.getServerGroupId() != 0) {
+                    /*if (currentUser.getServerGroupId() != 0) {
                         synchronizeGroupData(context, currentUser);
-                    }
+                    }*/
 
-                    List<Category> updatedCategories = categoriesDataProvider.getUpdatedCategories();
+                    /*List<Category> updatedCategories = categoriesDataProvider.getUpdatedCategories();
 
                     GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
                     List<Good> updatedGoods = goodsDataProvider.getUpdatedGoods(context);
 
                     if (updatedCategories.size() > 0 || updatedGoods.size() > 0) {
                         updateCategoriesAndGoodsOnServer(context, updatedCategories, updatedGoods);
-                    }
+                    }*/
 
                     updateCategoriesAndGoodsFromServer(context, currentUser);
 

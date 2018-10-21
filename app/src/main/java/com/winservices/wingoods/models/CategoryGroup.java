@@ -13,10 +13,19 @@ public class CategoryGroup extends ExpandableGroup {
     private int categoryId;
     private int serverCategoryId;
     private List<Good> items;
+    private Category category;
 
     public CategoryGroup(String title, List<Good> items) {
         super(title, items);
         this.items = items;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void remove(int position) {

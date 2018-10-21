@@ -490,7 +490,7 @@ public class MainActivity extends AppCompatActivity
                         syncTriggeredByUser = false;
                     }
 
-                    Log.d(TAG, "Sync BroadCast received and sync finished");
+                    Log.d(TAG, "Sync BroadCast received");
                 }
             });
         }

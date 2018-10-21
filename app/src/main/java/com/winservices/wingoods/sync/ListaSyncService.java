@@ -16,7 +16,7 @@ public class ListaSyncService extends Service {
 
     @Override
     public void onCreate() {
-        android.os.Debug.waitForDebugger();
+        //android.os.Debug.waitForDebugger();
         Log.d(LOG_TAG, " onCreate ");
         synchronized (sSyncAdapterLock){
             if (listaSyncAdapter==null){
@@ -30,4 +30,5 @@ public class ListaSyncService extends Service {
     public IBinder onBind(Intent intent) {
         return listaSyncAdapter.getSyncAdapterBinder();
     }
+
 }

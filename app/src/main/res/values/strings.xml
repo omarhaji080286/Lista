@@ -72,7 +72,7 @@
     <string name="sender_email">sender email</string>
     <string name="decline">Decline</string>
     <string name="accept">Accept</string>
-    <string name="invitation_already_sent">You have already sent an invitation to this preson.</string>
+    <string name="invitation_already_sent">You have already sent an invitation to this person.</string>
     <string name="team_s_name">Team\'s name</string>
     <string name="team_name_required">Team name is required</string>
     <string name="team_already_created">You have already created this team !</string>

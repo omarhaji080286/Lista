@@ -93,7 +93,7 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
     public void refreshList(){
         categories.clear();
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        List<Category> categoriesToChoose = categoriesDataProvider.getAllcategories();
+        List<Category> categoriesToChoose = categoriesDataProvider.getAllCategories();
         categories.addAll(categoriesToChoose);
         notifyDataSetChanged();
     }

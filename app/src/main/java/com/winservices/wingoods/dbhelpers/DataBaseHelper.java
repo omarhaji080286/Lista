@@ -93,7 +93,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
     public static final String HOST_URL_GET_INVITATIONS = HOST + "getInvitations.php";
     static final String HOST_URL_UPDATE_CO_USER_RESPONSE = HOST + "updateCoUserResponse.php";
-    static final String HOST_URL_ADD_GROUP = HOST + "addGroup.php";
+    public static final String HOST_URL_ADD_GROUP_AND_CO_USER = HOST + "addGroupAndCoUser.php";
     static final String HOST_URL_GET_GROUP_DATA = HOST + "getGroupData.php";
     static final String HOST_URL_DELETE_USER_CATEGORIES_AND_GOODS = HOST + "deleteAllUserCategoriesAndGoods.php";
     static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS = HOST + "updateCategoriesAndGoods.php";
@@ -115,6 +115,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     private final static int DATABASE_VERSION = 1;
+
 
     //private User currentUser;
 
@@ -241,6 +242,37 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //GROUPS
 
+    public Group getGroupById(int groupId) {
+
+        db = this.getReadableDatabase();
+        Cursor res;
+        Group group = null;
+        try {
+            String sql = "select "+TABLE_GROUPS+"." + COL_GROUP_ID + " as " + _ID + " , * "
+                    + " from " + TABLE_GROUPS
+                    + " WHERE " + COL_GROUP_ID + " = " + groupId;
+
+            res = db.rawQuery(sql, null);
+
+            while (res.moveToNext()) {
+                //int groupId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String groupName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_GROUP_NAME));
+                String ownerEmail = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_OWNER_EMAIL));
+                int serverOwnerId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_OWNER_ID));
+                int serverGroupId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GROUP_ID));
+                int syncStatus = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
+
+                group = new Group(groupId, groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
+
+            }
+            res.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return group;
+    }
+
     Group getGroupByUserId(int serverUserId) {
         db = this.getReadableDatabase();
         Cursor res;
@@ -250,7 +282,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " from " + TABLE_GROUPS + ", " + TABLE_USERS
                     + " WHERE " + TABLE_GROUPS+"."+COL_GROUP_ID+" = "+ TABLE_USERS+"."+COL_GROUP_ID
                     + " AND " + TABLE_USERS+"."+COL_SERVER_USER_ID + " = " + serverUserId;
-
 
             res = db.rawQuery(sql, null);
 
@@ -578,7 +609,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //CATEGORIES
 
 
-    int getGoodsToBuyNumber(int categoryId) {
+    public int getGoodsToBuyNumber(int categoryId) {
         String countQuery = "SELECT "+TABLE_GOODS+".* FROM " + TABLE_GOODS
                 + " WHERE " +  TABLE_GOODS+"."+COL_CATEGORY_ID+ " = " + categoryId
                 + " AND " +  TABLE_GOODS+"."+COL_IS_TO_BUY + " = 1 "
@@ -620,6 +651,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cnt ;
     }
 
+    int getGoodsNumber(int categoryId) {
+        String countQuery = "SELECT * FROM " + TABLE_GOODS
+                + " WHERE " +  COL_CATEGORY_ID+ " = " + categoryId
+                + " AND " + COL_CRUD_STATUS + " <> " + DELETED;
+        db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(countQuery, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("DB", e.toString());
+        }
+        int cnt = 0;
+        if (cursor != null) {
+            cnt = cursor.getCount();
+            cursor.close();
+        }
+        return cnt ;
+    }
+
+
     Cursor getCategoryByName(String name) {
          db = this.getReadableDatabase();
         Cursor res = null;
@@ -642,6 +694,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " from " + TABLE_CATEGORIES
                     + " where " + COL_SERVER_CATEGORY_ID + " = " + serverCategoryId
                     + " and " + COL_USERID + " = " + userId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Cursor getCategoryByServerCategoryId(int serverCategoryId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_CATEGORY_ID + " as " + _ID + " , * "
+                    + " from " + TABLE_CATEGORIES
+                    + " where " + COL_SERVER_CATEGORY_ID + " = " + serverCategoryId
+                    + " and " + COL_SERVER_CATEGORY_ID + " = " + serverCategoryId, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -702,8 +768,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             res = db.rawQuery("select " + COL_CATEGORY_ID + " as " + _ID + " , *"
                     + " from " + TABLE_CATEGORIES
                     + " where " + COL_USERID + " = " + getCurrentUser().getUserId()
-                    + " and " + COL_SERVER_CATEGORY_ID + " <> 0"
-                    + " and " + COL_USERID + " = " + getCurrentUser().getUserId(), null);
+                    + " and " + COL_SERVER_CATEGORY_ID + " <> 0", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -863,14 +928,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    Cursor getGoodByServerGoodId(int serverGoodId, int userId) {
+    Cursor getGoodByServerGoodId(int serverGoodId) {
          db = this.getReadableDatabase();
         Cursor res = null;
         try {
             res = db.rawQuery("SELECT " + COL_GOOD_ID + " as " + _ID + " , " + TABLE_GOODS + ".*"
                     + " FROM " + TABLE_GOODS + ", " + TABLE_CATEGORIES
                     + " WHERE  " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + "=" + TABLE_GOODS + "." + COL_CATEGORY_ID
-                    + " AND " + TABLE_CATEGORIES + "."+COL_USERID + "=" + userId
+                    + " AND " + TABLE_CATEGORIES + "."+COL_USERID + "=" + getCurrentUser().getUserId()
                     + " AND " + TABLE_GOODS +"."+COL_SERVER_GOOD_ID + " = " + serverGoodId, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1372,12 +1437,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_EMAIL, coUser.getEmail());
         contentValues.put(COL_CONFIRMATION_STATUS, coUser.getConfirmationStatus());
         contentValues.put(COL_HAS_RESPONDED, coUser.getHasResponded());
-        contentValues.put(COL_SYNC_STATUS, DataBaseHelper.SYNC_STATUS_FAILED);
+        contentValues.put(COL_SYNC_STATUS, coUser.getSyncStatus());
+        contentValues.put(COL_SERVER_CO_USER_ID, coUser.getServerCoUserId());
 
         long result = db.insert(TABLE_CO_USERS, null, contentValues);
         return (result != -1);
     }
-
-
 
 }

@@ -147,9 +147,9 @@ public class GoodsDataProvider {
     }
 
 
-    public Good getGoodByServerGoodIdAndUserId(int serverGoodId, int userId) {
+    public Good getGoodByServerGoodId(int serverGoodId) {
 
-        Cursor cursor = db.getGoodByServerGoodId(serverGoodId, userId);
+        Cursor cursor = db.getGoodByServerGoodId(serverGoodId);
 
         cursor.moveToNext();
 
@@ -170,14 +170,14 @@ public class GoodsDataProvider {
         good.setGoodDesc(goodDesc);
         good.setIsOrdered(isOrdered);
 
-        Log.d(TAG, Constants.TAG_LISTA+"getGoodByServerGoodIdAndUserId called");
+        Log.d(TAG, Constants.TAG_LISTA+"getGoodByServerGoodId called");
 
         return good;
     }
 
 
 
-    List<Good> getUpdatedGoods(Context context) {
+    public List<Good> getUpdatedGoods(Context context) {
 
         List<Good> list = new ArrayList<>();
         Cursor cursor = db.getUpdatedGoods();
