@@ -52,9 +52,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
     private void loadCategories() {
         categories.clear();
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         for (int i = 0; i < groups.size(); i++) {
-            //Category category = categoriesDataProvider.getCategoryById(groups.get(i).getCategoryId());
             Category category = groups.get(i).getCategory();
             categories.add(category);
         }
@@ -237,18 +235,11 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-        Category category = new Category();
-        for (int i = 0; i < categories.size() ; i++) {
-            if (categories.get(i).getCategoryId()==((CategoryGroup) group).getCategoryId()){
-                category = categories.get(i);
-            }
-        }
-
         holder.setCategoryName(group.getTitle());
         holder.categoryIcon.setImageResource(((CategoryGroup) group).getCategory().getIcon());
 
-        int goodsToBuyNumber = category.getGoodsToBuyNumber();
-        int orderedGoodsNumber = category.getOrderedGoodsNumber();
+        int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
+        int orderedGoodsNumber = ((CategoryGroup) group).getCategory().getOrderedGoodsNumber();
         if (goodsToBuyNumber!=0) {
             holder.cartContainer.setVisibility(View.VISIBLE);
             //String orderedOfToBuy = String.valueOf(orderedGoodsNumber)+" / "+String.valueOf(goodsToBuyNumber);
@@ -266,7 +257,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         }
 
         final int notOrderedGoods = goodsToBuyNumber - orderedGoodsNumber;
-        final Category finalCategory = category;
+        final Category finalCategory = ((CategoryGroup) group).getCategory();
         holder.cartContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -242,6 +242,9 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
             if (newGoods.size()>0){
                 CategoryGroup newCategoryGroup = new CategoryGroup(categoryGroup.getTitle(), newGoods );
                 newCategoryGroup.setCategoryId(categoryGroup.getCategoryId());
+                CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
+                Category category = categoriesDataProvider.getCategoryById(categoryGroup.getCategoryId());
+                newCategoryGroup.setCategory(category);
                 newMainList.add(newCategoryGroup);
             }
         }
