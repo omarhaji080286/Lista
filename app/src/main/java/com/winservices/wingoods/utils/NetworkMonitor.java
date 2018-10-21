@@ -35,8 +35,6 @@ public class NetworkMonitor extends BroadcastReceiver {
         if (checkNetworkConnection(context)) {
 
             ListaSyncAdapter.syncImmediately(context);
-            Synchronizer sync = new Synchronizer(context);
-            sync.synchronizeAll();
 
         }
 

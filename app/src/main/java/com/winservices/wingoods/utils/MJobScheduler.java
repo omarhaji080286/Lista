@@ -32,10 +32,7 @@ public class MJobScheduler extends JobService {
 
                 if (jobCancelled){ return; }
 
-                ListaSyncAdapter.syncImmediately(getApplicationContext());
-                Synchronizer sync = new Synchronizer(getApplicationContext());
-                sync.synchronizeAll();
-
+                //ListaSyncAdapter.syncImmediately(getApplicationContext());
 
                 /* (int i = 0; i < 10; i++) {
                   Log.d(TAG, "run : " + i);

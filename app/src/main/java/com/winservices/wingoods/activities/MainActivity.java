@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         //Sync Adapter first call
-        //ListaSyncAdapter.initializeSyncAdapter(this);
+        ListaSyncAdapter.initializeSyncAdapter(this);
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
         displaySelectedScreen(fragmentId);
     }
@@ -320,11 +320,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.sync:
-                syncTriggeredByUser = true;
-                //Synchronizer sync = new Synchronizer(this);
-                //sync.synchronizeAll();
-
-                ListaSyncAdapter.syncImmediately(this);
+               if (NetworkMonitor.checkNetworkConnection(this)){
+                   syncTriggeredByUser = true;
+                   ListaSyncAdapter.syncImmediately(this);
+               } else {
+                   Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+               }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -467,6 +468,7 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         unregisterReceiver(syncReceiver);
+        ListaSyncAdapter.syncImmediately(this);
     }
 
     public class SyncReceiver extends BroadcastReceiver {

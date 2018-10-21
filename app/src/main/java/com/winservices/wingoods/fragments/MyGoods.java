@@ -77,8 +77,6 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         super.onResume();
 
         ListaSyncAdapter.syncImmediately(getContext());
-        Synchronizer sync = new Synchronizer(getContext());
-        sync.synchronizeAll();
 
         searchView.setSelected(false);
 

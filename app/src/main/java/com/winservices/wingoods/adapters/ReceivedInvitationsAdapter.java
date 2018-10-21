@@ -109,8 +109,6 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
             }
 
             ListaSyncAdapter.syncImmediately(context);
-            Synchronizer sync = new Synchronizer(context);
-            sync.synchronizeAll();
 
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

@@ -2,60 +2,39 @@ package com.winservices.wingoods.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Service;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.winservices.wingoods.BuildConfig;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.CoUsersDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
-import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Good;
-import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
-import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,12 +45,12 @@ import java.util.concurrent.TimeoutException;
 
 public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
 
-    public final String LOG_TAG = ListaSyncAdapter.class.getSimpleName();
-    public static final int SYNC_INTERVAL = 30;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-    ContentResolver mContentResolver;
+    private final String LOG_TAG = ListaSyncAdapter.class.getSimpleName();
+    private static final int SYNC_INTERVAL = 60 * 15;
+    private static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    private ContentResolver mContentResolver;
 
-    public ListaSyncAdapter(Context context, boolean autoInitialize) {
+    ListaSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mContentResolver = context.getContentResolver();
     }
@@ -79,9 +58,8 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
 
-        //mContentResolver.delete(Good.GoodEntry.CONTENT_URI, null, null);
         Log.d(LOG_TAG, "Starting sync");
-        String response = null;
+        String response;
 
         try {
             final String jsonData = getJSONForSync(getContext());
@@ -148,7 +126,7 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             JSONArray jsonNotSyncReceivedInvitations = ReceivedInvitation.listToJSONArray(notSyncReceivedInvitations);
             root.put("jsonNotSyncReceivedInvitations",jsonNotSyncReceivedInvitations);
 
-            //updated Categories (not Sync yet)
+            //TODO updated Categories (not Sync yet)
             /*List<Category> updatedCategories = categoriesDataProvider.getUpdatedCategories();
             JSONArray jsonUpdatedCategories = Category.listToJSONArray(updatedCategories);
             root.put("jsonUpdatedCategories",jsonUpdatedCategories);*/
@@ -234,11 +212,36 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
                 insertGoods(jsonGroupGoodsToSync);
                 Log.d(LOG_TAG, "Sync goods completed. " + jsonGroupGoodsToSync.length() + " inserted.");
 
+                //updates Goods goods Data relative to the group
+                JSONArray jsonUpdatedGoodsByGroupMembers = jsonObject.getJSONArray("updatedGoodsByGroupMembers");
+                updateUpdatedGoodsByGroupMembers(jsonUpdatedGoodsByGroupMembers);
+                Log.d(LOG_TAG, "Sync updated goods by group members completed. " + jsonUpdatedGoodsByGroupMembers.length() + " updated.");
+
             }
 
         } catch (JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+        }
+    }
+
+    private void updateUpdatedGoodsByGroupMembers(JSONArray updateUpdatedGoodsByGroupMembers) throws JSONException {
+        DataManager dataManager = new DataManager(getContext());
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getContext());
+
+        for (int i = 0; i < updateUpdatedGoodsByGroupMembers.length(); i++) {
+            JSONObject JSONGood = updateUpdatedGoodsByGroupMembers.getJSONObject(i);
+            Good good = goodsDataProvider.getGoodByServerGoodId(JSONGood.getInt("serverGoodId"));
+            good.setGoodName(JSONGood.getString("goodName"));
+            good.setQuantityLevelId(JSONGood.getInt("quantityLevel"));
+            good.setToBuy((JSONGood.getInt("isToBuy")==1));
+            good.setSync(JSONGood.getInt("syncStatus"));
+            good.setEmail(JSONGood.getString("email"));
+            good.setServerCategoryId(JSONGood.getInt("serverCategoryId"));
+            good.setCrudStatus(JSONGood.getInt("crudStatus"));
+            good.setIsOrdered(JSONGood.getInt("isOrdered"));
+
+            dataManager.updateGood(good);
         }
     }
 
@@ -404,7 +407,6 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
     private static void onAccountCreated(Account newAccount, Context context){
         ListaSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
-        //syncImmediately(context);
     }
 
     public static void initializeSyncAdapter(Context context){

@@ -47,16 +47,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         this.context = context;
         this.groups = groups;
         categories = new ArrayList<>();
-        loadCategories();
-    }
-
-    private void loadCategories() {
-        categories.clear();
-        for (int i = 0; i < groups.size(); i++) {
-            Category category = groups.get(i).getCategory();
-            categories.add(category);
-        }
-
     }
 
     @Override
@@ -108,21 +98,14 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 DataManager dataManager = new DataManager(context);
                 dataManager.updateGood(good);
 
+                int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
+
                 if (good.isToBuy()){
                     holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
-                    //updates category goods to buy
-                    for (int i = 0; i < categories.size() ; i++) {
-                        if (categories.get(i).getCategoryId()==(good.getCategoryId())){
-                            categories.get(i).setGoodsToBuyNumber(categories.get(i).getGoodsToBuyNumber()+1);
-                        }
-                    }
+                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber+1);
                 } else {
                     holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
-                    for (int i = 0; i < categories.size() ; i++) {
-                        if (categories.get(i).getCategoryId()==(good.getCategoryId())){
-                            categories.get(i).setGoodsToBuyNumber(categories.get(i).getGoodsToBuyNumber()-1);
-                        }
-                    }
+                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber-1);
                 }
 
                 int groupflatPosition = flatPosition - childIndex - 1;
@@ -235,11 +218,13 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     @Override
     public void onBindGroupViewHolder(final CategoryGroupViewHolder holder, int flatPosition, ExpandableGroup group) {
 
-        holder.setCategoryName(group.getTitle());
-        holder.categoryIcon.setImageResource(((CategoryGroup) group).getCategory().getIcon());
+        Category category = ((CategoryGroup) group).getCategory();
 
-        int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
-        int orderedGoodsNumber = ((CategoryGroup) group).getCategory().getOrderedGoodsNumber();
+        holder.setCategoryName(group.getTitle());
+        holder.categoryIcon.setImageResource(category.getIcon());
+
+        int goodsToBuyNumber = category.getGoodsToBuyNumber();
+        int orderedGoodsNumber = category.getOrderedGoodsNumber();
         if (goodsToBuyNumber!=0) {
             holder.cartContainer.setVisibility(View.VISIBLE);
             //String orderedOfToBuy = String.valueOf(orderedGoodsNumber)+" / "+String.valueOf(goodsToBuyNumber);
@@ -257,7 +242,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         }
 
         final int notOrderedGoods = goodsToBuyNumber - orderedGoodsNumber;
-        final Category finalCategory = ((CategoryGroup) group).getCategory();
+        final Category finalCategory = category;
         holder.cartContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -286,7 +271,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     public void setNewList(List<CategoryGroup> newMainList){
-        loadCategories();
         this.groups.clear();
         this.groups.addAll(newMainList);
         notifyDataSetChanged();
@@ -300,8 +284,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
             CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
             cg.remove(listPos.childPos);
-            //notifyDataSetChanged();
-            notifyItemChanged(position);
+            notifyItemRemoved(position);
         } else {
             Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
         }
