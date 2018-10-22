@@ -66,7 +66,6 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User user = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
 
         getInvitations(this, user);
 
@@ -116,11 +115,10 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
                                             ReceivedInvitation invitation = new ReceivedInvitation(senderEmail, categories.toString(), CoUser.PENDING);
                                             invitation.setServerCoUserId(serverCoUserId);
-                                            invitation.setServerGroupeId(serverGroupId);
+                                            invitation.setServerGroupId(serverGroupId);
 
                                             InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
                                             invitationsDataManager.addReceivedInvitation(invitation);
-                                            invitationsDataManager.closDB();
 
                                             invitationsList.add(invitation);
 
@@ -185,5 +183,6 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
         setResult(MainActivity.FRAGMENT_REQUEST_CODE,intent);
         this.finish();
     }
+
 
 }

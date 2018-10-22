@@ -57,7 +57,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     private Dialog dialog;
     private final static int TAB_MAP = 0;
     private final static int TAB_LIST = 1;
-    private String activityTitle;
     private int serverCategoryIdToOrder;
     private int currentTab = TAB_MAP;
     private ShopsMap shopsMap;
@@ -343,5 +342,14 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        shopsMap = null;
+        shopsList = null;
+        shops = null;
+        shopsFirstList = null;
+        shopsFilter = null;
 
+    }
 }

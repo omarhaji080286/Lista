@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -47,12 +48,15 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.MyGoods;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
 import com.winservices.wingoods.utils.MJobScheduler;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -114,8 +118,6 @@ public class MainActivity extends AppCompatActivity
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User user = usersDataManager.getCurrentUser();
-        usersDataManager.closeDB();
-
 
         txtUserEmail.setText(user.getEmail());
 
@@ -174,14 +176,12 @@ public class MainActivity extends AppCompatActivity
                         if (Controlers.inputOk(categoryName)) {
                             UsersDataManager usersDataManager = new UsersDataManager(context);
                             User currentUser = usersDataManager.getCurrentUser();
-                            usersDataManager.closeDB();
 
                             Category category = new Category(categoryName.trim(), Color.getRandomColor(context), R.drawable.others,
                                     DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getUserId(), currentUser.getEmail());
 
                             DataManager dataManager = new DataManager(context);
                             int result = dataManager.addCategory(context, category);
-                            dataManager.closeDB();
 
                             switch (result) {
                                 case Constants.SUCCESS:
@@ -211,7 +211,6 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getApplicationContext());
                 String message = goodsDataProvider.getMessageToSend();
-                goodsDataProvider.closeDB();
                 openWhatsApp(message);
                 collapseFab();
             }
@@ -257,6 +256,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        //Sync Adapter first call
+        ListaSyncAdapter.initializeSyncAdapter(this);
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
         displaySelectedScreen(fragmentId);
     }
@@ -319,13 +320,14 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.sync:
-                syncTriggeredByUser = true;
-                Synchronizer sync = new Synchronizer();
-                sync.synchronizeAll(this);
+               if (NetworkMonitor.checkNetworkConnection(this)){
+                   syncTriggeredByUser = true;
+                   ListaSyncAdapter.syncImmediately(this);
+               } else {
+                   Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+               }
                 break;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -345,6 +347,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_my_orders:
                 navigationView.getMenu().getItem(2).setChecked(true);
+                goToOrders();
                 break;
             case R.id.nav_log_out:
                 logOut();
@@ -375,7 +378,6 @@ public class MainActivity extends AppCompatActivity
         User user = usersDataManager.getCurrentUser();
         user.setLastLoggedIn(DataBaseHelper.IS_NOT_LOGGED_IN);
         usersDataManager.updateUser( user);
-        usersDataManager.closeDB();
 
         finish();
         startActivity(new Intent(this, AuthActivity.class));
@@ -435,20 +437,38 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void goToOrders(){
+        if (NetworkMonitor.checkNetworkConnection(this)){
+            Intent intent = new Intent(MainActivity.this, MyOrdersActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+
     @Override
     protected void onDestroy() {
         //clear the job
         super.onDestroy();
+
         //JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
         //jobScheduler.cancel(Constants.JOB_ID);
         //Toast.makeText(this, "Job canceled...", Toast.LENGTH_SHORT).show();
+
+        DataBaseHelper.closeDB();
     }
+
+
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(syncReceiver);
+        ListaSyncAdapter.syncImmediately(this);
     }
 
     public class SyncReceiver extends BroadcastReceiver {
@@ -472,7 +492,7 @@ public class MainActivity extends AppCompatActivity
                         syncTriggeredByUser = false;
                     }
 
-                    Log.d(TAG, "Sync BroadCast received and sync finished");
+                    Log.d(TAG, "Sync BroadCast received");
                 }
             });
         }

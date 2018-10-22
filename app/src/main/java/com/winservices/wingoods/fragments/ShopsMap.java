@@ -252,6 +252,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                             Intent intent = new Intent(getActivity(), OrderActivity.class);
                             intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
+                            intent.putExtra(Constants.SHOP, finalShop);
                             startActivity(intent);
                             getActivity().finish();
                         }
@@ -412,5 +413,11 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         addShopsMarkers(shops);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleMap = null;
+        shops = null;
 
+    }
 }

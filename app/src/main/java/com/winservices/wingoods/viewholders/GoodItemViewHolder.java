@@ -30,17 +30,19 @@ public class GoodItemViewHolder extends ChildViewHolder{
     }
 
     public TextView goodName, goodDescription;
-    private RelativeLayout viewBackground;
+    //private RelativeLayout viewBackground;
     public RelativeLayout viewForeground;
-    public ImageView cart;
+    public ImageView cart, cartRemove;
 
     public GoodItemViewHolder(View itemView) {
         super(itemView);
         goodName = itemView.findViewById(R.id.txt_good_name);
         goodDescription = itemView.findViewById(R.id.txt_good_desc);
-        viewBackground =  itemView.findViewById(R.id.item_good_view_background);
+        //viewBackground =  itemView.findViewById(R.id.item_good_view_background);
         viewForeground=  itemView.findViewById(R.id.item_good);
         cart = itemView.findViewById(R.id.img_cart_in_good);
+        cartRemove = itemView.findViewById(R.id.ic_delete);
+
 
     }
 

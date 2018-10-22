@@ -64,7 +64,6 @@ public class CategoryItem extends Category {
     public int getGoodsToBuyNumber(Context context){
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         int number = categoriesDataProvider.getGoodsToBuyNumber(this.getCategoryId());
-        categoriesDataProvider.closeDB();
         return number;
     }
 

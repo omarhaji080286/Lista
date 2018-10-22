@@ -8,15 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
-import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.viewholders.InvitationViewHolder;
 
@@ -87,29 +86,29 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
             ReceivedInvitation invitation = invitationsDataManager.getReceivedInvitation(senderEmail);
             invitation.setResponse(response);
             invitationsDataManager.updateReceivedInvitation( invitation);
-            invitationsDataManager.closDB();
 
             if (invitation.getResponse() == CoUser.ACCEPTED) {
                 UsersDataManager usersDataManager = new UsersDataManager(context);
                 User user = usersDataManager.getCurrentUser();
-                user.setServerGroupId(invitation.getServerGroupeId());
+
+                user.setServerGroupId(invitation.getServerGroupId());
                 usersDataManager.updateUser(user);
-                usersDataManager.closeDB();
+
                 Toast.makeText(context, R.string.invitation_accepted, Toast.LENGTH_SHORT).show();
 
                 //Delete all local Categories and goods
                 DataManager dataManager = new DataManager(context);
                 dataManager.deleteAllUserCategoriesAndGoods();
-                dataManager.closeDB();
 
-                Synchronizer sync = new Synchronizer();
+                Synchronizer sync = new Synchronizer(context);
                 sync.deleteAllUserDataOnServerAndSyncGroup(context, user, invitation);
+
+
             } else {
                 Toast.makeText(context, R.string.invitation_declined, Toast.LENGTH_SHORT).show();
             }
 
-            Synchronizer sync = new Synchronizer();
-            sync.synchronizeAll(context);
+            ListaSyncAdapter.syncImmediately(context);
 
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

@@ -3,9 +3,14 @@ package com.winservices.wingoods.models;
 import android.content.Context;
 
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Category {
 
@@ -18,6 +23,36 @@ public class Category {
     private String email;
     private int crudStatus;
     private int serverCategoryId = 0;
+
+    private int goodsToBuyNumber;
+    private int orderedGoodsNumber;
+    private int goodsNumber;
+
+    public int getGoodsNumber() {
+        return goodsNumber;
+    }
+
+    public void setGoodsNumber(int goodsNumber) {
+        this.goodsNumber = goodsNumber;
+    }
+
+    public int getOrderedGoodsNumber() {
+        return orderedGoodsNumber;
+    }
+
+    public void setOrderedGoodsNumber(int orderedGoodsNumber) {
+        this.orderedGoodsNumber = orderedGoodsNumber;
+    }
+
+    public int getGoodsToBuyNumber() {
+        return goodsToBuyNumber;
+    }
+
+    public void setGoodsToBuyNumber(int goodsToBuyNumber) {
+        this.goodsToBuyNumber = goodsToBuyNumber;
+    }
+
+    public Category(){}
 
     public Category(String categoryName, int color, int icon, int sync, int userId, String email) {
         this.categoryName = categoryName;
@@ -202,11 +237,13 @@ public class Category {
         return null;
     }
 
-    public int getGoodsToBuyNumber(Context context){
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        int number = categoriesDataProvider.getGoodsToBuyNumber(this.getCategoryId());
-        categoriesDataProvider.closeDB();
-        return number;
+    public static JSONArray listToJSONArray(List<Category> categories){
+        JSONArray jsonCategories = new JSONArray();
+        for (int i = 0; i < categories.size(); i++) {
+            JSONObject JSONCategory = categories.get(i).toJSONObject();
+            jsonCategories.put(JSONCategory);
+        }
+        return jsonCategories;
     }
 
 }

@@ -13,6 +13,7 @@ import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 
 import java.util.List;
 
@@ -33,8 +34,7 @@ public class NetworkMonitor extends BroadcastReceiver {
 
         if (checkNetworkConnection(context)) {
 
-            Synchronizer sync = new Synchronizer();
-            sync.synchronizeAll(context);
+            ListaSyncAdapter.syncImmediately(context);
 
         }
 

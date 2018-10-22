@@ -4,6 +4,12 @@ package com.winservices.wingoods.models;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.utils.Constants;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
 public class CoUser {
 
     public static final int PENDING = 0;
@@ -105,4 +111,34 @@ public class CoUser {
     public void setServerCoUserId(int serverCoUserId) {
         this.serverCoUserId = serverCoUserId;
     }
+
+    public static JSONArray listToJSONArray(List<CoUser> coUsers){
+        JSONArray jsonCoUsers = new JSONArray();
+        for (int i = 0; i < coUsers.size(); i++) {
+            JSONObject JSONGood = coUsers.get(i).toJSONObject();
+            jsonCoUsers.put(JSONGood);
+        }
+        return jsonCoUsers;
+    }
+
+    public JSONObject toJSONObject(){
+        JSONObject JSONCoUser = new JSONObject();
+        try {
+            JSONCoUser.put("coUserId", this.coUserId);
+            JSONCoUser.put("coUserEmail", this.coUserEmail);
+            JSONCoUser.put("userId", this.userId);
+            JSONCoUser.put("email", this.email);
+            JSONCoUser.put("confirmationStatus", this.confirmationStatus);
+            JSONCoUser.put("hasResponded", this.hasResponded);
+            JSONCoUser.put("syncStatus", this.syncStatus);
+            JSONCoUser.put("serverCoUserId", this.serverCoUserId);
+            return JSONCoUser;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
 }

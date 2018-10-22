@@ -21,9 +21,11 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesInMyGoodsAdapter;
 import com.winservices.wingoods.adapters.MyGoodsAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
@@ -73,7 +75,8 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
     @Override
     public void onResume() {
         super.onResume();
-        //Synchronizer.synchronizeAll(getContext());
+
+        ListaSyncAdapter.syncImmediately(getContext());
 
         searchView.setSelected(false);
 
@@ -110,8 +113,8 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         });
 
         //Adapter for categories to choose
-        List<Category> categoriesToChoose = categoriesDataProvider.getAllcategories();
-        categoriesDataProvider.closeDB();
+        CategoriesDataProvider categoriesDataProvider2 = new CategoriesDataProvider(getContext());
+        List<Category> categoriesToChoose = categoriesDataProvider2.getAllCategories();
 
         categoriesToChooseAdapter = new CategoriesInMyGoodsAdapter(getContext(), categoriesToChoose);
 
@@ -213,9 +216,9 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
 
 
     public void reloadMainList(){
+
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
         initialMainList = categoriesDataProvider.getMainGoodsList("");
-        categoriesDataProvider.closeDB();
 
         List<CategoryGroup> increasedMainList = new ArrayList<>();
         increasedMainList.addAll(getFilteredMainList(searchView.getText().toString()));
@@ -237,6 +240,9 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
             if (newGoods.size()>0){
                 CategoryGroup newCategoryGroup = new CategoryGroup(categoryGroup.getTitle(), newGoods );
                 newCategoryGroup.setCategoryId(categoryGroup.getCategoryId());
+                CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
+                Category category = categoriesDataProvider.getCategoryById(categoryGroup.getCategoryId());
+                newCategoryGroup.setCategory(category);
                 newMainList.add(newCategoryGroup);
             }
         }

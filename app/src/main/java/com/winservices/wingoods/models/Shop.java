@@ -4,6 +4,8 @@ package com.winservices.wingoods.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 public class Shop implements Parcelable {
 
     private int serverShopId;

@@ -5,13 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.winservices.wingoods.activities.OrderActivity">
+    tools:context="com.winservices.wingoods.activities.OrderActivity"
+    android:id="@+id/cl_container">
+
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_order_will_be_sent_to"
+        android:layout_margin="5dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/txt_shop_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shop_name"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintLeft_toRightOf="@+id/txt"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_goods_to_order"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/txt_shop_name"/>
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -22,28 +42,22 @@
         android:background="@color/colorGray">
 
         <Button
-            android:id="@+id/btn_select_shop"
-            style="@style/Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:text="@string/shops" />
-
-        <Button
             android:id="@+id/btn_add_good"
             style="@style/Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="33"
-            android:text="@string/add_an_item" />
+            android:layout_weight="50"
+            android:text="@string/add_an_item"
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/btn_order"
             style="@style/Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="34"
-            android:text="@string/order" />
+            android:layout_weight="50"
+            android:text="@string/order"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 

@@ -27,11 +27,11 @@
 
             <ImageView
                 android:id="@+id/ic_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/ic_delete_white"
+                android:src="@drawable/ic_delete_white"
                 android:contentDescription="@string/delete_icon"/>
 
         </RelativeLayout>
@@ -68,7 +68,7 @@
                 android:id="@+id/img_cart_in_good"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_cart_full"
+                android:src="@drawable/ic_cart_full_white"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:visibility="gone"/>

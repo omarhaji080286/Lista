@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
     <permission
         android:name="com.winservices.wingoods.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -88,15 +92,6 @@
             </intent-filter>
         </receiver>
 
-        <!--
-        <receiver android:name=".activities.MainActivity$SyncReceiver">
-            <intent-filter>
-                <action android:name="com.winservices.wingoods.Sync" />
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-        -->
-
         <activity
             android:name=".activities.AuthActivity"
             android:launchMode="singleTask"
@@ -129,9 +124,45 @@
             android:name=".activities.ShopsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.OrderActivity"
+        <activity
+            android:name=".activities.OrderActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.MyOrdersActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.OrderDetailsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <service
+            android:name=".sync.ListaAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".sync.ListaSyncService">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <provider
+            android:name=".providers.GoodProvider"
+            android:authorities="com.winservices.wingoods"
+            android:exported="false"
+            android:syncable="true"/>
+
+
     </application>
 
 </manifest>

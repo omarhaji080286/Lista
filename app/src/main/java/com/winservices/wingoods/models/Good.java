@@ -1,11 +1,17 @@
 package com.winservices.wingoods.models;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
+import android.provider.BaseColumns;
 
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class Good {
 
@@ -22,6 +28,10 @@ public class Good {
     private int serverCategoryId;
     private int isOrdered;
 
+    public void setServerCategoryId(int serverCategoryId) {
+        this.serverCategoryId = serverCategoryId;
+    }
+
     public Good(String goodName, int categoryId, int quantityLevelId, boolean isToBuy, int sync, String email) {
         this.goodName = goodName;
         this.categoryId = categoryId;
@@ -32,7 +42,7 @@ public class Good {
     }
 
     public Good(String goodName, int categoryId, int quantityLevelId, boolean isToBuy,
-                int sync, String email, int serverGoodId, int serverCategoryID) {
+                int sync, String email, int serverGoodId, int serverCategoryId) {
         this.goodName = goodName;
         this.categoryId = categoryId;
         this.quantityLevelId = quantityLevelId;
@@ -40,7 +50,7 @@ public class Good {
         this.sync = sync;
         this.email = email;
         this.serverGoodId = serverGoodId;
-        this.serverCategoryId = serverCategoryID;
+        this.serverCategoryId = serverCategoryId;
     }
 
     public Good(int goodId, String goodName, int categoryId, int quantityLevelId,
@@ -105,13 +115,6 @@ public class Good {
 
     public void setServerGoodId(int serverGoodId) {
         this.serverGoodId = serverGoodId;
-    }
-
-
-    public void setServerCategoryId(Context context) {
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        this.serverCategoryId = categoriesDataProvider.getCategoryByGoodId(this.goodId).getServerCategoryId();
-        categoriesDataProvider.closeDB();
     }
 
     public String getEmail() {
@@ -196,6 +199,7 @@ public class Good {
             JSONGood.put("crud_status", this.crudStatus);
             JSONGood.put("serverGoodId", this.serverGoodId);
             JSONGood.put("serverCategoryId", this.serverCategoryId);
+            JSONGood.put("isOrdered", this.isOrdered);
 
             return JSONGood;
 
@@ -205,5 +209,47 @@ public class Good {
 
         return null;
     }
+
+    public static JSONArray listToJSONArray(List<Good> goods){
+        JSONArray jsonGoods = new JSONArray();
+        for (int i = 0; i < goods.size(); i++) {
+            JSONObject JSONGood = goods.get(i).toJSONObject();
+            jsonGoods.put(JSONGood);
+        }
+        return jsonGoods;
+    }
+
+
+    // for sync adapter purpose
+    public static final String CONTENT_AUTHORITY = "com.winservices.wingoods";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_GOODS = "goods-path";
+
+    public static class GoodEntry implements BaseColumns{
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_GOODS);
+
+        public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GOODS;
+
+        public static final String TABLE_NAME = "goods";
+
+        public static final String _ID = BaseColumns._ID;
+
+        public static final String COLUMN_GOOD_NAME = "good_name";
+        public static final String COLUMN_QUANTITY_LEVEL = "quantity_level";
+        public static final String COLUMN_CATEGORY_ID = "category_id";
+        public static final String COLUMN_IS_TO_BUY = "is_to_buy";
+        public static final String COLUMN_SYNC_STATUS = "sync_status";
+        public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_CRUD_STATUS = "crud_status";
+        public static final String COLUMN_SERVER_GOOD_ID= "server_good_id";
+        public static final String COLUMN_IS_ORDERED = "is_ordered";
+
+
+    }
+
+
+
+
 
 }

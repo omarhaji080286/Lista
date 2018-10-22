@@ -121,7 +121,6 @@ public class User {
 
         GroupsDataManager groupsDataManager = new GroupsDataManager(context);
         Group group = groupsDataManager.getGroupByUserId(this.getServerUserId());
-        groupsDataManager.closeDB();
 
         return group;
     }
