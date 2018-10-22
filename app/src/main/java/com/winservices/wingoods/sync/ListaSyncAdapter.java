@@ -29,6 +29,7 @@ import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.ReceivedInvitation;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 
 import org.json.JSONArray;
@@ -81,12 +82,12 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             response = future.get(10, TimeUnit.SECONDS);
             Log.d(LOG_TAG, "json response : " + response);
             processSyncResponse(response);
+            sendSyncBroadCast(getContext());
 
         } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         } finally {
-            sendSyncBroadCast(getContext());
             Log.d(LOG_TAG, "Sync finished");
         }
 
@@ -99,7 +100,8 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
 
             //Get the current server user id
             UsersDataManager usersDataManager = new UsersDataManager(context);
-            int serverUserId = usersDataManager.getCurrentUser().getServerUserId();
+            User user = usersDataManager.getCurrentUser();
+            int serverUserId = user.getServerUserId();
             root.put("serverUserId", serverUserId);
 
             //Not Sync Categories

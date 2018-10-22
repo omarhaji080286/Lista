@@ -468,7 +468,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         unregisterReceiver(syncReceiver);
-        ListaSyncAdapter.syncImmediately(this);
     }
 
     public class SyncReceiver extends BroadcastReceiver {
