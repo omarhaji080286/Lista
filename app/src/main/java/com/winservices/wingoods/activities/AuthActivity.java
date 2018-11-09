@@ -36,7 +36,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
@@ -50,6 +53,7 @@ import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Icon;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +63,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private final static String TAG = AuthActivity.class.getSimpleName();
 
     TextView signUpTxt;
     EditText emailEdit, passEdit, userNameEdit;
@@ -82,6 +88,15 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         createShortcut();
+        Log.d(TAG, "before Token : ");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                //SharedPrefManager.getInstance(getApplicationContext()).storeToken(newToken);
+                Log.d(TAG, "Token: " + newToken);
+            }
+        });
 
         signUpTxt = findViewById(R.id.signUpText);
         userNameEdit = findViewById(R.id.edit_user_name);
