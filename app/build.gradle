@@ -35,10 +35,10 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.0.2'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.android.support:design:27.0.2'
-    implementation 'com.android.volley:volley:1.0.0'
+    implementation 'com.android.volley:volley:1.1.0'
 
     //google sign in
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
     //face book sign in
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'

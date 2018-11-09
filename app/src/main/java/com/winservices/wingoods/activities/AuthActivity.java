@@ -134,12 +134,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
     public void onClick(View view) {
 
         switch (view.getId()){
@@ -556,7 +550,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 int isToBuyInt = jsonGood.getInt("is_to_buy");
                 int crudStatus = jsonGood.getInt("crud_status");
                 boolean isToBuy = (isToBuyInt == 1);
-                String goodDesc = "";
+                String goodDesc = jsonGood.getString("good_desc");
                 int sync = DataBaseHelper.SYNC_STATUS_FAILED;
                 String email = currentUser.getEmail();
                 int serverGoodId = 0;

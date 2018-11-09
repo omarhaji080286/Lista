@@ -22,6 +22,7 @@ import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class UtilsFunctions {
 
@@ -116,12 +117,12 @@ public class UtilsFunctions {
 
 
     public static String dateToString(Date date, String pattern){
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, Locale.FRANCE);
         return dateFormat.format(date);
     }
 
     public static Date stringToDate(String dateString){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
         Date date = new Date();
         try {
             date = format.parse(dateString);

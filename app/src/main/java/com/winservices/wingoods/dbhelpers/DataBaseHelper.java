@@ -37,7 +37,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
-    //
+
     // Lista LOCAL (compte root)
     private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
@@ -111,8 +111,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String GOODS_NUMBER = "goods_number";
     public static final String TAG = "DataBaseHelper";
     public static final String HOST_URL_SYNC = HOST + "sync.php";
-
-
 
     private final static int DATABASE_VERSION = 1;
 

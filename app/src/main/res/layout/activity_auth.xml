@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/user_name"
             android:inputType="textEmailAddress"
-            android:visibility="gone"
+            android:visibility="visible"
             android:textSize="15sp"/>
 
         <EditText
