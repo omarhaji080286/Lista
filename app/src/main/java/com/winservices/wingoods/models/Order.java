@@ -6,6 +6,7 @@ import java.util.Date;
 public class Order {
 
     public static final int SENT = 1;
+    public static final int READ = 6;
     public static final int IN_PREPARATION = 2;
     public static final int NOT_SUPPORTED = 3;
     public static final int AVAILABLE = 4;
@@ -22,6 +23,8 @@ public class Order {
         switch (statusId){
             case SENT :
                 return  "SENT";
+            case READ:
+                return "READ";
             case IN_PREPARATION :
                 return "IN PREPARATION";
             case NOT_SUPPORTED :
@@ -31,7 +34,7 @@ public class Order {
             case COMPLETED :
                 return "COMPLETED";
             default:
-                return "SENT";
+                return "N/A";
         }
     }
 
