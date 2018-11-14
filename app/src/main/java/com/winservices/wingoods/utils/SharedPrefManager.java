@@ -22,12 +22,11 @@ public class SharedPrefManager {
         return instance;
     }
 
-    public boolean storeToken(String token){
+    public void storeToken(String token){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_ACCESS_TOKEN, token);
         editor.apply();
-        return true;
     }
 
     public String getToken(){

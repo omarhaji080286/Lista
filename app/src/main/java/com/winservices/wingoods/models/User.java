@@ -16,6 +16,7 @@ public class User {
     private String signUpType;
     private int lastLoggedIn;
     private int groupId;
+    private String fcmToken;
 
     public User(int userId, String email, String password, String userName, int serverUserId, int serverGroupId, String signUpType) {
         this.userId = userId;
@@ -43,6 +44,14 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public int getGroupId() {

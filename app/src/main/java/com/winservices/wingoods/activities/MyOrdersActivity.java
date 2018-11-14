@@ -143,6 +143,7 @@ public class MyOrdersActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //adding coUser failed
+                        dialog.dismiss();
                     }
                 }
         ) {

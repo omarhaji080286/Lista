@@ -263,7 +263,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
             root.put("serverUserId", currentUser.getServerUserId() );
             root.put("serverShopId", selectedShopId);
-            root.put("statusId", Order.SENT);
+            root.put("statusId", Order.REGISTERED);
 
 
             JSONArray jsonGoods = new JSONArray();

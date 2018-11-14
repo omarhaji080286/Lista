@@ -54,6 +54,7 @@ import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Icon;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,7 +94,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String newToken = instanceIdResult.getToken();
-                //SharedPrefManager.getInstance(getApplicationContext()).storeToken(newToken);
+                SharedPrefManager.getInstance(getApplicationContext()).storeToken(newToken);
                 Log.d(TAG, "Token: " + newToken);
             }
         });
@@ -215,7 +216,10 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
+
+
         //insert the user in the DB
+
         User user = new User(email, pass, userName);
         user.setSignUpType(DataBaseHelper.LISTA);
         progressBar.setVisibility(View.VISIBLE);
@@ -460,6 +464,8 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     public void registerUserToAppServer(final Context context, final User userToRegister) {
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
+            String fcmToken = SharedPrefManager.getInstance(context).getToken();
+            userToRegister.setFcmToken(fcmToken);
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_ADD_USER,
@@ -510,6 +516,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                     postData.put("password", "" + userToRegister.getPassword());
                     postData.put("user_name", "" + userToRegister.getUserName());
                     postData.put("sign_up_type", "" + userToRegister.getSignUpType());
+                    postData.put("fcm_token", "" + userToRegister.getFcmToken());
                     return postData;
                 }
             };
