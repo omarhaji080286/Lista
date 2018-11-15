@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lista</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -119,12 +120,12 @@
     <string name="my_invitations">My invitations</string>
 
 
-    <string name="facebook_app_id">247070192572725</string>
-    <string name="fb_login_protocol_scheme">fb247070192572725</string>
+    <string name="facebook_app_id" translatable="false">247070192572725</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb247070192572725</string>
 
-    <string name="permission_preference">PERMISSION_PREFERENCE</string>
-    <string name="permission_access_fine_location">PERMISSION_ACCESS_FINE_LOCATION</string>
-    <string name="permission_access_coarse_location">PERMISSION_ACCESS_COARSE_LOCATION</string>
+    <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
+    <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
+    <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="sync_finished">sync finished</string>
     <string name="reset_all_filters">Reset all filters</string>
     <string name="show_results">Show results</string>
@@ -145,8 +146,8 @@
     <string name="order_details">Order Details</string>
     <string name="no_orders_registered">No orders have been registered</string>
 
-    <string name="sync_account_type">wingoods.winservices.com</string>
-    <string name="content_authority">com.winservices.wingoods</string>
+    <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
+    <string name="content_authority" translatable="false">com.winservices.wingoods</string>
 
 
 </resources>

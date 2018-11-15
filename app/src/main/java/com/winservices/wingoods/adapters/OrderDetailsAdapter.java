@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.viewholders.OrderDetailsVH;
-import com.winservices.wingoods.viewholders.OrderVH;
 
 import java.util.List;
 
@@ -37,13 +35,26 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsVH> {
         OrderedGood orderedGood = orderedGoods.get(position);
 
         String goodText;
-        if (orderedGood.getGoodDesc().equals("")){
+        if (orderedGood.getGoodDesc().equals("")) {
             goodText = orderedGood.getGoodName();
         } else {
-            goodText = orderedGood.getGoodName()+" ( "+ orderedGood.getGoodDesc()+" )";
+            goodText = orderedGood.getGoodName() + " ( " + orderedGood.getGoodDesc() + " )";
         }
 
         holder.txtGoodName.setText(goodText);
+
+        switch (orderedGood.getStatus()) {
+            case OrderedGood.PROCESSED:
+                holder.imgStatus.setVisibility(View.VISIBLE);
+                holder.imgStatus.setImageResource(R.drawable.check);
+                break;
+            case OrderedGood.NOT_AVAILABLE:
+                holder.imgStatus.setVisibility(View.VISIBLE);
+                holder.imgStatus.setImageResource(R.drawable.cross);
+                break;
+            default:
+                holder.imgStatus.setVisibility(View.GONE);
+        }
 
     }
 

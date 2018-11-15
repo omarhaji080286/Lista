@@ -107,6 +107,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                     orderedGood.setServerGoodId(JSONOrderedGood.getInt("server_good_id"));
                                     orderedGood.setServerShopId(JSONOrderedGood.getInt("server_shop_id"));
                                     orderedGood.setServerUserId(JSONOrderedGood.getInt("server_user_id"));
+                                    orderedGood.setStatus(JSONOrderedGood.getInt("status"));
 
                                     orderedGoods.add(orderedGood);
 

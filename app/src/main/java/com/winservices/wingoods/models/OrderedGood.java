@@ -2,6 +2,10 @@ package com.winservices.wingoods.models;
 
 public class OrderedGood {
 
+    public final static int UNPROCESSED = 0;
+    public final static int PROCESSED = 1;
+    public final static int NOT_AVAILABLE = 2;
+
     private int serverOrderedGoodId;
     private int serverGoodId;
     private int serverCategoryId;
@@ -10,6 +14,15 @@ public class OrderedGood {
     private String goodDesc;
     private int serverShopId;
     private int serverUserId;
+    private int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public int getServerUserId() {
         return serverUserId;

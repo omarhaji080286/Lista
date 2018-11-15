@@ -1,4 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="filters_removed">Filters have been removed</string>
     <string name="app_name">Lista</string>
     <string name="my_goods">قائمة التسوق</string>
     <string name="search_goods">البحث عن سلعة</string>
