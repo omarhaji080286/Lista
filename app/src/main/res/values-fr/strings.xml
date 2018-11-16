@@ -137,4 +137,7 @@
     <string name="additional_good">Article supplémentaire</string>
     <string name="order_details">Détails de la commande</string>
     <string name="no_orders_registered">Aucune commande n\'a été enregistrée</string>
+    <string name="did_you_get_your_order">did you get your order?</string>
+    <string name="order_completed">Order completed ?</string>
+    <string name="not_yet">Not yet</string>
 </resources>

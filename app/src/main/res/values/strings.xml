@@ -148,6 +148,9 @@
 
     <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
     <string name="content_authority" translatable="false">com.winservices.wingoods</string>
+    <string name="did_you_get_your_order">Did you get your order ?</string>
+    <string name="order_completed">Order completed ?</string>
+    <string name="not_yet">Not yet</string>
 
 
 </resources>

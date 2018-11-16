@@ -60,22 +60,26 @@ public class MyOrdersActivity extends AppCompatActivity {
         rvOrders = findViewById(R.id.rv_orders);
         txtNoOrders = findViewById(R.id.txt_no_orders);
 
-        orders = new ArrayList<>();
 
-        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
-        dialog.show();
-        getOrders(this);
-    }
 
-    private void setRecyclerViewOrders() {
-        myOrdersAdapter = new MyOrdersAdapter(this, orders);
+        myOrdersAdapter = new MyOrdersAdapter(this);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvOrders.setLayoutManager(llm);
         rvOrders.setAdapter(myOrdersAdapter);
+
+        //getOrders(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getOrders(this);
     }
 
     private void getOrders(final Context context) {
-
+        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        dialog.show();
+        orders = new ArrayList<>();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_ORDERS,
                 new Response.Listener<String>() {
@@ -120,12 +124,15 @@ public class MyOrdersActivity extends AppCompatActivity {
                                     order.setStatusId(JSONShop.getInt("status_id"));
                                     order.setShop(shop);
 
-                                    orders.add(order);
+                                    if (order.getStatusId()!=Order.COMPLETED){
+                                        orders.add(order);
+                                    }
+
 
                                 }
 
                                 if (orders.size()>0) {
-                                    setRecyclerViewOrders();
+                                    myOrdersAdapter.setOrders(orders);
                                 } else {
                                     txtNoOrders.setVisibility(View.VISIBLE);
                                 }

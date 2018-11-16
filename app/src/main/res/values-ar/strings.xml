@@ -137,4 +137,7 @@
     <string name="additional_good">عنصر إضافي</string>
     <string name="order_details">تفاصيل الطلب</string>
     <string name="no_orders_registered">لم يتم تسجيل أي طلب</string>
+    <string name="did_you_get_your_order">did you get your order?</string>
+    <string name="order_completed">Order completed ?</string>
+    <string name="not_yet">Not yet</string>
 </resources>

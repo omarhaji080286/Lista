@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.winservices.wingoods.activities.OrderDetailsActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_complete_order"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/did_you_get_your_order"
+            style="@style/EditText"/>
+
+        <Button
+            android:id="@+id/btnCompleteOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="@string/yes"
+            style="@style/Button" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_order_goods"
@@ -14,4 +37,4 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"/>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

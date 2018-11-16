@@ -1,17 +1,21 @@
 package com.winservices.wingoods.activities;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,13 +24,8 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.OrderDetailsAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
-import com.winservices.wingoods.dbhelpers.UsersDataManager;
-import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.OrderedGood;
-import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
-import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -35,18 +34,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class OrderDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = "OrderDetailsActivity";
     private RecyclerView rvOrderDetails;
+    private LinearLayout llCompleteOrder;
+    private Button btnCompleteOrder;
     private List<OrderedGood> orderedGoods;
     private Dialog dialog;
     private int serverOrderId;
+    private int orderStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +63,89 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
 
         rvOrderDetails = findViewById(R.id.rv_order_goods);
+        llCompleteOrder = findViewById(R.id.ll_complete_order);
+        btnCompleteOrder = findViewById(R.id.btnCompleteOrder);
 
         orderedGoods = new ArrayList<>();
 
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
+        orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
+
+        if (orderStatus == Order.READ || orderStatus == Order.AVAILABLE || orderStatus == Order.IN_PREPARATION) {
+            llCompleteOrder.setVisibility(View.VISIBLE);
+        }
 
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         getOrderedGoods(this);
+        final Context context = this;
 
+        btnCompleteOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateOrderStatus(serverOrderId);
+            }
+        });
+
+    }
+
+    private void updateOrderStatus(final int serverOrderId) {
+        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        dialog.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_UPDATE_ORDER,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Order completed", Toast.LENGTH_SHORT).show();
+                                llCompleteOrder.setVisibility(View.GONE);
+                            }
+                            dialog.dismiss();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //adding coUser failed
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonRequest", "" + getJSONForUpdateOrder(serverOrderId));
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    private String getJSONForUpdateOrder(int serverOrderId) {
+        final JSONObject root = new JSONObject();
+        try {
+
+            root.put("server_order_id", serverOrderId);
+            root.put("status_id", Order.COMPLETED);
+
+            return root.toString(1);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't format JSON");
+        }
+
+        return null;
     }
 
     private void setRecyclerViewOrderedGoods() {
@@ -131,20 +207,20 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String, String> postData = new HashMap<>();
-                postData.put("jsonData", ""+getJSONForGetOrders(serverOrderId) );
+                postData.put("jsonData", "" + getJSONForGetOrders(serverOrderId));
                 return postData;
             }
         };
         RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
     }
 
-    private String getJSONForGetOrders(int serverOrderId){
+    private String getJSONForGetOrders(int serverOrderId) {
         final JSONObject root = new JSONObject();
         try {
 
-            root.put("serverOrderId", serverOrderId );
+            root.put("serverOrderId", serverOrderId);
 
             return root.toString(1);
 
@@ -159,13 +235,36 @@ public class OrderDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
-            case android.R.id.home :
-                finish();
+        switch (id) {
+            case android.R.id.home:
+                isYourOrderComplete();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void isYourOrderComplete() {
+        if (orderStatus == Order.READ || orderStatus == Order.AVAILABLE || orderStatus == Order.IN_PREPARATION) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(this));
+            builder.setMessage(R.string.did_you_get_your_order);
+            builder.setTitle(R.string.order_completed);
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    updateOrderStatus(serverOrderId);
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            builder.setNegativeButton(R.string.not_yet, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            Dialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     @Override

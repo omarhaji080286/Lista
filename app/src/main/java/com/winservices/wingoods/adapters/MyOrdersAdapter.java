@@ -17,16 +17,21 @@ import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.OrderVH;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
     private Context context;
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
-    public MyOrdersAdapter(Context context, List<Order> orders) {
+    public MyOrdersAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -54,6 +59,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 if (NetworkMonitor.checkNetworkConnection(context)) {
                     Intent intent = new Intent(context, OrderDetailsActivity.class);
                     intent.putExtra(Constants.ORDER_ID, order.getServerOrderId());
+                    intent.putExtra(Constants.ORDER_STATUS, order.getStatusId());
                     context.startActivity(intent);
                 } else {
                     Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
