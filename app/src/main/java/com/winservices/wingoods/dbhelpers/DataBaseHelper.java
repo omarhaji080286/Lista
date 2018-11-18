@@ -111,7 +111,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String GOODS_NUMBER = "goods_number";
     public static final String TAG = "DataBaseHelper";
     public static final String HOST_URL_SYNC = HOST + "sync.php";
-    public static final String HOST_URL_UPDATE_ORDER = HOST + "updateOrderByUser.php";
+    public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
 
     private final static int DATABASE_VERSION = 1;
 

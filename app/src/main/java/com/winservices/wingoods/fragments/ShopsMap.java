@@ -79,7 +79,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         mView = inflater.inflate(R.layout.fragment_shops_map, container, false);
 
         cardViewShop = mView.findViewById(R.id.cardview_shop);
-        shopIcon =  mView.findViewById(R.id.img_shop_icon);
+        shopIcon = mView.findViewById(R.id.img_shop_icon);
         shopName = mView.findViewById(R.id.txt_shop_name);
         shopType = mView.findViewById(R.id.txt_shop_type);
         shopAdress = mView.findViewById(R.id.txt_shop_adress);
@@ -100,7 +100,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         }
 
         MapView mapView = mView.findViewById(R.id.mapview_shops);
-        if (mapView !=null){
+        if (mapView != null) {
             mapView.onCreate(null);
             mapView.onResume();
             mapView.getMapAsync(this);
@@ -140,11 +140,11 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     private void buildMapsData() {
         if (mGoogleMap != null) {
             if (checkPermission(TXT_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && checkPermission(TXT_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    && checkPermission(TXT_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     showPermissionExplanation(TXT_FINE_LOCATION);
-                } else if (!permissionUtil.checkPermissionPreference("access_fine_location")){
+                } else if (!permissionUtil.checkPermissionPreference("access_fine_location")) {
                     requestPermission(TXT_FINE_LOCATION);
                     permissionUtil.updatePermissionPreference("access_fine_location");
                 } else {
@@ -157,7 +157,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        if (cardViewShop.getVisibility()==View.VISIBLE){
+                        if (cardViewShop.getVisibility() == View.VISIBLE) {
                             UtilsFunctions.collapse(cardViewShop);
                         }
                     }
@@ -180,7 +180,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         shopName.setText(marker.getTitle());
                         shopType.setText(marker.getSnippet());
 
-                        switch (marker.getSnippet()){
+                        switch (marker.getSnippet()) {
                             case Constants.SHOP_TYPE_1:
                                 shopIcon.setImageResource(R.drawable.others);
                                 break;
@@ -207,19 +207,19 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void setMarkersClickListener(final ArrayList<Shop> shopsWithMarkers){
+    private void setMarkersClickListener(final ArrayList<Shop> shopsWithMarkers) {
 
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                if (cardViewShop.getVisibility()==View.GONE){
+                if (cardViewShop.getVisibility() == View.GONE) {
                     UtilsFunctions.expand(cardViewShop);
                 }
 
                 Shop shop = new Shop();
                 for (int i = 0; i < shopsWithMarkers.size(); i++) {
-                    if (marker.getId().equals(shopsWithMarkers.get(i).getMarkerId())){
+                    if (marker.getId().equals(shopsWithMarkers.get(i).getMarkerId())) {
                         shop = shopsWithMarkers.get(i);
                     }
                 }
@@ -231,7 +231,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 shopCity.setText(shop.getCity().getCityName());
                 shopEmail.setText(shop.getShopEmail());
 
-                switch (shop.getShopType().getShopTypeName()){
+                switch (shop.getShopType().getShopTypeName()) {
                     case Constants.SHOP_TYPE_1:
                         shopIcon.setImageResource(R.drawable.others);
                         break;
@@ -243,14 +243,14 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         break;
                 }
 
-                if (serverCategoryIdToOrder!=0){
+                if (serverCategoryIdToOrder != 0) {
                     btnOrder.setVisibility(View.VISIBLE);
                     final Shop finalShop = shop;
                     btnOrder.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(getActivity(), OrderActivity.class);
-                            intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                            intent.putExtra(Constants.CATEGORY_TO_ORDER, serverCategoryIdToOrder);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);
                             startActivity(intent);
@@ -268,20 +268,20 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void addShopsMarkers(final ArrayList<Shop> shops){
+    private void addShopsMarkers(final ArrayList<Shop> shops) {
 
         for (int i = 0; i < shops.size(); i++) {
             final Shop shop = shops.get(i);
             BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
 
-            switch (shop.getShopType().getServerShopTypeId()){
+            switch (shop.getShopType().getServerShopTypeId()) {
                 case 1:
                     bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
                     break;
-                case 2 :
+                case 2:
                     bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                     break;
-                case 3 :
+                case 3:
                     bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                     break;
             }
@@ -301,7 +301,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private int checkPermission(int permission){
+    private int checkPermission(int permission) {
         int status = PackageManager.PERMISSION_DENIED;
         switch (permission) {
             case TXT_FINE_LOCATION:
@@ -327,12 +327,12 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void showPermissionExplanation(final int permission){
+    private void showPermissionExplanation(final int permission) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        if (permission==TXT_FINE_LOCATION){
+        if (permission == TXT_FINE_LOCATION) {
             builder.setMessage("This app needs to access your location. Please allow.");
             builder.setTitle("Location permission needed..");
-        } else if (permission==TXT_COARSE_LOCATION){
+        } else if (permission == TXT_COARSE_LOCATION) {
             builder.setMessage("This app needs to access your location. Please allow.");
             builder.setTitle("Location permission needed..");
         }
@@ -357,11 +357,10 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        Log.e(TAG,"entered on request permission");
+        Log.e(TAG, "entered on request permission");
         switch (requestCode) {
             case REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -378,7 +377,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void goToAppSettings(){
+    private void goToAppSettings() {
         Toast.makeText(getContext(), R.string.allow_location_permission_in_settings, Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -387,19 +386,19 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         this.startActivity(intent);
     }
 
-    public void setShopNameFilter(ArrayList<Shop> newList){
+    public void setShopNameFilter(ArrayList<Shop> newList) {
         mGoogleMap.clear();
         addShopsMarkers(newList);
 
     }
 
-    public void setShopsFilter(ShopsFilter shopsFilter){
+    public void setShopsFilter(ShopsFilter shopsFilter) {
         ArrayList<Shop> newList = new ArrayList<>();
         for (int j = 0; j < shopsFilter.getSelectedCities().size(); j++) {
             City city = shopsFilter.getSelectedCities().get(j);
-            for (int i = 0; i < shops.size() ; i++) {
+            for (int i = 0; i < shops.size(); i++) {
                 Shop shop = shops.get(i);
-                if(shop.getCity().getServerCityId()==city.getServerCityId()){
+                if (shop.getCity().getServerCityId() == city.getServerCityId()) {
                     newList.add(shop);
                 }
             }
@@ -408,7 +407,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         addShopsMarkers(newList);
     }
 
-    public void setShops(ArrayList<Shop> shops){
+    public void setShops(ArrayList<Shop> shops) {
         mGoogleMap.clear();
         addShopsMarkers(shops);
     }

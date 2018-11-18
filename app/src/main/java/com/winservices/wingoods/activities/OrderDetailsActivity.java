@@ -11,9 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -43,8 +40,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = "OrderDetailsActivity";
     private RecyclerView rvOrderDetails;
-    private LinearLayout llCompleteOrder;
-    private Button btnCompleteOrder;
     private List<OrderedGood> orderedGoods;
     private Dialog dialog;
     private int serverOrderId;
@@ -63,37 +58,24 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
 
         rvOrderDetails = findViewById(R.id.rv_order_goods);
-        llCompleteOrder = findViewById(R.id.ll_complete_order);
-        btnCompleteOrder = findViewById(R.id.btnCompleteOrder);
 
         orderedGoods = new ArrayList<>();
 
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
         orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
 
-        if (orderStatus == Order.READ || orderStatus == Order.AVAILABLE || orderStatus == Order.IN_PREPARATION) {
-            llCompleteOrder.setVisibility(View.VISIBLE);
-        }
-
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         getOrderedGoods(this);
-        final Context context = this;
 
-        btnCompleteOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateOrderStatus(serverOrderId);
-            }
-        });
 
     }
 
-    private void updateOrderStatus(final int serverOrderId) {
+    private void completeOrder(final int serverOrderId) {
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                DataBaseHelper.HOST_URL_UPDATE_ORDER,
+                DataBaseHelper.HOST_URL_COMPLETE_ORDER,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -106,7 +88,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Order completed", Toast.LENGTH_SHORT).show();
-                                llCompleteOrder.setVisibility(View.GONE);
                             }
                             dialog.dismiss();
 
@@ -245,13 +226,13 @@ public class OrderDetailsActivity extends AppCompatActivity {
     }
 
     private void isYourOrderComplete() {
-        if (orderStatus == Order.READ || orderStatus == Order.AVAILABLE || orderStatus == Order.IN_PREPARATION) {
+        if ( orderStatus == Order.AVAILABLE ) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(this));
             builder.setMessage(R.string.did_you_get_your_order);
             builder.setTitle(R.string.order_completed);
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    updateOrderStatus(serverOrderId);
+                    completeOrder(serverOrderId);
                     dialog.dismiss();
                     finish();
                 }
@@ -264,6 +245,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
             });
             Dialog dialog = builder.create();
             dialog.show();
+        } else {
+            finish();
         }
     }
 
