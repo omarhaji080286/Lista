@@ -35,7 +35,7 @@ public class NetworkMonitor extends BroadcastReceiver {
 
         if (checkNetworkConnection(context)) {
 
-            SyncHelper.sync(context);
+            //SyncHelper.sync(context);
         }
 
     }

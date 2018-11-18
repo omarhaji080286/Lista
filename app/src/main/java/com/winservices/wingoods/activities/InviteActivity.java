@@ -168,7 +168,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (res1) {
             case Constants.SUCCESS:
-                SyncHelper.sync(this);
+                //SyncHelper.sync(this);
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:

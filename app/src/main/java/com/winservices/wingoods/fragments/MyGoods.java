@@ -77,7 +77,7 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
     public void onResume() {
         super.onResume();
 
-        SyncHelper.sync(getContext());
+        //SyncHelper.sync(getContext());
         searchView.setSelected(false);
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
