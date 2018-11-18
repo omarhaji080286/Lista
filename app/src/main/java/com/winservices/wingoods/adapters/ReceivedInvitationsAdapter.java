@@ -103,12 +103,11 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
                 Synchronizer sync = new Synchronizer(context);
                 sync.deleteAllUserDataOnServerAndSyncGroup(context, user, invitation);
 
-
             } else {
                 Toast.makeText(context, R.string.invitation_declined, Toast.LENGTH_SHORT).show();
             }
 
-            ListaSyncAdapter.syncImmediately(context);
+
 
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

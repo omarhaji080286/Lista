@@ -6,6 +6,7 @@ import android.app.job.JobService;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.sync.ListaSyncAdapter;
 
@@ -31,8 +32,7 @@ public class MJobScheduler extends JobService {
             public void run() {
 
                 if (jobCancelled){ return; }
-
-                //ListaSyncAdapter.syncImmediately(getApplicationContext());
+                //SyncHelper.sync(getApplicationContext());
 
                 /* (int i = 0; i < 10; i++) {
                   Log.d(TAG, "run : " + i);

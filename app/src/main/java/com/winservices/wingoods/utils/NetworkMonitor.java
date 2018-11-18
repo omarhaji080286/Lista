@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.Good;
@@ -34,8 +35,7 @@ public class NetworkMonitor extends BroadcastReceiver {
 
         if (checkNetworkConnection(context)) {
 
-            ListaSyncAdapter.syncImmediately(context);
-
+            SyncHelper.sync(context);
         }
 
     }

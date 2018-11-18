@@ -43,6 +43,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.MyGoods;
@@ -322,7 +323,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.sync:
                if (NetworkMonitor.checkNetworkConnection(this)){
                    syncTriggeredByUser = true;
-                   ListaSyncAdapter.syncImmediately(this);
+                   SyncHelper.sync(this);
                } else {
                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
                }

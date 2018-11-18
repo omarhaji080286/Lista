@@ -26,6 +26,7 @@ import com.winservices.wingoods.dbhelpers.CoUsersDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Group;
@@ -167,7 +168,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (res1) {
             case Constants.SUCCESS:
-                ListaSyncAdapter.syncImmediately(this);
+                SyncHelper.sync(this);
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:

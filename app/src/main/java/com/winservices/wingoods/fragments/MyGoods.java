@@ -21,6 +21,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesInMyGoodsAdapter;
 import com.winservices.wingoods.adapters.MyGoodsAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
@@ -76,8 +77,7 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
     public void onResume() {
         super.onResume();
 
-        ListaSyncAdapter.syncImmediately(getContext());
-
+        SyncHelper.sync(getContext());
         searchView.setSelected(false);
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
