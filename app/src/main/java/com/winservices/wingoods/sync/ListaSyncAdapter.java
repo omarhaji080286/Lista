@@ -59,7 +59,7 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
 
-        Log.d(LOG_TAG, "Starting sync");
+        /*Log.d(LOG_TAG, "Starting sync");
         String response;
 
         try {
@@ -89,7 +89,7 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
         } finally {
             Log.d(LOG_TAG, "Sync finished");
-        }
+        }*/
 
     }
 
