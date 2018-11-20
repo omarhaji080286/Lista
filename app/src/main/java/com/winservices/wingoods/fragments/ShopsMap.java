@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -43,6 +45,7 @@ import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     private ArrayList<Shop> shops;
 
-    private TextView shopName, shopType, shopAdress, shopPhone, shopEmail, shopCity;
+    private TextView shopName, shopType, shopPhone, shopCity;
     private CardView cardViewShop;
     private ImageView shopIcon;
     private Button btnOrder;
@@ -82,9 +85,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         shopIcon = mView.findViewById(R.id.img_shop_icon);
         shopName = mView.findViewById(R.id.txt_shop_name);
         shopType = mView.findViewById(R.id.txt_shop_type);
-        shopAdress = mView.findViewById(R.id.txt_shop_adress);
         shopPhone = mView.findViewById(R.id.txt_shop_phone);
-        shopEmail = mView.findViewById(R.id.txt_shop_email);
         shopCity = mView.findViewById(R.id.txt_shop_city);
         btnOrder = mView.findViewById(R.id.btn_order);
 
@@ -226,22 +227,11 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                 shopName.setText(shop.getShopName());
                 shopType.setText(shop.getShopType().getShopTypeName());
-                shopAdress.setText(shop.getShopAdress());
                 shopPhone.setText(shop.getShopPhone());
                 shopCity.setText(shop.getCity().getCityName());
-                shopEmail.setText(shop.getShopEmail());
-
-                switch (shop.getShopType().getShopTypeName()) {
-                    case Constants.SHOP_TYPE_1:
-                        shopIcon.setImageResource(R.drawable.others);
-                        break;
-                    case Constants.SHOP_TYPE_2:
-                        shopIcon.setImageResource(R.drawable.steak);
-                        break;
-                    case Constants.SHOP_TYPE_3:
-                        shopIcon.setImageResource(R.drawable.fruit);
-                        break;
-                }
+                String imagePath = SharedPrefManager.getInstance(getContext()).getShopImagePath(shop.getServerShopId());
+                Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+                shopIcon.setImageBitmap(bitmap);
 
                 if (serverCategoryIdToOrder != 0) {
                     btnOrder.setVisibility(View.VISIBLE);

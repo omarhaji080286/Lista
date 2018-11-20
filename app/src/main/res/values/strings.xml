@@ -151,6 +151,7 @@
     <string name="did_you_get_your_order">Did you get your order ?</string>
     <string name="order_completed">Order completed ?</string>
     <string name="not_yet">Not yet</string>
+    <string name="next">Next</string>
 
 
 </resources>

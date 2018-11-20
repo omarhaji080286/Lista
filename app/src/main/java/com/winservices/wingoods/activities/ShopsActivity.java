@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -36,32 +37,36 @@ import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ShopsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private static final String TAG = "ShopsActivity";
     public static final String SHOPS_TAG = "shops";
-    private ViewPager mViewPager;
+    public static final int REQUEST_FOR_FILTERS = 101;
+    private static final String TAG = "ShopsActivity";
+    private final static int TAB_MAP = 0;
+    private final static int TAB_LIST = 1;
     TabLayout tabLayout;
+    private ViewPager mViewPager;
     private SectionPageAdapter mSectionPageAdapter;
     private ArrayList<Shop> shops, shopsFirstList;
     private Dialog dialog;
-    private final static int TAB_MAP = 0;
-    private final static int TAB_LIST = 1;
     private int serverCategoryIdToOrder;
     private int currentTab = TAB_MAP;
     private ShopsMap shopsMap;
     private ShopsList shopsList;
-    public static final int REQUEST_FOR_FILTERS = 101;
     private ShopsFilter shopsFilter;
 
     @Override
@@ -77,7 +82,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         shopsFirstList = new ArrayList<>();
         shopsFilter = new ShopsFilter();
 
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -87,8 +92,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
             public void onTabSelected(TabLayout.Tab tab) {
                 currentTab = tab.getPosition();
             }
+
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {            }
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 currentTab = tab.getPosition();
@@ -98,7 +106,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         Intent intent = getIntent();
         serverCategoryIdToOrder = intent.getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
 
-        if (serverCategoryIdToOrder!=0){
+        if (serverCategoryIdToOrder != 0) {
             initActivityVariables(TAB_LIST, getString(R.string.shop_selection));
         } else {
             initActivityVariables(TAB_MAP, getString(R.string.lista_shops));
@@ -109,12 +117,12 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     }
 
 
-    private void initActivityVariables(int tab, String activityTitle){
+    private void initActivityVariables(int tab, String activityTitle) {
         this.currentTab = tab;
         setTitle(activityTitle);
     }
 
-    private void setDialog(int msgId){
+    private void setDialog(int msgId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.progress, null);
         TextView msg = view.findViewById(R.id.txt_msg_progress);
@@ -126,12 +134,12 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     }
 
 
-    private void setupTabIcons(){
+    private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(R.drawable.map);
         tabLayout.getTabAt(1).setIcon(R.drawable.list);
     }
 
-    private void setupViewPagerAdapter(ArrayList<Shop> shops){
+    private void setupViewPagerAdapter(ArrayList<Shop> shops) {
         mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
         shopsMap = new ShopsMap();
@@ -154,11 +162,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == REQUEST_FOR_FILTERS) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 shopsFilter = (ShopsFilter) data.getSerializableExtra("filter");
                 shopsList.adapter.setShops(shopsFirstList);
                 shopsMap.setShops(shopsFirstList);
-                if (shopsFilter.isEnable()){
+                if (shopsFilter.isEnable()) {
                     shopsList.adapter.setShopsFilter(shopsFilter);
                     shopsMap.setShopsFilter(shopsFilter);
                 }
@@ -170,86 +178,90 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     }
 
 
-    private void returnToMainActivity(){
+    private void returnToMainActivity() {
         int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, R.id.nav_my_goods);
         Intent intent = new Intent();
         intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
-        setResult(MainActivity.FRAGMENT_REQUEST_CODE,intent);
+        setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);
         this.finish();
     }
 
     private void getShops(final Context context) {
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                    DataBaseHelper.HOST_URL_GET_SHOPS,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
-                                String message = jsonObject.getString("message");
-                                if (error) {
-                                    //error in server
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    JSONArray JSONShops = jsonObject.getJSONArray("shops");
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_GET_SHOPS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                JSONArray JSONShops = jsonObject.getJSONArray("shops");
 
-                                    for (int i = 0; i < JSONShops.length(); i++) {
-                                        JSONObject JSONShop = JSONShops.getJSONObject(i);
+                                for (int i = 0; i < JSONShops.length(); i++) {
+                                    JSONObject JSONShop = JSONShops.getJSONObject(i);
 
-                                        Shop shop = new Shop();
+                                    Shop shop = new Shop();
 
-                                        int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
-                                        String shopTypeName = JSONShop.getString("shop_type_name");
-                                        ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                                    int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
+                                    String shopTypeName = JSONShop.getString("shop_type_name");
+                                    ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
 
-                                        int serverCountryId = JSONShop.getInt("server_country_id");
-                                        String countryName = JSONShop.getString("country_name");
-                                        Country country = new Country(serverCountryId, countryName);
+                                    int serverCountryId = JSONShop.getInt("server_country_id");
+                                    String countryName = JSONShop.getString("country_name");
+                                    Country country = new Country(serverCountryId, countryName);
 
-                                        int serverCityId = JSONShop.getInt("server_city_id");
-                                        String cityName = JSONShop.getString("city_name");
-                                        City city = new City(serverCityId,cityName, country );
+                                    int serverCityId = JSONShop.getInt("server_city_id");
+                                    String cityName = JSONShop.getString("city_name");
+                                    City city = new City(serverCityId, cityName, country);
 
-                                        shop.setServerShopId(JSONShop.getInt("server_shop_id"));
-                                        shop.setShopName(JSONShop.getString("shop_name"));
-                                        shop.setShopAdress(JSONShop.getString("shop_adress"));
-                                        shop.setShopEmail(JSONShop.getString("shop_email"));
-                                        shop.setShopPhone(JSONShop.getString("shop_phone"));
-                                        shop.setLongitude(JSONShop.getDouble("longitude"));
-                                        shop.setLatitude(JSONShop.getDouble("latitude"));
-                                        shop.setShopType(shopType);
-                                        shop.setCity(city);
-                                        shop.setCountry(country);
+                                    shop.setServerShopId(JSONShop.getInt("server_shop_id"));
+                                    shop.setShopName(JSONShop.getString("shop_name"));
+                                    shop.setShopAdress(JSONShop.getString("shop_adress"));
+                                    shop.setShopEmail(JSONShop.getString("shop_email"));
+                                    shop.setShopPhone(JSONShop.getString("shop_phone"));
+                                    shop.setLongitude(JSONShop.getDouble("longitude"));
+                                    shop.setLatitude(JSONShop.getDouble("latitude"));
+                                    shop.setShopType(shopType);
+                                    shop.setCity(city);
+                                    shop.setCountry(country);
 
-                                        shops.add(shop);
-                                        shopsFirstList.add(shop);
-                                    }
-                                    setupViewPagerAdapter(shops);
+                                    String shopImage = JSONShop.getString("shop_image");
+                                    storeImageToFile(shopImage, shop.getServerShopId());
+
+                                    shops.add(shop);
+                                    shopsFirstList.add(shop);
                                 }
-
-                                dialog.dismiss();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                setupViewPagerAdapter(shops);
                             }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //adding coUser failed
+
+                            dialog.dismiss();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-            ) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> postData = new HashMap<>();
-                    postData.put("jsonData", "" );
-                    return postData;
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //adding coUser failed
+                        dialog.dismiss();
+                    }
                 }
-            };
-            RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonData", "");
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
     }
 
     @Override
@@ -288,7 +300,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                UtilsFunctions.hideKeyboard(getApplicationContext(), searchView );
+                UtilsFunctions.hideKeyboard(getApplicationContext(), searchView);
                 return false;
             }
         });
@@ -300,20 +312,20 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.item_filter_shops:
-                //TO DO
+                //TODO
                 //Activity for filtering the list using different creterias
-                if (NetworkMonitor.checkNetworkConnection(this)){
+                if (NetworkMonitor.checkNetworkConnection(this)) {
                     Intent filtersIntent = new Intent(ShopsActivity.this, FilterShopsActivity.class);
-                    filtersIntent.putExtra("shopsFilter",shopsFilter);
+                    filtersIntent.putExtra("shopsFilter", shopsFilter);
                     startActivityForResult(filtersIntent, REQUEST_FOR_FILTERS);
                 } else {
                     Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
                 }
 
                 break;
-            case android.R.id.home :
+            case android.R.id.home:
                 returnToMainActivity();
                 break;
         }
@@ -330,9 +342,9 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     public boolean onQueryTextChange(String newText) {
         newText = newText.toLowerCase();
         ArrayList<Shop> newList = new ArrayList<>();
-        for(Shop shop : shops){
+        for (Shop shop : shops) {
             String shopName = shop.getShopName().toLowerCase();
-            if (shopName.contains(newText)){
+            if (shopName.contains(newText)) {
                 newList.add(shop);
             }
         }
@@ -340,6 +352,33 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         shopsList.setShopNameFilter(newList);
         shopsMap.setShopNameFilter(newList);
         return true;
+    }
+
+
+    private void storeImageToFile(final String shopImage, final int serverShopId) {
+        final String file_path = this.getFilesDir().getPath() + "/jpg";
+        Thread thread = new Thread(){
+            public void run() {
+                File dir = new File(file_path);
+                if (!dir.exists()) dir.mkdirs();
+                File file = new File(dir, "lista_pro_shop_" + serverShopId + ".jpg");
+                FileOutputStream fOut;
+                try {
+                    fOut = new FileOutputStream(file);
+                    Bitmap bitmap = UtilsFunctions.stringToBitmap(shopImage);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
+                    fOut.flush();
+                    fOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                SharedPrefManager.getInstance(getApplicationContext()).storeShopImagePath(serverShopId,file.getAbsolutePath());
+            }
+        };
+        thread.run();
+
+
+
     }
 
     @Override
