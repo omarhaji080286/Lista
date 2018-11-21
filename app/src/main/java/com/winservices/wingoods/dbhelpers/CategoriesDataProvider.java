@@ -110,9 +110,12 @@ public class CategoriesDataProvider {
             int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
             Log.d(TAG, Constants.TAG_LISTA+"getCategoryByName called");
-            return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+            Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+            category.setDCategoryID(dCategoryId);
+            return category;
         }
 
     }
@@ -128,9 +131,12 @@ public class CategoriesDataProvider {
         //int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
         Log.d(TAG, Constants.TAG_LISTA+"getCategoryByServerCategoryIdAndUserId called");
-        return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        category.setDCategoryID(dCategoryId);
+        return category;
     }
 
     public Category getCategoryByCrud(int crudStatus) {
@@ -145,9 +151,12 @@ public class CategoriesDataProvider {
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
         Log.d(TAG, Constants.TAG_LISTA+"getCategoryByCrud called");
-        return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        category.setDCategoryID(dCategoryId);
+        return category;
     }
 
 
@@ -162,7 +171,10 @@ public class CategoriesDataProvider {
             int sync = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
+
             Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email);
+            category.setDCategoryID(dCategoryId);
             list.add(category);
         }
         cursor.close();
@@ -185,9 +197,10 @@ public class CategoriesDataProvider {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
             Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
-
+            category.setDCategoryID(dCategoryId);
             categories.add(category);
 
         }
@@ -210,8 +223,10 @@ public class CategoriesDataProvider {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
             Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+            category.setDCategoryID(dCategoryId);
             categories.add(category);
         }
         cursor.close();
@@ -233,6 +248,8 @@ public class CategoriesDataProvider {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
+
             int goodsToBuyNumber = getGoodsToBuyNumber(categoryId);
             int orderedGoodsNumber = getOrderedGoodsNumber(categoryId);
             int goodsNumber = getGoodsNumber(categoryId);
@@ -241,6 +258,7 @@ public class CategoriesDataProvider {
             category.setGoodsToBuyNumber(goodsToBuyNumber);
             category.setOrderedGoodsNumber(orderedGoodsNumber);
             category.setGoodsNumber(goodsNumber);
+            category.setDCategoryID(dCategoryId);
 
             categories.add(category);
 
@@ -265,8 +283,10 @@ public class CategoriesDataProvider {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+            int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
             Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+            category.setDCategoryID(dCategoryId);
 
             categories.add(category);
 
@@ -290,10 +310,12 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
         Log.d(TAG, Constants.TAG_LISTA+"getCategoryByGoodId called");
-
-        return new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        category.setDCategoryID(dCategoryId);
+        return category;
     }
 
 
@@ -309,6 +331,7 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
         int goodsToBuyNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GOODS_TO_BUY_NUMBER));
         int orderedGoodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.ORDERED_GOODS_NUMBER));
         int goodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GOODS_NUMBER));
@@ -317,6 +340,7 @@ public class CategoriesDataProvider {
         category.setGoodsToBuyNumber(goodsToBuyNumber);
         category.setOrderedGoodsNumber(orderedGoodsNumber);
         category.setGoodsNumber(goodsNumber);
+        category.setDCategoryID(dCategoryId);
 
         Log.d(TAG, Constants.TAG_LISTA+"getCategoryById called");
         return category;
@@ -336,8 +360,10 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int crud = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CRUD_STATUS));
         //int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
         Category category =  new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        category.setDCategoryID(dCategoryId);
 
         Log.d(TAG, Constants.TAG_LISTA+"getCategoryByServerCategoryId called");
         return category;

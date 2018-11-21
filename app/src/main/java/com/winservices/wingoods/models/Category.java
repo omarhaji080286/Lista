@@ -14,6 +14,8 @@ import java.util.List;
 
 public class Category {
 
+    public static final String PREFIX_D_CATEGORY = "d_category_";
+
     private int categoryId = 0;
     private String categoryName;
     private int color;
@@ -23,10 +25,19 @@ public class Category {
     private String email;
     private int crudStatus;
     private int serverCategoryId = 0;
+    private int dCategoryId;
 
     private int goodsToBuyNumber;
     private int orderedGoodsNumber;
     private int goodsNumber;
+
+    public int getDCategoryId() {
+        return dCategoryId;
+    }
+
+    public void setDCategoryID(int dCategoryId) {
+        this.dCategoryId = dCategoryId;
+    }
 
     public int getGoodsNumber() {
         return goodsNumber;

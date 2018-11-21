@@ -296,4 +296,9 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SyncHelper.sync(getContext());
+    }
 }

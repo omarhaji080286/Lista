@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
@@ -54,7 +53,6 @@ import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Icon;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
-import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -468,7 +466,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             userToRegister.setFcmToken(fcmToken);
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                    DataBaseHelper.HOST_URL_ADD_USER,
+                    DataBaseHelper.HOST_URL_REGISTER_USER,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -544,17 +542,19 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
                 String categoryName = JSONCategory.getString("category_name");
                 int crudStatus = JSONCategory.getInt("crud_status");
+                int dCategoryId = JSONCategory.getInt("d_category_id");
                 int sync = DataBaseHelper.SYNC_STATUS_FAILED;
                 String email = currentUser.getEmail();
                 int userId = currentUser.getUserId();
                 int serverCategoryId = 0;
-                Icon icon = new Icon(this);
                 int color = Color.getRandomColor(this);
 
-                int iconId = icon.getIcon(crudStatus);
+                String dCategoryImage = JSONCategory.getString("d_category_image");
+                SharedPrefManager.getInstance(this).storeImageToFile(dCategoryImage, "png", Category.PREFIX_D_CATEGORY, dCategoryId);
 
-                Category category = new Category(categoryName, color, iconId, sync, userId, email, serverCategoryId);
+                Category category = new Category(categoryName, color, 0, sync, userId, email, serverCategoryId);
                 category.setCrudStatus(crudStatus);
+                category.setDCategoryID(dCategoryId);
 
                 DataManager dataManager = new DataManager(this);
                 dataManager.addCategory(this, category);

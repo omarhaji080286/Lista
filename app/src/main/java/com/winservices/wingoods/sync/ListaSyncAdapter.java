@@ -290,9 +290,11 @@ public class ListaSyncAdapter extends AbstractThreadedSyncAdapter {
             String email = JSONCategory.getString("email");
             int crudStatus = JSONCategory.getInt("crudStatus");
             int userId = usersDataManager.getCurrentUser().getUserId();
+            int dCategoryId = JSONCategory.getInt("d_category_id");
 
             Category category = new Category(categoryName, color, icon,sync,userId, email, serverCategoryId);
             category.setCrudStatus(crudStatus);
+            category.setDCategoryID(dCategoryId);
             dataManager.addCategory(getContext(), category);
 
         }

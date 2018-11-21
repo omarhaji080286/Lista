@@ -48,6 +48,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_CATEGORY_COLOR = "category_color";
     static final String COL_CATEGORY_ICON = "category_icon";
     static final String COL_CRUD_STATUS = "crud_status";
+    static final String COL_D_CATEGORY_ID = "d_category_id";
+
 
     private static final String TABLE_CO_USERS = "co_users";
     static final String COL_CONFIRMATION_STATUS = "confirmation_status";
@@ -88,7 +90,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     public static final String COL_IS_ORDERED = "is_ordered";
-    public static final String HOST_URL_ADD_USER = HOST + "registerUser.php";
+    public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
     public static final String HOST_URL_GET_INVITATIONS = HOST + "getInvitations.php";
@@ -190,8 +192,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "user_id INTEGER, " +
                 "email TEXT, " +
                 "crud_status INTEGER, " +
-                "server_category_id INTEGER, " +
-                "FOREIGN KEY (user_id) REFERENCES users (user_id)) ");
+                "server_category_id INTEGER," +
+                "d_category_id INTEGER, " +
+                "FOREIGN KEY (user_id) REFERENCES users (user_id) ) ");
 
         db.execSQL("CREATE TABLE goods (" +
                 "good_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -215,6 +218,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_group_id INTEGER, " +
                 "server_co_user_id INTEGER, " +
                 "FOREIGN KEY (user_id) REFERENCES users (user_id)) ");
+
 
     }
 
@@ -1106,6 +1110,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_USERID, category.getUserId());
         contentValues.put(COL_CRUD_STATUS, category.getCrudStatus());
         contentValues.put(COL_SERVER_CATEGORY_ID, category.getServerCategoryId());
+        contentValues.put(COL_D_CATEGORY_ID, category.getDCategoryId());
 
         int affectedRows = 0;
         try {
@@ -1293,6 +1298,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_USERID, category.getUserId());
         contentValues.put(COL_CRUD_STATUS, category.getCrudStatus());
         contentValues.put(COL_SERVER_CATEGORY_ID, category.getServerCategoryId());
+        contentValues.put(COL_D_CATEGORY_ID, category.getDCategoryId());
 
         long result = db.insert(TABLE_CATEGORIES, null, contentValues);
         return (result != -1);

@@ -3,6 +3,9 @@ package com.winservices.wingoods.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Icon;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bumptech.glide.util.Util;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableListPosition;
@@ -29,6 +33,7 @@ import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
@@ -221,7 +226,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         Category category = ((CategoryGroup) group).getCategory();
 
         holder.setCategoryName(group.getTitle());
-        holder.categoryIcon.setImageResource(category.getIcon());
+
+        String imgPath =SharedPrefManager.getInstance(context).getImagePath(Category.PREFIX_D_CATEGORY+category.getDCategoryId());
+        Bitmap bitmap =  UtilsFunctions.getOrientedBitmap(imgPath);
+        holder.categoryIcon.setImageBitmap(bitmap);
 
         int goodsToBuyNumber = category.getGoodsToBuyNumber();
         int orderedGoodsNumber = category.getOrderedGoodsNumber();

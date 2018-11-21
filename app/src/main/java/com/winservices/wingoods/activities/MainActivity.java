@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity
 
                             Category category = new Category(categoryName.trim(), Color.getRandomColor(context), R.drawable.others,
                                     DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getUserId(), currentUser.getEmail());
+                            category.setDCategoryID(Constants.USER_D_CATEGORY_ID);
 
                             DataManager dataManager = new DataManager(context);
                             int result = dataManager.addCategory(context, category);

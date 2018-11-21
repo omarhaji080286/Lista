@@ -377,8 +377,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         };
         thread.run();
 
-
-
     }
 
     @Override

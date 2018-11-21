@@ -31,4 +31,5 @@ public class Constants {
     public static final String ORDER_ID = "orderId";
     public static final String TAG_LISTA = "LISTA - ";
     public static final String ORDER_STATUS = "order_status" ;
+    public static final int USER_D_CATEGORY_ID = 99;
 }

@@ -3,11 +3,9 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,7 +19,6 @@ import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
-import com.winservices.wingoods.utils.NetworkMonitor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +57,7 @@ public class Synchronizer {
                     DataBaseHelper.HOST_URL_SYNC,
                     future,future) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
+                protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
                     postData.put("jsonData", "" + jsonData);
                     return postData;
@@ -73,7 +70,7 @@ public class Synchronizer {
             processSyncResponse(response);
             sendSyncBroadCast(context);
 
-        } catch (InterruptedException | ExecutionException | JSONException | TimeoutException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         } finally {
@@ -160,7 +157,7 @@ public class Synchronizer {
         return null;
     }
 
-    private void processSyncResponse(String response) throws JSONException{
+    private void processSyncResponse(String response) {
 
         try{
             JSONObject jsonObject = new JSONObject(response);
@@ -284,9 +281,11 @@ public class Synchronizer {
             String email = JSONCategory.getString("email");
             int crudStatus = JSONCategory.getInt("crudStatus");
             int userId = usersDataManager.getCurrentUser().getUserId();
+            int dCategoryId = JSONCategory.getInt("d_category_id");
 
             Category category = new Category(categoryName, color, icon,sync,userId, email, serverCategoryId);
             category.setCrudStatus(crudStatus);
+            category.setDCategoryID(dCategoryId);
             dataManager.addCategory(context, category);
 
         }
@@ -357,7 +356,7 @@ public class Synchronizer {
             int serverCategoryId = JSONCategoryIds.getInt("serverCategoryId");
 
             CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-            Category category = categoriesDataProvider.getCategoryById( deviceCategoryId);
+            Category category = categoriesDataProvider.getCategoryById(deviceCategoryId);
 
             category.setServerCategoryId(serverCategoryId);
             category.setSync(DataBaseHelper.SYNC_STATUS_OK);
@@ -422,7 +421,7 @@ public class Synchronizer {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String, String> postData = new HashMap<>();
                 postData.put("server_user_id", "" + user.getServerUserId());
                 postData.put("server_co_user_id", "" + invitation.getServerCoUserId());
