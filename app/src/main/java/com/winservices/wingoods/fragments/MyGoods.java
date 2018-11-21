@@ -77,7 +77,7 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
     public void onResume() {
         super.onResume();
 
-        //SyncHelper.sync(getContext());
+        SyncHelper.sync(getContext());
         searchView.setSelected(false);
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
@@ -88,14 +88,14 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         //Adapter for Goods expandable recycler list view
         mAdapter = new MyGoodsAdapter(categories, getContext());
 
-        final int GRID_COLOMN_NUMBER = 3;
-        GridLayoutManager glm1 = new GridLayoutManager(getContext(), GRID_COLOMN_NUMBER);
+        final int GRID_COLUMN_NUMBER = 3;
+        GridLayoutManager glm1 = new GridLayoutManager(getContext(), GRID_COLUMN_NUMBER);
         glm1.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 switch (mAdapter.getItemViewType(position)) {
                     case 2:
-                        return GRID_COLOMN_NUMBER;
+                        return GRID_COLUMN_NUMBER;
                     default:
                         return 1;
                 }
