@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.winservices.wingoods.fragments.ShopsList;
 import com.winservices.wingoods.fragments.ShopsMap;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
@@ -49,6 +51,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShopsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -207,6 +210,19 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                                     JSONObject JSONShop = JSONShops.getJSONObject(i);
 
                                     Shop shop = new Shop();
+
+                                    JSONArray JSONDCategories = JSONShop.getJSONArray("d_categories");
+                                    List<DefaultCategory> defaultCategories = new ArrayList<>();
+                                    for (int j = 0; j < JSONDCategories.length(); j++) {
+                                        JSONObject JSONDCategory =  JSONDCategories.getJSONObject(j);
+                                        int dCategoryId = JSONDCategory.getInt("d_category_id");
+                                        String dCategoryName = JSONDCategory.getString("d_category_name");
+
+                                        DefaultCategory dCategory = new DefaultCategory(dCategoryId, dCategoryName);
+                                        defaultCategories.add(dCategory);
+                                    }
+
+                                    shop.setDefaultCategories(defaultCategories);
 
                                     int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
                                     String shopTypeName = JSONShop.getString("shop_type_name");

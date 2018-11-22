@@ -1,18 +1,13 @@
 package com.winservices.wingoods.utils;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +16,6 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.support.v7.app.AlertDialog;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;

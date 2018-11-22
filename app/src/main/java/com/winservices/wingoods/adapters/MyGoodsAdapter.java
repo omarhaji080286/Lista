@@ -29,6 +29,7 @@ import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
@@ -227,7 +228,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         holder.setCategoryName(group.getTitle());
 
-        String imgPath =SharedPrefManager.getInstance(context).getImagePath(Category.PREFIX_D_CATEGORY+category.getDCategoryId());
+        String imgPath =SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY+category.getDCategoryId());
         Bitmap bitmap =  UtilsFunctions.getOrientedBitmap(imgPath);
         holder.categoryIcon.setImageBitmap(bitmap);
 

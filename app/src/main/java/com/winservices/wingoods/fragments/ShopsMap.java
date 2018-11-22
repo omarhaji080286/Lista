@@ -3,6 +3,7 @@ package com.winservices.wingoods.fragments;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +27,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -40,20 +47,33 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
+import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.models.City;
+import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
-    private static final String TAG = "ShopMaps";
+    private static final String TAG = ShopsMap.class.getSimpleName();
 
     private final static int REQUEST_ACCESS_FINE_LOCATION = 101;
     private final static int REQUEST_ACCESS_COARSE_LOCATION = 102;
@@ -72,8 +92,12 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     private CardView cardViewShop;
     private ImageView shopIcon;
     private Button btnOrder;
+    private RecyclerView rvDCategories;
+    private DefaultCategoriesAdapter dCategoriesAdapter;
 
     private int serverCategoryIdToOrder;
+
+    private Shop currentShop = null;
 
 
     @Nullable
@@ -88,6 +112,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         shopPhone = mView.findViewById(R.id.txt_shop_phone);
         shopCity = mView.findViewById(R.id.txt_shop_city);
         btnOrder = mView.findViewById(R.id.btn_order);
+        rvDCategories = mView.findViewById(R.id.rv_d_categories);
 
         return mView;
     }
@@ -95,6 +120,10 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        rvDCategories.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false ));
+        //dCategoriesAdapter = new DefaultCategoriesAdapter(getContext());
+        //rvDCategories.setAdapter(dCategoriesAdapter);
 
         if (GoogleServicesAvailable()) {
             permissionUtil = new PermissionUtil(getContext());
@@ -225,6 +254,10 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     }
                 }
 
+                dCategoriesAdapter = new DefaultCategoriesAdapter(shop.getDefaultCategories(), getContext());
+                rvDCategories.setAdapter(dCategoriesAdapter);
+
+                //dCategoriesAdapter.setDCategories(shop.getDefaultCategories());
                 shopName.setText(shop.getShopName());
                 shopType.setText(shop.getShopType().getShopTypeName());
                 shopPhone.setText(shop.getShopPhone());
@@ -257,6 +290,85 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         });
 
     }
+
+    /*private void getShopDetails(final int serverShopId) {
+        currentShop = new Shop();
+        currentShop.setServerShopId(serverShopId);
+
+        final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), getContext(), R.string.loading).create();
+        dialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_GET_SHOP_DETAILS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                JSONObject JSONShop = jsonObject.getJSONObject("shopDetails");
+
+                                JSONArray JSONCategories = JSONShop.getJSONArray("d_categories");
+                                Log.d(TAG, "categories: " + JSONCategories.toString());
+
+                                int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
+                                String shopTypeName = JSONShop.getString("shop_type_name");
+                                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+
+                                int serverCountryId = JSONShop.getInt("server_country_id");
+                                String countryName = JSONShop.getString("country_name");
+                                Country country = new Country(serverCountryId, countryName);
+
+                                int serverCityId = JSONShop.getInt("server_city_id");
+                                String cityName = JSONShop.getString("city_name");
+                                City city = new City(serverCityId, cityName, country);
+
+                                currentShop.setServerShopId(JSONShop.getInt("server_shop_id"));
+                                currentShop.setShopName(JSONShop.getString("shop_name"));
+                                currentShop.setShopAdress(JSONShop.getString("shop_adress"));
+                                currentShop.setShopEmail(JSONShop.getString("shop_email"));
+                                currentShop.setShopPhone(JSONShop.getString("shop_phone"));
+                                currentShop.setLongitude(JSONShop.getDouble("longitude"));
+                                currentShop.setLatitude(JSONShop.getDouble("latitude"));
+                                currentShop.setShopType(shopType);
+                                currentShop.setCity(city);
+                                currentShop.setCountry(country);
+
+                                //String shopImage = JSONShop.getString("shop_image");
+                                //SharedPrefManager.storeImageToFile(shopImage, shop.getServerShopId());
+
+                            }
+
+                            dialog.dismiss();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        dialog.dismiss();
+                        Log.d(TAG, "error on response: " + error.getMessage());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonRequest", String.valueOf(serverShopId));
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(getContext()).addToRequestQueue(stringRequest);
+
+    }*/
 
     private void addShopsMarkers(final ArrayList<Shop> shops) {
 

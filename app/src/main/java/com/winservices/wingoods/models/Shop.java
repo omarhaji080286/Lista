@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Shop implements Parcelable {
 
@@ -19,6 +20,15 @@ public class Shop implements Parcelable {
     private City city;
     private Country country;
     private String markerId;
+    private List<DefaultCategory> defaultCategories;
+
+    public List<DefaultCategory> getDefaultCategories() {
+        return defaultCategories;
+    }
+
+    public void setDefaultCategories(List<DefaultCategory> defaultCategories) {
+        this.defaultCategories = defaultCategories;
+    }
 
     public String getMarkerId() {
         return markerId;

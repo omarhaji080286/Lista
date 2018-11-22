@@ -24,6 +24,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int IS_LOGGED_IN = 1;
     public static final int IS_NOT_LOGGED_IN = 0;
 
+
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
 
@@ -114,6 +115,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String TAG = "DataBaseHelper";
     public static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
+    public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
 
     private final static int DATABASE_VERSION = 1;
 

@@ -99,7 +99,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
+                        dialog.dismiss();
                     }
                 }
         ) {

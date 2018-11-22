@@ -46,6 +46,7 @@ import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Color;
@@ -550,7 +551,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                 int color = Color.getRandomColor(this);
 
                 String dCategoryImage = JSONCategory.getString("d_category_image");
-                SharedPrefManager.getInstance(this).storeImageToFile(dCategoryImage, "png", Category.PREFIX_D_CATEGORY, dCategoryId);
+                SharedPrefManager.getInstance(this).storeImageToFile(dCategoryImage, "png", DefaultCategory.PREFIX_D_CATEGORY, dCategoryId);
 
                 Category category = new Category(categoryName, color, 0, sync, userId, email, serverCategoryId);
                 category.setCrudStatus(crudStatus);

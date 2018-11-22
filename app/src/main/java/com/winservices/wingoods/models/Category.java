@@ -14,9 +14,7 @@ import java.util.List;
 
 public class Category {
 
-    public static final String PREFIX_D_CATEGORY = "d_category_";
-
-    private int categoryId = 0;
+        private int categoryId = 0;
     private String categoryName;
     private int color;
     private int icon;
