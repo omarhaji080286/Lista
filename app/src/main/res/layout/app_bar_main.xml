@@ -26,54 +26,77 @@
         android:id="@+id/fl_interceptor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:descendantFocusability="blocksDescendants" />
+        android:descendantFocusability="blocksDescendants"
+        android:background="#80FFFFFF"
+        android:visibility="invisible"/>
 
-    <GridLayout
+    <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="10dp"
         android:layout_marginEnd="5dp"
-        android:columnCount="2"
-        android:rowCount="4">
+        android:layout_marginBottom="10dp">
+
+        <TableRow android:layout_marginBottom="5dp" >
+
+            <TextView
+                android:id="@+id/txt_wtsp"
+                android:layout_column="0"
+                style="@style/LabelForFAB"
+                android:text="@string/send_to"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_wtsp"
+                style="@style/FAB"
+                android:src="@drawable/ic_share"
+                android:layout_column="1"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:id="@+id/txt_add_categories_label"
+                style="@style/LabelForFAB"
+                android:layout_column="0"
+                android:text="@string/add_a_category" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_add_category"
+                style="@style/FAB"
+                android:src="@drawable/ic_edit"
+                android:layout_column="1"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:id="@+id/add_order_label"
+                style="@style/LabelForFAB"
+                android:layout_column="0"
+                android:text="@string/add_an_order" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_add_order"
+                style="@style/FAB"
+                android:src="@drawable/ic_cart_empty_white"
+                android:layout_column="1"/>
+        </TableRow>
+
+        <TableRow>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_plus"
+                style="@style/FAB"
+                android:src="@drawable/ic_action_plus"
+                android:visibility="visible"
+                android:layout_column="1"/>
+
+        </TableRow>
 
 
-        <TextView
-            android:id="@+id/txt_wtsp"
-            style="@style/LabelForFAB"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:text="@string/send_to" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_wtsp"
-            style="@style/FAB"
-            android:layout_column="1"
-            android:layout_row="0"
-            android:src="@drawable/ic_share" />
-
-        <TextView
-            android:id="@+id/txt_add_categories_label"
-            style="@style/LabelForFAB"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:text="@string/add_a_category" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_add_category"
-            style="@style/FAB"
-            android:layout_column="1"
-            android:layout_row="1"
-            android:src="@drawable/ic_edit" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_plus"
-            style="@style/FAB"
-            android:layout_column="1"
-            android:layout_row="2"
-            android:src="@drawable/ic_action_plus"
-            android:visibility="visible" />
-
-    </GridLayout>
+    </TableLayout>
 
 </android.support.design.widget.CoordinatorLayout>

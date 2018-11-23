@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.annotation.SuppressLint;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
@@ -65,9 +66,9 @@ public class MainActivity extends AppCompatActivity
     private final static String TAG = "MainActivity";
 
     public static int FRAGMENT_REQUEST_CODE = 1;
-    FloatingActionButton fabPlus, fabAddCategory, fabWtsp;
-    Animation fabOpen, fabClose, fabRotateClockWise, fabAntiClockWise;
-    TextView addCategoriesLabel, txtSend, txtUserEmail;
+    FloatingActionButton fabPlus, fabAddCategory, fabWtsp, fabAddOrder;
+    Animation fabOpen, fabClose, fabRotateClockWise, fabAntiClockWise, fabTxtOpen, fabTxtClose;
+    TextView addCategoriesLabel, txtSend, txtUserEmail, txtAddOrder;
     boolean isOpen = false;
     NavigationView navigationView;
     FrameLayout mInterceptorFrame;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private SyncReceiver syncReceiver;
     private boolean syncTriggeredByUser = false;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +112,8 @@ public class MainActivity extends AppCompatActivity
 
         });
 
+        fabAddOrder = findViewById(R.id.fab_add_order);
+        txtAddOrder = findViewById(R.id.add_order_label);
         fabPlus = findViewById(R.id.fab_plus);
         fabAddCategory = findViewById(R.id.fab_add_category);
         fabWtsp = findViewById(R.id.fab_wtsp);
@@ -123,6 +127,8 @@ public class MainActivity extends AppCompatActivity
         txtUserEmail.setText(user.getEmail());
 
         fabOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fabTxtOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_txt_open);
+        fabTxtClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_txt_close);
         fabClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         fabRotateClockWise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
         fabAntiClockWise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_anticlockwise);
@@ -218,6 +224,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+
 
     @Override
     protected void onStart() {
@@ -407,10 +415,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void expandFab() {
+        mInterceptorFrame.setVisibility(View.VISIBLE);
+        fabAddOrder.startAnimation(fabOpen);
+        txtAddOrder.startAnimation(fabTxtOpen);
         fabAddCategory.startAnimation(fabOpen);
-        addCategoriesLabel.startAnimation(fabOpen);
+        addCategoriesLabel.startAnimation(fabTxtOpen);
         fabWtsp.startAnimation(fabOpen);
-        txtSend.startAnimation(fabOpen);
+        txtSend.startAnimation(fabTxtOpen);
         fabPlus.startAnimation(fabRotateClockWise);
         fabAddCategory.setClickable(true);
         fabWtsp.setClickable(true);
@@ -418,10 +429,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void collapseFab() {
+        mInterceptorFrame.setVisibility(View.INVISIBLE);
+        fabAddOrder.startAnimation(fabClose);
+        txtAddOrder.startAnimation(fabTxtClose);
         fabAddCategory.startAnimation(fabClose);
-        addCategoriesLabel.startAnimation(fabClose);
+        addCategoriesLabel.startAnimation(fabTxtClose);
         fabWtsp.startAnimation(fabClose);
-        txtSend.startAnimation(fabClose);
+        txtSend.startAnimation(fabTxtClose);
         fabPlus.startAnimation(fabAntiClockWise);
         fabAddCategory.setClickable(false);
         fabWtsp.setClickable(false);
