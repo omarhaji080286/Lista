@@ -146,6 +146,14 @@ public class MainActivity extends AppCompatActivity
 
         final Context context = this;
 
+        fabAddOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ShopsActivity.class));
+                collapseFab();
+            }
+        });
+
         fabAddCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

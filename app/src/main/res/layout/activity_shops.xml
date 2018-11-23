@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.winservices.wingoods.activities.ShopsActivity">
+    tools:context="com.winservices.wingoods.activities.ShopsActivity"
+    android:layout_weight="100">
 
 
     <android.support.design.widget.AppBarLayout
@@ -26,8 +27,32 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_shops"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="90"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                style="@style/Footer"
+                android:text="1 - Shop selection"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="2 - lista confirmation"
+                android:gravity="center"/>
+    </LinearLayout>
 
 </LinearLayout>
 

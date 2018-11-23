@@ -156,7 +156,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         mSectionPageAdapter.addFragment(shopsList, "");
         mViewPager.setAdapter(mSectionPageAdapter);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(currentTab);
+        mViewPager.setCurrentItem(1);
         setupTabIcons();
 
     }

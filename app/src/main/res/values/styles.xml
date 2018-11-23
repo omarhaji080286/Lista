@@ -74,6 +74,24 @@
         <item name="android:visibility">invisible</item>
     </style>
 
+    <style name="Footer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/teal</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/fab_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+
+    </style>
+
     <style name="FAB" parent="Theme.AppCompat.Light">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
