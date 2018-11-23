@@ -3,6 +3,8 @@ package com.winservices.wingoods.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,8 @@ import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
@@ -41,12 +45,23 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
     public void onBindViewHolder(ShopInListViewHolder holder, int position) {
 
         final Shop shop = this.shops.get(position);
-
         holder.shopName.setText(shop.getShopName());
         holder.shopType.setText(shop.getShopType().getShopTypeName());
-        holder.shopEmail.setText(shop.getShopEmail());
         holder.shopPhone.setText(shop.getShopPhone());
-        holder.shopAdress.setText(shop.getShopAdress());
+        holder.city.setText(shop.getCity().getCityName());
+
+        String imagePath = SharedPrefManager.getInstance(context).getShopImagePath(shop.getServerShopId());
+        if (imagePath!=null){
+            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+            holder.imgShopIcon.setImageBitmap(bitmap);
+        } else {
+            holder.imgShopIcon.setImageResource(R.drawable.default_shop_image);
+        }
+
+        holder.rvDCategories.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false ));
+        DefaultCategoriesAdapter dCategoriesAdapter = new DefaultCategoriesAdapter(shop.getDefaultCategories(), context);
+        holder.rvDCategories.setAdapter(dCategoriesAdapter);
+
         holder.btnOrder.setVisibility(View.GONE);
 
         if (serverCategoryIdToOrder != 0) {

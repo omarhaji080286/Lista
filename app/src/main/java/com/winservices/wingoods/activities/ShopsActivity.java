@@ -248,7 +248,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                                     shop.setCountry(country);
 
                                     String shopImage = JSONShop.getString("shop_image");
-                                    storeImageToFile(shopImage, shop.getServerShopId());
+                                    if (!shopImage.equals(Shop.DEFAULT_IMAGE)) storeImageToFile(shopImage, shop.getServerShopId());
 
                                     shops.add(shop);
                                     shopsFirstList.add(shop);

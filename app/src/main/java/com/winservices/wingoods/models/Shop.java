@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Shop implements Parcelable {
 
+    public static final String DEFAULT_IMAGE = "defaultImage";
+
     private int serverShopId;
     private String shopName;
     private String shopAdress;

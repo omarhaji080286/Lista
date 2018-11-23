@@ -262,9 +262,15 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 shopType.setText(shop.getShopType().getShopTypeName());
                 shopPhone.setText(shop.getShopPhone());
                 shopCity.setText(shop.getCity().getCityName());
+
                 String imagePath = SharedPrefManager.getInstance(getContext()).getShopImagePath(shop.getServerShopId());
-                Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
-                shopIcon.setImageBitmap(bitmap);
+                if (imagePath!=null){
+                    Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+                    shopIcon.setImageBitmap(bitmap);
+                } else {
+                    shopIcon.setImageResource(R.drawable.default_shop_image);
+                }
+
 
                 if (serverCategoryIdToOrder != 0) {
                     btnOrder.setVisibility(View.VISIBLE);
