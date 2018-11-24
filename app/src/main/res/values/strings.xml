@@ -154,6 +154,9 @@
     <string name="next">Next</string>
     <string name="default_category_image">Default category image</string>
     <string name="add_an_order">Add an order</string>
+    <string name="_1_shop_selection">1 - Shop selection</string>
+    <string name="_2_list_confirmation">2 - list confirmation</string>
+    <string name="select">Select</string>
 
 
 </resources>

@@ -69,6 +69,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class ShopsMap extends Fragment implements OnMapReadyCallback {
@@ -95,10 +96,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     private RecyclerView rvDCategories;
     private DefaultCategoriesAdapter dCategoriesAdapter;
 
-    private int serverCategoryIdToOrder;
-
-    private Shop currentShop = null;
-
+    private boolean orderInitiated;
 
     @Nullable
     @Override
@@ -122,8 +120,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 
         rvDCategories.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false ));
-        //dCategoriesAdapter = new DefaultCategoriesAdapter(getContext());
-        //rvDCategories.setAdapter(dCategoriesAdapter);
 
         if (GoogleServicesAvailable()) {
             permissionUtil = new PermissionUtil(getContext());
@@ -229,7 +225,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 Bundle bundle = getArguments();
                 if (bundle != null) {
                     shops = (ArrayList<Shop>) bundle.getSerializable(ShopsActivity.SHOPS_TAG);
-                    serverCategoryIdToOrder = bundle.getInt(Constants.CATEGORY_TO_ORDER);
+                    orderInitiated = bundle.getBoolean(Constants.ORDER_INITIATED);
                 }
                 addShopsMarkers(this.shops);
             }
@@ -272,18 +268,18 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 }
 
 
-                if (serverCategoryIdToOrder != 0) {
+                if (orderInitiated) {
                     btnOrder.setVisibility(View.VISIBLE);
                     final Shop finalShop = shop;
                     btnOrder.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(getActivity(), OrderActivity.class);
-                            intent.putExtra(Constants.CATEGORY_TO_ORDER, serverCategoryIdToOrder);
+                            intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);
                             startActivity(intent);
-                            getActivity().finish();
+                            Objects.requireNonNull(getActivity()).finish();
                         }
                     });
                 } else {

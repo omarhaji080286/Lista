@@ -250,24 +250,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             holder.cartContainer.setVisibility(View.GONE);
         }
 
-        final int notOrderedGoods = goodsToBuyNumber - orderedGoodsNumber;
-        final Category finalCategory = category;
-        holder.cartContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (notOrderedGoods > 0) {
-                    if (NetworkMonitor.checkNetworkConnection(context)) {
-                        Intent intent = new Intent(context, ShopsActivity.class);
-                        intent.putExtra(Constants.CATEGORY_TO_ORDER, finalCategory.getServerCategoryId());
-                        context.startActivity(intent);
-                    } else {
-                        Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, R.string.all_items_ordered, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
 
     }
 

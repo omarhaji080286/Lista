@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,11 +67,12 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
     private SectionPageAdapter mSectionPageAdapter;
     private ArrayList<Shop> shops, shopsFirstList;
     private Dialog dialog;
-    private int serverCategoryIdToOrder;
-    private int currentTab = TAB_MAP;
+    private boolean orderInitiated;
     private ShopsMap shopsMap;
     private ShopsList shopsList;
     private ShopsFilter shopsFilter;
+    private LinearLayout llFooter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,9 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         setContentView(R.layout.activity_shops);
         mViewPager = findViewById(R.id.vp_shops);
         tabLayout = findViewById(R.id.tabs_shops);
+        llFooter = findViewById(R.id.ll_footer);
+
+        setTitle(R.string.lista_shops);
 
         setDialog(R.string.loading);
 
@@ -93,37 +98,29 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                currentTab = tab.getPosition();
-            }
+                            }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                currentTab = tab.getPosition();
-            }
+            public void onTabReselected(TabLayout.Tab tab) { }
         });
 
         Intent intent = getIntent();
-        serverCategoryIdToOrder = intent.getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
+        orderInitiated = intent.getBooleanExtra(Constants.ORDER_INITIATED, false);
 
-        if (serverCategoryIdToOrder != 0) {
-            initActivityVariables(TAB_LIST, getString(R.string.shop_selection));
+        if (orderInitiated) {
+            llFooter.setVisibility(View.VISIBLE);
         } else {
-            initActivityVariables(TAB_MAP, getString(R.string.lista_shops));
+            llFooter.setVisibility(View.GONE);
         }
 
         getShops(this);
 
     }
 
-
-    private void initActivityVariables(int tab, String activityTitle) {
-        this.currentTab = tab;
-        setTitle(activityTitle);
-    }
 
     private void setDialog(int msgId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -149,7 +146,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         shopsList = new ShopsList();
         Bundle mBundle = new Bundle();
         mBundle.putParcelableArrayList(SHOPS_TAG, shops);
-        mBundle.putInt(Constants.CATEGORY_TO_ORDER, serverCategoryIdToOrder);
+        mBundle.putBoolean(Constants.ORDER_INITIATED, orderInitiated);
         shopsMap.setArguments(mBundle);
         shopsList.setArguments(mBundle);
         mSectionPageAdapter.addFragment(shopsMap, "");
@@ -175,7 +172,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+                Log.d(TAG, "onActivityResult: NO RESULT");
             }
         }
     }
@@ -271,7 +268,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 }
         ) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String, String> postData = new HashMap<>();
                 postData.put("jsonData", "");
                 return postData;
@@ -376,7 +373,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         Thread thread = new Thread(){
             public void run() {
                 File dir = new File(file_path);
-                if (!dir.exists()) dir.mkdirs();
+                if (!dir.exists()) {
+                    if (dir.mkdirs()){
+                        Log.d(TAG, "Files created");
+                    }
+                }
                 File file = new File(dir, "lista_pro_shop_" + serverShopId + ".jpg");
                 FileOutputStream fOut;
                 try {

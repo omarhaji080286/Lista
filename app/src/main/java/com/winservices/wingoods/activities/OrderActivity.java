@@ -2,69 +2,33 @@ package com.winservices.wingoods.activities;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.AdditionalGoodsAdapter;
-import com.winservices.wingoods.adapters.GoodsToOrderAdapter;
+import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
-import com.winservices.wingoods.dbhelpers.DataManager;
-import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
-import com.winservices.wingoods.dbhelpers.RequestHandler;
-import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
-import com.winservices.wingoods.models.Good;
-import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
-import com.winservices.wingoods.utils.NetworkMonitor;
-import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
-import com.winservices.wingoods.utils.UtilsFunctions;
-import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener {
+public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener*/ {
 
-    private final static String TAG = "OrderActivity";
-    private GoodsToOrderAdapter goodsToOrderAdapter;
+    private final static String TAG = OrderActivity.class.getSimpleName();
+    private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private int selectedShopId;
-    private int serverCategoryIdToOrder;
-    private Dialog dialog;
+    private boolean orderInitiated;
     private Context context;
-    private List<CategoryGroup> groupsAdditionalGoods;
-    private AdditionalGoodsAdapter additionalGoodsAdapter;
+    private RecyclerView rvCategoriesToOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +43,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        ConstraintLayout container = findViewById(R.id.cl_container);
-        RecyclerView rvGoodsToOrder = findViewById(R.id.rv_goods_to_order);
-        Button btnAddGood = findViewById(R.id.btn_add_good);
+        rvCategoriesToOrder = findViewById(R.id.rvCategoriesToOrder);
         Button btnOrder = findViewById(R.id.btn_order);
         TextView txtShopName = findViewById(R.id.txt_shop_name);
 
@@ -90,39 +52,16 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         txtShopName.setText(shop.getShopName());
 
-        serverCategoryIdToOrder = getIntent().getIntExtra(Constants.CATEGORY_TO_ORDER, 0);
+        orderInitiated = getIntent().getBooleanExtra(Constants.ORDER_INITIATED, false);
 
-        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
-        List<Good> goodsToOrder = goodsDataProvider.getGoodsToOrderByServerCategoryId(serverCategoryIdToOrder);
+        loadCategoriesToOrder(shop);
 
-        goodsToOrderAdapter = new GoodsToOrderAdapter(this, goodsToOrder);
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvGoodsToOrder);
+        //btnOrder.setOnClickListener(this);
 
-        GridLayoutManager glm = new GridLayoutManager(this, 3);
-        rvGoodsToOrder.setLayoutManager(glm);
-        rvGoodsToOrder.setAdapter(goodsToOrderAdapter);
-        rvGoodsToOrder.setHasFixedSize(true);
 
-        btnOrder.setOnClickListener(this);
 
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        groupsAdditionalGoods = categoriesDataProvider.getAdditionalGoodsList(0);
-        removeGoodsFromList(serverCategoryIdToOrder);
-
-        additionalGoodsAdapter = new AdditionalGoodsAdapter(groupsAdditionalGoods, context);
-
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-
-        final View mView = LayoutInflater.from(context)
-                .inflate(R.layout.fragment_additional_goods_to_order, container, false);
-
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        dialog.setCancelable(false);
-
-        btnAddGood.setOnClickListener(new View.OnClickListener() {
+        /*btnAddGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (groupsAdditionalGoods.size()>0) {
@@ -177,13 +116,50 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     Toast.makeText(context, R.string.no_additional_items, Toast.LENGTH_LONG).show();
                 }
             }
+        });*/
+
+    }
+
+    private void loadCategoriesToOrder(Shop shop) {
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        List<CategoryGroup> categoriesToOrder = categoriesDataProvider.getCategoriesForOrder(shop);
+
+        categoriesToOrderAdapter = new CategoriesToOrderAdapter(categoriesToOrder, this);
+
+        //ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        //new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvCategoriesToOrder);
+
+        final int GRID_COLUMN_NUMBER = 3;
+        GridLayoutManager glm = new GridLayoutManager(this, GRID_COLUMN_NUMBER);
+        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (categoriesToOrderAdapter.getItemViewType(position)) {
+                    case 2:
+                        return GRID_COLUMN_NUMBER;
+                    default:
+                        return 1;
+                }
+            }
         });
 
+        rvCategoriesToOrder.setLayoutManager(glm);
+        rvCategoriesToOrder.setAdapter(categoriesToOrderAdapter);
+        expandRecyclerView();
+    }
+
+    private void expandRecyclerView() {
+        for (int i = categoriesToOrderAdapter.getGroups().size() - 1; i >= 0; i--) {
+            if (categoriesToOrderAdapter.isGroupExpanded(i)) {
+                return;
+            }
+            categoriesToOrderAdapter.toggleGroup(i);
+        }
     }
 
 
 
-    private void removeGoodsFromList(int serverCategoryIdToOrder) {
+    /*private void removeGoodsFromList(int serverCategoryIdToOrder) {
 
         for (int i = 0; i < groupsAdditionalGoods.size(); i++) {
             CategoryGroup categoryGroup = groupsAdditionalGoods.get(i);
@@ -356,5 +332,5 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             break;
 
         }
-    }
+    }*/
 }

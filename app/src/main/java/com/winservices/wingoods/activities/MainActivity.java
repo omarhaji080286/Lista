@@ -149,7 +149,9 @@ public class MainActivity extends AppCompatActivity
         fabAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ShopsActivity.class));
+                Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
+                intent.putExtra(Constants.ORDER_INITIATED, true);
+                startActivity(intent);
                 collapseFab();
             }
         });

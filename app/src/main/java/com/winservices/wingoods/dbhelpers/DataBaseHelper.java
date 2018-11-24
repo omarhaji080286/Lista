@@ -748,16 +748,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getCategoriesWithGoodsNotOrdered(int serverCategoryIdToOrder) {
+    public Cursor getCategoriesWithGoodsNotOrdered() {
          db = this.getReadableDatabase();
         Cursor res = null;
         try {
             res = db.rawQuery("SELECT " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID + " AS " + _ID + " , "+TABLE_CATEGORIES+"."+"*"
-                    + " FROM " + TABLE_CATEGORIES + ", " + TABLE_GOODS
+                    + " FROM " + TABLE_CATEGORIES + ", " + TABLE_GOODS + "," + TABLE_USERS
                     + " WHERE " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + " = " + TABLE_GOODS + "." + COL_CATEGORY_ID
+                    + " AND " + TABLE_CATEGORIES + "." + COL_USERID + " = " + TABLE_USERS + "." + COL_USERID
                     + " AND " + TABLE_GOODS+"."+COL_IS_TO_BUY + " = 1"
                     + " AND " + TABLE_GOODS+"."+COL_IS_ORDERED + " = 0"
-                    + " AND " + TABLE_CATEGORIES+"."+COL_SERVER_CATEGORY_ID + " <> " + serverCategoryIdToOrder
+                    + " AND " + TABLE_USERS+"."+COL_USERID + " = " + getCurrentUser().getUserId()
                     + " GROUP BY " + TABLE_CATEGORIES+"."+COL_CATEGORY_ID, null);
         } catch (Exception e) {
             e.printStackTrace();

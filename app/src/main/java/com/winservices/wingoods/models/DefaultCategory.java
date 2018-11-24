@@ -1,6 +1,9 @@
 package com.winservices.wingoods.models;
 
-public class DefaultCategory {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class DefaultCategory implements Parcelable {
 
     public static final String PREFIX_D_CATEGORY = "d_category_";
 
@@ -28,4 +31,35 @@ public class DefaultCategory {
     public void setDCategoryName(String dCategoryName) {
         this.dCategoryName = dCategoryName;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(dCategoryId);
+        parcel.writeString(dCategoryName);
+    }
+
+    public static final Parcelable.Creator<DefaultCategory> CREATOR = new Parcelable.Creator<DefaultCategory>() {
+        public DefaultCategory createFromParcel(Parcel in) {
+            return new DefaultCategory(in);
+        }
+
+        public DefaultCategory[] newArray(int size) {
+            return new DefaultCategory[size];
+        }
+    };
+
+    public DefaultCategory(Parcel input) {
+        this.dCategoryId = input.readInt();
+        this.dCategoryName = input.readString();
+
+    }
+
+    public DefaultCategory(){ }
+
+
 }

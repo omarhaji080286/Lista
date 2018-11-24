@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Shop implements Parcelable {
@@ -137,6 +138,7 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(shopType);
         parcel.writeSerializable(city);
         parcel.writeSerializable(country);
+        parcel.writeTypedList(defaultCategories);
 
     }
 
@@ -161,6 +163,9 @@ public class Shop implements Parcelable {
         this.shopType = (ShopType)input.readSerializable();
         this.city = (City) input.readSerializable();
         this.country = (Country) input.readSerializable();
+        this.defaultCategories = new ArrayList<>();
+        input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
+
     }
 
     public Shop(){ }

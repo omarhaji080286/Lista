@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.utils.Constants;
 
 import java.util.ArrayList;
@@ -15,9 +17,9 @@ import java.util.List;
 
 public class CategoriesDataProvider {
 
+    private final static String TAG = "CategoriesDataProvider";
     private DataBaseHelper db;
     private Context context;
-    private final static String TAG = "CategoriesDataProvider";
 
     public CategoriesDataProvider(Context context) {
         this.db = DataBaseHelper.getInstance(context);
@@ -47,12 +49,48 @@ public class CategoriesDataProvider {
             mainGoodsList.add(categoryGroup);
 
         }
-        Log.d(TAG, Constants.TAG_LISTA+"getMainGoodsList called");
+        Log.d(TAG, Constants.TAG_LISTA + "getMainGoodsList called");
         return mainGoodsList;
 
     }
 
-    public List<CategoryGroup> getAdditionalGoodsList(int serverCategoryIdToOrder) {
+    public List<CategoryGroup> getCategoriesForOrder(Shop shop) {
+
+        List<CategoryGroup> groups = new ArrayList<>();
+        List<Category> categoriesToOrder = new ArrayList<>();
+
+        List<Category> categories = this.getCategoriesWithGoodsNotOrdered();
+
+        List<DefaultCategory> shopDCategories = shop.getDefaultCategories();
+
+        for (int i = 0; i < shopDCategories.size(); i++) {
+            for (int j = 0; j < categories.size(); j++) {
+                if (shopDCategories.get(i).getDCategoryId() == categories.get(j).getDCategoryId()) {
+                    categoriesToOrder.add(categories.get(j));
+                }
+            }
+        }
+
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+
+        for (int i = 0; i < categoriesToOrder.size(); i++) {
+
+            Category category = categories.get(i);
+            List<Good> notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(category.getServerCategoryId());
+            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
+            categoryGroup.setCategoryId(category.getCategoryId());
+            categoryGroup.setServerCategoryId(category.getServerCategoryId());
+            groups.add(categoryGroup);
+
+        }
+
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoriesForOrder called");
+
+        return groups;
+
+    }
+
+    /*public List<CategoryGroup> getAdditionalGoodsList(int serverCategoryIdToOrder) {
 
         List<CategoryGroup> additionalGoodsList = new ArrayList<>();
         List<Category> categories;
@@ -72,24 +110,24 @@ public class CategoriesDataProvider {
 
         }
 
-        Log.d(TAG, Constants.TAG_LISTA+"getAdditionalGoodsList called");
+        Log.d(TAG, Constants.TAG_LISTA + "getAdditionalGoodsList called");
 
         return additionalGoodsList;
 
-    }
+    }*/
 
     public int getGoodsToBuyNumber(int categoryId) {
-        Log.d(TAG, Constants.TAG_LISTA+"getGoodsToBuyNumber called");
+        Log.d(TAG, Constants.TAG_LISTA + "getGoodsToBuyNumber called");
         return db.getGoodsToBuyNumber(categoryId);
     }
 
     public int getOrderedGoodsNumber(int categoryId) {
-        Log.d(TAG, Constants.TAG_LISTA+"getOrderedGoodsNumber called");
+        Log.d(TAG, Constants.TAG_LISTA + "getOrderedGoodsNumber called");
         return db.getOrderedGoodsNumber(categoryId);
     }
 
     public int getGoodsNumber(int categoryId) {
-        Log.d(TAG, Constants.TAG_LISTA+"getGoodsNumber called");
+        Log.d(TAG, Constants.TAG_LISTA + "getGoodsNumber called");
         return db.getGoodsNumber(categoryId);
     }
 
@@ -97,7 +135,7 @@ public class CategoriesDataProvider {
     Category getCategoryByName(String categoryName) {
         Cursor cursor = db.getCategoryByName(categoryName);
 
-        if (cursor.getCount()==0) {
+        if (cursor.getCount() == 0) {
             return null;
         } else {
             cursor.moveToNext();
@@ -112,7 +150,7 @@ public class CategoriesDataProvider {
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
             int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-            Log.d(TAG, Constants.TAG_LISTA+"getCategoryByName called");
+            Log.d(TAG, Constants.TAG_LISTA + "getCategoryByName called");
             Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
             category.setDCategoryID(dCategoryId);
             return category;
@@ -133,7 +171,7 @@ public class CategoriesDataProvider {
         String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
         int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByServerCategoryIdAndUserId called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoryByServerCategoryIdAndUserId called");
         Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         category.setDCategoryID(dCategoryId);
         return category;
@@ -153,7 +191,7 @@ public class CategoriesDataProvider {
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
         int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByCrud called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoryByCrud called");
         Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         category.setDCategoryID(dCategoryId);
         return category;
@@ -178,7 +216,7 @@ public class CategoriesDataProvider {
             list.add(category);
         }
         cursor.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getNotSyncCategories called");
+        Log.d(TAG, Constants.TAG_LISTA + "getNotSyncCategories called");
         return list;
     }
 
@@ -205,13 +243,13 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getExcludedCategoriesFromSync called");
+        Log.d(TAG, Constants.TAG_LISTA + "getExcludedCategoriesFromSync called");
         return categories;
     }
 
-    private List<Category> getCategoriesWithGoodsNotOrdered(int serverCategoryIdToOrder){
+    private List<Category> getCategoriesWithGoodsNotOrdered() {
         List<Category> categories = new ArrayList<>();
-        Cursor cursor = db.getCategoriesWithGoodsNotOrdered(serverCategoryIdToOrder);
+        Cursor cursor = db.getCategoriesWithGoodsNotOrdered();
 
         while (cursor.moveToNext()) {
             int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
@@ -230,7 +268,7 @@ public class CategoriesDataProvider {
             categories.add(category);
         }
         cursor.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoriesWithGoodsNotOrdered called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoriesWithGoodsNotOrdered called");
         return categories;
     }
 
@@ -264,7 +302,7 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getAllCategories called");
+        Log.d(TAG, Constants.TAG_LISTA + "getAllCategories called");
         return categories;
     }
 
@@ -292,7 +330,7 @@ public class CategoriesDataProvider {
 
         }
         cursor.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getUpdatedCategories called");
+        Log.d(TAG, Constants.TAG_LISTA + "getUpdatedCategories called");
 
         return categories;
     }
@@ -312,7 +350,7 @@ public class CategoriesDataProvider {
         int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
         int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByGoodId called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoryByGoodId called");
         Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         category.setDCategoryID(dCategoryId);
         return category;
@@ -336,13 +374,13 @@ public class CategoriesDataProvider {
         int orderedGoodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.ORDERED_GOODS_NUMBER));
         int goodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.GOODS_NUMBER));
 
-        Category category =  new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         category.setGoodsToBuyNumber(goodsToBuyNumber);
         category.setOrderedGoodsNumber(orderedGoodsNumber);
         category.setGoodsNumber(goodsNumber);
         category.setDCategoryID(dCategoryId);
 
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoryById called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoryById called");
         return category;
 
     }
@@ -362,10 +400,10 @@ public class CategoriesDataProvider {
         //int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
         int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-        Category category =  new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
+        Category category = new Category(categoryId, categoryName, color, icon, sync, userId, email, crud, serverCategoryId);
         category.setDCategoryID(dCategoryId);
 
-        Log.d(TAG, Constants.TAG_LISTA+"getCategoryByServerCategoryId called");
+        Log.d(TAG, Constants.TAG_LISTA + "getCategoryByServerCategoryId called");
         return category;
 
     }

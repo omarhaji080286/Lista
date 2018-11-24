@@ -27,12 +27,12 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
 
     private Context context;
     private ArrayList<Shop> shops;
-    private int serverCategoryIdToOrder;
+    private boolean orderInitiated;
 
-    public ShopsListAdapter(Context context, ArrayList<Shop> shops, int serverCategoryIdToOrder) {
+    public ShopsListAdapter(Context context, ArrayList<Shop> shops, boolean orderInitiated) {
         this.context = context;
         this.shops = shops;
-        this.serverCategoryIdToOrder = serverCategoryIdToOrder;
+        this.orderInitiated = orderInitiated;
     }
 
     @Override
@@ -64,13 +64,13 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
 
         holder.btnOrder.setVisibility(View.GONE);
 
-        if (serverCategoryIdToOrder != 0) {
+        if (orderInitiated) {
             holder.btnOrder.setVisibility(View.VISIBLE);
             holder.btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                 Intent intent = new Intent(context, OrderActivity.class);
-                intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+                intent.putExtra(Constants.ORDER_INITIATED,orderInitiated);
                 intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                 intent.putExtra(Constants.SHOP, shop);
                 context.startActivity(intent);

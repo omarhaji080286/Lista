@@ -20,6 +20,8 @@ public class CategoryGroup extends ExpandableGroup {
         this.items = items;
     }
 
+
+
     public Category getCategory() {
         return category;
     }

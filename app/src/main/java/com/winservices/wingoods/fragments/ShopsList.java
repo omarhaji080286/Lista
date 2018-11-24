@@ -30,7 +30,7 @@ public class ShopsList extends Fragment {
     private RecyclerView shopsRecyclerView;
     private ArrayList<Shop> shops;
     public ShopsListAdapter adapter;
-    private int serverCategoryIdToOrder;
+    private boolean orderInitiated;
 
     @Nullable
     @Override
@@ -57,14 +57,14 @@ public class ShopsList extends Fragment {
         shops = new ArrayList<>();
         if (bundle != null) {
             shops = (ArrayList<Shop>) getArguments().getSerializable(ShopsActivity.SHOPS_TAG);
-            serverCategoryIdToOrder = getArguments().getInt(Constants.CATEGORY_TO_ORDER);
+            orderInitiated = getArguments().getBoolean(Constants.ORDER_INITIATED);
         }
 
         if (shops.size()==0){
             message.setVisibility(View.VISIBLE);
             shopsRecyclerView.setVisibility(View.GONE);
         } else {
-            adapter = new ShopsListAdapter(getContext(), shops, serverCategoryIdToOrder);
+            adapter = new ShopsListAdapter(getContext(), shops, orderInitiated);
 
             LinearLayoutManager llm = new LinearLayoutManager(getContext());
             shopsRecyclerView.setLayoutManager(llm);
