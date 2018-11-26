@@ -79,17 +79,6 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
     }
 
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
-
     public void removeChildItem(int position) {
         ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
         CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);

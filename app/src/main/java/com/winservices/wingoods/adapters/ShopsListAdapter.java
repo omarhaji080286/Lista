@@ -9,10 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
+import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
@@ -51,35 +51,43 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.city.setText(shop.getCity().getCityName());
 
         String imagePath = SharedPrefManager.getInstance(context).getShopImagePath(shop.getServerShopId());
-        if (imagePath!=null){
+        if (imagePath != null) {
             Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
             holder.imgShopIcon.setImageBitmap(bitmap);
         } else {
             holder.imgShopIcon.setImageResource(R.drawable.default_shop_image);
         }
 
-        holder.rvDCategories.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false ));
+        holder.rvDCategories.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
         DefaultCategoriesAdapter dCategoriesAdapter = new DefaultCategoriesAdapter(shop.getDefaultCategories(), context);
         holder.rvDCategories.setAdapter(dCategoriesAdapter);
 
         holder.btnOrder.setVisibility(View.GONE);
 
-        if (orderInitiated) {
+
+        if (canGetOrder(shop) && orderInitiated) {
             holder.btnOrder.setVisibility(View.VISIBLE);
             holder.btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Intent intent = new Intent(context, OrderActivity.class);
-                intent.putExtra(Constants.ORDER_INITIATED,orderInitiated);
-                intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
-                intent.putExtra(Constants.SHOP, shop);
-                context.startActivity(intent);
-                ((Activity)context).finish();
+                    Intent intent = new Intent(context, OrderActivity.class);
+                    intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
+                    intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
+                    intent.putExtra(Constants.SHOP, shop);
+                    context.startActivity(intent);
+                    ((Activity) context).finish();
                 }
             });
         } else {
             holder.btnOrder.setVisibility(View.GONE);
         }
+
+    }
+
+    private boolean canGetOrder(Shop shop) {
+
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        return (categoriesDataProvider.getCategoriesForOrder(shop).size() > 0);
 
     }
 
@@ -89,19 +97,19 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
     }
 
 
-    public void setShopNameFilter(ArrayList<Shop> newList){
+    public void setShopNameFilter(ArrayList<Shop> newList) {
         shops = new ArrayList<>();
         shops.addAll(newList);
         notifyDataSetChanged();
     }
 
-    public void setShopsFilter(ShopsFilter shopsFilter){
+    public void setShopsFilter(ShopsFilter shopsFilter) {
         ArrayList<Shop> newList = new ArrayList<>();
         for (int j = 0; j < shopsFilter.getSelectedCities().size(); j++) {
             City city = shopsFilter.getSelectedCities().get(j);
-            for (int i = 0; i < shops.size() ; i++) {
+            for (int i = 0; i < shops.size(); i++) {
                 Shop shop = shops.get(i);
-                if(shop.getCity().getServerCityId()==city.getServerCityId()){
+                if (shop.getCity().getServerCityId() == city.getServerCityId()) {
                     newList.add(shop);
                 }
             }

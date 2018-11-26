@@ -48,6 +48,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
+import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.models.City;
@@ -268,7 +269,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 }
 
 
-                if (orderInitiated) {
+                if (orderInitiated && canGetOrder(shop)) {
                     btnOrder.setVisibility(View.VISIBLE);
                     final Shop finalShop = shop;
                     btnOrder.setOnClickListener(new View.OnClickListener() {
@@ -290,6 +291,13 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 return false;
             }
         });
+
+    }
+
+    private boolean canGetOrder(Shop shop) {
+
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
+        return (categoriesDataProvider.getCategoriesForOrder(shop).size() > 0);
 
     }
 
