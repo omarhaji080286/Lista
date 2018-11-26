@@ -2,26 +2,55 @@ package com.winservices.wingoods.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.AdditionalGoodsAdapter;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
+import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
+import com.winservices.wingoods.utils.UtilsFunctions;
+import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener*/ {
+public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener {
 
     private final static String TAG = OrderActivity.class.getSimpleName();
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
@@ -29,6 +58,7 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
     private boolean orderInitiated;
     private Context context;
     private RecyclerView rvCategoriesToOrder;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +77,9 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
         Button btnOrder = findViewById(R.id.btn_order);
         TextView txtShopName = findViewById(R.id.txt_shop_name);
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvCategoriesToOrder);
+
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
         Shop shop = getIntent().getParcelableExtra(Constants.SHOP);
 
@@ -56,8 +89,7 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
 
         loadCategoriesToOrder(shop);
 
-
-        //btnOrder.setOnClickListener(this);
+        btnOrder.setOnClickListener(this);
 
 
 
@@ -120,14 +152,13 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
 
     }
 
+
+
     private void loadCategoriesToOrder(Shop shop) {
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         List<CategoryGroup> categoriesToOrder = categoriesDataProvider.getCategoriesForOrder(shop);
 
         categoriesToOrderAdapter = new CategoriesToOrderAdapter(categoriesToOrder, this);
-
-        //ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        //new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvCategoriesToOrder);
 
         final int GRID_COLUMN_NUMBER = 3;
         GridLayoutManager glm = new GridLayoutManager(this, GRID_COLUMN_NUMBER);
@@ -154,31 +185,6 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
                 return;
             }
             categoriesToOrderAdapter.toggleGroup(i);
-        }
-    }
-
-
-
-    /*private void removeGoodsFromList(int serverCategoryIdToOrder) {
-
-        for (int i = 0; i < groupsAdditionalGoods.size(); i++) {
-            CategoryGroup categoryGroup = groupsAdditionalGoods.get(i);
-            if (categoryGroup.getServerCategoryId()==serverCategoryIdToOrder){
-                groupsAdditionalGoods.get(i).clear();
-            }
-        }
-
-    }
-
-    public void removeSelectedAdditionalGoods() {
-        List<CategoryGroup> groups = new ArrayList<>();
-        groups.addAll(groupsAdditionalGoods);
-        List<Good> goodsToRemove = additionalGoodsAdapter.getSelectedAdditionalGoods();
-        for (int i = 0; i < groups.size(); i++) {
-            for (int k = 0; k < goodsToRemove.size(); k++) {
-                Good goodToRemove = goodsToRemove.get(k);
-                groupsAdditionalGoods.get(i).removeItem(goodToRemove);
-            }
         }
     }
 
@@ -217,7 +223,7 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
                     }
             ) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
+                protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
                     postData.put("jsonData", "" + getJSONForAddOrder());
                     postData.put("language", "" + Locale.getDefault().getLanguage());
@@ -241,12 +247,10 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
             root.put("serverShopId", selectedShopId);
             root.put("statusId", Order.REGISTERED);
 
-
             JSONArray jsonGoods = new JSONArray();
-            for (int i = 0; i < goodsToOrderAdapter.getGoodsToOrder().size(); i++) {
+            for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
 
-                Good good = goodsToOrderAdapter.getGoodsToOrder().get(i);
-                //good.setServerCategoryId(this);
+                Good good = categoriesToOrderAdapter.getGoodsToOrder().get(i);
                 JSONObject JSONGood = good.toJSONObject();
                 jsonGoods.put(JSONGood);
             }
@@ -263,56 +267,41 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
 
     private void updateOrderedGoods() {
         DataManager dataManager = new DataManager(this);
-        for (int i = 0; i < goodsToOrderAdapter.getGoodsToOrder().size(); i++) {
-            Good good = goodsToOrderAdapter.getGoodsToOrder().get(i);
+        for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
+            Good good = categoriesToOrderAdapter.getGoodsToOrder().get(i);
             good.setIsOrdered(1);
             dataManager.updateGood(good);
         }
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         switch (id){
             case android.R.id.home :
                 goToShopsActivity();
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void goToShopsActivity(){
         Intent intent = new Intent(OrderActivity.this, ShopsActivity.class);
-        intent.putExtra(Constants.CATEGORY_TO_ORDER,serverCategoryIdToOrder);
+        intent.putExtra(Constants.ORDER_INITIATED,true);
         startActivity(intent);
         finish();
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-
-        goodsToOrderAdapter.remove(position);
-
-        if (viewHolder instanceof GoodItemViewHolder) {
-            GoodItemViewHolder item = (GoodItemViewHolder) viewHolder;
-
-            GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
-            Good goodToInsert = goodsDataProvider.getGoodById(item.getGoodId());
-            additionalGoodsAdapter.insertGood(goodToInsert);
-
+        if (viewHolder instanceof CategoriesToOrderAdapter.GoodInOrderVH) {
+            categoriesToOrderAdapter.removeChildItem(position);
         }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        goodsToOrderAdapter = null;
-        groupsAdditionalGoods = null;
-        additionalGoodsAdapter = null;
     }
 
     @Override
@@ -320,8 +309,7 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
 
         switch (view.getId()){
             case R.id.btn_order :
-
-                if (goodsToOrderAdapter.getGoodsToOrder().size()>0) {
+                if (categoriesToOrderAdapter.getGoodsToOrderNumber()>0) {
                     view.setEnabled(false);
                     dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
                     dialog.show();
@@ -330,7 +318,6 @@ public class OrderActivity extends AppCompatActivity /*implements RecyclerItemTo
                     Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
                 }
             break;
-
         }
-    }*/
+    }
 }

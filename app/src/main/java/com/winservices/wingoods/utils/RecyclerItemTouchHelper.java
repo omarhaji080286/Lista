@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
@@ -25,23 +26,33 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
 
         if (viewHolder != null) {
-            final View foregroundView = ((GoodItemViewHolder) viewHolder).viewForeground;
+            View foregroundView = getCastedView(viewHolder);
             getDefaultUIUtil().onSelected(foregroundView);
         }
+    }
+
+    private View getCastedView(RecyclerView.ViewHolder viewHolder){
+        View foregroundView = null;
+        if (viewHolder instanceof CategoriesToOrderAdapter.GoodInOrderVH){
+            foregroundView = ((CategoriesToOrderAdapter.GoodInOrderVH) viewHolder).rlViewForeground;
+        } else if (viewHolder instanceof GoodItemViewHolder){
+            foregroundView = ((GoodItemViewHolder) viewHolder).viewForeground;
+        }
+        return foregroundView;
     }
 
     @Override
     public void onChildDrawOver(Canvas c, RecyclerView recyclerView,
                                 RecyclerView.ViewHolder viewHolder, float dX, float dY,
                                 int actionState, boolean isCurrentlyActive) {
-        final View foregroundView = ((GoodItemViewHolder) viewHolder).viewForeground;
+        final View foregroundView = getCastedView(viewHolder);
         getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY,
                 actionState, isCurrentlyActive);
     }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        final View foregroundView = ((GoodItemViewHolder) viewHolder).viewForeground;
+        final View foregroundView = getCastedView(viewHolder);
         getDefaultUIUtil().clearView(foregroundView);
     }
 
@@ -49,7 +60,7 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     public void onChildDraw(Canvas c, RecyclerView recyclerView,
                             RecyclerView.ViewHolder viewHolder, float dX, float dY,
                             int actionState, boolean isCurrentlyActive) {
-        final View foregroundView = ((GoodItemViewHolder) viewHolder).viewForeground;
+        final View foregroundView = getCastedView(viewHolder);
 
         getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
                 actionState, isCurrentlyActive);
