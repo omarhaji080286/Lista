@@ -2,15 +2,17 @@ package com.winservices.wingoods.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
@@ -19,18 +21,22 @@ import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.Controlers;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
-public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<CategoriesToOrderAdapter.CategoryInOrderVH,CategoriesToOrderAdapter.GoodInOrderVH> {
+public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<CategoriesToOrderAdapter.CategoryInOrderVH, CategoriesToOrderAdapter.GoodInOrderVH> {
 
     private Context context;
     private List<CategoryGroup> groups;
@@ -61,7 +67,7 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         Category category = categoriesDataProvider.getCategoryById(((CategoryGroup) group).getCategoryId());
 
-        String imagePath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY+category.getDCategoryId());
+        String imagePath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY + category.getDCategoryId());
         Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
 
         holder.imgCategory.setImageBitmap(bitmap);
@@ -71,11 +77,101 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
     }
 
     @Override
-    public void onBindChildViewHolder(GoodInOrderVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
+    public void onBindChildViewHolder(final GoodInOrderVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
         final Good good = (Good) group.getItems().get(childIndex);
 
         holder.txtGoodDesc.setText(good.getGoodDesc());
         holder.txtGoodName.setText(good.getGoodName());
+
+        holder.rlViewForeground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCompleteGoodDescDialog(holder.rlViewForeground, good);
+            }
+        });
+
+    }
+
+    private void showCompleteGoodDescDialog(ViewGroup viewGroup, Good good) {
+
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+        View mView = LayoutInflater.from(context)
+                .inflate(R.layout.fragment_good_desc, viewGroup, false);
+
+        Button btnUpdateGood = mView.findViewById(R.id.btn_update_good);
+        Button btnCancel = mView.findViewById(R.id.btn_cancel);
+        Button btnQuantity = mView.findViewById(R.id.btnQuantity);
+        Button btnGrammage = mView.findViewById(R.id.btnGrammage);
+        Button btnLitrage = mView.findViewById(R.id.btnLitrage);
+        final TextView txtGoodName = mView.findViewById(R.id.txtGoodName);
+        final EditText editBrand = mView.findViewById(R.id.edit_good_desc);
+
+        //prepare widgets
+
+        //EditText
+        txtGoodName.setText(good.getGoodName());
+
+        //Show the dialog
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();
+
+        //Action Button "Cancel"
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        //Action Button "Update"
+        /*btnUpdateGood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String updatedName = editGoodName.getText().toString();
+                if (Controlers.inputOk(updatedName)) {
+                    int categoryId = (int) spinner.getSelectedItemId();
+
+                    GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+                    Good updatedGood = goodsDataProvider.getGoodById(goodItem.getGoodId());
+
+                    updatedGood.setGoodName(updatedName.trim());
+                    updatedGood.setCategoryId(categoryId);
+                    updatedGood.setQuantityLevelId(goodItem.getQuantityLevelId());
+                    updatedGood.setGoodDesc(editGoodDesc.getText().toString().trim());
+                    updatedGood.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
+                    if (!editGoodDesc.getText().toString().trim().isEmpty()) {
+                        holder.goodDescription.setVisibility(View.VISIBLE);
+                    }
+
+                    DataManager dataManager = new DataManager(context);
+                    int result = dataManager.updateGood(updatedGood);
+
+                    switch (result) {
+                        case Constants.SUCCESS:
+                            Toast.makeText(context, context.getResources().getString(R.string.good_updated), Toast.LENGTH_SHORT).show();
+                            refreshList();
+                            dialog.dismiss();
+                            if (mOnGoodUpdatedListener != null) {
+                                mOnGoodUpdatedListener.onGoodUpdated();
+                            }
+                            break;
+                        case Constants.DATAEXISTS:
+                            Toast.makeText(context, context.getResources().getString(R.string.good_exists), Toast.LENGTH_SHORT).show();
+                            break;
+                        case Constants.ERROR:
+                            Toast.makeText(context, context.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    UtilsFunctions.hideKeyboard(context, view);
+                } else {
+                    Toast.makeText(context, context.getResources().getString(R.string.input_txt_not_valid), Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });*/
 
     }
 
@@ -88,7 +184,7 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
     public int getGoodsToOrderNumber() {
         int goodsToOrderNumber = 0;
-        for (int i = 0; i < groups.size() ; i++) {
+        for (int i = 0; i < groups.size(); i++) {
             goodsToOrderNumber = goodsToOrderNumber + groups.get(i).getItems().size();
         }
         return goodsToOrderNumber;
@@ -96,7 +192,7 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
     public List<Good> getGoodsToOrder() {
         List<Good> goodsToOrder = new ArrayList<>();
-        for (int i = 0; i < groups.size() ; i++) {
+        for (int i = 0; i < groups.size(); i++) {
             for (int j = 0; j < groups.get(i).getItems().size(); j++) {
                 goodsToOrder.add((Good) groups.get(i).getItems().get(j));
             }
@@ -106,10 +202,10 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
     public List<Good> getGoodsToComplete() {
         List<Good> goodsToOrder = new ArrayList<>();
-        for (int i = 0; i < groups.size() ; i++) {
+        for (int i = 0; i < groups.size(); i++) {
             for (int j = 0; j < groups.get(i).getItems().size(); j++) {
                 Good good = (Good) groups.get(i).getItems().get(j);
-                if (good.getGoodDesc().isEmpty()){
+                if (good.getGoodDesc().isEmpty()) {
                     goodsToOrder.add(good);
                 }
             }
@@ -135,8 +231,8 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
     public class GoodInOrderVH extends ChildViewHolder {
 
-        private TextView txtGoodName, txtGoodDesc;
         public RelativeLayout rlViewForeground;
+        private TextView txtGoodName, txtGoodDesc;
 
         GoodInOrderVH(View itemView) {
             super(itemView);
@@ -147,7 +243,6 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
 
         }
     }
-
 
 
 }

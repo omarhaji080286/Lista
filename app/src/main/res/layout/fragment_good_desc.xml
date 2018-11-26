@@ -18,65 +18,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <TextView
+                android:id="@+id/txtGoodName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txt_category_select"
-                    style="@style/TextViewLabel"
-                    android:layout_width="wrap_content"
-                    android:text="@string/select_a_category" />
-
-                <Spinner
-                    android:id="@+id/spinnerCategories"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_margin="2dp"
-                    android:background="@color/white" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txt_good_name"
-                    style="@style/TextViewLabel"
-                    android:layout_width="wrap_content"
-                    android:text="@string/good_s_name" />
-
-                <EditText
-                    android:id="@+id/edit_good"
-                    style="@style/EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/good_s_name" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/txt_good_desc"
-                    style="@style/TextViewLabel"
-                    android:layout_width="wrap_content"
-                    android:text="@string/good_description" />
-
-                <EditText
-                    android:id="@+id/edit_good_desc"
-                    style="@style/EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/good_description" />
-
-            </LinearLayout>
+                android:text="@string/good_s_name"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,19 +38,24 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:weightSum="100"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         style="@style/TextViewLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/brand" />
+                        android:textSize="18sp"
+                        android:text="@string/brand"
+                        android:layout_weight="20"/>
 
                     <EditText
-                        style="@style/EditText"
+                        android:id="@+id/editBrand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/brand" />
+                        android:hint="@string/brand"
+                        android:layout_weight="80"/>
 
                 </LinearLayout>
 
@@ -105,21 +63,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="99">
+                    android:weightSum="99"
+                    android:layout_marginBottom="10dp">
 
                     <Button
+                        android:id="@+id/btnQuantity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="33"
-                        android:text="Quantity" />
+                        android:text="Quantity"
+                        android:background="@drawable/blue_button"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
 
                     <Button
+                        android:id="@+id/btnGrammage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="33"
                         android:text="Grammage" />
 
                     <Button
+                        android:id="@+id/btnLitrage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="33"
@@ -140,23 +105,30 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:visibility="gone">
+                        android:visibility="visible"
+                        android:weightSum="100">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus" />
+                            android:src="@drawable/ic_minus"
+                            android:layout_weight="10"/>
 
                         <EditText
                             android:id="@+id/editQuantity"
-                            android:layout_width="wrap_content"
+                            android:layout_width="70dp"
                             android:layout_height="wrap_content"
-                            android:hint="@string/_0" />
+                            android:hint="@string/_0"
+                            android:layout_weight="80"
+                            android:gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"/>
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_plus" />
+                            android:src="@drawable/ic_plus"
+                            android:layout_weight="10"/>
 
                     </LinearLayout>
 
@@ -190,7 +162,7 @@
             style="@style/Button"
             android:layout_width="wrap_content"
             android:layout_weight="50"
-            android:text="@string/cancel" />
+            android:text="@string/not_now" />
 
         <Button
             android:id="@+id/btn_update_good"

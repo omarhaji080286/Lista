@@ -157,6 +157,9 @@
     <string name="_1_shop_selection">1 - Shop selection</string>
     <string name="_2_list_confirmation">2 - list confirmation</string>
     <string name="select">Select</string>
+    <string name="brand">Brand</string>
+    <string name="_0">0</string>
+    <string name="not_now">Not now</string>
 
 
 </resources>

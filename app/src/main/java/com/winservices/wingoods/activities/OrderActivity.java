@@ -51,7 +51,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private final static String TAG = OrderActivity.class.getSimpleName();
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private int selectedShopId;
-    private boolean orderInitiated;
+    //private boolean orderInitiated;
     private Context context;
     private RecyclerView rvCategoriesToOrder;
     private Dialog dialog;
@@ -81,12 +81,30 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         txtShopName.setText(shop.getShopName());
 
-        orderInitiated = getIntent().getBooleanExtra(Constants.ORDER_INITIATED, false);
+        //orderInitiated = getIntent().getBooleanExtra(Constants.ORDER_INITIATED, false);
 
         loadCategoriesToOrder(shop);
 
         btnOrder.setOnClickListener(this);
 
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+            case R.id.btn_order :
+                if (categoriesToOrderAdapter.getGoodsToOrderNumber()>0) {
+                    if (categoriesToOrderAdapter.getGoodsToComplete().size()==0){
+                        addOrder(context);
+                    } else {
+                        Toast.makeText(context, "need to complete goods", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 
 
@@ -244,21 +262,5 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         super.onDestroy();
     }
 
-    @Override
-    public void onClick(View view) {
 
-        switch (view.getId()){
-            case R.id.btn_order :
-                if (categoriesToOrderAdapter.getGoodsToOrderNumber()>0) {
-                    if (categoriesToOrderAdapter.getGoodsToComplete().size()==0){
-                        addOrder(context);
-                    } else {
-                        Toast.makeText(context, "need to complete goods", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
-                }
-            break;
-        }
-    }
 }
