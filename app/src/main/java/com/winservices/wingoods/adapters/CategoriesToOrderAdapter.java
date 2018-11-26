@@ -35,7 +35,6 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
     private List<CategoryGroup> groups;
     private int lastPosition = -1;
 
-
     public CategoriesToOrderAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
         this.context = context;
