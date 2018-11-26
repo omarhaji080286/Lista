@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,13 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.adapters.AdditionalGoodsAdapter;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
@@ -39,7 +36,6 @@ import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.utils.UtilsFunctions;
-import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,65 +87,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         btnOrder.setOnClickListener(this);
 
-
-
-        /*btnAddGood.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (groupsAdditionalGoods.size()>0) {
-
-                    Button btnCancel = mView.findViewById(R.id.btn_cancel);
-                    Button btnAddAdditionalGood = mView.findViewById(R.id.btn_add_additional_good);
-                    RecyclerView rvAdditionalGoodsToOrder = mView.findViewById(R.id.rv_additional_goods_to_order);
-                    TextView txtNoItems = mView.findViewById(R.id.txt_No_items);
-
-                    if (groupsAdditionalGoods.size()==1 && groupsAdditionalGoods.get(0).getItems().size()==0){
-                        txtNoItems.setVisibility(View.VISIBLE);
-                        btnAddAdditionalGood.setVisibility(View.GONE);
-                    } else {
-                        txtNoItems.setVisibility(View.GONE);
-                        btnAddAdditionalGood.setVisibility(View.VISIBLE);
-                    }
-
-                    dialog.show();
-
-                    LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-                    rvAdditionalGoodsToOrder.setLayoutManager(llm);
-                    rvAdditionalGoodsToOrder.setAdapter(additionalGoodsAdapter);
-                    for (int i = additionalGoodsAdapter.getGroups().size() - 1; i >= 0; i--) {
-                        if (additionalGoodsAdapter.isGroupExpanded(i)) {
-                            return;
-                        }
-                        additionalGoodsAdapter.toggleGroup(i);
-                    }
-
-                    btnAddAdditionalGood.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (additionalGoodsAdapter.getSelectedAdditionalGoods().size() > 0) {
-                                dialog.dismiss();
-                                goodsToOrderAdapter.addAdditionalGoods(additionalGoodsAdapter.getSelectedAdditionalGoods());
-                                removeSelectedAdditionalGoods();
-                                additionalGoodsAdapter.selectedAdditionalGoods.clear();
-                            } else {
-                                Toast.makeText(OrderActivity.this, R.string.no_item_selected, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(context, R.string.no_additional_items, Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-
     }
 
 
@@ -190,6 +127,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
     private void addOrder(final Context context) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
+            dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
+            dialog.show();
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_ADD_ORDER,
                     new Response.Listener<String>() {
@@ -201,6 +140,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                                 String message = jsonObject.getString("message");
                                 if (error) {
                                     //error in server
+                                    dialog.dismiss();
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                                 } else {
                                     dialog.dismiss();
@@ -218,7 +158,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            //error
+                            dialog.dismiss();
                         }
                     }
             ) {
@@ -310,10 +250,11 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         switch (view.getId()){
             case R.id.btn_order :
                 if (categoriesToOrderAdapter.getGoodsToOrderNumber()>0) {
-                    view.setEnabled(false);
-                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
-                    dialog.show();
-                    addOrder(context);
+                    if (categoriesToOrderAdapter.getGoodsToComplete().size()==0){
+                        addOrder(context);
+                    } else {
+                        Toast.makeText(context, "need to complete goods", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
                 }

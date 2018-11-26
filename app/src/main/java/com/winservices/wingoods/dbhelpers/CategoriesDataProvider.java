@@ -64,9 +64,11 @@ public class CategoriesDataProvider {
         List<DefaultCategory> shopDCategories = shop.getDefaultCategories();
 
         for (int i = 0; i < shopDCategories.size(); i++) {
+            DefaultCategory defaultCategory = shopDCategories.get(i);
             for (int j = 0; j < categories.size(); j++) {
-                if (shopDCategories.get(i).getDCategoryId() == categories.get(j).getDCategoryId()) {
-                    categoriesToOrder.add(categories.get(j));
+                Category category = categories.get(j);
+                if (defaultCategory.getDCategoryId() == category.getDCategoryId()) {
+                    categoriesToOrder.add(category);
                 }
             }
         }
@@ -75,7 +77,7 @@ public class CategoriesDataProvider {
 
         for (int i = 0; i < categoriesToOrder.size(); i++) {
 
-            Category category = categories.get(i);
+            Category category = categoriesToOrder.get(i);
             List<Good> notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(category.getServerCategoryId());
             CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
             categoryGroup.setCategoryId(category.getCategoryId());
@@ -89,32 +91,6 @@ public class CategoriesDataProvider {
         return groups;
 
     }
-
-    /*public List<CategoryGroup> getAdditionalGoodsList(int serverCategoryIdToOrder) {
-
-        List<CategoryGroup> additionalGoodsList = new ArrayList<>();
-        List<Category> categories;
-
-        categories = this.getCategoriesWithGoodsNotOrdered(serverCategoryIdToOrder);
-
-        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
-
-        for (int i = 0; i < categories.size(); i++) {
-
-            Category category = categories.get(i);
-            List<Good> notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(category.getServerCategoryId());
-            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
-            categoryGroup.setCategoryId(category.getCategoryId());
-            categoryGroup.setServerCategoryId(category.getServerCategoryId());
-            additionalGoodsList.add(categoryGroup);
-
-        }
-
-        Log.d(TAG, Constants.TAG_LISTA + "getAdditionalGoodsList called");
-
-        return additionalGoodsList;
-
-    }*/
 
     public int getGoodsToBuyNumber(int categoryId) {
         Log.d(TAG, Constants.TAG_LISTA + "getGoodsToBuyNumber called");

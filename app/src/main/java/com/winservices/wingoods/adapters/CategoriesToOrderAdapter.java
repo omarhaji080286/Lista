@@ -27,6 +27,7 @@ import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<CategoriesToOrderAdapter.CategoryInOrderVH,CategoriesToOrderAdapter.GoodInOrderVH> {
@@ -109,6 +110,19 @@ public class CategoriesToOrderAdapter extends ExpandableRecyclerViewAdapter<Cate
         for (int i = 0; i < groups.size() ; i++) {
             for (int j = 0; j < groups.get(i).getItems().size(); j++) {
                 goodsToOrder.add((Good) groups.get(i).getItems().get(j));
+            }
+        }
+        return goodsToOrder;
+    }
+
+    public List<Good> getGoodsToComplete() {
+        List<Good> goodsToOrder = new ArrayList<>();
+        for (int i = 0; i < groups.size() ; i++) {
+            for (int j = 0; j < groups.get(i).getItems().size(); j++) {
+                Good good = (Good) groups.get(i).getItems().get(j);
+                if (good.getGoodDesc().isEmpty()){
+                    goodsToOrder.add(good);
+                }
             }
         }
         return goodsToOrder;

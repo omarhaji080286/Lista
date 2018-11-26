@@ -46,14 +46,18 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
                                 RecyclerView.ViewHolder viewHolder, float dX, float dY,
                                 int actionState, boolean isCurrentlyActive) {
         final View foregroundView = getCastedView(viewHolder);
-        getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY,
-                actionState, isCurrentlyActive);
+        if (foregroundView!=null) {
+            getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY,
+                    actionState, isCurrentlyActive);
+        }
     }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         final View foregroundView = getCastedView(viewHolder);
-        getDefaultUIUtil().clearView(foregroundView);
+        if (foregroundView!=null) {
+            getDefaultUIUtil().clearView(foregroundView);
+        }
     }
 
     @Override
@@ -61,9 +65,10 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
                             RecyclerView.ViewHolder viewHolder, float dX, float dY,
                             int actionState, boolean isCurrentlyActive) {
         final View foregroundView = getCastedView(viewHolder);
-
-        getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
-                actionState, isCurrentlyActive);
+        if (foregroundView!=null){
+            getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
+                    actionState, isCurrentlyActive);
+        }
     }
 
     @Override
