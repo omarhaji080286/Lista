@@ -12,6 +12,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Good;
@@ -210,11 +211,32 @@ public class Synchronizer {
                 updateUpdatedGoodsByGroupMembers(jsonUpdatedGoodsByGroupMembers);
                 Log.d(LOG_TAG, "Sync updated goods by group members completed. " + jsonUpdatedGoodsByGroupMembers.length() + " updated.");
 
+                //updates amounts
+                JSONArray jsonAmountsToSync = jsonObject.getJSONArray("amountsToSync");
+                insertAmounts(jsonAmountsToSync);
+                Log.d(LOG_TAG, "Sync amounts completed. " + jsonAmountsToSync.length() + " inserted or updated.");
+
             }
 
         } catch (JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+        }
+    }
+
+    private void insertAmounts(JSONArray jsonAmountsToSync) throws JSONException {
+
+        AmountsDataManager amountsDataManager = new AmountsDataManager(context);
+
+        for (int i = 0; i < jsonAmountsToSync.length(); i++) {
+            JSONObject JSONGood = jsonAmountsToSync.getJSONObject(i);
+            int amountId = JSONGood.getInt("amount_id");
+            String amountValue = JSONGood.getString("amount_value");
+            int amountTypeId = JSONGood.getInt("amount_type_id");
+            String amountTypeName = JSONGood.getString("amount_type_name");
+
+            Amount amount = new Amount(amountId, amountValue, amountTypeId, amountTypeName);
+            amountsDataManager.insertAmount(amount);
         }
     }
 

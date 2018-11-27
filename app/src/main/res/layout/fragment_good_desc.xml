@@ -1,150 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frag_update_good"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:weightSum="100">
+    android:focusableInTouchMode="true">
 
-    <ScrollView
+
+    <LinearLayout
+        android:id="@+id/llGoodName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="85">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtGoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
+            android:text="@string/good_s_name"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtGoodDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="(description)"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llBrand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:weightSum="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llGoodName">
+
+        <TextView
+            style="@style/TextViewLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:text="@string/brand"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/editBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="80"
+            android:hint="@string/brand"
+            android:maxLength="30"
+            tools:ignore="Autofill" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llUnitsButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llBrand">
+
+        <Button
+            android:id="@+id/btnQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:text="Quantity"
+            android:layout_margin="1dp"
+            android:textSize="12sp"
+            android:background="@drawable/red_button"/>
+
+        <Button
+            android:id="@+id/btnGrammage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:text="Kg"
+            android:layout_margin="1dp"
+            android:textSize="12sp"
+            android:background="@drawable/gray_button"/>
+
+        <Button
+            android:id="@+id/btnLitrage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:text="litre"
+            android:layout_margin="1dp"
+            android:textSize="12sp"
+            android:background="@drawable/gray_button"/>
+
+        <Button
+            android:id="@+id/btnDh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:text="DH"
+            android:layout_margin="1dp"
+            android:textSize="12sp"
+            android:background="@drawable/gray_button"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llUnitsButtons">
 
         <LinearLayout
+            android:id="@+id/llUnits"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:orientation="vertical">
 
-
-            <TextView
-                android:id="@+id/txtGoodName"
+            <LinearLayout
+                android:id="@+id/llQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/good_s_name"
-                android:textSize="18sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="visible"
+                android:weightSum="100">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:src="@drawable/ic_minus" />
+
+                <EditText
+                    android:id="@+id/editQuantity"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="80"
+                    android:gravity="center"
+                    android:hint="@string/_0" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:src="@drawable/ic_plus" />
+
+            </LinearLayout>
+
 
             <LinearLayout
+                android:id="@+id/llUnitsValues"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="100"
-                    android:layout_marginBottom="10dp">
-
-                    <TextView
-                        style="@style/TextViewLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:text="@string/brand"
-                        android:layout_weight="20"/>
-
-                    <EditText
-                        android:id="@+id/editBrand"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/brand"
-                        android:layout_weight="80"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="99"
-                    android:layout_marginBottom="10dp">
-
-                    <Button
-                        android:id="@+id/btnQuantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Quantity"
-                        android:background="@drawable/blue_button"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"/>
-
-                    <Button
-                        android:id="@+id/btnGrammage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Grammage" />
-
-                    <Button
-                        android:id="@+id/btnLitrage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Litrage" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:id="@+id/llQuantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:visibility="visible"
-                        android:weightSum="100">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus"
-                            android:layout_weight="10"/>
-
-                        <EditText
-                            android:id="@+id/editQuantity"
-                            android:layout_width="70dp"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/_0"
-                            android:layout_weight="80"
-                            android:gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="5dp"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_plus"
-                            android:layout_weight="10"/>
-
-                    </LinearLayout>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvGrammage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvLitrage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                </LinearLayout>
+                android:orientation="vertical"
+                android:visibility="visible">
 
             </LinearLayout>
 
@@ -153,24 +193,30 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/llDialogButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="15">
+        android:layout_weight="15"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scroll">
 
         <Button
             android:id="@+id/btn_cancel"
-            style="@style/Button"
             android:layout_width="wrap_content"
-            android:layout_weight="50"
+            android:layout_height="wrap_content"
             android:text="@string/not_now" />
 
         <Button
             android:id="@+id/btn_update_good"
-            style="@style/Button"
             android:layout_width="wrap_content"
-            android:layout_weight="50"
-            android:text="@string/update" />
+            android:layout_height="wrap_content"
+            android:text="Ok" />
 
     </LinearLayout>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
