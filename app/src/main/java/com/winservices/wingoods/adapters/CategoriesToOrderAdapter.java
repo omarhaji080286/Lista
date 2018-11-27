@@ -3,6 +3,8 @@ package com.winservices.wingoods.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,11 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableListPosition;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.dbhelpers.AmountsDataManager;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.DefaultCategory;
@@ -33,12 +39,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesToOrderAdapter
-        extends ExpandableRecyclerViewAdapter<CategoriesToOrderAdapter.CategoryInOrderVH, CategoriesToOrderAdapter.GoodInOrderVH>
-{
+        extends ExpandableRecyclerViewAdapter<CategoriesToOrderAdapter.CategoryInOrderVH, CategoriesToOrderAdapter.GoodInOrderVH> {
 
     private Context context;
     private List<CategoryGroup> groups;
     private int lastPosition = -1;
+    private String amountValue= "";
+    private String brandValue = "";
 
     public CategoriesToOrderAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
@@ -75,7 +82,7 @@ public class CategoriesToOrderAdapter
     }
 
     @Override
-    public void onBindChildViewHolder(final GoodInOrderVH holder, int flatPosition, ExpandableGroup group, int childIndex) {
+    public void onBindChildViewHolder(final GoodInOrderVH holder, final int flatPosition, final ExpandableGroup group, final int childIndex) {
         final Good good = (Good) group.getItems().get(childIndex);
 
         holder.txtGoodDesc.setText(good.getGoodDesc());
@@ -84,30 +91,34 @@ public class CategoriesToOrderAdapter
         holder.rlViewForeground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showCompleteGoodDescDialog(holder.rlViewForeground, good);
+                showCompleteGoodDescDialog(holder.rlViewForeground, good, flatPosition, childIndex, group);
             }
         });
 
     }
 
-    private void showCompleteGoodDescDialog(ViewGroup viewGroup, Good good) {
+    private void showCompleteGoodDescDialog(ViewGroup viewGroup, final Good good, final int flatPosition, final int childIndex, final ExpandableGroup group ) {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
         View mView = LayoutInflater.from(context)
                 .inflate(R.layout.fragment_good_desc, viewGroup, false);
 
         TextView txtGoodName = mView.findViewById(R.id.txtGoodName);
-        TextView txtGoodDesc = mView.findViewById(R.id.txtGoodDesc);
-        EditText editBrand = mView.findViewById(R.id.editBrand);
+        final TextView txtGoodDesc = mView.findViewById(R.id.txtGoodDesc);
+        final EditText editBrand = mView.findViewById(R.id.editBrand);
+
 
         final LinearLayout llQuantity = mView.findViewById(R.id.llQuantity);
-
         final LinearLayout llUnitsValues = mView.findViewById(R.id.llUnitsValues);
 
         final Button btnQuantity = mView.findViewById(R.id.btnQuantity);
         final Button btnGrammage = mView.findViewById(R.id.btnGrammage);
         final Button btnLitrage = mView.findViewById(R.id.btnLitrage);
         final Button btnDh = mView.findViewById(R.id.btnDh);
+
+        ImageView imgPlus = mView.findViewById(R.id.imgPlus);
+        ImageView imgMinus = mView.findViewById(R.id.imgMinus);
+        final EditText editAmount = mView.findViewById(R.id.editAmount);
 
         Button btnUpdateGood = mView.findViewById(R.id.btn_update_good);
         Button btnCancel = mView.findViewById(R.id.btn_cancel);
@@ -120,11 +131,70 @@ public class CategoriesToOrderAdapter
         final AlertDialog dialog = mBuilder.create();
         dialog.show();
 
+
+        //prepare Brand EditText
+        editBrand.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                brandValue = charSequence.toString();
+                String goodDesc = "( " + brandValue + " " + amountValue + " )";
+                txtGoodDesc.setText(goodDesc);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        //prepare Edit Amount
+        editAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                amountValue = charSequence.toString() + " pièce(s)";
+                String goodDesc = "( " + brandValue + " " + amountValue + ")";
+                txtGoodDesc.setText(goodDesc);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        //prepare Images + and -
+        imgMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Integer amount = Integer.valueOf(editAmount.getText().toString());
+                editAmount.setText(String.valueOf(Math.max(amount-1,0)));
+            }
+        });
+        imgPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Integer amount = Integer.valueOf(editAmount.getText().toString());
+                editAmount.setText(String.valueOf(amount+1));
+            }
+        });
+
         //prepare Buttons
         btnQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues);
+                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
                 changeButtonsBackGround(view, btnGrammage, btnLitrage, btnDh);
             }
         });
@@ -132,21 +202,21 @@ public class CategoriesToOrderAdapter
         btnGrammage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues);
+                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
                 changeButtonsBackGround(view, btnQuantity, btnLitrage, btnDh);
             }
         });
         btnLitrage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues);
+                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnDh);
             }
         });
         btnDh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues);
+                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnLitrage);
             }
         });
@@ -158,59 +228,30 @@ public class CategoriesToOrderAdapter
             }
         });
 
-
-        //Action Button "Update"
-        /*btnUpdateGood.setOnClickListener(new View.OnClickListener() {
+        btnUpdateGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String updatedName = editGoodName.getText().toString();
-                if (Controlers.inputOk(updatedName)) {
-                    int categoryId = (int) spinner.getSelectedItemId();
-
-                    GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
-                    Good updatedGood = goodsDataProvider.getGoodById(goodItem.getGoodId());
-
-                    updatedGood.setGoodName(updatedName.trim());
-                    updatedGood.setCategoryId(categoryId);
-                    updatedGood.setQuantityLevelId(goodItem.getQuantityLevelId());
-                    updatedGood.setGoodDesc(editGoodDesc.getText().toString().trim());
-                    updatedGood.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
-                    if (!editGoodDesc.getText().toString().trim().isEmpty()) {
-                        holder.goodDescription.setVisibility(View.VISIBLE);
-                    }
-
-                    DataManager dataManager = new DataManager(context);
-                    int result = dataManager.updateGood(updatedGood);
-
-                    switch (result) {
-                        case Constants.SUCCESS:
-                            Toast.makeText(context, context.getResources().getString(R.string.good_updated), Toast.LENGTH_SHORT).show();
-                            refreshList();
-                            dialog.dismiss();
-                            if (mOnGoodUpdatedListener != null) {
-                                mOnGoodUpdatedListener.onGoodUpdated();
-                            }
-                            break;
-                        case Constants.DATAEXISTS:
-                            Toast.makeText(context, context.getResources().getString(R.string.good_exists), Toast.LENGTH_SHORT).show();
-                            break;
-                        case Constants.ERROR:
-                            Toast.makeText(context, context.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    UtilsFunctions.hideKeyboard(context, view);
-                } else {
-                    Toast.makeText(context, context.getResources().getString(R.string.input_txt_not_valid), Toast.LENGTH_SHORT).show();
-                }
-
-
+                String finalGoodDesc = txtGoodDesc.getText().toString();
+                updateGood(good.getGoodId(),finalGoodDesc);
+                ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
+                notifyItemChanged(flatPosition);
+                dialog.dismiss();
             }
-        });*/
+        });
+    }
+
+    private void updateGood(int goodId, String goodDesc){
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+        DataManager dataManager = new DataManager(context);
+
+        Good good = goodsDataProvider.getGoodById(goodId);
+        good.setGoodDesc(goodDesc);
+        dataManager.updateGood(good);
 
     }
 
-    private void changeContent(View view, LinearLayout llQuantity, LinearLayout llUnitsValues){
-        switch (view.getId()){
+    private void changeContent(View view, LinearLayout llQuantity, LinearLayout llUnitsValues, final TextView txtGoodDesc, final EditText editBrand) {
+        switch (view.getId()) {
             case R.id.btnQuantity:
                 llQuantity.setVisibility(View.VISIBLE);
                 llUnitsValues.setVisibility(View.GONE);
@@ -219,7 +260,17 @@ public class CategoriesToOrderAdapter
                 llQuantity.setVisibility(View.GONE);
                 llUnitsValues.setVisibility(View.VISIBLE);
                 llUnitsValues.removeAllViews();
-                llUnitsValues.addView(getRadioGroup(view.getId()));
+                RadioGroup rg = getRadioGroup(view.getId());
+                rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                        RadioButton rb = radioGroup.findViewById(checkedId);
+                        amountValue = rb.getText().toString();
+                        String goodDesc = "( " + editBrand.getText().toString() + " " + amountValue + " )";
+                        txtGoodDesc.setText(goodDesc);
+                    }
+                });
+                llUnitsValues.addView(rg);
         }
     }
 
@@ -236,25 +287,26 @@ public class CategoriesToOrderAdapter
 
         rg.setOrientation(RadioGroup.VERTICAL);
 
-        for (int i = 0; i < getUnitsValues(viewId).length; i++) {
+        for (int i = 0; i < getUnitsValues(viewId).size(); i++) {
             RadioButton rb = new RadioButton(context);
-            rb.setText(getUnitsValues(viewId)[i]);
+            rb.setText(getUnitsValues(viewId).get(i).getAmountValue());
             rglp = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
             rg.addView(rb, rglp);
         }
         return rg;
     }
 
-    private String[] getUnitsValues(int viewId) {
+    private List<Amount> getUnitsValues(int viewId) {
+        AmountsDataManager amountsDataManager = new AmountsDataManager(context);
         switch (viewId) {
             case R.id.btnGrammage:
-                return new String[]{"A", "B", "C", "D", "E"};
+                return amountsDataManager.getAmounts(Amount.WEIGHT);
             case R.id.btnLitrage:
-                return new String[]{"L1", "L2", "L3", "L4", "L5"};
+                return amountsDataManager.getAmounts(Amount.VOLUME);
             case R.id.btnDh:
-                return new String[]{"DH1", "DH2", "DH3", "DH4", "DH5"};
+                return amountsDataManager.getAmounts(Amount.CURRENCY);
             default:
-                return new String[]{"Nothing to display"};
+                return new ArrayList<>();
         }
     }
 

@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frag_update_good"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -37,10 +37,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="(description)"
+            android:text=" ( ? )"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </LinearLayout>
 
@@ -69,7 +69,8 @@
             android:layout_weight="80"
             android:hint="@string/brand"
             android:maxLength="30"
-            tools:ignore="Autofill" />
+            tools:ignore="Autofill"
+            android:inputType="text" />
 
     </LinearLayout>
 
@@ -155,22 +156,26 @@
                 android:weightSum="100">
 
                 <ImageView
+                    android:id="@+id/imgMinus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
                     android:src="@drawable/ic_minus" />
 
                 <EditText
-                    android:id="@+id/editQuantity"
+                    android:id="@+id/editAmount"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="80"
                     android:gravity="center"
-                    android:hint="@string/_0" />
+                    android:text="@string/_0"
+                    android:maxLength="2"
+                    android:inputType="number"/>
 
                 <ImageView
+                    android:id="@+id/imgPlus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"

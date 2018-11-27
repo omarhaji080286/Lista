@@ -24,7 +24,7 @@ public class AmountsDataManager {
         Cursor cursor = db.getAmounts(amountTypeId);
         List<Amount> amounts = new ArrayList<>();
 
-        if (cursor.getCount() != 0 ) {
+        if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
                 int amountId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
                 String amountValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_AMOUNT_VALUE));
@@ -42,7 +42,7 @@ public class AmountsDataManager {
 
     void insertAmount(Amount amount) {
 
-        if (getAmountById(amount.getAmountId())==null){
+        if (getAmountById(amount.getAmountId()) == null) {
             db.insertAmount(amount);
         } else {
             db.updateAmount(amount);
@@ -50,9 +50,9 @@ public class AmountsDataManager {
 
     }
 
-    private Amount getAmountById(int amountId){
+    private Amount getAmountById(int amountId) {
         Cursor cursor = db.getAmountById(amountId);
-        if ( cursor == null || cursor.getCount() == 0) {
+        if (cursor == null || cursor.getCount() == 0) {
             return null;
         }
         cursor.moveToNext();
@@ -63,7 +63,6 @@ public class AmountsDataManager {
 
         return new Amount(amountId, amountValue, amountTypeId, amountTypeName);
     }
-
 
 
 }
