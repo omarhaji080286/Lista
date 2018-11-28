@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,13 +47,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, View.OnClickListener {
+public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private final static String TAG = OrderActivity.class.getSimpleName();
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private int selectedShopId;
-    //private boolean orderInitiated;
-    private Context context;
     private RecyclerView rvCategoriesToOrder;
     private Dialog dialog;
 
@@ -62,7 +61,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         setContentView(R.layout.activity_order);
 
         setTitle(getString(R.string.order_my_list));
-        context = this;
 
         if (getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
@@ -70,7 +68,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
 
         rvCategoriesToOrder = findViewById(R.id.rvCategoriesToOrder);
-        Button btnOrder = findViewById(R.id.btn_order);
         TextView txtShopName = findViewById(R.id.txt_shop_name);
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
@@ -81,36 +78,27 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         txtShopName.setText(shop.getShopName());
 
-        //orderInitiated = getIntent().getBooleanExtra(Constants.ORDER_INITIATED, false);
 
         loadCategoriesToOrder(shop);
 
-        btnOrder.setOnClickListener(this);
-
     }
 
-    @Override
-    public void onClick(View view) {
+    private void sendOrder() {
 
-        switch (view.getId()){
-            case R.id.btn_order :
-                if (categoriesToOrderAdapter.getGoodsToOrderNumber()>0) {
-                    if (categoriesToOrderAdapter.getGoodsToComplete().size()==0){
-                        addOrder(context);
-                    } else {
-                        Toast.makeText(context, "need to complete goods", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, R.string.empty_order, Toast.LENGTH_SHORT).show();
-                }
-                break;
+        if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
+            if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
+                addOrder(this);
+            } else {
+                Toast.makeText(this, "need to complete goods", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, R.string.empty_order, Toast.LENGTH_SHORT).show();
         }
+
     }
-
-
 
     private void loadCategoriesToOrder(Shop shop) {
-        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
         List<CategoryGroup> categoriesToOrder = categoriesDataProvider.getCategoriesForOrder(shop);
 
         categoriesToOrderAdapter = new CategoriesToOrderAdapter(categoriesToOrder, this);
@@ -194,14 +182,14 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private String getJSONForAddOrder(){
+    private String getJSONForAddOrder() {
         final JSONObject root = new JSONObject();
         try {
 
             UsersDataManager usersDataManager = new UsersDataManager(this);
             User currentUser = usersDataManager.getCurrentUser();
 
-            root.put("serverUserId", currentUser.getServerUserId() );
+            root.put("serverUserId", currentUser.getServerUserId());
             root.put("serverShopId", selectedShopId);
             root.put("statusId", Order.REGISTERED);
 
@@ -233,19 +221,29 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.order_activity_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
-            case android.R.id.home :
+        switch (id) {
+            case android.R.id.home:
                 goToShopsActivity();
+                break;
+            case R.id.sendOrder:
+                sendOrder();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void goToShopsActivity(){
+    private void goToShopsActivity() {
         Intent intent = new Intent(OrderActivity.this, ShopsActivity.class);
-        intent.putExtra(Constants.ORDER_INITIATED,true);
+        intent.putExtra(Constants.ORDER_INITIATED, true);
         startActivity(intent);
         finish();
     }

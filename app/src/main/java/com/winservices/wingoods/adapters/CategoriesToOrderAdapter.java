@@ -8,14 +8,17 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
@@ -105,8 +108,8 @@ public class CategoriesToOrderAdapter
 
         TextView txtGoodName = mView.findViewById(R.id.txtGoodName);
         final TextView txtGoodDesc = mView.findViewById(R.id.txtGoodDesc);
-        final EditText editBrand = mView.findViewById(R.id.editBrand);
-
+        //final EditText editBrand = mView.findViewById(R.id.editBrand);
+        final MultiAutoCompleteTextView editBrand = mView.findViewById(R.id.macBrand);
 
         final LinearLayout llQuantity = mView.findViewById(R.id.llQuantity);
         final LinearLayout llUnitsValues = mView.findViewById(R.id.llUnitsValues);
@@ -131,6 +134,11 @@ public class CategoriesToOrderAdapter
         final AlertDialog dialog = mBuilder.create();
         dialog.show();
 
+        String[] BRANDS = new String[] {"Kiri", "Tide", "Dethol", "Coca-cola", "Jaouda", "Fraise"};
+        ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_expandable_list_item_1, BRANDS);
+        editBrand.setAdapter(macBrandAdapter);
+        editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
         //prepare Brand EditText
         editBrand.addTextChangedListener(new TextWatcher() {
@@ -178,13 +186,26 @@ public class CategoriesToOrderAdapter
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (editAmount.getText().toString().isEmpty()){
+                    editAmount.setText(String.valueOf(0));
+                    return;
+                }
                 Integer amount = Integer.valueOf(editAmount.getText().toString());
-                editAmount.setText(String.valueOf(Math.max(amount-1,0)));
+                if (amount==0) return;
+                if (amount==1){
+                    editAmount.setText(String.valueOf(0));
+                    amountValue = "";
+                    String goodDesc = "( " + brandValue + " " + amountValue + ")";
+                    txtGoodDesc.setText(goodDesc);
+                    return;
+                }
+                editAmount.setText(String.valueOf(Math.max(amount-1,1)));
             }
         });
         imgPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (editAmount.getText().toString().isEmpty()) editAmount.setText(String.valueOf(0));
                 Integer amount = Integer.valueOf(editAmount.getText().toString());
                 editAmount.setText(String.valueOf(amount+1));
             }
@@ -232,12 +253,23 @@ public class CategoriesToOrderAdapter
             @Override
             public void onClick(View view) {
                 String finalGoodDesc = txtGoodDesc.getText().toString();
-                updateGood(good.getGoodId(),finalGoodDesc);
-                ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
-                notifyItemChanged(flatPosition);
-                dialog.dismiss();
+                if (inputsOk()){
+                    updateGood(good.getGoodId(),finalGoodDesc);
+                    ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
+                    notifyItemChanged(flatPosition);
+                    dialog.dismiss();
+                }
             }
         });
+    }
+
+    private boolean inputsOk() {
+        boolean inputsOk = true;
+        if (amountValue.isEmpty()){
+            inputsOk = false;
+            Toast.makeText(context, R.string.select_amount, Toast.LENGTH_SHORT).show();
+        }
+        return inputsOk;
     }
 
     private void updateGood(int goodId, String goodDesc){
@@ -275,10 +307,14 @@ public class CategoriesToOrderAdapter
     }
 
     private void changeButtonsBackGround(View view, Button btn1, Button btn2, Button btn3) {
-        view.setBackground(context.getDrawable(R.drawable.red_button));
-        btn1.setBackground(context.getDrawable(R.drawable.gray_button));
-        btn2.setBackground(context.getDrawable(R.drawable.gray_button));
-        btn3.setBackground(context.getDrawable(R.drawable.gray_button));
+        view.setBackground(context.getDrawable(R.drawable.btn_amount_selected));
+        ((Button) view).setTextColor( context.getResources().getColor(R.color.white));
+        btn1.setBackground(context.getDrawable(R.drawable.btn_amount));
+        btn1.setTextColor( context.getResources().getColor(R.color.black));
+        btn2.setBackground(context.getDrawable(R.drawable.btn_amount));
+        btn2.setTextColor( context.getResources().getColor(R.color.black));
+        btn3.setBackground(context.getDrawable(R.drawable.btn_amount));
+        btn3.setTextColor( context.getResources().getColor(R.color.black));
     }
 
     private RadioGroup getRadioGroup(int viewId) {

@@ -48,7 +48,7 @@
         android:id="@+id/llBrand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:weightSum="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,13 +72,20 @@
             tools:ignore="Autofill"
             android:inputType="text" />
 
+        <MultiAutoCompleteTextView
+            android:id="@+id/macBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="select or Type a Brand"
+            android:completionThreshold="1"/>
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/llUnitsButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:weightSum="100"
@@ -89,42 +96,30 @@
         <Button
             android:id="@+id/btnQuantity"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="25"
             android:text="Quantity"
-            android:layout_margin="1dp"
-            android:textSize="12sp"
-            android:background="@drawable/red_button"/>
+            style="@style/BtnAmountSelected"/>
 
         <Button
             android:id="@+id/btnGrammage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="25"
             android:text="Kg"
-            android:layout_margin="1dp"
-            android:textSize="12sp"
-            android:background="@drawable/gray_button"/>
+            style="@style/BtnAmount"/>
 
         <Button
             android:id="@+id/btnLitrage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="25"
             android:text="litre"
-            android:layout_margin="1dp"
-            android:textSize="12sp"
-            android:background="@drawable/gray_button"/>
+            style="@style/BtnAmount"/>
 
         <Button
             android:id="@+id/btnDh"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_weight="25"
             android:text="DH"
-            android:layout_margin="1dp"
-            android:textSize="12sp"
-            android:background="@drawable/gray_button"/>
+            style="@style/BtnAmount"/>
 
     </LinearLayout>
 
@@ -141,7 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:orientation="vertical">
