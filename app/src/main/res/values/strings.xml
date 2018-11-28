@@ -163,6 +163,7 @@
     <string name="send">Send</string>
     <string name="select_amount">Please, select an amount.</string>
     <string name="_1" translatable="false">1</string>
+    <string name="brand_or_description">Brand, Description...</string>
 
 
 </resources>

@@ -11,12 +11,21 @@ public class Amount {
     private String amountValue;
     private int amountTypeId;
     private String amountTypeName;
+    private boolean selected;
 
     public Amount(int amountId, String amountValue, int amountTypeId, String amountTypeName) {
         this.amountId = amountId;
         this.amountValue = amountValue;
         this.amountTypeId = amountTypeId;
         this.amountTypeName = amountTypeName;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public int getAmountId() {

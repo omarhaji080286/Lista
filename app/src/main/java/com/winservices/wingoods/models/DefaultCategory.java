@@ -6,10 +6,13 @@ import android.os.Parcelable;
 public class DefaultCategory implements Parcelable {
 
     public static final String PREFIX_D_CATEGORY = "d_category_";
+    public static final int GROCERIES = 1;
+    public static final int HYGIENE_PRODUCTS = 6;
+    public static final int COSMETICS = 8;
+    public static final int HARDWARES = 10;
 
     private int dCategoryId;
     private String dCategoryName;
-
 
     public DefaultCategory(int dCategoryId, String dCategoryName) {
         this.dCategoryId = dCategoryId;

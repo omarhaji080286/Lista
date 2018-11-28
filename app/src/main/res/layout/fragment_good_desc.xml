@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frag_update_good"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -54,30 +53,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llGoodName">
 
-        <TextView
-            style="@style/TextViewLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="20"
-            android:text="@string/brand"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/editBrand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="80"
-            android:hint="@string/brand"
-            android:maxLength="30"
-            tools:ignore="Autofill"
-            android:inputType="text" />
-
         <MultiAutoCompleteTextView
             android:id="@+id/macBrand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="select or Type a Brand"
-            android:completionThreshold="1"/>
+            android:completionThreshold="1"
+            android:hint="@string/brand_or_description" />
 
     </LinearLayout>
 
@@ -86,8 +67,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:weightSum="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,31 +76,31 @@
 
         <Button
             android:id="@+id/btnQuantity"
+            style="@style/BtnAmountSelected"
             android:layout_width="wrap_content"
             android:layout_weight="25"
-            android:text="Quantity"
-            style="@style/BtnAmountSelected"/>
+            android:text="Quantity" />
 
         <Button
             android:id="@+id/btnGrammage"
+            style="@style/BtnAmount"
             android:layout_width="wrap_content"
             android:layout_weight="25"
-            android:text="Kg"
-            style="@style/BtnAmount"/>
+            android:text="Kg" />
 
         <Button
             android:id="@+id/btnLitrage"
+            style="@style/BtnAmount"
             android:layout_width="wrap_content"
             android:layout_weight="25"
-            android:text="litre"
-            style="@style/BtnAmount"/>
+            android:text="litre" />
 
         <Button
             android:id="@+id/btnDh"
+            style="@style/BtnAmount"
             android:layout_width="wrap_content"
             android:layout_weight="25"
-            android:text="DH"
-            style="@style/BtnAmount"/>
+            android:text="DH" />
 
     </LinearLayout>
 
@@ -165,9 +146,9 @@
                     android:layout_marginEnd="5dp"
                     android:layout_weight="80"
                     android:gravity="center"
-                    android:text="@string/_0"
+                    android:inputType="number"
                     android:maxLength="2"
-                    android:inputType="number"/>
+                    android:text="@string/_0" />
 
                 <ImageView
                     android:id="@+id/imgPlus"
@@ -178,15 +159,12 @@
 
             </LinearLayout>
 
-
-            <LinearLayout
-                android:id="@+id/llUnitsValues"
+            <GridLayout
+                android:id="@+id/gridAmounts"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:columnCount="4"
+                android:visibility="gone" />
 
         </LinearLayout>
 

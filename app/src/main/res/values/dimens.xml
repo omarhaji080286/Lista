@@ -14,5 +14,6 @@
     <dimen name="fab_margin_start">15dp</dimen>
     <dimen name="fab_text_size">15sp</dimen>
     <dimen name="btn_amount_height_size">30sp</dimen>
+    <dimen name="margin_grid_cell">2dp</dimen>
 
 </resources>

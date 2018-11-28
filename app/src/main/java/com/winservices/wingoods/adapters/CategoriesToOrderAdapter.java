@@ -5,17 +5,17 @@ import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +47,7 @@ public class CategoriesToOrderAdapter
     private Context context;
     private List<CategoryGroup> groups;
     private int lastPosition = -1;
-    private String amountValue= "";
+    private String amountValue = "";
     private String brandValue = "";
 
     public CategoriesToOrderAdapter(List<CategoryGroup> groups, Context context) {
@@ -94,13 +94,14 @@ public class CategoriesToOrderAdapter
         holder.rlViewForeground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                amountValue = "";
+                brandValue = "";
                 showCompleteGoodDescDialog(holder.rlViewForeground, good, flatPosition, childIndex, group);
             }
         });
-
     }
 
-    private void showCompleteGoodDescDialog(ViewGroup viewGroup, final Good good, final int flatPosition, final int childIndex, final ExpandableGroup group ) {
+    private void showCompleteGoodDescDialog(ViewGroup viewGroup, final Good good, final int flatPosition, final int childIndex, final ExpandableGroup group) {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
         View mView = LayoutInflater.from(context)
@@ -108,11 +109,11 @@ public class CategoriesToOrderAdapter
 
         TextView txtGoodName = mView.findViewById(R.id.txtGoodName);
         final TextView txtGoodDesc = mView.findViewById(R.id.txtGoodDesc);
-        //final EditText editBrand = mView.findViewById(R.id.editBrand);
+
         final MultiAutoCompleteTextView editBrand = mView.findViewById(R.id.macBrand);
 
         final LinearLayout llQuantity = mView.findViewById(R.id.llQuantity);
-        final LinearLayout llUnitsValues = mView.findViewById(R.id.llUnitsValues);
+        final GridLayout gridAmounts = mView.findViewById(R.id.gridAmounts);
 
         final Button btnQuantity = mView.findViewById(R.id.btnQuantity);
         final Button btnGrammage = mView.findViewById(R.id.btnGrammage);
@@ -126,40 +127,52 @@ public class CategoriesToOrderAdapter
         Button btnUpdateGood = mView.findViewById(R.id.btn_update_good);
         Button btnCancel = mView.findViewById(R.id.btn_cancel);
 
-        //EditText
-        txtGoodName.setText(good.getGoodName());
-
         //Show the dialog
         mBuilder.setView(mView);
         final AlertDialog dialog = mBuilder.create();
         dialog.show();
 
-        String[] BRANDS = new String[] {"Kiri", "Tide", "Dethol", "Coca-cola", "Jaouda", "Fraise"};
-        ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
-                android.R.layout.simple_expandable_list_item_1, BRANDS);
-        editBrand.setAdapter(macBrandAdapter);
-        editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        //EditText
+        txtGoodName.setText(good.getGoodName());
+        txtGoodDesc.setText(good.getGoodDesc());
 
         //prepare Brand EditText
-        editBrand.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
+        Category category = categoriesDataProvider.getCategoryByGoodId(good.getGoodId());
 
-            }
+        if (!(category.getDCategoryId() == DefaultCategory.GROCERIES ||
+                category.getDCategoryId() == DefaultCategory.COSMETICS ||
+                category.getDCategoryId() == DefaultCategory.HYGIENE_PRODUCTS ||
+                category.getDCategoryId() == DefaultCategory.HARDWARES)) {
+            editBrand.setVisibility(View.GONE);
+        } else {
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                brandValue = charSequence.toString();
-                String goodDesc = "( " + brandValue + " " + amountValue + " )";
-                txtGoodDesc.setText(goodDesc);
+            String[] BRANDS = new String[]{"Kiri", "Tide", "Dethol", "Coca-cola", "Jaouda", "Fraise"};
+            ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
+                    android.R.layout.simple_expandable_list_item_1, BRANDS);
+            editBrand.setAdapter(macBrandAdapter);
+            editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
-            }
+            editBrand.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            @Override
-            public void afterTextChanged(Editable editable) {
+                }
 
-            }
-        });
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    brandValue = charSequence.toString();
+                    String goodDesc = "( " + brandValue + " " + amountValue + " )";
+                    txtGoodDesc.setText(goodDesc);
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+        }
 
         //prepare Edit Amount
         editAmount.addTextChangedListener(new TextWatcher() {
@@ -186,28 +199,29 @@ public class CategoriesToOrderAdapter
         imgMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editAmount.getText().toString().isEmpty()){
+                if (editAmount.getText().toString().isEmpty()) {
                     editAmount.setText(String.valueOf(0));
                     return;
                 }
                 Integer amount = Integer.valueOf(editAmount.getText().toString());
-                if (amount==0) return;
-                if (amount==1){
+                if (amount == 0) return;
+                if (amount == 1) {
                     editAmount.setText(String.valueOf(0));
                     amountValue = "";
                     String goodDesc = "( " + brandValue + " " + amountValue + ")";
                     txtGoodDesc.setText(goodDesc);
                     return;
                 }
-                editAmount.setText(String.valueOf(Math.max(amount-1,1)));
+                editAmount.setText(String.valueOf(Math.max(amount - 1, 1)));
             }
         });
         imgPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editAmount.getText().toString().isEmpty()) editAmount.setText(String.valueOf(0));
+                if (editAmount.getText().toString().isEmpty())
+                    editAmount.setText(String.valueOf(0));
                 Integer amount = Integer.valueOf(editAmount.getText().toString());
-                editAmount.setText(String.valueOf(amount+1));
+                editAmount.setText(String.valueOf(amount + 1));
             }
         });
 
@@ -215,7 +229,7 @@ public class CategoriesToOrderAdapter
         btnQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
                 changeButtonsBackGround(view, btnGrammage, btnLitrage, btnDh);
             }
         });
@@ -223,21 +237,21 @@ public class CategoriesToOrderAdapter
         btnGrammage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnLitrage, btnDh);
             }
         });
         btnLitrage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnDh);
             }
         });
         btnDh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, llUnitsValues, txtGoodDesc, editBrand);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnLitrage);
             }
         });
@@ -253,8 +267,8 @@ public class CategoriesToOrderAdapter
             @Override
             public void onClick(View view) {
                 String finalGoodDesc = txtGoodDesc.getText().toString();
-                if (inputsOk()){
-                    updateGood(good.getGoodId(),finalGoodDesc);
+                if (inputsOk()) {
+                    updateGood(good.getGoodId(), finalGoodDesc);
                     ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
                     notifyItemChanged(flatPosition);
                     dialog.dismiss();
@@ -265,14 +279,14 @@ public class CategoriesToOrderAdapter
 
     private boolean inputsOk() {
         boolean inputsOk = true;
-        if (amountValue.isEmpty()){
+        if (amountValue.isEmpty()) {
             inputsOk = false;
             Toast.makeText(context, R.string.select_amount, Toast.LENGTH_SHORT).show();
         }
         return inputsOk;
     }
 
-    private void updateGood(int goodId, String goodDesc){
+    private void updateGood(int goodId, String goodDesc) {
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
         DataManager dataManager = new DataManager(context);
 
@@ -282,54 +296,81 @@ public class CategoriesToOrderAdapter
 
     }
 
-    private void changeContent(View view, LinearLayout llQuantity, LinearLayout llUnitsValues, final TextView txtGoodDesc, final EditText editBrand) {
+    private void changeContent(final View view, LinearLayout llQuantity,
+                               final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand, final GridLayout gridAmounts) {
         switch (view.getId()) {
             case R.id.btnQuantity:
                 llQuantity.setVisibility(View.VISIBLE);
-                llUnitsValues.setVisibility(View.GONE);
+                gridAmounts.setVisibility(View.GONE);
                 break;
             default:
                 llQuantity.setVisibility(View.GONE);
-                llUnitsValues.setVisibility(View.VISIBLE);
-                llUnitsValues.removeAllViews();
-                RadioGroup rg = getRadioGroup(view.getId());
-                rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                gridAmounts.removeAllViews();
+                gridAmounts.setVisibility(View.VISIBLE);
+                gridAmounts.post(new Runnable() {
                     @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                        RadioButton rb = radioGroup.findViewById(checkedId);
-                        amountValue = rb.getText().toString();
-                        String goodDesc = "( " + editBrand.getText().toString() + " " + amountValue + " )";
-                        txtGoodDesc.setText(goodDesc);
+                    public void run() {
+                        setGridValues(view.getId(), gridAmounts, editBrand, txtGoodDesc);
                     }
                 });
-                llUnitsValues.addView(rg);
         }
+    }
+
+    private void setGridValues(final int viewId, final GridLayout gridAmounts, final MultiAutoCompleteTextView editBrand, final TextView txtGoodDesc) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        int gWidth = gridAmounts.getWidth();
+        int columnCount = gridAmounts.getColumnCount();
+        int marginGridCell = (int) context.getResources().getDimension(R.dimen.margin_grid_cell);
+        int w = gWidth / columnCount;
+        int h = (int) (w * 0.60);
+        final List<Amount> amounts = getUnitsValues(viewId);
+
+        for (int i = 0; i < amounts.size(); i++) {
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.setGravity(Gravity.CENTER);
+            params.setMargins(0, 0, marginGridCell, marginGridCell);
+            params.width = w;
+            params.height = h;
+            final View childAmount = inflater.inflate(R.layout.item_amount_in_grid, null);
+
+            final Amount amount = amounts.get(i);
+            final TextView tvTitle = childAmount.findViewById(R.id.txtAmount);
+            tvTitle.setText(amount.getAmountValue());
+            childAmount.setTag(amount.getAmountId());
+            childAmount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tvTitle.setBackgroundColor(context.getResources().getColor(R.color.colorGreen1));
+                    refreshGoodDesc(gridAmounts, amount, amounts, editBrand, txtGoodDesc);
+                }
+            });
+            gridAmounts.addView(childAmount, params);
+        }
+    }
+
+    private void refreshGoodDesc(GridLayout gridAmounts, Amount amount, List<Amount> amounts,
+                                 MultiAutoCompleteTextView editBrand, TextView txtGoodDesc) {
+
+        for (int j = 0; j < amounts.size(); j++) {
+            if (amounts.get(j).getAmountId() != amount.getAmountId())
+                gridAmounts.getChildAt(j).findViewById(R.id.txtAmount).setBackgroundColor(context.getResources().getColor(R.color.colorBlue1));
+        }
+
+        amountValue = amount.getAmountValue();
+        String goodDesc = "( " + editBrand.getText().toString() + " " + amountValue + " )";
+        txtGoodDesc.setText(goodDesc);
+
     }
 
     private void changeButtonsBackGround(View view, Button btn1, Button btn2, Button btn3) {
         view.setBackground(context.getDrawable(R.drawable.btn_amount_selected));
-        ((Button) view).setTextColor( context.getResources().getColor(R.color.white));
+        ((Button) view).setTextColor(context.getResources().getColor(R.color.white));
         btn1.setBackground(context.getDrawable(R.drawable.btn_amount));
-        btn1.setTextColor( context.getResources().getColor(R.color.black));
+        btn1.setTextColor(context.getResources().getColor(R.color.black));
         btn2.setBackground(context.getDrawable(R.drawable.btn_amount));
-        btn2.setTextColor( context.getResources().getColor(R.color.black));
+        btn2.setTextColor(context.getResources().getColor(R.color.black));
         btn3.setBackground(context.getDrawable(R.drawable.btn_amount));
-        btn3.setTextColor( context.getResources().getColor(R.color.black));
-    }
-
-    private RadioGroup getRadioGroup(int viewId) {
-        RadioGroup rg = new RadioGroup(context);
-        RadioGroup.LayoutParams rglp;
-
-        rg.setOrientation(RadioGroup.VERTICAL);
-
-        for (int i = 0; i < getUnitsValues(viewId).size(); i++) {
-            RadioButton rb = new RadioButton(context);
-            rb.setText(getUnitsValues(viewId).get(i).getAmountValue());
-            rglp = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-            rg.addView(rb, rglp);
-        }
-        return rg;
+        btn3.setTextColor(context.getResources().getColor(R.color.black));
     }
 
     private List<Amount> getUnitsValues(int viewId) {
