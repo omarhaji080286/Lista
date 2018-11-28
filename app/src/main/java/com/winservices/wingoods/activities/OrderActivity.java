@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,7 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private int selectedShopId;
     private RecyclerView rvCategoriesToOrder;
     private Dialog dialog;
+    private GridLayoutManager glm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,18 +87,38 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     }
 
     private void sendOrder() {
-
         if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
             if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
                 addOrder(this);
             } else {
-                Toast.makeText(this, "need to complete goods", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.set_descriptions, Toast.LENGTH_SHORT).show();
+                List<Good> goodsToComplete = categoriesToOrderAdapter.getGoodsToComplete();
+                for (int i = 0; i < goodsToComplete.size(); i++) {
+                    Good good = goodsToComplete.get(i);
+                    int position = categoriesToOrderAdapter.getGoodPosition(good.getGoodId());
+                    animateItem(position);
+                }
             }
         } else {
             Toast.makeText(this, R.string.empty_order, Toast.LENGTH_SHORT).show();
         }
-
     }
+
+    private void animateItem(final int position) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                View v = glm.findViewByPosition(position);
+                Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
+                if (v != null) {
+                    v.startAnimation(anim);
+                }
+
+            }
+        }, 50);
+    }
+
 
     private void loadCategoriesToOrder(Shop shop) {
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
@@ -104,7 +127,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         categoriesToOrderAdapter = new CategoriesToOrderAdapter(categoriesToOrder, this);
 
         final int GRID_COLUMN_NUMBER = 3;
-        GridLayoutManager glm = new GridLayoutManager(this, GRID_COLUMN_NUMBER);
+        glm = new GridLayoutManager(this, GRID_COLUMN_NUMBER);
         glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {

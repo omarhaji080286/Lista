@@ -7,9 +7,16 @@ public class DefaultCategory implements Parcelable {
 
     public static final String PREFIX_D_CATEGORY = "d_category_";
     public static final int GROCERIES = 1;
+    public static final int FRUITS_AND_VEGETABLES = 2;
+    public static final int MEATS = 3;
+    public static final int FISH = 4;
+    public static final int SPICES = 5;
     public static final int HYGIENE_PRODUCTS = 6;
+    public static final int DRUGS = 7;
     public static final int COSMETICS = 8;
+    public static final int BREADS = 9;
     public static final int HARDWARES = 10;
+
 
     private int dCategoryId;
     private String dCategoryName;

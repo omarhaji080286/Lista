@@ -163,7 +163,9 @@
     <string name="send">Send</string>
     <string name="select_amount">Please, select an amount.</string>
     <string name="_1" translatable="false">1</string>
-    <string name="brand_or_description">Brand, Description...</string>
+    <string name="brand_or_description">Brand, Description…</string>
+    <string name="item_s">item(s)</string>
+    <string name="set_descriptions">Some articles needs a description. Please, tap an article to set its description.</string>
 
 
 </resources>

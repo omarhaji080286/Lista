@@ -56,6 +56,10 @@ public class CategoriesToOrderAdapter
         this.groups = groups;
     }
 
+    public List<CategoryGroup> getAdapterGroups() {
+        return this.groups;
+    }
+
     @Override
     public CategoryInOrderVH onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -183,7 +187,7 @@ public class CategoriesToOrderAdapter
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                amountValue = charSequence.toString() + " pièce(s)";
+                amountValue = charSequence.toString() + " " + context.getString(R.string.item_s);
                 String goodDesc = "( " + brandValue + " " + amountValue + ")";
                 txtGoodDesc.setText(goodDesc);
 
@@ -224,6 +228,76 @@ public class CategoriesToOrderAdapter
                 editAmount.setText(String.valueOf(amount + 1));
             }
         });
+
+        //Hide or show buttons depending on the category
+        switch (category.getDCategoryId()) {
+            case DefaultCategory.GROCERIES:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.VISIBLE);
+                btnDh.setVisibility(View.VISIBLE);
+                break;
+            case DefaultCategory.FRUITS_AND_VEGETABLES:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.VISIBLE);
+                break;
+            case DefaultCategory.MEATS:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            case DefaultCategory.FISH:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            case DefaultCategory.SPICES:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.VISIBLE);
+                break;
+            case DefaultCategory.HYGIENE_PRODUCTS:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.VISIBLE);
+                btnDh.setVisibility(View.VISIBLE);
+                break;
+            case DefaultCategory.DRUGS:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.GONE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            case DefaultCategory.COSMETICS:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.GONE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            case DefaultCategory.BREADS:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            case DefaultCategory.HARDWARES:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.GONE);
+                btnLitrage.setVisibility(View.GONE);
+                btnDh.setVisibility(View.GONE);
+                break;
+            default:
+                btnQuantity.setVisibility(View.VISIBLE);
+                btnGrammage.setVisibility(View.VISIBLE);
+                btnLitrage.setVisibility(View.VISIBLE);
+                btnDh.setVisibility(View.VISIBLE);
+        }
+
 
         //prepare Buttons
         btnQuantity.setOnClickListener(new View.OnClickListener() {
@@ -266,7 +340,7 @@ public class CategoriesToOrderAdapter
         btnUpdateGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String finalGoodDesc = txtGoodDesc.getText().toString();
+                String finalGoodDesc = brandValue + " " + amountValue;
                 if (inputsOk()) {
                     updateGood(good.getGoodId(), finalGoodDesc);
                     ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
@@ -454,6 +528,21 @@ public class CategoriesToOrderAdapter
             rlViewForeground = itemView.findViewById(R.id.rlViewForeground);
 
         }
+    }
+
+    public int getGoodPosition(int goodId){
+        int position = -1;
+        for (int i = 0; i < groups.size(); i++) {
+            position = position +1;
+            for (int j = 0; j < groups.get(i).getItems().size(); j++) {
+                position = position + 1;
+                Good good = (Good) groups.get(i).getItems().get(j);
+                if (good.getGoodId()==goodId) {
+                    return position;
+                }
+            }
+        }
+        return position;
     }
 
 
