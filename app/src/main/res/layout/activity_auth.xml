@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="@drawable/logo"
+        android:background="@mipmap/lista_logo"
         android:contentDescription="@string/description" />
 
     <TextView

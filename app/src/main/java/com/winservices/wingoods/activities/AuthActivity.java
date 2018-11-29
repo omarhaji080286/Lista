@@ -448,7 +448,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
             intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getResources().getString(R.string.app_name));
             intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource
-                    .fromContext(getApplicationContext(), R.drawable.logo));
+                    .fromContext(getApplicationContext(), R.mipmap.lista_logo));
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             getApplicationContext().sendBroadcast(intent);
 
