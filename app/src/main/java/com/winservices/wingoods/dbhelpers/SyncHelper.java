@@ -14,16 +14,14 @@ public class SyncHelper {
 
     private static class SyncAsyncTask extends AsyncTask<Void, Void, Void> {
         private Synchronizer synchronizer;
-        private Context context;
 
         private SyncAsyncTask(Context context) {
             this.synchronizer = new Synchronizer(context);
-            this.context = context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            UsersDataManager usersDataManager = new UsersDataManager(context);
+            UsersDataManager usersDataManager = new UsersDataManager(synchronizer.context);
             User user = usersDataManager.getCurrentUser();
             if (user != null) synchronizer.sync();
             return null;

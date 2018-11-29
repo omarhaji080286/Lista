@@ -38,7 +38,7 @@ public class Synchronizer {
     private final static String LOG_TAG = "Synchronizer";
     public final static int PERIOD = 15 * 60 * 1000;
 
-    private Context context;
+    public Context context;
 
     public Synchronizer(Context context) {
         DataBaseHelper.getInstance(context);
