@@ -15,6 +15,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
@@ -216,6 +217,11 @@ public class Synchronizer {
                 insertAmounts(jsonAmountsToSync);
                 Log.d(LOG_TAG, "Sync amounts completed. " + jsonAmountsToSync.length() + " inserted or updated.");
 
+                //updates amounts
+                JSONArray jsonDescriptionsToSync = jsonObject.getJSONArray("descriptionsToSync");
+                insertDescriptions(jsonDescriptionsToSync);
+                Log.d(LOG_TAG, "Sync descriptions completed. " + jsonDescriptionsToSync.length() + " inserted or updated.");
+
             }
 
         } catch (JSONException e){
@@ -224,16 +230,31 @@ public class Synchronizer {
         }
     }
 
+    private void insertDescriptions(JSONArray jsonDescriptionsToSync) throws JSONException {
+
+        DescriptionsDataManager descriptionsDataManager = new DescriptionsDataManager(context);
+
+        for (int i = 0; i < jsonDescriptionsToSync.length(); i++) {
+            JSONObject JSONDesc = jsonDescriptionsToSync.getJSONObject(i);
+            int descId = JSONDesc.getInt("desc_id");
+            String descValue = JSONDesc.getString("desc_value");
+            int dCategoryId = JSONDesc.getInt("d_category_id");
+
+            Description desc = new Description(descId, descValue, dCategoryId);
+            descriptionsDataManager.insertDesc(desc);
+        }
+    }
+
     private void insertAmounts(JSONArray jsonAmountsToSync) throws JSONException {
 
         AmountsDataManager amountsDataManager = new AmountsDataManager(context);
 
         for (int i = 0; i < jsonAmountsToSync.length(); i++) {
-            JSONObject JSONGood = jsonAmountsToSync.getJSONObject(i);
-            int amountId = JSONGood.getInt("amount_id");
-            String amountValue = JSONGood.getString("amount_value");
-            int amountTypeId = JSONGood.getInt("amount_type_id");
-            String amountTypeName = JSONGood.getString("amount_type_name");
+            JSONObject JSONAmount = jsonAmountsToSync.getJSONObject(i);
+            int amountId = JSONAmount.getInt("amount_id");
+            String amountValue = JSONAmount.getString("amount_value");
+            int amountTypeId = JSONAmount.getInt("amount_type_id");
+            String amountTypeName = JSONAmount.getString("amount_type_name");
 
             Amount amount = new Amount(amountId, amountValue, amountTypeId, amountTypeName);
             amountsDataManager.insertAmount(amount);

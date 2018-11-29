@@ -5,7 +5,7 @@ public class Amount {
     public static final int WEIGHT = 1;
     public static final int VOLUME = 2;
     public static final int CURRENCY = 3;
-    public static final int ALL = 4;
+    public static final int ALL = -1;
 
     private int amountId;
     private String amountValue;

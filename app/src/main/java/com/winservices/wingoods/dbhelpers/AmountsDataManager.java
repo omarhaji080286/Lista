@@ -41,13 +41,11 @@ public class AmountsDataManager {
     }
 
     void insertAmount(Amount amount) {
-
         if (getAmountById(amount.getAmountId()) == null) {
             db.insertAmount(amount);
         } else {
             db.updateAmount(amount);
         }
-
     }
 
     private Amount getAmountById(int amountId) {

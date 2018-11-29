@@ -10,6 +10,7 @@ import android.util.Log;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.ReceivedInvitation;
@@ -36,6 +37,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
@@ -95,6 +97,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
     public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
     private static final String TABLE_CO_USERS = "co_users";
+    private static final String TABLE_DESCRIPTIONS = "descriptions";
     private static final String COL_LAST_LOGGED_IN = "last_logged_in";
     private static final String TABLE_GROUPS = "groups";
     private static final String TABLE_AMOUNTS = "amounts";
@@ -113,6 +116,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private final static int DATABASE_VERSION = 1;
+
+    static final String COL_DESC_ID = "desc_id";
+    static final String COL_DESC_VALUE = "desc_value";
 
 
     //private User currentUser;
@@ -220,6 +226,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "amount_type_id INTEGER, " +
                 "amount_type_name TEXT ) ");
 
+        db.execSQL("CREATE TABLE descriptions ( " +
+                "desc_id INTEGER PRIMARY KEY, " +
+                "desc_value TEXT, " +
+                "d_category_id INTEGER ) ");
+
     }
 
     @Override
@@ -239,6 +250,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //SELECT QUERIES
+
+    //DESCRIPTIONS
+
+    Cursor getDescById(int descId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            if (descId == Description.ALL) {
+                res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+                        + " from " + TABLE_DESCRIPTIONS, null);
+            } else {
+                res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+                        + " from " + TABLE_DESCRIPTIONS
+                        + " where " + COL_DESC_ID + " = " + descId, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     //AMOUNTS
     Cursor getAmounts(int amountTypeId) {
@@ -1281,6 +1312,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //CREATE QUERIES
 
+    //DESCRIPTIONS
+    boolean insertDesc(Description desc) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DESC_ID, desc.getDescId());
+        contentValues.put(COL_DESC_VALUE, desc.getDescValue());
+        contentValues.put(COL_D_CATEGORY_ID, desc.getdCategoryId());
+
+        long result = db.insert(TABLE_DESCRIPTIONS, null, contentValues);
+        return (result != -1);
+    }
+
     //AMOUNTS
     boolean insertAmount(Amount amount) {
         db = this.getWritableDatabase();
@@ -1345,6 +1388,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //UPDATES
 
+    //DESCRIPTIONS
+    boolean updateDesc(Description desc) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DESC_ID, desc.getDescId());
+        contentValues.put(COL_DESC_VALUE, desc.getDescValue());
+        contentValues.put(COL_D_CATEGORY_ID, desc.getdCategoryId());
+
+        int affectedRows = 0;
+        try {
+            affectedRows = db.update(TABLE_DESCRIPTIONS, contentValues, COL_AMOUNT_ID + " = " + desc.getDescId(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (affectedRows == 1);
+    }
+
+    //AMOUNTS
     boolean updateAmount(Amount amount) {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
