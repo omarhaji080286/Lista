@@ -1,9 +1,15 @@
 package com.winservices.wingoods.models;
 
+import android.content.Context;
+
+import com.winservices.wingoods.dbhelpers.DescriptionsDataManager;
+
 public class Description {
 
     public static final int ALL = -1;
+    public static final int USER_DESCRIPTION = -2;
 
+    private int deviceDescId;
     private int descId;
     private String descValue;
     private int dCategoryId;
@@ -12,6 +18,14 @@ public class Description {
         this.descId = descId;
         this.descValue = descValue;
         this.dCategoryId = dCategoryId;
+    }
+
+    public int getDeviceDescId() {
+        return deviceDescId;
+    }
+
+    public void setDeviceDescId(int deviceDescId) {
+        this.deviceDescId = deviceDescId;
     }
 
     public int getDescId() {
@@ -37,4 +51,8 @@ public class Description {
     public void setdCategoryId(int dCategoryId) {
         this.dCategoryId = dCategoryId;
     }
+
+
+
+
 }

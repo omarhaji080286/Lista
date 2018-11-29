@@ -16,26 +16,54 @@ public class DescriptionsDataManager {
         this.context = context;
     }
 
-    void insertDesc(Description desc) {
-        if (getDescById(desc.getDescId()) == null) {
+    public void insertDesc(Description desc) {
+        if (getDescByServerId(desc.getDescId()) == null) {
             db.insertDesc(desc);
         } else {
             db.updateDesc(desc);
         }
     }
 
-    private Description getDescById(int descId) {
-        Cursor cursor = db.getDescById(descId);
+    public void insertUserDesc(Description desc){
+        if (getUserDescByValue(desc.getDescValue()) == null) {
+            db.insertDesc(desc);
+        }
+    }
+
+    private Description getDescByServerId(int descId) {
+        Cursor cursor = db.getDescByServerId(descId);
         if (cursor == null || cursor.getCount() == 0) {
             return null;
         }
         cursor.moveToNext();
-        //int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+        //int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_ID));
+        int deviceDescId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
         String descValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_VALUE));
         int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
 
-        return new Description(descId, descValue, dCategoryId);
+        Description desc = new Description(descId, descValue, dCategoryId);
+        desc.setDeviceDescId(deviceDescId);
+        return desc;
     }
+
+    private Description getUserDescByValue(String descValue) {
+        Cursor cursor = db.getUserDescByValue(descValue);
+        if (cursor == null || cursor.getCount() == 0) {
+            return null;
+        }
+        cursor.moveToNext();
+        int deviceDescId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+        int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_ID));
+        //String descValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_VALUE));
+        int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
+
+        Description desc = new Description(descId, descValue, dCategoryId);
+        desc.setDeviceDescId(deviceDescId);
+
+        return desc;
+    }
+
+
 
     public String[] getDescriptions(int dCategoryID) {
         Cursor cursor = db.getDescriptions(dCategoryID);
@@ -43,16 +71,36 @@ public class DescriptionsDataManager {
         int i = 0;
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
-                int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                int deviceDescId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_ID));
                 String descValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_VALUE));
                 int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
+
                 Description desc = new Description(descId, descValue, dCategoryId);
+                desc.setDeviceDescId(deviceDescId);
                 descriptions[i] = desc.getDescValue();
                 i = i + 1;
             }
             cursor.close();
         }
         return descriptions;
+    }
+
+    public static class InsertDescription implements Runnable{
+
+        private Description description;
+        private Context context;
+
+        public InsertDescription(Context context, Description description){
+            this.description = description;
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            DescriptionsDataManager descriptionsDataManager = new DescriptionsDataManager(context);
+            descriptionsDataManager.insertUserDesc(description);
+        }
     }
 
 }

@@ -117,6 +117,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_RECEIVED_INVITATIONS = "received_invitations";
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
+    private static final String COL_DEVICE_DESC_ID = "device_desc_id";
     private final static int DATABASE_VERSION = 1;
     //private User currentUser;
     private static DataBaseHelper instance;
@@ -224,7 +225,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "amount_type_name TEXT ) ");
 
         db.execSQL("CREATE TABLE descriptions ( " +
-                "desc_id INTEGER PRIMARY KEY, " +
+                "device_desc_id INTEGER PRIMARY KEY, " +
+                "desc_id INTEGER, " +
                 "desc_value TEXT, " +
                 "d_category_id INTEGER ) ");
 
@@ -255,10 +257,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor res = null;
         try {
             if (dCategoryId == Description.ALL) {
-                res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+                res = db.rawQuery("select " + COL_DEVICE_DESC_ID + " as " + _ID + " , *"
                         + " from " + TABLE_DESCRIPTIONS, null);
             } else {
-                res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+                res = db.rawQuery("select " + COL_DEVICE_DESC_ID + " as " + _ID + " , *"
                         + " from " + TABLE_DESCRIPTIONS
                         + " where " + COL_D_CATEGORY_ID + " = " + dCategoryId, null);
             }
@@ -268,11 +270,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    Cursor getDescById(int descId) {
+    Cursor getDescByServerId(int descId) {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
-            res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+            res = db.rawQuery("select " + COL_DEVICE_DESC_ID + " as " + _ID + " , *"
                     + " from " + TABLE_DESCRIPTIONS
                     + " where " + COL_DESC_ID + " = " + descId, null);
         } catch (Exception e) {
@@ -280,6 +282,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return res;
     }
+
+    Cursor getUserDescByValue(String descValue) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DEVICE_DESC_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_DESCRIPTIONS
+                    + " where " + COL_DESC_VALUE + " = '" + descValue
+                    + "' and " + COL_DESC_ID + " = " + Description.USER_DESCRIPTION, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
 
     //AMOUNTS
     Cursor getAmounts(int amountTypeId) {

@@ -81,7 +81,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         txtShopName.setText(shop.getShopName());
 
-
         loadCategoriesToOrder(shop);
 
     }

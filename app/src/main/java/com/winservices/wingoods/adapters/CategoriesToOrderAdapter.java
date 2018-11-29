@@ -35,6 +35,7 @@ import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.DefaultCategory;
+import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -143,7 +144,7 @@ public class CategoriesToOrderAdapter
 
         //prepare Brand EditText
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
-        Category category = categoriesDataProvider.getCategoryByGoodId(good.getGoodId());
+        final Category category = categoriesDataProvider.getCategoryByGoodId(good.getGoodId());
 
         if (!(category.getDCategoryId() == DefaultCategory.GROCERIES ||
                 category.getDCategoryId() == DefaultCategory.COSMETICS ||
@@ -344,23 +345,41 @@ public class CategoriesToOrderAdapter
             @Override
             public void onClick(View view) {
                 String finalGoodDesc = brandValue + " " + amountValue;
-                if (inputsOk()) {
+                if (inputsOk(editBrand)) {
                     updateGood(good.getGoodId(), finalGoodDesc);
                     ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
                     notifyItemChanged(flatPosition);
                     dialog.dismiss();
+                    storeDescription(editBrand.getText().toString(), category.getDCategoryId());
                 }
             }
         });
     }
 
-    private boolean inputsOk() {
-        boolean inputsOk = true;
-        if (amountValue.isEmpty()) {
-            inputsOk = false;
-            Toast.makeText(context, R.string.select_amount, Toast.LENGTH_SHORT).show();
+    private void storeDescription(String descValue, int dCategoryId) {
+
+        if (!descValue.isEmpty()) {
+            Description description = new Description(Description.USER_DESCRIPTION, descValue.trim(), dCategoryId);
+            DescriptionsDataManager.InsertDescription insertDescription = new DescriptionsDataManager.InsertDescription(context, description);
+            Thread t = new Thread(insertDescription);
+            t.start();
         }
-        return inputsOk;
+    }
+
+    private boolean inputsOk(MultiAutoCompleteTextView editBrand) {
+
+        if (amountValue.isEmpty()) {
+            Toast.makeText(context, R.string.select_amount, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (editBrand.getVisibility() == View.VISIBLE) {
+            if (editBrand.getText().toString().isEmpty()) {
+                editBrand.setError("Description required");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void updateGood(int goodId, String goodDesc) {
@@ -502,6 +521,21 @@ public class CategoriesToOrderAdapter
         return goodsToOrder;
     }
 
+    public int getGoodPosition(int goodId) {
+        int position = -1;
+        for (int i = 0; i < groups.size(); i++) {
+            position = position + 1;
+            for (int j = 0; j < groups.get(i).getItems().size(); j++) {
+                position = position + 1;
+                Good good = (Good) groups.get(i).getItems().get(j);
+                if (good.getGoodId() == goodId) {
+                    return position;
+                }
+            }
+        }
+        return position;
+    }
+
     class CategoryInOrderVH extends GroupViewHolder {
 
         private TextView txtCategoryName;
@@ -531,21 +565,6 @@ public class CategoriesToOrderAdapter
             rlViewForeground = itemView.findViewById(R.id.rlViewForeground);
 
         }
-    }
-
-    public int getGoodPosition(int goodId){
-        int position = -1;
-        for (int i = 0; i < groups.size(); i++) {
-            position = position +1;
-            for (int j = 0; j < groups.get(i).getItems().size(); j++) {
-                position = position + 1;
-                Good good = (Good) groups.get(i).getItems().get(j);
-                if (good.getGoodId()==goodId) {
-                    return position;
-                }
-            }
-        }
-        return position;
     }
 
 
