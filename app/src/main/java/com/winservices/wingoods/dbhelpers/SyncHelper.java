@@ -3,6 +3,8 @@ package com.winservices.wingoods.dbhelpers;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.winservices.wingoods.models.User;
+
 public class SyncHelper {
 
 
@@ -12,14 +14,18 @@ public class SyncHelper {
 
     private static class SyncAsyncTask extends AsyncTask<Void, Void, Void> {
         private Synchronizer synchronizer;
+        private Context context;
 
         private SyncAsyncTask(Context context) {
             this.synchronizer = new Synchronizer(context);
+            this.context = context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            synchronizer.sync();
+            UsersDataManager usersDataManager = new UsersDataManager(context);
+            User user = usersDataManager.getCurrentUser();
+            if (user != null) synchronizer.sync();
             return null;
         }
     }
