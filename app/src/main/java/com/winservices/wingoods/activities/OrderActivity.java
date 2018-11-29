@@ -110,7 +110,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             public void run() {
 
                 View v = glm.findViewByPosition(position);
-                Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
+                Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
                 if (v != null) {
                     v.startAnimation(anim);
                 }

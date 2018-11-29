@@ -1,17 +1,33 @@
 package com.winservices.wingoods.models;
 
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.DrawFilter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.winservices.wingoods.R;
+import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Shop implements Parcelable {
 
     public static final String DEFAULT_IMAGE = "defaultImage";
+    public static final String PREFIX_SHOP = "shop_";
+    public static final Parcelable.Creator<Shop> CREATOR = new Parcelable.Creator<Shop>() {
+        public Shop createFromParcel(Parcel in) {
+            return new Shop(in);
+        }
 
+        public Shop[] newArray(int size) {
+            return new Shop[size];
+        }
+    };
     private int serverShopId;
     private String shopName;
     private String shopAdress;
@@ -24,6 +40,33 @@ public class Shop implements Parcelable {
     private Country country;
     private String markerId;
     private List<DefaultCategory> defaultCategories;
+
+    public Shop(Parcel input) {
+        this.serverShopId = input.readInt();
+        this.shopName = input.readString();
+        this.shopAdress = input.readString();
+        this.shopEmail = input.readString();
+        this.shopPhone = input.readString();
+        this.longitude = input.readDouble();
+        this.latitude = input.readDouble();
+        this.shopType = (ShopType) input.readSerializable();
+        this.city = (City) input.readSerializable();
+        this.country = (Country) input.readSerializable();
+        this.defaultCategories = new ArrayList<>();
+        input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
+
+    }
+
+    public Shop() {
+    }
+
+    public static Bitmap getShopImage(Context context, int serverShopId) {
+        String imagePath = SharedPrefManager.getInstance(context).getImagePath(Shop.PREFIX_SHOP + serverShopId);
+        if (imagePath!=null) {
+            return UtilsFunctions.getOrientedBitmap(imagePath);
+        }
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_shop_image);
+    }
 
     public List<DefaultCategory> getDefaultCategories() {
         return defaultCategories;
@@ -141,34 +184,6 @@ public class Shop implements Parcelable {
         parcel.writeTypedList(defaultCategories);
 
     }
-
-    public static final Parcelable.Creator<Shop> CREATOR = new Parcelable.Creator<Shop>() {
-        public Shop createFromParcel(Parcel in) {
-            return new Shop(in);
-        }
-
-        public Shop[] newArray(int size) {
-            return new Shop[size];
-        }
-    };
-
-    public Shop(Parcel input) {
-        this.serverShopId = input.readInt();
-        this.shopName = input.readString();
-        this.shopAdress = input.readString();
-        this.shopEmail = input.readString();
-        this.shopPhone = input.readString();
-        this.longitude = input.readDouble();
-        this.latitude = input.readDouble();
-        this.shopType = (ShopType)input.readSerializable();
-        this.city = (City) input.readSerializable();
-        this.country = (Country) input.readSerializable();
-        this.defaultCategories = new ArrayList<>();
-        input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
-
-    }
-
-    public Shop(){ }
 
 
 }

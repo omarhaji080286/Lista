@@ -37,4 +37,22 @@ public class DescriptionsDataManager {
         return new Description(descId, descValue, dCategoryId);
     }
 
+    public String[] getDescriptions(int dCategoryID) {
+        Cursor cursor = db.getDescriptions(dCategoryID);
+        String[] descriptions = new String[cursor.getCount()];
+        int i = 0;
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                int descId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String descValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DESC_VALUE));
+                int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_ID));
+                Description desc = new Description(descId, descValue, dCategoryId);
+                descriptions[i] = desc.getDescValue();
+                i = i + 1;
+            }
+            cursor.close();
+        }
+        return descriptions;
+    }
+
 }

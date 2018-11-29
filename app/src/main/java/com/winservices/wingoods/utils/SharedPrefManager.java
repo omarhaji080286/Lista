@@ -4,13 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
+import com.winservices.wingoods.models.Shop;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class SharedPrefManager {
 
-    public static final String PREFIX_SHOP = "shop_";
+
     private static final String SHARED_PREF_NAME = "listaSharedPreferences";
     private static final String KEY_ACCESS_TOKEN = "token";
     private static SharedPrefManager instance;
@@ -42,13 +44,13 @@ public class SharedPrefManager {
     public void storeShopImagePath(int serverShopId, String path) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PREFIX_SHOP + serverShopId, path);
+        editor.putString(Shop.PREFIX_SHOP + serverShopId, path);
         editor.apply();
     }
 
     public String getShopImagePath(int serverShopId){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(PREFIX_SHOP + serverShopId, null);
+        return sharedPreferences.getString(Shop.PREFIX_SHOP + serverShopId, null);
     }
 
     public void storeImageToFile(final String encodedImage, final String imageType, final String prefix, final int sharedPrefKey) {

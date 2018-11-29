@@ -71,6 +71,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String RED_GOODS = "red_goods";
     static final String ORANGE_GOODS = "orange_goods";
     static final String GREEN_GOODS = "green_goods";
+    static final String COL_DESC_ID = "desc_id";
+    static final String COL_DESC_VALUE = "desc_value";
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
     // Lista LOCAL (compte root)
@@ -116,11 +118,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private final static int DATABASE_VERSION = 1;
-
-    static final String COL_DESC_ID = "desc_id";
-    static final String COL_DESC_VALUE = "desc_value";
-
-
     //private User currentUser;
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -253,18 +250,31 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //DESCRIPTIONS
 
-    Cursor getDescById(int descId) {
+    Cursor getDescriptions(int dCategoryId) {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
-            if (descId == Description.ALL) {
+            if (dCategoryId == Description.ALL) {
                 res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
                         + " from " + TABLE_DESCRIPTIONS, null);
             } else {
                 res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
                         + " from " + TABLE_DESCRIPTIONS
-                        + " where " + COL_DESC_ID + " = " + descId, null);
+                        + " where " + COL_D_CATEGORY_ID + " = " + dCategoryId, null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Cursor getDescById(int descId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DESC_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_DESCRIPTIONS
+                    + " where " + COL_DESC_ID + " = " + descId, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1398,7 +1408,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         int affectedRows = 0;
         try {
-            affectedRows = db.update(TABLE_DESCRIPTIONS, contentValues, COL_AMOUNT_ID + " = " + desc.getDescId(), null);
+            affectedRows = db.update(TABLE_DESCRIPTIONS, contentValues, COL_DESC_ID + " = " + desc.getDescId(), null);
         } catch (Exception e) {
             e.printStackTrace();
         }

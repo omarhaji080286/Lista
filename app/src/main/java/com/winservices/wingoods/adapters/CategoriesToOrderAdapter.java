@@ -29,6 +29,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.AmountsDataManager;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.DescriptionsDataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
@@ -151,9 +152,11 @@ public class CategoriesToOrderAdapter
             editBrand.setVisibility(View.GONE);
         } else {
 
-            String[] BRANDS = new String[]{"Kiri", "Tide", "Dethol", "Coca-cola", "Jaouda", "Fraise"};
+            DescriptionsDataManager descriptionsDataManager = new DescriptionsDataManager(context);
+            String[] descriptions = descriptionsDataManager.getDescriptions(category.getDCategoryId());
+
             ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
-                    android.R.layout.simple_expandable_list_item_1, BRANDS);
+                    android.R.layout.simple_expandable_list_item_1, descriptions);
             editBrand.setAdapter(macBrandAdapter);
             editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 

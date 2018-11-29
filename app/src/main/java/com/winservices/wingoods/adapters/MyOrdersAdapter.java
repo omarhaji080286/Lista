@@ -2,18 +2,22 @@ package com.winservices.wingoods.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.OrderDetailsActivity;
 import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.OrderVH;
 
@@ -50,7 +54,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
-        holder.imgShop.setImageResource(R.drawable.steak);
+
+        Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
+        holder.imgShop.setImageBitmap(bitmap);
+
         holder.txtDate.setText(dateString);
         holder.txtOrderStatus.setText(order.getStatusName());
         holder.clContainer.setOnClickListener(new View.OnClickListener() {
