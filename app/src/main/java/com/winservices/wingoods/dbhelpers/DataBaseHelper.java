@@ -38,6 +38,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
 
+    // Lista LOCAL (compte root)
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
@@ -75,8 +78,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DESC_VALUE = "desc_value";
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
-    // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
@@ -296,7 +298,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return res;
     }
-
 
 
     //AMOUNTS

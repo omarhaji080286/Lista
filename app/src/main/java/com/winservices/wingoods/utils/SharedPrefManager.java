@@ -81,11 +81,10 @@ public class SharedPrefManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                SharedPrefManager.getInstance(context).storeImagePath(prefix+sharedPrefKey,file.getAbsolutePath());
+                storeImagePath(prefix+sharedPrefKey,file.getAbsolutePath());
             }
         };
         thread.run();
-
     }
 
     private void storeImagePath(String key, String path) {

@@ -504,6 +504,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             //Registering FAILED
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
