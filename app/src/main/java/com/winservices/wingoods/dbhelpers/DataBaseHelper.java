@@ -121,6 +121,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_USERNAME = "user_name";
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
     private final static int DATABASE_VERSION = 1;
+    private static final String COL_USER_PHONE = "user_phone";
     //private User currentUser;
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -161,7 +162,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_group_id INTEGER," +
                 "sign_up_type TEXT," +
                 "last_logged_in INTEGER," +
-                "group_id INTEGER" +
+                "group_id INTEGER, " +
+                "user_phone TEXT " +
                 ")");
 
         db.execSQL("CREATE TABLE groups ( " +
@@ -1483,6 +1485,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_USER_ID, user.getServerUserId());
         contentValues.put(COL_SIGN_UP_TYPE, user.getSignUpType());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
+        contentValues.put(COL_USER_PHONE, user.getUserPhone());
 
         long result = db.insert(TABLE_USERS, null, contentValues);
         return (result != -1);

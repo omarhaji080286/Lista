@@ -154,4 +154,16 @@
     <string name="brand_or_description">Brand, Description...</string>
     <string name="item_s">item(s)</string>
     <string name="set_descriptions">need to complete goods</string>
+    <string name="input_phone_description">Please take a moment to verify your phone number.\nThis helps us confirm your indentity and secure your account.</string>
+    <string name="country_flag">Country flag</string>
+    <string name="hint_phone_number">123456789</string>
+    <string name="hint_verification_code">123456</string>
+    <string name="sms_sent_to">We just sent an SMS to&#160;</string>
+    <string name="with_code">&#160;with a code for you to enter here</string>
+    <string name="phone_required">Phone number is required</string>
+    <string name="not_valid_phone">Please enter a valid phone number</string>
+    <string name="code_required">Verification code is required</string>
+    <string name="not_valid_code">Verification code is not valid</string>
+    <string name="signing_up">Signing up…</string>
+    <string name="welcome_msg">Welcome to Lista</string>
 </resources>
