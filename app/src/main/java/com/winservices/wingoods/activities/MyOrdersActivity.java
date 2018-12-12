@@ -96,6 +96,7 @@ public class MyOrdersActivity extends AppCompatActivity {
                                 JSONArray JSONOrders = jsonObject.getJSONArray("orders");
 
                                 for (int i = 0; i < JSONOrders.length(); i++) {
+
                                     JSONObject JSONShop = JSONOrders.getJSONObject(i);
 
                                     int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
@@ -128,7 +129,6 @@ public class MyOrdersActivity extends AppCompatActivity {
                                         orders.add(order);
                                     }
 
-
                                 }
 
                                 if (orders.size()>0) {
@@ -138,7 +138,6 @@ public class MyOrdersActivity extends AppCompatActivity {
                                 }
 
                                 dialog.dismiss();
-
                             }
 
                         } catch (JSONException e) {
@@ -155,7 +154,7 @@ public class MyOrdersActivity extends AppCompatActivity {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String, String> postData = new HashMap<>();
                 postData.put("jsonData", ""+getJSONForGetOrders() );
                 return postData;
