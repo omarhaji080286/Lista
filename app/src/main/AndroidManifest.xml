@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/lista_logo"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.Launcher">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
