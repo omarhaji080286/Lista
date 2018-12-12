@@ -265,18 +265,43 @@ public class SignUpFragment extends Fragment {
                                 } else {
                                     //Registering OK
                                     //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    boolean isUserRegistered = jsonObject.getBoolean("is_user_registered");
+                                    if (isUserRegistered) {
 
-                                    int serverUserId = jsonObject.getInt("server_user_id");
-                                    userToRegister.setServerUserId(serverUserId);
-                                    userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
-                                    UsersDataManager usersDataManager = new UsersDataManager(context);
-                                    if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
-                                        usersDataManager.updateLastLoggedIn(serverUserId);
-                                        addDefaultItems(jsonObject);
-                                        Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
-                                        LauncherActivity launcherActivity = (LauncherActivity) getActivity();
-                                        Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                                        JSONObject JsonUser = jsonObject.getJSONObject("user");
+
+                                        int serverUserId = JsonUser.getInt("server_user_id");
+                                        String email = JsonUser.getString("email");
+                                        String userName = JsonUser.getString("user_name");
+                                        int serverGroupId = JsonUser.getInt("server_group_id");
+
+                                        userToRegister.setServerUserId(serverUserId);
+                                        userToRegister.setEmail(email);
+                                        userToRegister.setUserName(userName);
+                                        if (serverGroupId != 0)
+                                            userToRegister.setServerGroupId(serverGroupId);
+                                        userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
+
+                                        UsersDataManager usersDataManager = new UsersDataManager(context);
+                                        if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
+                                            usersDataManager.updateLastLoggedIn(serverUserId);
+                                            addUserItems(jsonObject);
+                                        }
+
+                                    } else {
+                                        int serverUserId = jsonObject.getInt("server_user_id");
+                                        userToRegister.setServerUserId(serverUserId);
+                                        userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
+                                        UsersDataManager usersDataManager = new UsersDataManager(context);
+                                        if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
+                                            usersDataManager.updateLastLoggedIn(serverUserId);
+                                            addDefaultItems(jsonObject);
+                                        }
                                     }
+                                    Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
+                                    LauncherActivity launcherActivity = (LauncherActivity) getActivity();
+                                    Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -311,6 +336,77 @@ public class SignUpFragment extends Fragment {
             // Network Problem
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
             dialog.dismiss();
+        }
+    }
+
+    private void addUserItems(JSONObject jsonObject) {
+
+        UsersDataManager usersDataManager = new UsersDataManager(getContext());
+        User currentUser = usersDataManager.getCurrentUser();
+
+        try {
+            JSONArray categoriesJSONArray = jsonObject.getJSONArray("user_categories");
+
+            for (int i = 0; i < categoriesJSONArray.length(); i++) {
+
+                JSONObject JSONCategory = categoriesJSONArray.getJSONObject(i);
+
+                int serverCategoryId = JSONCategory.getInt("server_category_id");
+                String categoryName = JSONCategory.getString("category_name");
+                int crudStatus = JSONCategory.getInt("crud_status");
+                int dCategoryId = JSONCategory.getInt("d_category_id");
+                int sync = DataBaseHelper.SYNC_STATUS_FAILED;
+                String email = currentUser.getEmail();
+                int userId = currentUser.getUserId();
+                int color = Color.getRandomColor(Objects.requireNonNull(getContext()));
+
+                String dCategoryImage = JSONCategory.getString("d_category_image");
+                SharedPrefManager.getInstance(getContext()).storeImageToFile(dCategoryImage, "png", DefaultCategory.PREFIX_D_CATEGORY, dCategoryId);
+
+                Category category = new Category(categoryName, color, 0, sync, userId, email, serverCategoryId);
+                category.setCrudStatus(crudStatus);
+                category.setDCategoryID(dCategoryId);
+
+                DataManager dataManager = new DataManager(getContext());
+                dataManager.addCategory(getContext(), category);
+
+            }
+
+            JSONArray goodsJSONArray = jsonObject.getJSONArray("user_goods");
+
+            for (int i = 0; i < goodsJSONArray.length(); i++) {
+
+                JSONObject jsonGood = goodsJSONArray.getJSONObject(i);
+
+                int serverGoodId = jsonGood.getInt("server_good_id");
+                String goodName = jsonGood.getString("good_name");
+                int quantityLevelId = jsonGood.getInt("quantity_level");
+                int isToBuyInt = jsonGood.getInt("is_to_buy");
+                boolean isToBuy = (isToBuyInt == 1);
+                String goodDesc = jsonGood.getString("good_desc");
+                int sync = DataBaseHelper.SYNC_STATUS_OK;
+                String email = currentUser.getEmail();
+                int serverCategoryId = jsonGood.getInt("server_category_id");
+                int isOrdered = jsonGood.getInt("is_ordered");
+                int crudStatus = 0;
+
+                CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
+                Category category = categoriesDataProvider.getCategoryByServerCategoryId(serverCategoryId);
+
+                int categoryId = category.getCategoryId();
+
+                Good good = new Good(goodName, categoryId, quantityLevelId, isToBuy, sync, email, serverGoodId, serverCategoryId);
+                good.setCrudStatus(crudStatus);
+                good.setGoodDesc(goodDesc);
+                good.setIsOrdered(isOrdered);
+
+                DataManager dataManager = new DataManager(getContext());
+                dataManager.addGood(good);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

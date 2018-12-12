@@ -1486,6 +1486,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SIGN_UP_TYPE, user.getSignUpType());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
         contentValues.put(COL_USER_PHONE, user.getUserPhone());
+        if (user.getServerGroupId()!=0) contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
 
         long result = db.insert(TABLE_USERS, null, contentValues);
         return (result != -1);
