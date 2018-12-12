@@ -39,11 +39,13 @@ import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
@@ -241,7 +243,6 @@ public class SignUpFragment extends Fragment {
                 );
     }
 
-
     public void registerUserToAppServer(final Context context, final User userToRegister) {
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
@@ -286,6 +287,7 @@ public class SignUpFragment extends Fragment {
                                         if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
                                             usersDataManager.updateLastLoggedIn(serverUserId);
                                             addUserItems(jsonObject);
+                                            if (serverGroupId != 0) addUserGroup(jsonObject);
                                         }
 
                                     } else {
@@ -298,6 +300,9 @@ public class SignUpFragment extends Fragment {
                                             addDefaultItems(jsonObject);
                                         }
                                     }
+
+                                    dialog.dismiss();
+
                                     Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
                                     LauncherActivity launcherActivity = (LauncherActivity) getActivity();
                                     Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
@@ -336,6 +341,32 @@ public class SignUpFragment extends Fragment {
             // Network Problem
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
             dialog.dismiss();
+        }
+    }
+
+    private void addUserGroup(JSONObject jsonObject) {
+        try {
+
+            JSONObject jsonGroup = jsonObject.getJSONObject("user_group");
+
+            int serverGroupId = jsonGroup.getInt("server_group_id");
+            String groupName = jsonGroup.getString("group_name");
+            String ownerEmail = jsonGroup.getString("owner_email");
+            int serverOwnerId = jsonGroup.getInt("server_owner_id");
+            int syncStatus = DataBaseHelper.SYNC_STATUS_OK;
+
+            Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
+
+            GroupsDataManager groupsDataManager = new GroupsDataManager(getContext());
+            groupsDataManager.addGroup(group);
+
+            UsersDataManager usersDataManager = new UsersDataManager(getContext());
+            User currentUser = usersDataManager.getCurrentUser();
+            currentUser.setGroupId(groupsDataManager.getGroupByOwnerId(serverOwnerId).getGroupId());
+            usersDataManager.updateUser(currentUser);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

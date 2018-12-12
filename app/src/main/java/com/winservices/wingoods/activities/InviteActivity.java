@@ -27,11 +27,11 @@ import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
+import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
-import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -59,7 +59,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_invite);
 
         setTitle(getString(R.string.invite_friends));
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -75,7 +75,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         user = usersDataManager.getCurrentUser();
 
         Group group = user.getGroup(this);
-        if ( group != null){
+        if (group != null) {
             editGroupName.setText(group.getGroupName());
         }
 
@@ -83,8 +83,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void displayTeamMembers(User user){
-        if (user.getServerGroupId()!=0){
+    private void displayTeamMembers(User user) {
+        if (user.getServerGroupId() != 0) {
             txtMembers.setVisibility(View.VISIBLE);
             txtMembersList.setVisibility(View.VISIBLE);
             editGroupName.setEnabled(false);
@@ -137,14 +137,11 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                if (user.getGroup(this)==null && user.getServerGroupId()==0) {
+                if (user.getGroup(this) == null && user.getServerGroupId() == 0) {
                     Group groupToAdd = new Group(editGroupName.getText().toString(), user.getEmail(), user.getServerUserId());
 
                     CoUser coUserToAdd = new CoUser(coUserEmail, user.getUserId(), user.getEmail(),
                             CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED);
-
-                    dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
-                    dialog.show();
 
                     createGroupAndSendInvitation(groupToAdd, coUserToAdd);
 
@@ -168,7 +165,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (res1) {
             case Constants.SUCCESS:
-                //SyncHelper.sync(this);
+                SyncHelper.sync(this);
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:
@@ -181,8 +178,12 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void createGroupAndSendInvitation(final Group groupToAdd, final CoUser coUserToAdd){
+    private void createGroupAndSendInvitation(final Group groupToAdd, final CoUser coUserToAdd) {
         if (NetworkMonitor.checkNetworkConnection(getApplicationContext())) {
+
+            dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+            dialog.show();
+
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_ADD_GROUP_AND_CO_USER,
                     new Response.Listener<String>() {
@@ -210,7 +211,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                             UsersDataManager usersDataManager = new UsersDataManager(getApplicationContext());
                                             User currentUser = usersDataManager.getCurrentUser();
 
-                                            Group group = groupsDataManager.getGroupByOwnerId(currentUser.getServerUserId() );
+                                            Group group = groupsDataManager.getGroupByOwnerId(currentUser.getServerUserId());
                                             currentUser.setGroupId(group.getGroupId());
                                             currentUser.setServerGroupId(group.getServerGroupId());
                                             usersDataManager.updateUser(currentUser);
@@ -244,7 +245,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            //adding coUser failed
+                            dialog.dismiss();
                         }
                     }
             ) {
@@ -252,8 +253,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> postData = new HashMap<>();
                     String jsonData = getJsonForCreateGroupAndSendInvitation(groupToAdd, coUserToAdd);
-                    Log.d(TAG, "json request = " +jsonData);
-                    postData.put("jsonData", jsonData );
+                    Log.d(TAG, "json request = " + jsonData);
+                    postData.put("jsonData", jsonData);
                     return postData;
                 }
             };
@@ -304,14 +305,9 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                     for (int i = 0; i < JSONTeamMembers.length(); i++) {
                                         JSONObject JSONTeamMember = JSONTeamMembers.getJSONObject(i);
 
-                                        String memberUserName = JSONTeamMember.getString("user_name");
-                                        String memberEmail = JSONTeamMember.getString("email");
+                                        String userPhone = JSONTeamMember.getString("user_phone");
 
-                                        membersList.append(" - ");
-                                        membersList.append(memberUserName);
-                                        membersList.append(" ( ");
-                                        membersList.append(memberEmail);
-                                        membersList.append(" ) ");
+                                        membersList.append(userPhone);
                                         membersList.append("\n");
                                     }
                                     txtMembersList.setText(membersList);
@@ -340,7 +336,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private String getJSONForGetTeamMembers(int serverUserId){
+    private String getJSONForGetTeamMembers(int serverUserId) {
         final JSONObject root = new JSONObject();
         try {
 
@@ -355,7 +351,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         return null;
     }
 
-    private void updateMemebersInSharedPreferences(String members){
+    private void updateMemebersInSharedPreferences(String members) {
 
         SharedPreferences appPreferences;
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -369,19 +365,19 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
-            case android.R.id.home :
+        switch (id) {
+            case android.R.id.home:
                 returnToMainActivity();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void returnToMainActivity(){
+    private void returnToMainActivity() {
         int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, R.id.nav_my_goods);
         Intent intent = new Intent();
         intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
-        setResult(MainActivity.FRAGMENT_REQUEST_CODE,intent);
+        setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);
         this.finish();
     }
 
