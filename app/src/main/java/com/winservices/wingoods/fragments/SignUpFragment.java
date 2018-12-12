@@ -37,12 +37,14 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.CoUsersDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
@@ -347,6 +349,7 @@ public class SignUpFragment extends Fragment {
     private void addUserGroup(JSONObject jsonObject) {
         try {
 
+            //insert group
             JSONObject jsonGroup = jsonObject.getJSONObject("user_group");
 
             int serverGroupId = jsonGroup.getInt("server_group_id");
@@ -364,6 +367,27 @@ public class SignUpFragment extends Fragment {
             User currentUser = usersDataManager.getCurrentUser();
             currentUser.setGroupId(groupsDataManager.getGroupByOwnerId(serverOwnerId).getGroupId());
             usersDataManager.updateUser(currentUser);
+
+            //insert cousers
+            JSONArray jsonCoUsers = jsonObject.getJSONArray("co_users");
+
+            for (int i = 0; i < jsonCoUsers.length(); i++) {
+
+                JSONObject jsonCoUser = jsonCoUsers.getJSONObject(i);
+
+                int serverCoUserId = jsonCoUser.getInt("server_co_user_id");
+                String coUserEmail = jsonCoUser.getString("co_user_email");
+                String email = jsonCoUser.getString("email");
+                int confirmationStatus = jsonCoUser.getInt("confirmation_status");
+                int hasResponded = jsonCoUser.getInt("has_responded");
+                int sync = DataBaseHelper.SYNC_STATUS_OK;
+
+                CoUser coUser = new CoUser(coUserEmail, currentUser.getUserId(), email, confirmationStatus, hasResponded, sync, serverCoUserId);
+
+                CoUsersDataManager coUsersDataManager = new CoUsersDataManager(getContext());
+                coUsersDataManager.addCoUser(coUser);
+
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -37,6 +37,16 @@ public class CoUser {
         this.syncStatus = syncStatus;
     }
 
+    public CoUser(String coUserEmail, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus, int serverCoUserId) {
+        this.coUserEmail = coUserEmail;
+        this.userId = userId;
+        this.email = email;
+        this.confirmationStatus = confirmationStatus;
+        this.hasResponded = hasResponded;
+        this.syncStatus = syncStatus;
+        this.serverCoUserId = serverCoUserId;
+    }
+
     public CoUser(int coUserId, String coUserEmail, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus, int serverCoUserId) {
         this.coUserId = coUserId;
         this.coUserEmail = coUserEmail;
