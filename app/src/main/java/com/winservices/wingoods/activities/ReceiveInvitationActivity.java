@@ -97,7 +97,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
                                             JSONObject JSONInvitation = invitations.getJSONObject(j);
 
-                                            String senderEmail = JSONInvitation.getString("email");
+                                            String senderPhone = JSONInvitation.getString("user_phone");
                                             int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
                                             int serverGroupId = JSONInvitation.getInt("server_group_id");
 
@@ -113,7 +113,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
                                                 }
                                             }
 
-                                            ReceivedInvitation invitation = new ReceivedInvitation(senderEmail, categories.toString(), CoUser.PENDING);
+                                            ReceivedInvitation invitation = new ReceivedInvitation(senderPhone, categories.toString(), CoUser.PENDING);
                                             invitation.setServerCoUserId(serverCoUserId);
                                             invitation.setServerGroupId(serverGroupId);
 
@@ -148,7 +148,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> postData = new HashMap<>();
-                    postData.put("co_user_email", "" + user.getEmail());
+                    postData.put("co_user_phone", "" + user.getUserPhone());
                     return postData;
                 }
             };

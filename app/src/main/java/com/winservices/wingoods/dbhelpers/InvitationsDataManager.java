@@ -21,7 +21,7 @@ public class InvitationsDataManager {
 
     public int addReceivedInvitation( ReceivedInvitation invitation) {
         int result;
-        if (db.invitationExists(invitation.getInvitationEmail())) {
+        if (db.invitationExists(invitation.getInvitationPhone())) {
             result = Constants.DATAEXISTS;
         } else {
             if (db.addReceivedInvitation(invitation)) {
@@ -41,9 +41,9 @@ public class InvitationsDataManager {
         return db.updateReceivedInvitation(invitation);
     }
 
-    public ReceivedInvitation getReceivedInvitation( String senderEmail) {
+    public ReceivedInvitation getReceivedInvitation( String senderPhone) {
         Log.d(TAG, Constants.TAG_LISTA+"getReceivedInvitation called");
-        return db.getReceivedInvitation(senderEmail);
+        return db.getReceivedInvitation(senderPhone);
         }
 
 
@@ -53,14 +53,14 @@ public class InvitationsDataManager {
         cursor.moveToNext();
 
         //int receivedInvitationId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_RECEIVED_INVITATION_ID));
-        String invitationEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_EMAIL));
+        String invitationPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_PHONE));
         String invitationCategories ="";
         int response = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_INVITATION_RESPONSE));
         int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
         int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
         int serverGroupId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GROUP_ID));
 
-        ReceivedInvitation invitation = new ReceivedInvitation(invitationEmail, invitationCategories, response);
+        ReceivedInvitation invitation = new ReceivedInvitation(invitationPhone, invitationCategories, response);
         invitation.setUserId(userId);
         invitation.setServerCoUserId(serverCoUserId);
         invitation.setServerGroupId(serverGroupId);
@@ -74,14 +74,14 @@ public class InvitationsDataManager {
         Cursor cursor = db.getNotSyncReceivedInvitations();
         while (cursor.moveToNext()) {
             int receivedInvitationId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
-            String invitationEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_EMAIL));
+            String invitationPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SENDER_PHONE));
             int invitationResponse = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_INVITATION_RESPONSE));
             int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
             int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
             int serverGroupId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GROUP_ID));
 
 
-            ReceivedInvitation invitation = new ReceivedInvitation(receivedInvitationId,  invitationEmail,  invitationResponse,  userId,  serverCoUserId );
+            ReceivedInvitation invitation = new ReceivedInvitation(receivedInvitationId,  invitationPhone,  invitationResponse,  userId,  serverCoUserId );
             invitation.setServerGroupId(serverGroupId);
             list.add(invitation);
         }

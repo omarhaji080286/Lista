@@ -27,14 +27,16 @@ public class CoUser {
     private int hasResponded = HAS_NOT_RESPONDED;
     private int syncStatus = 0;
     private int serverCoUserId = 0;
+    private String coUserPhone;
+    private int serverUserId;
 
-    public CoUser(String coUserEmail, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus) {
-        this.coUserEmail = coUserEmail;
+    public CoUser(String coUserPhone, int userId, int confirmationStatus, int hasResponded, int syncStatus, int serverUserId) {
+        this.coUserPhone = coUserPhone;
         this.userId = userId;
-        this.email = email;
         this.confirmationStatus = confirmationStatus;
         this.hasResponded = hasResponded;
         this.syncStatus = syncStatus;
+        this.serverUserId = serverUserId;
     }
 
     public CoUser(String coUserEmail, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus, int serverCoUserId) {
@@ -47,15 +49,31 @@ public class CoUser {
         this.serverCoUserId = serverCoUserId;
     }
 
-    public CoUser(int coUserId, String coUserEmail, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus, int serverCoUserId) {
+    public CoUser(int coUserId, String coUserPhone, int userId, String email, int confirmationStatus, int hasResponded, int syncStatus, int serverCoUserId) {
         this.coUserId = coUserId;
-        this.coUserEmail = coUserEmail;
+        this.coUserPhone = coUserPhone;
         this.userId = userId;
         this.email = email;
         this.confirmationStatus = confirmationStatus;
         this.hasResponded = hasResponded;
         this.syncStatus = syncStatus;
         this.serverCoUserId = serverCoUserId;
+    }
+
+    public int getServerUserId() {
+        return serverUserId;
+    }
+
+    public void setServerUserId(int serverUserId) {
+        this.serverUserId = serverUserId;
+    }
+
+    public String getCoUserPhone() {
+        return coUserPhone;
+    }
+
+    public void setCoUserPhone(String coUserPhone) {
+        this.coUserPhone = coUserPhone;
     }
 
     public int getCoUserId() {
@@ -142,6 +160,8 @@ public class CoUser {
             JSONCoUser.put("hasResponded", this.hasResponded);
             JSONCoUser.put("syncStatus", this.syncStatus);
             JSONCoUser.put("serverCoUserId", this.serverCoUserId);
+            JSONCoUser.put("coUserPhone", this.coUserPhone);
+            JSONCoUser.put("serverUserId", this.serverUserId);
             return JSONCoUser;
         } catch (JSONException e) {
             e.printStackTrace();

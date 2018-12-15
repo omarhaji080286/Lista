@@ -6,7 +6,9 @@
     android:orientation="vertical"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.winservices.wingoods.activities.InviteActivity">
+    tools:context="com.winservices.wingoods.activities.InviteActivity"
+    android:theme="@style/AppTheme"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/txtInvitation"
@@ -76,14 +78,23 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp">
 
+        <ImageView
+            android:id="@+id/imgContact"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/phone_book"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
         <EditText
-            android:id="@+id/editEmailInvitation"
+            android:id="@+id/editPhoneInvitation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_weight="95"
             android:ems="10"
-            android:hint="@string/email_hint"
-            android:inputType="textEmailAddress"
+            android:hint="@string/your_firend_phone"
+            android:text="+212666285728"
+            android:inputType="phone"
             android:textSize="15sp"/>
 
         <ImageButton

@@ -178,6 +178,7 @@
     <string name="not_valid_code">Verification code is not valid</string>
     <string name="signing_up">Signing up…</string>
     <string name="welcome_msg">Welcome to Lista</string>
+    <string name="your_firend_phone">your firend phone</string>
 
 
 </resources>

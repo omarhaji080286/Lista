@@ -25,7 +25,7 @@ public class CoUsersDataManager {
         Cursor cursor = db.getNotSyncCoUsers();
         while (cursor.moveToNext()) {
             int coUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
-            String coUserEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_EMAIL));
+            String coUserPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_PHONE));
             int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int confirmationStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CONFIRMATION_STATUS));
@@ -33,7 +33,7 @@ public class CoUsersDataManager {
             int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_ID));
             int syncStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
 
-            CoUser coUser = new CoUser(coUserId, coUserEmail, userId, email, hasResponed, confirmationStatus, syncStatus, serverCoUserId);
+            CoUser coUser = new CoUser(coUserId, coUserPhone, userId, email, hasResponed, confirmationStatus, syncStatus, serverCoUserId);
             list.add(coUser);
         }
         cursor.close();
@@ -48,7 +48,7 @@ public class CoUsersDataManager {
 
     public int addCoUser(CoUser coUser) {
         int result;
-        if (db.coUserExists(coUser.getCoUserEmail(), coUser.getEmail())) {
+        if (db.coUserExists(coUser.getCoUserPhone(), coUser.getUserId())) {
             result = Constants.DATAEXISTS;
         } else {
             if (db.addCoUser(coUser)) {
@@ -68,15 +68,15 @@ public class CoUsersDataManager {
         cursor.moveToNext();
 
         //int coUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_ID));
-        String coUserEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_EMAIL));
+        String coUserPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_PHONE));
         int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_ID));
-        String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));;
         int confirmationStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CONFIRMATION_STATUS));
         int hasResponded = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_HAS_RESPONDED));
         int syncStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
         int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
+        int serverUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_USER_ID));
 
-        CoUser coUser = new CoUser(coUserEmail, userId, email, confirmationStatus, hasResponded, syncStatus);
+        CoUser coUser = new CoUser(coUserPhone, userId, confirmationStatus, hasResponded, syncStatus, serverUserId);
         coUser.setCoUserId(coUserId);
         coUser.setServerCoUserId(serverCoUserId);
 

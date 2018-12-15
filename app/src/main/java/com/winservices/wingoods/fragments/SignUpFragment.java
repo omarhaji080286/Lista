@@ -130,7 +130,7 @@ public class SignUpFragment extends Fragment {
                     final String phone = editPhone.getText().toString();
                     String completePhone = "+212" + phone;
                     if (UtilsFunctions.isEmulator()) {
-                        completePhone = "+16505551111"; //whitelist number on Firebase, 123456 is the code to number
+                        completePhone = "+16"+phone; //whitelist number on Firebase, 123456 is the code to number
                     }
 
                     if (isPhoneValid(phone)) {
@@ -221,7 +221,10 @@ public class SignUpFragment extends Fragment {
 
                                     String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
-                                    String phone = "+212" + editPhone.getText().toString();
+                                    //TODO - for test
+                                    //String phone = "+212" + editPhone.getText().toString();
+                                    String phone = "+16" + editPhone.getText().toString();
+
                                     User userToRegister = new User(phone);
 
                                     userToRegister.setFcmToken(fcmToken);

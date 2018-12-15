@@ -64,7 +64,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SERVER_CATEGORY_ID = "server_category_id";
     static final String COL_SERVER_GOOD_ID = "server_good_id";
     static final String COL_HAS_RESPONDED = "has_responded";
-    static final String COL_SENDER_EMAIL = "sender_email";
+    static final String COL_SENDER_PHONE = "sender_phone";
     static final String COL_INVITATION_RESPONSE = "invitation_response";
     static final String COL_CATEGORY_ID = "category_id";
     static final String COL_GOOD_NAME = "good_name";
@@ -76,6 +76,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String GREEN_GOODS = "green_goods";
     static final String COL_DESC_ID = "desc_id";
     static final String COL_DESC_VALUE = "desc_value";
+    static final String COL_CO_USER_PHONE = "co_user_phone";
+
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
 
@@ -109,7 +111,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_GROUP_NAME = "group_name";
     private static final String COL_OWNER_EMAIL = "owner_email";
     private static final String COL_SERVER_OWNER_ID = "server_owner_id";
-    private static final String COL_SERVER_USER_ID = "server_user_id";
+    public static final String COL_SERVER_USER_ID = "server_user_id";
     private static final String COL_SIGN_UP_TYPE = "sign_up_type";
     private static final String DATABASE_NAME = "DB_WinGoods.sqlite";
     private static final String TABLE_CATEGORIES = "categories";
@@ -184,6 +186,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "has_responded INTEGER, " +
                 "server_co_user_id INTEGER, " +
                 "sync_status INTEGER, " +
+                "co_user_phone TEXT, " +
+                "server_user_id INTEGER, " +
                 "FOREIGN KEY (user_id) REFERENCES users (user_id)) ");
 
         db.execSQL("CREATE TABLE categories ( " +
@@ -215,7 +219,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE received_invitations ( " +
                 "received_invitation_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "sender_email TEXT, " +
+                "sender_phone TEXT, " +
                 "invitation_response INTEGER, " +
                 "user_id INTEGER, " +
                 "server_group_id INTEGER, " +
@@ -432,10 +436,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //INVITATIONS
 
-    boolean invitationExists(String senderEmail) {
+    boolean invitationExists(String senderPhone) {
         String countQuery = "select * from " + TABLE_RECEIVED_INVITATIONS
                 + " where "
-                + COL_SENDER_EMAIL + " = '" + senderEmail + "'"
+                + COL_SENDER_PHONE + " = '" + senderPhone + "'"
                 + "AND " + COL_USERID + "=" + getCurrentUser().getUserId();
 
         db = this.getReadableDatabase();
@@ -455,14 +459,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    ReceivedInvitation getReceivedInvitation(String senderEmail) {
+    ReceivedInvitation getReceivedInvitation(String senderPhone) {
         db = this.getReadableDatabase();
         Cursor res;
         ReceivedInvitation invitation = null;
         try {
             res = db.rawQuery("SELECT " + COL_RECEIVED_INVITATION_ID + " as " + _ID + " , *"
                     + " FROM " + TABLE_RECEIVED_INVITATIONS
-                    + " WHERE " + COL_SENDER_EMAIL + " = '" + senderEmail + "'"
+                    + " WHERE " + COL_SENDER_PHONE + " = '" + senderPhone + "'"
                     + " AND " + COL_USERID + "=" + getCurrentUser().getUserId(), null);
 
             while (res.moveToNext()) {
@@ -472,7 +476,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int serverCoUserId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
                 int serverGroupId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GROUP_ID));
 
-                invitation = new ReceivedInvitation(receivedInvitationID, senderEmail, invitationResponse, userId);
+                invitation = new ReceivedInvitation(receivedInvitationID, senderPhone, invitationResponse, userId);
                 invitation.setServerCoUserId(serverCoUserId);
                 invitation.setServerGroupId(serverGroupId);
             }
@@ -529,10 +533,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    boolean coUserExists(String coUserEmail, String email) {
+    boolean coUserExists(String coUserEmail, int userId) {
         String countQuery = "select * from " + TABLE_CO_USERS
                 + " where "
-                + COL_EMAIL + " = '" + email + "'"
+                + COL_USERID + " = " + userId
                 + " AND " + COL_CO_USER_EMAIL + " = '" + coUserEmail + "'";
 
         db = this.getReadableDatabase();
@@ -682,6 +686,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String signUpType = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_SIGN_UP_TYPE));
                 int lastLoggedIn = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_LAST_LOGGED_IN));
                 int groupId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_GROUP_ID));
+                String userPhone = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_PHONE));
 
                 currentUser = new User(userId, email, password, userName);
                 currentUser.setServerUserId(serverUserId);
@@ -689,6 +694,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 currentUser.setSignUpType(signUpType);
                 currentUser.setLastLoggedIn(lastLoggedIn);
                 currentUser.setGroupId(groupId);
+                currentUser.setUserPhone(userPhone);
             }
             res.close();
 
@@ -1388,7 +1394,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     boolean addReceivedInvitation(ReceivedInvitation invitation) {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_SENDER_EMAIL, invitation.getInvitationEmail());
+        contentValues.put(COL_SENDER_PHONE, invitation.getInvitationPhone());
         contentValues.put(COL_INVITATION_RESPONSE, invitation.getResponse());
         contentValues.put(COL_USERID, getCurrentUser().getUserId());
         contentValues.put(COL_SERVER_CO_USER_ID, invitation.getServerCoUserId());
@@ -1593,6 +1599,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_HAS_RESPONDED, coUser.getHasResponded());
         contentValues.put(COL_SYNC_STATUS, coUser.getSyncStatus());
         contentValues.put(COL_SERVER_CO_USER_ID, coUser.getServerCoUserId());
+        contentValues.put(COL_CO_USER_PHONE, coUser.getCoUserPhone());
+        contentValues.put(COL_SERVER_USER_ID, coUser.getServerUserId());
 
         long result = db.insert(TABLE_CO_USERS, null, contentValues);
         return (result != -1);

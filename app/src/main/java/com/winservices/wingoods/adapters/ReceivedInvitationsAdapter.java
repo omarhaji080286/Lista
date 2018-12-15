@@ -43,14 +43,14 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
 
         final ReceivedInvitation receivedInvitation = receivedInvitations.get(position);
 
-        holder.senderEmail.setText(receivedInvitation.getInvitationEmail());
+        holder.senderEmail.setText(receivedInvitation.getInvitationPhone());
         holder.categories.setText(receivedInvitation.getInvitationCategories());
 
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                respondToInvitation(CoUser.ACCEPTED, receivedInvitation.getInvitationEmail());
+                respondToInvitation(CoUser.ACCEPTED, receivedInvitation.getInvitationPhone());
                 holder.accept.setClickable(false);
                 holder.accept.setTextColor(context.getResources().getColor(R.color.colorGray));
                 holder.decline.setClickable(false);
@@ -62,7 +62,7 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
         holder.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                respondToInvitation(CoUser.REJECTED, receivedInvitation.getInvitationEmail());
+                respondToInvitation(CoUser.REJECTED, receivedInvitation.getInvitationPhone());
                 holder.accept.setClickable(false);
                 holder.accept.setTextColor(context.getResources().getColor(R.color.colorGray));
                 holder.decline.setClickable(false);
@@ -78,12 +78,12 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
     }
 
 
-    private void respondToInvitation(int response, String senderEmail){
+    private void respondToInvitation(int response, String senderPhone){
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
 
             InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
-            ReceivedInvitation invitation = invitationsDataManager.getReceivedInvitation(senderEmail);
+            ReceivedInvitation invitation = invitationsDataManager.getReceivedInvitation(senderPhone);
             invitation.setResponse(response);
             invitationsDataManager.updateReceivedInvitation( invitation);
 

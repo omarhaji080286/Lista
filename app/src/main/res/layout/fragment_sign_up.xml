@@ -57,8 +57,8 @@
 
             <ImageView
                 style="@style/flagCountry"
-                android:src="@drawable/morocco"
-                android:contentDescription="@string/country_flag" />
+            android:src="@drawable/morocco"
+            android:contentDescription="@string/country_flag" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:maxLength="9"
-                android:text="@string/hint_phone_number"
+                android:text="505551111"
                 android:visibility="visible"/>
 
         </LinearLayout>

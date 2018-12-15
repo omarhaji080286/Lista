@@ -10,32 +10,41 @@ import java.util.List;
 public class ReceivedInvitation {
 
     private int receivedInvitationId;
-    private String invitationEmail;
+    //private String invitationEmail;
     private String invitationCategories;
     private int response = CoUser.PENDING;
     private int userId;
     private int serverCoUserId;
     private int serverGroupId;
+    private String invitationPhone;
 
-    public ReceivedInvitation(String invitationEmail, String invitationCategories, int response) {
-        this.invitationEmail = invitationEmail;
+    public ReceivedInvitation(String invitationPhone, String invitationCategories, int response) {
+        this.invitationPhone = invitationPhone;
         this.invitationCategories = invitationCategories;
         this.response = response;
     }
 
-    public ReceivedInvitation(int receivedInvitationId, String invitationEmail, int response, int userId) {
+    public ReceivedInvitation(int receivedInvitationId, String invitationPhone, int response, int userId) {
         this.receivedInvitationId = receivedInvitationId;
-        this.invitationEmail = invitationEmail;
+        this.invitationPhone = invitationPhone;
         this.response = response;
         this.userId = userId;
     }
 
-    public ReceivedInvitation(int receivedInvitationId, String invitationEmail, int response, int userId, int serverCoUserId) {
+    public ReceivedInvitation(int receivedInvitationId, String invitationPhone, int response, int userId, int serverCoUserId) {
         this.receivedInvitationId = receivedInvitationId;
-        this.invitationEmail = invitationEmail;
+        this.invitationPhone = invitationPhone;
         this.response = response;
         this.userId = userId;
         this.serverCoUserId = serverCoUserId;
+    }
+
+    public String getInvitationPhone() {
+        return invitationPhone;
+    }
+
+    public void setInvitationPhone(String invitationPhone) {
+        this.invitationPhone = invitationPhone;
     }
 
     public int getServerGroupId() {
@@ -52,14 +61,6 @@ public class ReceivedInvitation {
 
     public void setReceivedInvitationId(int receivedInvitationId) {
         this.receivedInvitationId = receivedInvitationId;
-    }
-
-    public String getInvitationEmail() {
-        return invitationEmail;
-    }
-
-    public void setInvitationEmail(String invitationEmail) {
-        this.invitationEmail = invitationEmail;
     }
 
     public String getInvitationCategories() {
@@ -100,7 +101,6 @@ public class ReceivedInvitation {
 
         try {
             jsonRI.put("receivedInvitationId", this.receivedInvitationId);
-            jsonRI.put("invitationEmail", this.invitationEmail);
             jsonRI.put("invitationCategories", this.invitationCategories);
             jsonRI.put("response", this.response);
             jsonRI.put("userId", this.userId);

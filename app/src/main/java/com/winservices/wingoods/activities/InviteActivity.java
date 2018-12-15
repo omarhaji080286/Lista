@@ -1,18 +1,23 @@
 package com.winservices.wingoods.activities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +32,6 @@ import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
-import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Group;
@@ -45,10 +49,11 @@ import java.util.Map;
 
 public class InviteActivity extends AppCompatActivity implements View.OnClickListener {
 
+    static final int PICK_CONTACT = 111;
     private static final String TAG = "InviteActivity";
-
+    ImageView imgContact;
     ImageButton btnSendIntivation;
-    EditText editEmailInvitation, editGroupName;
+    EditText editPhoneInvitation, editGroupName;
     TextView txtMembersList, txtMembers;
     User user;
     Dialog dialog;
@@ -63,12 +68,14 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        imgContact = findViewById(R.id.imgContact);
         btnSendIntivation = findViewById(R.id.btnSendIntivation);
         editGroupName = findViewById(R.id.editGroupName);
-        editEmailInvitation = findViewById(R.id.editEmailInvitation);
+        editPhoneInvitation = findViewById(R.id.editPhoneInvitation);
         txtMembersList = findViewById(R.id.txtMembersList);
         txtMembers = findViewById(R.id.txtMembers);
 
+        imgContact.setOnClickListener(this);
         btnSendIntivation.setOnClickListener(this);
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
@@ -117,48 +124,77 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                String coUserEmail = editEmailInvitation.getText().toString().trim();
+                String coUserPhone = editPhoneInvitation.getText().toString().trim();
 
-                if (coUserEmail.isEmpty()) {
-                    editEmailInvitation.setError(getString(R.string.emailRequired));
-                    editEmailInvitation.requestFocus();
+                if (coUserPhone.isEmpty()) {
+                    editPhoneInvitation.setError(getString(R.string.phone_required));
+                    editPhoneInvitation.requestFocus();
                     return;
                 }
 
-                if (coUserEmail.equals(user.getEmail())) {
-                    editEmailInvitation.setError(getString(R.string.cant_invite_your_self));
-                    editEmailInvitation.requestFocus();
-                    return;
-                }
-
-                if (!Patterns.EMAIL_ADDRESS.matcher(coUserEmail).matches()) {
-                    editEmailInvitation.setError(getString(R.string.emailNotValid));
-                    editEmailInvitation.requestFocus();
+                if (coUserPhone.equals(user.getUserPhone())) {
+                    editPhoneInvitation.setError(getString(R.string.cant_invite_your_self));
+                    editPhoneInvitation.requestFocus();
                     return;
                 }
 
                 if (user.getGroup(this) == null && user.getServerGroupId() == 0) {
                     Group groupToAdd = new Group(editGroupName.getText().toString(), user.getEmail(), user.getServerUserId());
 
-                    CoUser coUserToAdd = new CoUser(coUserEmail, user.getUserId(), user.getEmail(),
-                            CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED);
+                    CoUser coUserToAdd = new CoUser(coUserPhone, user.getUserId(), CoUser.HAS_NOT_RESPONDED,
+                            CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED, user.getServerUserId());
 
                     createGroupAndSendInvitation(groupToAdd, coUserToAdd);
 
                 } else {
-                    addCoUserInvitation(editEmailInvitation.getText().toString());
+                    addCoUserInvitation(editPhoneInvitation.getText().toString());
                 }
 
                 UtilsFunctions.hideKeyboard(this, view);
+                break;
+
+            case R.id.imgContact:
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                startActivityForResult(intent, PICK_CONTACT);
                 break;
         }
 
     }
 
-    private void addCoUserInvitation(String coUserEmail) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        CoUser coUser = new CoUser(coUserEmail, user.getUserId(), user.getEmail(),
-                CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED);
+        switch (requestCode) {
+            case (PICK_CONTACT):
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri uri = data.getData();
+                    if (uri == null) return;
+                    Cursor cursor = null;
+                    try {
+                        cursor = getContentResolver().query(uri, null, null, null, null);
+                        if (cursor == null) return;
+                        cursor.moveToFirst();
+                        int phoneIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        String phoneNo = cursor.getString(phoneIndex);
+                        phoneNo = PhoneNumberUtils.formatNumber(phoneNo, "MA");
+                        editPhoneInvitation.setText(phoneNo);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (cursor != null) cursor.close();
+                    }
+                }
+                break;
+        }
+
+    }
+
+    private void addCoUserInvitation(String coUserPhone) {
+
+        CoUser coUser = new CoUser(coUserPhone, user.getUserId(),
+                CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED, user.getServerUserId());
 
         CoUsersDataManager coUsersDataManager = new CoUsersDataManager(this);
         int res1 = coUsersDataManager.addCoUser(coUser);
@@ -169,8 +205,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
                 break;
             case Constants.DATAEXISTS:
-                editEmailInvitation.setError(getString(R.string.invitation_already_sent));
-                editEmailInvitation.requestFocus();
+                editPhoneInvitation.setError(getString(R.string.invitation_already_sent));
+                editPhoneInvitation.requestFocus();
                 break;
             case Constants.ERROR:
                 Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
@@ -367,7 +403,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                returnToMainActivity();
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
