@@ -66,8 +66,6 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
         categoriesToChooseRecyclerView = view.findViewById(R.id.list_categories);
         txtChooseCategory = view.findViewById(R.id.txt_choose_a_category);
 
-
-
     }
 
     @Override

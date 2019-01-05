@@ -225,6 +225,11 @@ public class OrderDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        isYourOrderComplete();
+    }
+
     private void isYourOrderComplete() {
         if ( orderStatus == Order.AVAILABLE ) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(this));

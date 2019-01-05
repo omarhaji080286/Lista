@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        myGoodsFragment = new MyGoods();
+
         syncReceiver = new SyncReceiver();
 
         mInterceptorFrame = findViewById(R.id.fl_interceptor);
@@ -250,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
-        myGoodsFragment = new MyGoods();
         displayFragment(myGoodsFragment, MyGoods.TAG);
     }
 
@@ -380,6 +381,7 @@ public class MainActivity extends AppCompatActivity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+
                     myGoodsFragment.reloadMainList();
                     myGoodsFragment.mAdapter.refreshList();
                     myGoodsFragment.categoriesToChooseAdapter.refreshList();
