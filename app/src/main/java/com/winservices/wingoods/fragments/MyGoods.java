@@ -35,6 +35,8 @@ import java.util.List;
 
 public class MyGoods extends android.support.v4.app.Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
+    public static final String TAG = MyGoods.class.getSimpleName();
+
     private EditText searchView;
     private RecyclerView mRecyclerView;
     public MyGoodsAdapter mAdapter;

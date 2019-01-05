@@ -10,15 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,10 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
@@ -50,7 +40,6 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.MyGoods;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.User;
-import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.Controlers;
@@ -58,19 +47,16 @@ import com.winservices.wingoods.utils.MJobScheduler;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
+    private String currentFragTag = "none";
 
     public static int FRAGMENT_REQUEST_CODE = 1;
     FloatingActionButton fabPlus, fabAddCategory, fabWtsp, fabAddOrder;
     Animation fabOpen, fabClose, fabRotateClockWise, fabAntiClockWise, fabTxtOpen, fabTxtClose;
-    TextView addCategoriesLabel, txtSend, txtUserEmail, txtAddOrder;
+    TextView addCategoriesLabel, txtSend, txtAddOrder;
     boolean isOpen = false;
-    NavigationView navigationView;
     FrameLayout mInterceptorFrame;
     int fragmentId = R.id.nav_my_goods;
     MyGoods myGoodsFragment;
@@ -85,17 +71,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         syncReceiver = new SyncReceiver();
-
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         mInterceptorFrame = findViewById(R.id.fl_interceptor);
         mInterceptorFrame.setOnTouchListener(new View.OnTouchListener() {
@@ -109,7 +89,6 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
 
-
         });
 
         fabAddOrder = findViewById(R.id.fab_add_order);
@@ -119,12 +98,6 @@ public class MainActivity extends AppCompatActivity
         fabWtsp = findViewById(R.id.fab_wtsp);
         addCategoriesLabel = findViewById(R.id.txt_add_categories_label);
         txtSend = findViewById(R.id.txt_wtsp);
-        txtUserEmail = navigationView.getHeaderView(0).findViewById(R.id.txt_user_email);
-
-        UsersDataManager usersDataManager = new UsersDataManager(this);
-        User user = usersDataManager.getCurrentUser();
-
-        txtUserEmail.setText(user.getEmail());
 
         fabOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fabTxtOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_txt_open);
@@ -206,7 +179,7 @@ public class MainActivity extends AppCompatActivity
                                     Toast.makeText(context, context.getResources().getString(R.string.category_add_success), Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                     collapseFab();
-                                    displaySelectedScreen(fragmentId);
+                                    //displaySelectedScreen(fragmentId);
                                     break;
                                 case Constants.DATAEXISTS:
                                     Toast.makeText(context, context.getResources().getString(R.string.category_exists), Toast.LENGTH_SHORT).show();
@@ -276,10 +249,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        //Sync Adapter first call
-        //ListaSyncAdapter.initializeSyncAdapter(this);
         registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
-        displaySelectedScreen(fragmentId);
+        myGoodsFragment = new MyGoods();
+        displayFragment(myGoodsFragment, MyGoods.TAG);
     }
 
     private void openWhatsApp(String message) {
@@ -304,16 +276,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -329,6 +291,9 @@ public class MainActivity extends AppCompatActivity
 
         //go to activity
         switch (id){
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.action_invite:
                 startActivity(new Intent(this, InviteActivity.class));
                 break;
@@ -351,77 +316,13 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void displaySelectedScreen(int id) {
-        Fragment fragment = null;
-
-        switch (id) {
-            case R.id.nav_my_goods:
-                myGoodsFragment = new MyGoods();
-                fragment = myGoodsFragment;
-                fragmentId = R.id.nav_my_goods;
-                navigationView.getMenu().getItem(0).setChecked(true);
-                break;
-            case R.id.nav_shops:
-                navigationView.getMenu().getItem(1).setChecked(true);
-                goToShops();
-                break;
-            case R.id.nav_my_orders:
-                navigationView.getMenu().getItem(2).setChecked(true);
-                goToOrders();
-                break;
-            case R.id.nav_log_out:
-                logOut();
-                break;
-        }
-
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_main, fragment);
-            ft.commit();
-        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
-
-
-    private void logOut(){
-
-
-        //Log out from FaceBook
-        LoginManager.getInstance().logOut();
-
-        //Log out from FaceBook
-        googleLogOut();
-
-        UsersDataManager usersDataManager = new UsersDataManager(this);
-        User user = usersDataManager.getCurrentUser();
-        user.setLastLoggedIn(DataBaseHelper.IS_NOT_LOGGED_IN);
-        usersDataManager.updateUser( user);
-
-        finish();
-        startActivity(new Intent(this, AuthActivity.class));
-    }
-
-    private void googleLogOut(){
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInClient.signOut();
-    }
-
-    // @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-
-        int fragmentId = item.getItemId();
-        displaySelectedScreen(fragmentId);
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    public void displayFragment(Fragment fragment, String tag) {
+        if (currentFragTag.equals(tag)) return;
+        currentFragTag = tag;
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction()
+                .replace(R.id.content_main, fragment, tag)
+                .commit();
     }
 
     private void expandFab() {
@@ -452,39 +353,10 @@ public class MainActivity extends AppCompatActivity
         isOpen = false;
     }
 
-
-    private void goToShops(){
-        if (NetworkMonitor.checkNetworkConnection(this)){
-            Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void goToOrders(){
-        if (NetworkMonitor.checkNetworkConnection(this)){
-            Intent intent = new Intent(MainActivity.this, MyOrdersActivity.class);
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-
-
     @Override
     protected void onDestroy() {
         //clear the job
         super.onDestroy();
-
-        //JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-
-        //jobScheduler.cancel(Constants.JOB_ID);
-        //Toast.makeText(this, "Job canceled...", Toast.LENGTH_SHORT).show();
-
         DataBaseHelper.closeDB();
     }
 
