@@ -132,6 +132,14 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
+                coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
+
+                if ((coUserPhone.length() != 13) || (!coUserPhone.substring(0, 4).equals("+212"))) {
+                    editPhoneInvitation.setError(getString(R.string.not_valid_phone));
+                    editPhoneInvitation.requestFocus();
+                    return;
+                }
+
                 if (coUserPhone.equals(user.getUserPhone())) {
                     editPhoneInvitation.setError(getString(R.string.cant_invite_your_self));
                     editPhoneInvitation.requestFocus();
@@ -147,13 +155,14 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     createGroupAndSendInvitation(groupToAdd, coUserToAdd);
 
                 } else {
-                    addCoUserInvitation(editPhoneInvitation.getText().toString());
+                    addCoUserInvitation(coUserPhone);
                 }
 
                 UtilsFunctions.hideKeyboard(this, view);
                 break;
 
             case R.id.imgContact:
+                editPhoneInvitation.setError(null);
                 Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                 intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_CONTACT);
@@ -179,6 +188,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                         int phoneIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                         String phoneNo = cursor.getString(phoneIndex);
                         phoneNo = PhoneNumberUtils.formatNumber(phoneNo, "MA");
+                        phoneNo = UtilsFunctions.formatPhone(phoneNo);
                         editPhoneInvitation.setText(phoneNo);
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -196,4 +196,25 @@ public class UtilsFunctions {
                 || "google_sdk".equals(Build.PRODUCT);
     }
 
+    public static String formatPhone(String phone){
+        phone = phone.replace("-", "");
+        phone = phone.replace(" ", "");
+
+
+        switch (phone.length()){
+            case 10 :
+                if (phone.substring(0,1).equals("0")){
+                    phone = "+212"+phone.substring(1);
+                }
+                break;
+            case 14 :
+                if (phone.substring(0,5).equals("00212")){
+                    phone = "+212"+phone.substring(5);
+                }
+                break;
+        }
+
+        return phone;
+    }
+
 }
