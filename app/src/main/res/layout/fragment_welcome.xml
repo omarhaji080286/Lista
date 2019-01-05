@@ -90,6 +90,26 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/linlayShops"
+                style="@style/WelcomeItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2">
+
+                <ImageView
+                    android:id="@+id/imgShops"
+                    style="@style/WelcomeImgItem"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/shops" />
+
+                <TextView
+                    android:id="@+id/txtShops"
+                    style="@style/WelcomeTextItem"
+                    android:text="@string/shops"/>
+
+            </LinearLayout>
+
 
         </TableRow>
 

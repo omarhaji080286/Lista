@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
 import com.winservices.wingoods.activities.MyOrdersActivity;
+import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.utils.NetworkMonitor;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class WelcomeFragment extends Fragment {
     public final static String TAG = WelcomeFragment.class.getSimpleName();
 
     ConstraintLayout consLayMyGoods;
-    LinearLayout linlayMyOrders;
+    LinearLayout linlayMyOrders, linlayShops;
 
     public WelcomeFragment() {
         // Required empty public constructor
@@ -50,6 +51,8 @@ public class WelcomeFragment extends Fragment {
 
         consLayMyGoods = view.findViewById(R.id.consLayMyGoods);
         linlayMyOrders = view.findViewById(R.id.linlayMyOrders);
+        linlayShops = view.findViewById(R.id.linlayShops);
+
 
         consLayMyGoods.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +65,13 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 goToActivity(new Intent(getActivity(), MyOrdersActivity.class));
+            }
+        });
+
+        linlayShops.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToActivity(new Intent(getActivity(), ShopsActivity.class));
             }
         });
 
