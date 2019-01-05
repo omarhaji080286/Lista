@@ -357,7 +357,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                         membersList.append("\n");
                                     }
                                     txtMembersList.setText(membersList);
-                                    updateMemebersInSharedPreferences(membersList.toString());
+                                    updateMembersInSharedPreferences(membersList.toString());
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -397,7 +397,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         return null;
     }
 
-    private void updateMemebersInSharedPreferences(String members) {
+    private void updateMembersInSharedPreferences(String members) {
 
         SharedPreferences appPreferences;
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -418,14 +418,5 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void returnToMainActivity() {
-        int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, R.id.nav_my_goods);
-        Intent intent = new Intent();
-        intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
-        setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);
-        this.finish();
-    }
-
 
 }
