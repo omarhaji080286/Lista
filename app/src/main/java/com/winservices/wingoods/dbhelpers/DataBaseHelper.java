@@ -181,7 +181,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "co_user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "co_user_email TEXT, " +
                 "user_id INTEGER, " +
-                "email INTEGER, " +
+                "email TEXT, " +
                 "confirmation_status INTEGER, " +
                 "has_responded INTEGER, " +
                 "server_co_user_id INTEGER, " +
@@ -533,11 +533,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    boolean coUserExists(String coUserEmail, int userId) {
+    boolean coUserExists(String coUserPhone, int userId) {
         String countQuery = "select * from " + TABLE_CO_USERS
                 + " where "
                 + COL_USERID + " = " + userId
-                + " AND " + COL_CO_USER_EMAIL + " = '" + coUserEmail + "'";
+                + " AND " + COL_CO_USER_PHONE + " = '" + coUserPhone + "'";
 
         db = this.getReadableDatabase();
         Cursor cursor = null;
@@ -1235,14 +1235,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     boolean updateCoUser(CoUser coUser) {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_CO_USER_ID, coUser.getCoUserId());
+
         contentValues.put(COL_CO_USER_EMAIL, coUser.getCoUserEmail());
         contentValues.put(COL_USERID, coUser.getUserId());
         contentValues.put(COL_EMAIL, coUser.getEmail());
         contentValues.put(COL_CONFIRMATION_STATUS, coUser.getConfirmationStatus());
         contentValues.put(COL_HAS_RESPONDED, coUser.getHasResponded());
-        contentValues.put(COL_SERVER_CO_USER_ID, coUser.getServerCoUserId());
         contentValues.put(COL_SYNC_STATUS, coUser.getSyncStatus());
+        contentValues.put(COL_SERVER_CO_USER_ID, coUser.getServerCoUserId());
+        contentValues.put(COL_CO_USER_PHONE, coUser.getCoUserPhone());
+        contentValues.put(COL_SERVER_USER_ID, coUser.getServerUserId());
 
         int affectedRows = 0;
         db.beginTransaction();

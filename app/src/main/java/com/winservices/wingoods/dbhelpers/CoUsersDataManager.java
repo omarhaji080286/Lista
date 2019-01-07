@@ -26,6 +26,7 @@ public class CoUsersDataManager {
         while (cursor.moveToNext()) {
             int coUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
             String coUserPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_PHONE));
+            String coUserEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_EMAIL));
             int userId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USERID));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
             int confirmationStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CONFIRMATION_STATUS));
@@ -34,6 +35,7 @@ public class CoUsersDataManager {
             int syncStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
 
             CoUser coUser = new CoUser(coUserId, coUserPhone, userId, email, hasResponed, confirmationStatus, syncStatus, serverCoUserId);
+            coUser.setCoUserEmail(coUserEmail);
             list.add(coUser);
         }
         cursor.close();
@@ -75,10 +77,14 @@ public class CoUsersDataManager {
         int syncStatus = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SYNC_STATUS));
         int serverCoUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CO_USER_ID));
         int serverUserId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_USER_ID));
+        String email = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
+        String coUserEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CO_USER_EMAIL));
 
         CoUser coUser = new CoUser(coUserPhone, userId, confirmationStatus, hasResponded, syncStatus, serverUserId);
         coUser.setCoUserId(coUserId);
         coUser.setServerCoUserId(serverCoUserId);
+        coUser.setEmail(email);
+        coUser.setCoUserEmail(coUserEmail);
 
         return coUser;
     }

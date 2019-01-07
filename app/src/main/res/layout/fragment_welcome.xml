@@ -29,7 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="80">
 
-        <TableRow>
+        <TableRow
+            android:gravity="center_horizontal">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/consLayMyGoods"

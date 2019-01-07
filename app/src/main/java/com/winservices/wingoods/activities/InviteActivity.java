@@ -132,13 +132,14 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
+                //TODO - remove comment for release
+                /*coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
 
                 if ((coUserPhone.length() != 13) || (!coUserPhone.substring(0, 4).equals("+212"))) {
                     editPhoneInvitation.setError(getString(R.string.not_valid_phone));
                     editPhoneInvitation.requestFocus();
                     return;
-                }
+                }*/
 
                 if (coUserPhone.equals(user.getUserPhone())) {
                     editPhoneInvitation.setError(getString(R.string.cant_invite_your_self));
@@ -151,6 +152,10 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                     CoUser coUserToAdd = new CoUser(coUserPhone, user.getUserId(), CoUser.HAS_NOT_RESPONDED,
                             CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED, user.getServerUserId());
+
+                    //TODO - Must process
+                    coUserToAdd.setCoUserEmail(coUserPhone+"@gmail.com");
+                    coUserToAdd.setEmail(user.getEmail());
 
                     createGroupAndSendInvitation(groupToAdd, coUserToAdd);
 
@@ -205,6 +210,10 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
         CoUser coUser = new CoUser(coUserPhone, user.getUserId(),
                 CoUser.HAS_NOT_RESPONDED, CoUser.PENDING, DataBaseHelper.SYNC_STATUS_FAILED, user.getServerUserId());
+
+        //TODO - Must process
+        coUser.setCoUserEmail(coUserPhone+"@gmail.com");
+        coUser.setEmail(user.getEmail());
 
         CoUsersDataManager coUsersDataManager = new CoUsersDataManager(this);
         int res1 = coUsersDataManager.addCoUser(coUser);
@@ -266,6 +275,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                             int serverCoUserId = jsonObject.getInt("serverCoUserId");
                                             coUserToAdd.setServerCoUserId(serverCoUserId);
                                             coUserToAdd.setSyncStatus(DataBaseHelper.SYNC_STATUS_OK);
+
                                             coUsersDataManager.addCoUser(coUserToAdd);
 
                                             Toast.makeText(InviteActivity.this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();

@@ -102,14 +102,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AuthActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.InviteActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
@@ -144,24 +136,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
-        <service android:name=".sync.ListaAuthenticatorService">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-        <service android:name=".sync.ListaSyncService">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
         <service
             android:name=".services.ListaMessagingService"
             android:stopWithTask="false">
@@ -184,13 +158,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
-
-        <provider
-            android:name=".providers.GoodProvider"
-            android:authorities="com.winservices.wingoods"
-            android:exported="false"
-            android:syncable="true" />
-
 
     </application>
 

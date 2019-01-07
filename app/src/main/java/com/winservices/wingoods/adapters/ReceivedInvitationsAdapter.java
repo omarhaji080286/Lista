@@ -15,7 +15,6 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.User;
-import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.viewholders.InvitationViewHolder;
 

@@ -1,14 +1,8 @@
 package com.winservices.wingoods.utils;
 
-import android.annotation.SuppressLint;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.winservices.wingoods.dbhelpers.SyncHelper;
-import com.winservices.wingoods.dbhelpers.Synchronizer;
-import com.winservices.wingoods.sync.ListaSyncAdapter;
 
 
 public class MJobScheduler extends JobService {

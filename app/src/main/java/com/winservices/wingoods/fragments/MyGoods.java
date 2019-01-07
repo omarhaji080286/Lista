@@ -22,11 +22,9 @@ import com.winservices.wingoods.adapters.CategoriesInMyGoodsAdapter;
 import com.winservices.wingoods.adapters.MyGoodsAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
-import com.winservices.wingoods.dbhelpers.Synchronizer;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
-import com.winservices.wingoods.sync.ListaSyncAdapter;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
