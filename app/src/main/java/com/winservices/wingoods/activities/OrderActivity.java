@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -198,6 +199,10 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                     return postData;
                 }
             };
+
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
+                    RequestHandler.RETRY_COUNT, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

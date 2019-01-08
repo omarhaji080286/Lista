@@ -1,204 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/frag_update_good"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:weightSum="100">
+    android:focusableInTouchMode="true">
 
-    <ScrollView
+
+    <LinearLayout
+        android:id="@+id/llGoodName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="85">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtGoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
+            android:text="@string/good_s_name"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtGoodDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text=" ( ? )"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/consLayCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/llGoodName">
+
+        <Spinner
+            android:id="@+id/spinnerCategories"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="2dp"
+            android:layout_gravity="center"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llBrand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:weightSum="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/consLayCategories">
+
+        <MultiAutoCompleteTextView
+            android:id="@+id/macBrand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:completionThreshold="1"
+            android:hint="@string/brand_or_description" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llUnitsButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llBrand">
+
+        <Button
+            android:id="@+id/btnQuantity"
+            style="@style/BtnAmountSelected"
+            android:layout_width="wrap_content"
+            android:layout_weight="25"
+            android:text="Quantity" />
+
+        <Button
+            android:id="@+id/btnGrammage"
+            style="@style/BtnAmount"
+            android:layout_width="wrap_content"
+            android:layout_weight="25"
+            android:text="Kg" />
+
+        <Button
+            android:id="@+id/btnLitrage"
+            style="@style/BtnAmount"
+            android:layout_width="wrap_content"
+            android:layout_weight="25"
+            android:text="litre" />
+
+        <Button
+            android:id="@+id/btnDh"
+            style="@style/BtnAmount"
+            android:layout_width="wrap_content"
+            android:layout_weight="25"
+            android:text="DH" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llUnitsButtons">
+
+        <LinearLayout
+            android:id="@+id/llUnits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/llQuantity"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="visible"
+                android:weightSum="100">
 
-                <TextView
-                    android:id="@+id/txt_category_select"
-                    style="@style/TextViewLabel"
+                <ImageView
+                    android:id="@+id/imgMinus"
                     android:layout_width="wrap_content"
-                    android:text="@string/select_a_category" />
-
-                <Spinner
-                    android:id="@+id/spinnerCategories"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_margin="2dp"
-                    android:background="@color/white" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txt_good_name"
-                    style="@style/TextViewLabel"
-                    android:layout_width="wrap_content"
-                    android:text="@string/good_s_name" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:src="@drawable/ic_minus" />
 
                 <EditText
-                    android:id="@+id/edit_good"
-                    style="@style/EditText"
-                    android:layout_width="match_parent"
+                    android:id="@+id/editAmount"
+                    android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/good_s_name" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/txt_good_desc"
-                    style="@style/TextViewLabel"
-                    android:layout_width="wrap_content"
-                    android:text="@string/good_description" />
-
-                <EditText
-                    android:id="@+id/edit_good_desc"
-                    style="@style/EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/good_description" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        style="@style/TextViewLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/brand" />
-
-                    <EditText
-                        style="@style/EditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/brand" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="99">
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Quantity" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Grammage" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="33"
-                        android:text="Litrage" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="80"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:text="@string/_0" />
 
-                    <LinearLayout
-                        android:id="@+id/llQuantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_minus" />
-
-                        <EditText
-                            android:id="@+id/editQuantity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/_0" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_plus" />
-
-                    </LinearLayout>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvGrammage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvLitrage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/imgPlus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:src="@drawable/ic_plus" />
 
             </LinearLayout>
+
+            <GridLayout
+                android:id="@+id/gridAmounts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:columnCount="4"
+                android:visibility="gone" />
 
         </LinearLayout>
 
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/llDialogButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="15">
+        android:layout_weight="15"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scroll">
 
         <Button
             android:id="@+id/btn_cancel"
-            style="@style/Button"
             android:layout_width="wrap_content"
-            android:layout_weight="50"
-            android:text="@string/cancel" />
+            android:layout_height="wrap_content"
+            android:text="@string/not_now" />
 
         <Button
             android:id="@+id/btn_update_good"
-            style="@style/Button"
             android:layout_width="wrap_content"
-            android:layout_weight="50"
-            android:text="@string/update" />
+            android:layout_height="wrap_content"
+            android:text="Ok" />
 
     </LinearLayout>
 
-</LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -146,41 +146,33 @@ public class CategoriesToOrderAdapter
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(context);
         final Category category = categoriesDataProvider.getCategoryByGoodId(good.getGoodId());
 
-        if (!(category.getDCategoryId() == DefaultCategory.GROCERIES ||
-                category.getDCategoryId() == DefaultCategory.COSMETICS ||
-                category.getDCategoryId() == DefaultCategory.HYGIENE_PRODUCTS ||
-                category.getDCategoryId() == DefaultCategory.HARDWARES)) {
-            editBrand.setVisibility(View.GONE);
-        } else {
+        DescriptionsDataManager descriptionsDataManager = new DescriptionsDataManager(context);
+        String[] descriptions = descriptionsDataManager.getDescriptions(category.getDCategoryId());
 
-            DescriptionsDataManager descriptionsDataManager = new DescriptionsDataManager(context);
-            String[] descriptions = descriptionsDataManager.getDescriptions(category.getDCategoryId());
+        ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_expandable_list_item_1, descriptions);
+        editBrand.setAdapter(macBrandAdapter);
+        editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
-            ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<String>(context,
-                    android.R.layout.simple_expandable_list_item_1, descriptions);
-            editBrand.setAdapter(macBrandAdapter);
-            editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        editBrand.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            editBrand.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-                }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                brandValue = charSequence.toString();
+                String goodDesc = "( " + brandValue + " " + amountValue + " )";
+                txtGoodDesc.setText(goodDesc);
 
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    brandValue = charSequence.toString();
-                    String goodDesc = "( " + brandValue + " " + amountValue + " )";
-                    txtGoodDesc.setText(goodDesc);
+            }
 
-                }
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-        }
+            }
+        });
 
         //prepare Edit Amount
         editAmount.addTextChangedListener(new TextWatcher() {
@@ -373,12 +365,12 @@ public class CategoriesToOrderAdapter
             return false;
         }
 
-        if (editBrand.getVisibility() == View.VISIBLE) {
+        /*if (editBrand.getVisibility() == View.VISIBLE) {
             if (editBrand.getText().toString().isEmpty()) {
                 editBrand.setError("Description required");
                 return false;
             }
-        }
+        }*/
         return true;
     }
 

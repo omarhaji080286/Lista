@@ -6,6 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 public class RequestHandler {
+    public static final int RETRY_COUNT = 1;
     private static RequestHandler mInstance;
     private RequestQueue mRequestQueue;
     private static Context mCtx;
