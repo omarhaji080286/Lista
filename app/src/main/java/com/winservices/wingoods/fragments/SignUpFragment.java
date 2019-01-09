@@ -74,7 +74,7 @@ public class SignUpFragment extends Fragment {
     private Dialog dialog;
     private FirebaseAuth firebaseAuth;
     private String codeSent;
-    private EditText editPhone, editVerifCode;
+    private EditText editPhone, editVerifCode, editUserName;
     private Button btnContinue, btnSignUp;
     private TextView txtDescription;
     private LinearLayout linlayPhoneCointaner;
@@ -116,6 +116,7 @@ public class SignUpFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
 
         editPhone = view.findViewById(R.id.editPhone);
+        editUserName = view.findViewById(R.id.editUserName);
         btnContinue = view.findViewById(R.id.btnContinue);
         editVerifCode = view.findViewById(R.id.editVerifCode);
         btnSignUp = view.findViewById(R.id.btnNext);
@@ -128,17 +129,20 @@ public class SignUpFragment extends Fragment {
                 if (NetworkMonitor.checkNetworkConnection(Objects.requireNonNull(getContext()))) {
 
                     final String phone = editPhone.getText().toString();
+                    String userName = editUserName.getText().toString();
+
                     String completePhone = "+212" + phone;
                     if (UtilsFunctions.isEmulator()) {
                         completePhone = "+16"+phone; //whitelist number on Firebase, 123456 is the code to number
                     }
 
-                    if (isPhoneValid(phone)) {
+                    if (isInputsOk(phone, userName)) {
 
                         sendVerifCode(completePhone);
 
                         btnContinue.setVisibility(View.GONE);
                         linlayPhoneCointaner.setVisibility(View.GONE);
+                        editUserName.setVisibility(View.GONE);
                         btnSignUp.setVisibility(View.VISIBLE);
                         editVerifCode.setVisibility(View.VISIBLE);
 
@@ -179,7 +183,7 @@ public class SignUpFragment extends Fragment {
 
     }
 
-    private boolean isPhoneValid(String phone) {
+    private boolean isInputsOk(String phone, String userName) {
 
         if (phone.isEmpty()) {
             editPhone.setError(getString(R.string.phone_required));
@@ -190,6 +194,12 @@ public class SignUpFragment extends Fragment {
         if (phone.length() < 9) {
             editPhone.setError(getString(R.string.not_valid_phone));
             editPhone.requestFocus();
+            return false;
+        }
+
+        if (userName.isEmpty()) {
+            editUserName.setError("User name required");
+            editUserName.requestFocus();
             return false;
         }
 
@@ -225,6 +235,8 @@ public class SignUpFragment extends Fragment {
                                     //String phone = "+212" + editPhone.getText().toString();
                                     String phone = "+16" + editPhone.getText().toString();
 
+                                    String userName = editUserName.getText().toString();
+
                                     User userToRegister = new User(phone);
 
                                     userToRegister.setFcmToken(fcmToken);
@@ -232,6 +244,7 @@ public class SignUpFragment extends Fragment {
 
                                     //TODO - must adjust
                                     userToRegister.setEmail(phone + "@gmail.com");
+                                    userToRegister.setUserName(userName);
 
                                     registerUserToAppServer(getContext(), userToRegister);
 

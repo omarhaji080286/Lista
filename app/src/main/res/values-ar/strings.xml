@@ -167,4 +167,9 @@
     <string name="signing_up">Signing up…</string>
     <string name="welcome_msg">Welcome to Lista</string>
     <string name="your_firend_phone">your firend phone</string>
+    <string name="my_profile">My profile</string>
+    <string name="phone">Phone :</string>
+    <string name="user_name_label">User name :</string>
+    <string name="user_name_hint">Firstname Lastname</string>
+    <string name="my_list">My List</string>
 </resources>

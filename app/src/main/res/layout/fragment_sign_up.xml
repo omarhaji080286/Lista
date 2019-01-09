@@ -78,7 +78,14 @@
 
         </LinearLayout>
 
-
+        <EditText
+            android:id="@+id/editUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/EditText"
+            android:hint="@string/user_name_hint"
+            android:layout_margin="@dimen/text_content_margin_large"
+            android:maxLength="30"/>
 
         <Button
             android:id="@+id/btnContinue"
@@ -89,9 +96,11 @@
             android:visibility="visible"/>
 
         <EditText
+            android:layout_gravity="center_horizontal"
             android:id="@+id/editVerifCode"
             style="@style/EditText"
-            android:layout_width="match_parent"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text="@string/hint_verification_code"

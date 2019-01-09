@@ -73,6 +73,23 @@ public class UsersDataManager {
         return result;
     }
 
+    public static class UpdateUser implements Runnable{
+
+        private User user;
+        private Context context;
+
+        public UpdateUser(Context context, User user){
+            this.user = user;
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            UsersDataManager descriptionsDataManager = new UsersDataManager(context);
+            descriptionsDataManager.updateUser(user);
+        }
+    }
+
 
 
 }

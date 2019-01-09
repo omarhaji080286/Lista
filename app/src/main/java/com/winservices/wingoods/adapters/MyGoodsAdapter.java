@@ -463,10 +463,8 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 String finalGoodDesc = brandValue + " " + amountValue;
                 if (inputsOk(editBrand)) {
                     int categoryId = (int) spinner.getSelectedItemId();
-                    updateGood(good.getGoodId(), finalGoodDesc, categoryId);
-                    ((Good) group.getItems().get(childIndex)).setGoodDesc(finalGoodDesc);
-                    notifyItemChanged(flatPosition);
-                    if (categoryId != good.getCategoryId()) refreshList();
+                    updateGood(good.getGoodId(), finalGoodDesc, categoryId, flatPosition);
+                    refreshList();
                     dialog.dismiss();
                     storeDescription(editBrand.getText().toString(), category.getDCategoryId());
                 }
@@ -491,7 +489,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         return true;
     }
 
-    private void updateGood(int goodId, String goodDesc, int categoryId) {
+    private void updateGood(int goodId, String goodDesc, int categoryId, int flatPosition) {
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
         DataManager dataManager = new DataManager(context);
 
@@ -499,6 +497,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         good.setGoodDesc(goodDesc);
         good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
         good.setCategoryId(categoryId);
+        good.setToBuy(true);
 
         dataManager.updateGood(good);
 

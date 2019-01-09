@@ -30,7 +30,8 @@
         android:layout_weight="80">
 
         <TableRow
-            android:gravity="center_horizontal">
+            android:gravity="start"
+            android:layout_marginStart="5dp">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/consLayMyGoods"
@@ -84,7 +85,7 @@
                     android:id="@+id/imgMyOrders"
                     style="@style/WelcomeImgItem"
                     android:contentDescription="TODO"
-                    android:src="@drawable/ic_cart_full_black" />
+                    android:src="@drawable/ic_cart_empty_black_128" />
 
                 <TextView
                     android:id="@+id/txtMyOrders"
@@ -116,6 +117,31 @@
 
         </TableRow>
 
+        <TableRow
+            android:gravity="start"
+            android:layout_marginStart="5dp">
+
+            <LinearLayout
+                android:id="@+id/linlayProfile"
+                style="@style/WelcomeItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1">
+
+                <ImageView
+                    android:id="@+id/imgProfil"
+                    style="@style/WelcomeImgItem"
+                    android:contentDescription="TODO"
+                    android:src="@drawable/users" />
+
+                <TextView
+                    android:id="@+id/txtProfil"
+                    style="@style/WelcomeTextItem"
+                    android:text="@string/my_profile"/>
+
+            </LinearLayout>
+
+        </TableRow>
 
     </TableLayout>
 
