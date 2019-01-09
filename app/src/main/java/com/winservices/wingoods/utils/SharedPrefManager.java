@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.User;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +46,13 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Shop.PREFIX_SHOP + serverShopId, path);
+        editor.apply();
+    }
+
+    public void storeUserImagePath(int serverUserId, String path) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(User.PREFIX_USER + serverUserId, path);
         editor.apply();
     }
 
@@ -97,6 +105,11 @@ public class SharedPrefManager {
     public String getImagePath(String key){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, null);
+    }
+
+    public String getUserImagePath(int serverUserId){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(User.PREFIX_USER + serverUserId, null);
     }
 
 }

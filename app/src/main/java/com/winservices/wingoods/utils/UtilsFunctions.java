@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -215,6 +216,13 @@ public class UtilsFunctions {
         }
 
         return phone;
+    }
+
+    public static String imageToString(Bitmap bitmap, int quality) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+        byte[] imgByte = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(imgByte, Base64.DEFAULT);
     }
 
 }

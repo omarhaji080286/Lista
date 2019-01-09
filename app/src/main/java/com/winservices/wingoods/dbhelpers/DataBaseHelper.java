@@ -37,14 +37,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
-
-    // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
-
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
     public static final String TAG = "DataBaseHelper";
+    public static final String COL_SERVER_USER_ID = "server_user_id";
     static final String COL_EMAIL = "email";
     static final String COL_USERID = "user_id";
     static final String COL_SYNC_STATUS = "sync_status";
@@ -77,10 +74,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DESC_ID = "desc_id";
     static final String COL_DESC_VALUE = "desc_value";
     static final String COL_CO_USER_PHONE = "co_user_phone";
-
-    private static final int DELETED = -1;
-    private static final int RESTORED = 1;
-
+    // Lista LOCAL (compte root)
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
@@ -101,7 +96,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String HOST_URL_GET_ORDERED_GOODS = HOST + "getOrderedGoods.php";
     public static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
+    public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST +"uploadUserImage.php";
+
     public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
+    private static final int DELETED = -1;
+    private static final int RESTORED = 1;
     private static final String TABLE_CO_USERS = "co_users";
     private static final String TABLE_DESCRIPTIONS = "descriptions";
     private static final String COL_LAST_LOGGED_IN = "last_logged_in";
@@ -111,7 +110,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_GROUP_NAME = "group_name";
     private static final String COL_OWNER_EMAIL = "owner_email";
     private static final String COL_SERVER_OWNER_ID = "server_owner_id";
-    public static final String COL_SERVER_USER_ID = "server_user_id";
     private static final String COL_SIGN_UP_TYPE = "sign_up_type";
     private static final String DATABASE_NAME = "DB_WinGoods.sqlite";
     private static final String TABLE_CATEGORIES = "categories";
@@ -1494,7 +1492,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SIGN_UP_TYPE, user.getSignUpType());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
         contentValues.put(COL_USER_PHONE, user.getUserPhone());
-        if (user.getServerGroupId()!=0) contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
+        if (user.getServerGroupId() != 0)
+            contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
 
         long result = db.insert(TABLE_USERS, null, contentValues);
         return (result != -1);

@@ -6,6 +6,7 @@ import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 
 public class User {
 
+    public static final String PREFIX_USER = "user_";
     private int userId;
     private String email;
     private String password;
