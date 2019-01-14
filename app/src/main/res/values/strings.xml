@@ -184,5 +184,6 @@
     <string name="phone">Phone :</string>
     <string name="user_name_label">User name :</string>
     <string name="user_name_hint"><i>Firstname Lastname</i></string>
+    <string name="account">Account</string>
 
 </resources>
