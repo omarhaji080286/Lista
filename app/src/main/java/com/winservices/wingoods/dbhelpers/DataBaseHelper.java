@@ -96,7 +96,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String HOST_URL_GET_ORDERED_GOODS = HOST + "getOrderedGoods.php";
     public static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
-    public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST +"uploadUserImage.php";
+    public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST + "uploadUserImage.php";
 
     public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
     private static final int DELETED = -1;
@@ -1492,6 +1492,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SIGN_UP_TYPE, user.getSignUpType());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
         contentValues.put(COL_USER_PHONE, user.getUserPhone());
+
         if (user.getServerGroupId() != 0)
             contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
 

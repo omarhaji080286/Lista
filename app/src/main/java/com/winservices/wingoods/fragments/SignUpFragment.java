@@ -312,6 +312,7 @@ public class SignUpFragment extends Fragment {
                                         int serverUserId = jsonObject.getInt("server_user_id");
                                         userToRegister.setServerUserId(serverUserId);
                                         userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
+
                                         UsersDataManager usersDataManager = new UsersDataManager(context);
                                         if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
                                             usersDataManager.updateLastLoggedIn(serverUserId);

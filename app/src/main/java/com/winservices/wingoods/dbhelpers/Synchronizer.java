@@ -151,6 +151,9 @@ public class Synchronizer {
             }
             root.put("excludedServerGoodsIds", excludedServerGoodsIds);
 
+            //Sync User (if username modified)
+            root.put("userName", user.getUserName());
+
             return root.toString(1);
         } catch (JSONException e) {
             Log.d("LISTA", "Can't format JSON");
