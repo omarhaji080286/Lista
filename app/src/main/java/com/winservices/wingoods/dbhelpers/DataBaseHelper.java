@@ -973,25 +973,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-
-    Cursor getPurchasableCategories() {
-        db = this.getReadableDatabase();
-        Cursor res = null;
-        try {
-            res = db.rawQuery("select " + COL_CATEGORY_ID + " as " + _ID + " , * from " + TABLE_CATEGORIES +
-                    " where exists" +
-                    " ( select * from goods where" +
-                    " categories.category_id = goods.category_id" +
-                    " and goods." + COL_IS_TO_BUY + " = 1" +
-                    " and goods." + COL_CRUD_STATUS + " <> -1 )" +
-                    " and " + COL_CRUD_STATUS + " <> -1" +
-                    " and " + COL_USERID + "=" + getCurrentUser().getUserId(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
     Cursor getNotSyncCategories() {
         db = this.getReadableDatabase();
         Cursor res = null;
@@ -1126,6 +1107,30 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return res;
+    }
+
+    int getGoodsToBuyNb() {
+        String countQuery = "SELECT * "
+                + " FROM " + TABLE_GOODS + "," + TABLE_CATEGORIES
+                + " WHERE " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + "=" + TABLE_GOODS + "." + COL_CATEGORY_ID
+                + " AND " + TABLE_GOODS + "." + COL_CRUD_STATUS + " <> " + DELETED
+                + " AND " + TABLE_GOODS + "." + COL_IS_TO_BUY + " = " + 1
+                + " AND " + TABLE_CATEGORIES + "." + COL_USERID + "=" + getCurrentUser().getUserId();
+
+        db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(countQuery, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("DB", e.toString());
+        }
+        int cnt = 0;
+        if (cursor != null) {
+            cnt = cursor.getCount();
+            cursor.close();
+        }
+        return cnt;
     }
 
 

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.winservices.wingoods.activities.ShopsActivity"
-    android:layout_weight="100">
+    android:layout_weight="100"
+    android:background="@color/white">
 
 
     <android.support.design.widget.AppBarLayout

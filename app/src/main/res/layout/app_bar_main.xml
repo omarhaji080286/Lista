@@ -37,22 +37,6 @@
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="10dp">
 
-        <TableRow android:layout_marginBottom="5dp" >
-
-            <TextView
-                android:id="@+id/txt_wtsp"
-                android:layout_column="0"
-                style="@style/LabelForFAB"
-                android:text="@string/send_to"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_wtsp"
-                style="@style/FAB"
-                android:src="@drawable/ic_share"
-                android:layout_column="1"/>
-
-        </TableRow>
-
         <TableRow
             android:layout_marginBottom="5dp">
 

@@ -2,7 +2,9 @@ package com.winservices.wingoods.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +14,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,12 +21,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
@@ -41,11 +44,12 @@ import java.util.Map;
 public class MyOrdersActivity extends AppCompatActivity {
 
     private final String TAG = "MyOrdersActivity";
+    FloatingActionButton fabAddOrder;
     private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
     private List<Order> orders;
     private Dialog dialog;
-    private TextView txtNoOrders;
+    private TextView txtNoOrders, txtAddOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +57,21 @@ public class MyOrdersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_orders);
 
         setTitle(getString(R.string.my_orders));
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         rvOrders = findViewById(R.id.rv_orders);
         txtNoOrders = findViewById(R.id.txt_no_orders);
-
-
+        fabAddOrder = findViewById(R.id.fab_add_order);
 
         myOrdersAdapter = new MyOrdersAdapter(this);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvOrders.setLayoutManager(llm);
         rvOrders.setAdapter(myOrdersAdapter);
 
-        //getOrders(this);
+        initFabAddOrder();
+
     }
 
     @Override
@@ -75,6 +79,28 @@ public class MyOrdersActivity extends AppCompatActivity {
         super.onResume();
         getOrders(this);
     }
+
+    private void initFabAddOrder() {
+        fabAddOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isThereGoodToBuy()){
+                    Intent intent = new Intent(MyOrdersActivity.this, ShopsActivity.class);
+                    intent.putExtra(Constants.ORDER_INITIATED, true);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.no_items_to_buy, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean isThereGoodToBuy() {
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
+        int goodsToBuyNb = goodsDataProvider.getGoodsToBuyNb();
+        return (goodsToBuyNb > 0);
+    }
+
 
     private void getOrders(final Context context) {
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
@@ -125,13 +151,13 @@ public class MyOrdersActivity extends AppCompatActivity {
                                     order.setStatusId(JSONShop.getInt("status_id"));
                                     order.setShop(shop);
 
-                                    if (order.getStatusId()!=Order.COMPLETED){
+                                    if (order.getStatusId() != Order.COMPLETED) {
                                         orders.add(order);
                                     }
 
                                 }
 
-                                if (orders.size()>0) {
+                                if (orders.size() > 0) {
                                     myOrdersAdapter.setOrders(orders);
                                 } else {
                                     txtNoOrders.setVisibility(View.VISIBLE);
@@ -156,21 +182,21 @@ public class MyOrdersActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> postData = new HashMap<>();
-                postData.put("jsonData", ""+getJSONForGetOrders() );
+                postData.put("jsonData", "" + getJSONForGetOrders());
                 return postData;
             }
         };
         RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
     }
 
-    private String getJSONForGetOrders(){
+    private String getJSONForGetOrders() {
         final JSONObject root = new JSONObject();
         try {
 
             UsersDataManager usersDataManager = new UsersDataManager(this);
             User currentUser = usersDataManager.getCurrentUser();
 
-            root.put("serverUserId", currentUser.getServerUserId() );
+            root.put("serverUserId", currentUser.getServerUserId());
 
             return root.toString(1);
 

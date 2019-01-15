@@ -19,43 +19,6 @@ public class GoodsDataProvider {
         this.db = DataBaseHelper.getInstance(context);
     }
 
-    public String getMessageToSend() {
-
-        StringBuilder sb = new StringBuilder();
-
-        Cursor categories = db.getPurchasableCategories();
-
-        while (categories.moveToNext()) {
-
-            int categoryId = categories.getInt(categories.getColumnIndexOrThrow(DataBaseHelper._ID));
-            String categoryName = categories.getString(categories.getColumnIndexOrThrow(DataBaseHelper.COL_CATEGORY_NAME));
-
-            sb.append(categoryName);
-            sb.append(" :\n");
-            Cursor goods = db.getGoodsByCategory(categoryId, "");
-
-            while (goods.moveToNext()) {
-                String goodName = goods.getString(goods.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_NAME));
-                String goodDesc = goods.getString(goods.getColumnIndexOrThrow(DataBaseHelper.COL_GOOD_DESC));
-                boolean isToBuy = (goods.getInt(goods.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_BUY))==1);
-
-                if (isToBuy) {
-                    sb.append("- ");
-                    sb.append(goodName);
-                    sb.append("(");
-                    sb.append(goodDesc);
-                    sb.append(")");
-                    sb.append("\n");
-                }
-            }
-            goods.close();
-        }
-        categories.close();
-        Log.d(TAG, Constants.TAG_LISTA+"getMessageToSend called");
-
-        return sb.toString();
-    }
-
 
     public List<Good> getNotSyncGoods(Context context) {
         List<Good> list = new ArrayList<>();
@@ -272,6 +235,10 @@ public class GoodsDataProvider {
 
         return list;
 
+    }
+
+    public int getGoodsToBuyNb(){
+        return db.getGoodsToBuyNb();
     }
 
 }

@@ -50,16 +50,15 @@ import com.winservices.wingoods.utils.UtilsFunctions;
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
-    private String currentFragTag = "none";
-
     public static int FRAGMENT_REQUEST_CODE = 1;
-    FloatingActionButton fabPlus, fabAddCategory, fabWtsp, fabAddOrder;
+    FloatingActionButton fabPlus, fabAddCategory, fabAddOrder;
     Animation fabOpen, fabClose, fabRotateClockWise, fabAntiClockWise, fabTxtOpen, fabTxtClose;
-    TextView addCategoriesLabel, txtSend, txtAddOrder;
+    TextView addCategoriesLabel, txtAddOrder;
     boolean isOpen = false;
     FrameLayout mInterceptorFrame;
     int fragmentId = R.id.nav_my_goods;
     MyGoods myGoodsFragment;
+    private String currentFragTag = "none";
     private SyncReceiver syncReceiver;
     private boolean syncTriggeredByUser = false;
 
@@ -97,9 +96,7 @@ public class MainActivity extends AppCompatActivity {
         txtAddOrder = findViewById(R.id.add_order_label);
         fabPlus = findViewById(R.id.fab_plus);
         fabAddCategory = findViewById(R.id.fab_add_category);
-        fabWtsp = findViewById(R.id.fab_wtsp);
         addCategoriesLabel = findViewById(R.id.txt_add_categories_label);
-        txtSend = findViewById(R.id.txt_wtsp);
 
         fabOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fabTxtOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_txt_open);
@@ -124,10 +121,14 @@ public class MainActivity extends AppCompatActivity {
         fabAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
-                intent.putExtra(Constants.ORDER_INITIATED, true);
-                startActivity(intent);
-                collapseFab();
+                if (isThereGoodToBuy()) {
+                    Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
+                    intent.putExtra(Constants.ORDER_INITIATED, true);
+                    startActivity(intent);
+                    collapseFab();
+                } else {
+                    Toast.makeText(context, R.string.no_items_to_buy, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -199,18 +200,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fabWtsp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getApplicationContext());
-                String message = goodsDataProvider.getMessageToSend();
-                openWhatsApp(message);
-                collapseFab();
-            }
-        });
     }
 
-
+    private boolean isThereGoodToBuy() {
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
+        int goodsToBuyNb = goodsDataProvider.getGoodsToBuyNb();
+        return (goodsToBuyNb > 0);
+    }
 
     @Override
     protected void onStart() {
@@ -231,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (jobScheduler != null) {
             int resultCode = jobScheduler.schedule(jobInfo);
-            if (resultCode == JobScheduler.RESULT_SUCCESS){
+            if (resultCode == JobScheduler.RESULT_SUCCESS) {
                 Log.d(TAG, "Job scheduled");
             } else {
                 Log.d(TAG, "Job scheduling failed");
@@ -255,27 +251,6 @@ public class MainActivity extends AppCompatActivity {
         displayFragment(myGoodsFragment, MyGoods.TAG);
     }
 
-    private void openWhatsApp(String message) {
-        String wtspUri = "com.whatsapp";
-        if (Controlers.whatsappInstalled(wtspUri, this)) {
-            //String smsNumber = "212672401726"; //without '+'
-            try {
-                Intent sendIntent = new Intent("android.intent.action.MAIN");
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.setType("text/plain");
-                sendIntent.putExtra(Intent.EXTRA_TEXT, message);
-                // sendIntent.putExtra("jid", smsNumber + "@s.whatsapp.net"); //phone number without "+" prefix
-                sendIntent.setPackage(wtspUri);
-                startActivity(sendIntent);
-            } catch (Exception e) {
-                Toast.makeText(this, "Error/n" + e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.wtsp_not_installed), Toast.LENGTH_LONG).show();
-        }
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -291,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //go to activity
-        switch (id){
+        switch (id) {
             case android.R.id.home:
                 finish();
                 break;
@@ -299,19 +274,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, InviteActivity.class));
                 break;
             case R.id.action_receive_invitation:
-                if (NetworkMonitor.checkNetworkConnection(this)){
+                if (NetworkMonitor.checkNetworkConnection(this)) {
                     startActivity(new Intent(this, ReceiveInvitationActivity.class));
                 } else {
                     Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.sync:
-               if (NetworkMonitor.checkNetworkConnection(this)){
-                   syncTriggeredByUser = true;
-                   SyncHelper.sync(this);
-               } else {
-                   Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-               }
+                if (NetworkMonitor.checkNetworkConnection(this)) {
+                    syncTriggeredByUser = true;
+                    SyncHelper.sync(this);
+                } else {
+                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -332,11 +307,8 @@ public class MainActivity extends AppCompatActivity {
         txtAddOrder.startAnimation(fabTxtOpen);
         fabAddCategory.startAnimation(fabOpen);
         addCategoriesLabel.startAnimation(fabTxtOpen);
-        fabWtsp.startAnimation(fabOpen);
-        txtSend.startAnimation(fabTxtOpen);
         fabPlus.startAnimation(fabRotateClockWise);
         fabAddCategory.setClickable(true);
-        fabWtsp.setClickable(true);
         isOpen = true;
     }
 
@@ -346,11 +318,8 @@ public class MainActivity extends AppCompatActivity {
         txtAddOrder.startAnimation(fabTxtClose);
         fabAddCategory.startAnimation(fabClose);
         addCategoriesLabel.startAnimation(fabTxtClose);
-        fabWtsp.startAnimation(fabClose);
-        txtSend.startAnimation(fabTxtClose);
         fabPlus.startAnimation(fabAntiClockWise);
         fabAddCategory.setClickable(false);
-        fabWtsp.setClickable(false);
         isOpen = false;
     }
 
@@ -360,7 +329,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         DataBaseHelper.closeDB();
     }
-
 
 
     @Override
@@ -386,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     myGoodsFragment.mAdapter.refreshList();
                     myGoodsFragment.categoriesToChooseAdapter.refreshList();
 
-                    if (syncTriggeredByUser){
+                    if (syncTriggeredByUser) {
                         Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
                         syncTriggeredByUser = false;
                     }
