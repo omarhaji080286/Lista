@@ -332,6 +332,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 if (NetworkMonitor.checkNetworkConnection(this)) {
                     Intent filtersIntent = new Intent(ShopsActivity.this, FilterShopsActivity.class);
                     filtersIntent.putExtra("shopsFilter", shopsFilter);
+                    filtersIntent.putExtra("shopsNumber", shopsFirstList.size());
                     startActivityForResult(filtersIntent, REQUEST_FOR_FILTERS);
                 } else {
                     Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();

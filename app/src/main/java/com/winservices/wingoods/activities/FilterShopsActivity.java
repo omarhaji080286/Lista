@@ -10,11 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -55,7 +52,7 @@ public class FilterShopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_shops);
         setTitle(getString(R.string.filters));
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -64,6 +61,13 @@ public class FilterShopsActivity extends AppCompatActivity {
         rvCities = findViewById(R.id.rv_cities);
         Button btShowResult = findViewById(R.id.bt_showResult);
         Button btResetFilters = findViewById(R.id.bt_reSetFilters);
+
+        int shopsNumber = getIntent().getIntExtra("shopsNumber", 0);
+
+        if (shopsNumber == 0) {
+            btShowResult.setEnabled(false);
+            btResetFilters.setEnabled(false);
+        }
 
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
@@ -76,12 +80,12 @@ public class FilterShopsActivity extends AppCompatActivity {
                 ShopsFilter shopsFilter = new ShopsFilter();
                 ArrayList<City> selectedCities = citiesAdapter.getSelectedCities();
 
-                if (selectedCities.size()>0){
+                if (selectedCities.size() > 0) {
                     shopsFilter.setSelectedCities(selectedCities);
                     shopsFilter.setFilterState(ShopsFilter.ENABLE);
                     Intent shopsReturnIntent = new Intent();
                     shopsReturnIntent.putExtra("filter", shopsFilter);
-                    setResult(Activity.RESULT_OK,shopsReturnIntent);
+                    setResult(Activity.RESULT_OK, shopsReturnIntent);
                     finish();
                 } else {
                     Toast.makeText(FilterShopsActivity.this, R.string.select_city, Toast.LENGTH_SHORT).show();
@@ -97,7 +101,7 @@ public class FilterShopsActivity extends AppCompatActivity {
                 shopsFilter.setFilterState(ShopsFilter.DISABLE);
                 Intent shopsReturnIntent = new Intent();
                 shopsReturnIntent.putExtra("filter", shopsFilter);
-                setResult(Activity.RESULT_OK,shopsReturnIntent);
+                setResult(Activity.RESULT_OK, shopsReturnIntent);
                 finish();
                 Toast.makeText(FilterShopsActivity.this, R.string.filters_removed, Toast.LENGTH_SHORT).show();
             }
@@ -105,14 +109,14 @@ public class FilterShopsActivity extends AppCompatActivity {
 
     }
 
-    private void prepareCitiesSection(ArrayList<City> cities){
+    private void prepareCitiesSection(ArrayList<City> cities) {
 
         //Section "CITY"
         //Parent
         rlCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(sectionCitiesIsExpanded){
+                if (sectionCitiesIsExpanded) {
                     UtilsFunctions.collapse(rvCities);
                     arrowCity.setImageResource(R.drawable.ic_arrow_down_black);
                     sectionCitiesIsExpanded = false;
@@ -126,12 +130,12 @@ public class FilterShopsActivity extends AppCompatActivity {
         });
 
         //Child
-        citiesAdapter = new CitiesAdapter(cities,this);
+        citiesAdapter = new CitiesAdapter(cities, this);
         ShopsFilter shopsFilterFromIntent = (ShopsFilter) getIntent().getSerializableExtra("shopsFilter");
-        if (shopsFilterFromIntent.isEnable()){
+        if (shopsFilterFromIntent.isEnable()) {
             citiesAdapter.setSelectedCities(shopsFilterFromIntent.getSelectedCities());
         }
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false );
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvCities.setLayoutManager(llm);
         rvCities.setAdapter(citiesAdapter);
 
@@ -165,7 +169,7 @@ public class FilterShopsActivity extends AppCompatActivity {
 
                                     int serverCityId = JSONCity.getInt("server_city_id");
                                     String cityName = JSONCity.getString("city_name");
-                                    City city = new City(serverCityId,cityName, country );
+                                    City city = new City(serverCityId, cityName, country);
 
                                     cities.add(city);
 
@@ -191,14 +195,12 @@ public class FilterShopsActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> postData = new HashMap<>();
-                postData.put("jsonData", "" );
+                postData.put("jsonData", "");
                 return postData;
             }
         };
         RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
     }
-
-
 
 
     @Override
