@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -65,6 +66,7 @@ public class Synchronizer {
                     return postData;
                 }
             };
+
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
 
             response = future.get(10, TimeUnit.SECONDS);

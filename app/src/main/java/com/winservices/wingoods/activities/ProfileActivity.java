@@ -237,9 +237,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             };
 
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
-                    RequestHandler.RETRY_COUNT, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
         } else {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();

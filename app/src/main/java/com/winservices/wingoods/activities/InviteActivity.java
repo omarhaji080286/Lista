@@ -314,6 +314,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return postData;
                 }
             };
+
             RequestHandler.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
         } else {
             Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();

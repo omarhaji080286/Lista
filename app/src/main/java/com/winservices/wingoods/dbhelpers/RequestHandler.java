@@ -1,6 +1,8 @@
 package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -33,6 +35,10 @@ public class RequestHandler {
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
+
+        req.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
+                RETRY_COUNT, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         getRequestQueue().add(req);
     }
 
