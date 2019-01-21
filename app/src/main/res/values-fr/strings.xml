@@ -70,7 +70,7 @@
     <string name="invitation_sent">Invitation envoyée</string>
     <string name="send_invite">Envoyer une invitation</string>
     <string name="received_invites">Invitations reçues</string>
-    <string name="sender_email">Email de l\'expéditeur</string>
+    <string name="sender_phone">Email de l\'expéditeur</string>
     <string name="decline">Décliner</string>
     <string name="accept">Accepter</string>
     <string name="invitation_already_sent">Vous avez déjà envoyer une invitation à cette personne.</string>

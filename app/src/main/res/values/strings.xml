@@ -4,8 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="my_goods">My goods</string>
-    <string name="search_goods">بحث عن البضائع</string>
-    <string name="add_goods">Add goods</string>
+    <string name="search_goods">search items</string>
+    <string name="add_goods">Add items</string>
     <string name="add_categories">Add categories</string>
     <string name="category_name">Category name :</string>
     <string name="add_category_btn">Add Category</string>
@@ -14,15 +14,14 @@
     <string name="error">An error occurred. Please try again.</string>
     <string name="category_exists">This category already exists.</string>
     <string name="input_txt_not_valid">Input text is not valid.</string>
-    <string name="existing_goods">Existing goods</string>
-    <string name="good_s_name">Good\'s name</string>
-    <string name="good_add_success">Good created successfully</string>
+    <string name="existing_goods">Existing items</string>
+    <string name="good_s_name">Item\'s name</string>
+    <string name="good_add_success">Item created successfully</string>
     <string name="good_exists">This good already exists.</string>
     <string name="email">Email</string>
     <string name="add">Add</string>
     <string name="select_a_category">Select a category</string>
     <string name="send_to">Send to</string>
-    <string name="wtsp_not_installed">Please, try again after installing WhatsApp.</string>
     <string name="arrow">Arrow</string>
     <string name="category_s_name">Category\'s name</string>
     <string name="logo">logo</string>
@@ -44,7 +43,7 @@
     <string name="deleted">has been deleted</string>
     <string name="undo">UNDO</string>
     <string name="add_a_category">Add a category</string>
-    <string name="add_a_good">Add a good</string>
+    <string name="add_a_good">Add an item</string>
     <string name="category_to_add">What category do you want to add ?</string>
     <string name="adding_a_category">Adding a Category</string>
     <string name="purchases_list">Purchases list</string>
@@ -70,7 +69,7 @@
     <string name="invitation_sent">Invitation sent</string>
     <string name="send_invite">Send invitation</string>
     <string name="received_invites">Received invitation</string>
-    <string name="sender_email">sender email</string>
+    <string name="sender_phone">sender phone</string>
     <string name="decline">Decline</string>
     <string name="accept">Accept</string>
     <string name="invitation_already_sent">You have already sent an invitation to this person.</string>
@@ -118,14 +117,6 @@
     <string name="my_orders">My Orders</string>
     <string name="invite_friends">Invite friends</string>
     <string name="my_invitations">My invitations</string>
-
-
-    <string name="facebook_app_id" translatable="false">247070192572725</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb247070192572725</string>
-
-    <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
-    <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
-    <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="sync_finished">sync finished</string>
     <string name="reset_all_filters">Reset all filters</string>
     <string name="show_results">Show results</string>
@@ -145,9 +136,6 @@
     <string name="additional_good">additional good</string>
     <string name="order_details">Order Details</string>
     <string name="no_orders_registered">No orders have been registered</string>
-
-    <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
-    <string name="content_authority" translatable="false">com.winservices.wingoods</string>
     <string name="did_you_get_your_order">Did you get your order ?</string>
     <string name="order_completed">Order completed ?</string>
     <string name="not_yet">Not yet</string>
@@ -162,7 +150,6 @@
     <string name="not_now">Not now</string>
     <string name="send">Send</string>
     <string name="select_amount">Please, select an amount.</string>
-    <string name="_1" translatable="false">1</string>
     <string name="brand_or_description">Brand, Description…</string>
     <string name="item_s">item(s)</string>
     <string name="set_descriptions">Some articles needs a description. Please, tap an article to set its description.</string>
@@ -186,5 +173,15 @@
     <string name="user_name_hint"><i>Firstname Lastname</i></string>
     <string name="account">Account</string>
     <string name="no_items_to_buy">There are no items to buy</string>
+
+
+    <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
+    <string name="content_authority" translatable="false">com.winservices.wingoods</string>
+    <string name="_1" translatable="false">1</string>
+    <string name="facebook_app_id" translatable="false">247070192572725</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb247070192572725</string>
+    <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
+    <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
+    <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
 
 </resources>
