@@ -42,6 +42,8 @@
                 <ImageView
                     android:id="@+id/imgMyGoods"
                     style="@style/WelcomeImgItem"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:contentDescription="TODO"
                     android:src="@drawable/list_black" />
 

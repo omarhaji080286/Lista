@@ -38,11 +38,11 @@
                 android:id="@+id/img_category_icon_in_my_goods"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/fruit"
                 android:layout_below="@id/txt_category_name_in_my_goods"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:contentDescription="@string/description" />
+                android:contentDescription="@string/description"
+                android:src="@drawable/others"/>
 
         </RelativeLayout>
 

@@ -1,6 +1,7 @@
 package com.winservices.wingoods.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,12 @@ import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.CategoryItemInMyGoods;
 
 import java.util.List;
@@ -47,7 +51,15 @@ public class CategoriesInMyGoodsAdapter extends RecyclerView.Adapter<CategoryIte
 
         final Category category = categories.get(position);
         holder.categoryName.setText(category.getCategoryName());
-        holder.categoryIcon.setImageResource(category.getIcon());
+
+        String imgPath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY + category.getDCategoryId());
+        if (imgPath != null) {
+            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imgPath);
+            holder.categoryIcon.setImageBitmap(bitmap);
+        } else {
+            holder.categoryIcon.setImageResource(R.drawable.others);
+        }
+
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
