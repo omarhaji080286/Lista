@@ -179,7 +179,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
 
     private void returnToMainActivity() {
-        int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, R.id.nav_my_goods);
+        int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, 101);
         Intent intent = new Intent();
         intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
         setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);

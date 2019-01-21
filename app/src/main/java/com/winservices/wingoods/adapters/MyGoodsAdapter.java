@@ -52,7 +52,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
     private Context context;
     private List<CategoryGroup> groups;
-    //private List<Category> categories;
     private String amountValue = "";
     private String brandValue = "";
     private OnGoodUpdatedListener mOnGoodUpdatedListener;
@@ -61,7 +60,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         super(groups);
         this.context = context;
         this.groups = groups;
-        //categories = new ArrayList<>();
     }
 
     @Override
@@ -154,8 +152,12 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         holder.setCategoryName(group.getTitle());
 
         String imgPath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY + category.getDCategoryId());
-        Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imgPath);
-        holder.categoryIcon.setImageBitmap(bitmap);
+        if (imgPath != null) {
+            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imgPath);
+            holder.categoryIcon.setImageBitmap(bitmap);
+        } else {
+            holder.categoryIcon.setImageResource(R.drawable.others);
+        }
 
         int goodsToBuyNumber = category.getGoodsToBuyNumber();
         int orderedGoodsNumber = category.getOrderedGoodsNumber();

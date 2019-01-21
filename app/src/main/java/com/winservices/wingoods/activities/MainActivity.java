@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     TextView addCategoriesLabel, txtAddOrder;
     boolean isOpen = false;
     FrameLayout mInterceptorFrame;
-    int fragmentId = R.id.nav_my_goods;
+    int fragmentId = 101;
     MyGoods myGoodsFragment;
     private String currentFragTag = "none";
     private SyncReceiver syncReceiver;
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FRAGMENT_REQUEST_CODE) {
-            fragmentId = data.getIntExtra(Constants.SELECTED_FRAGMENT, R.id.nav_my_goods);
+            fragmentId = data.getIntExtra(Constants.SELECTED_FRAGMENT, 101);
         }
     }
 
