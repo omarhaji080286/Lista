@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:maxLength="9"
-                android:text="505551111"
+                android:hint="505551111"
                 android:visibility="visible"/>
 
         </LinearLayout>
