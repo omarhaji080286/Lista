@@ -40,12 +40,9 @@ dependencies {
     //google sign in
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
-    //face book sign in
-    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
-
     //Google Maps
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //FireBase - Cloud Messaging
     implementation 'com.google.firebase:firebase-core:16.0.6'

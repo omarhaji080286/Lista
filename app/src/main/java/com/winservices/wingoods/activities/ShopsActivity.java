@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ShopsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -135,8 +136,8 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
 
     private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(R.drawable.map);
-        tabLayout.getTabAt(1).setIcon(R.drawable.list);
+        Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(R.drawable.map);
+        Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(R.drawable.list);
     }
 
     private void setupViewPagerAdapter(ArrayList<Shop> shops) {
