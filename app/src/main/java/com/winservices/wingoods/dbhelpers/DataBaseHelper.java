@@ -36,7 +36,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
-    //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+    private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+
+    // Lista LOCAL (compte root)
+    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
@@ -74,8 +78,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DESC_ID = "desc_id";
     static final String COL_DESC_VALUE = "desc_value";
     static final String COL_CO_USER_PHONE = "co_user_phone";
-    // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
@@ -120,7 +123,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
-    private final static int DATABASE_VERSION = 1;
+    private final static int DATABASE_VERSION = 4;
     private static final String COL_USER_PHONE = "user_phone";
     //private User currentUser;
     private static DataBaseHelper instance;
@@ -249,6 +252,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS received_invitations ");
         db.execSQL("DROP TABLE IF EXISTS users ");
         db.execSQL("DROP TABLE IF EXISTS groups ");
+        db.execSQL("DROP TABLE IF EXISTS amounts ");
+        db.execSQL("DROP TABLE IF EXISTS descriptions ");
 
         onCreate(db);
     }

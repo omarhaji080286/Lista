@@ -48,11 +48,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:15.0.1'
 
     //FireBase - Cloud Messaging
-    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
 
     //FireBase - SMS
-    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
 
 
 }

@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -83,10 +84,13 @@ public class SignUpFragment extends Fragment {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+            Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSignInMethod());
+            signInWithPhoneAuthCredential(phoneAuthCredential);
         }
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
+            Log.d(TAG, "onVerificationFailed: " + e.toString());
             Toast.makeText(getContext(), "Phone Authentication failed", Toast.LENGTH_SHORT).show();
         }
 
@@ -251,12 +255,12 @@ public class SignUpFragment extends Fragment {
                                     registerUserToAppServer(getContext(), userToRegister);
 
                                 } else {
-                                    Log.d(TAG, "signIn : failure");
+                                    Log.d(TAG, "signIn : failure = " + task.getException());
                                     editVerifCode.setError(getString(R.string.not_valid_code));
                                     editVerifCode.requestFocus();
-                                    if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                    /*if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                         Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                    }
+                                    }*/
                                 }
                             }
                         }

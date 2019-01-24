@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "249301586679",
-    "firebase_url": "https://listapro-a6b91.firebaseio.com",
-    "project_id": "listapro-a6b91",
-    "storage_bucket": "listapro-a6b91.appspot.com"
+    "project_number": "478988420061",
+    "firebase_url": "https://winservices-lista.firebaseio.com",
+    "project_id": "winservices-lista",
+    "storage_bucket": "winservices-lista.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:249301586679:android:88819f95b8953097",
+        "mobilesdk_app_id": "1:478988420061:android:1282c21bdd7db5ec",
         "android_client_info": {
           "package_name": "com.winservices.wingoods"
         }
       },
       "oauth_client": [
         {
-          "client_id": "249301586679-02je58ljmne0r28nsnu0c1hfq8jn6c0u.apps.googleusercontent.com",
+          "client_id": "478988420061-4r5khekk9vqbfeq7snd9ljvldtqt8qdg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.winservices.wingoods",
@@ -23,13 +23,13 @@
           }
         },
         {
-          "client_id": "249301586679-vn2gefmf4vjop7nhog25i6a46ch8viqa.apps.googleusercontent.com",
+          "client_id": "478988420061-pjta76hgd1idjai7orbrm385su75qs60.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBob3lFjeGhlDLvDDxtn7mbag3Ays4wNCE"
+          "current_key": "AIzaSyAA3bsLakxoPB8JtZZQ7_ngtnIZ2msNgQ8"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "249301586679-vn2gefmf4vjop7nhog25i6a46ch8viqa.apps.googleusercontent.com",
+              "client_id": "478988420061-pjta76hgd1idjai7orbrm385su75qs60.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
