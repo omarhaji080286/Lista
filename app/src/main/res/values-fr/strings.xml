@@ -74,11 +74,11 @@
     <string name="filters_removed">Filtres réinitialisés</string>
     <string name="error_map">La carte ne fonctionnera pas correctement</string>
     <string name="order_my_list">Commander ma liste</string>
-    <string name="shops">Boutiques</string>
+    <string name="shops">Magasin</string>
     <string name="Registering_order">Enregistrement de la commande…</string>
     <string name="empty_order">la commande ne contient aucun article !</string>
     <string name="no_additional_items">Aucun article supplémentaire à commander. Prière de vérifier votre liste principale</string>
-    <string name="shop_name">Nom de la boutique</string>
+    <string name="shop_name">Nom du magasin</string>
     <string name="your_order_will_be_sent_to">Votre commande sera envoyée à :</string>
     <string name="order_details">Détails de la commande</string>
     <string name="no_orders_registered">Aucune commande n\'a été enregistrée</string>

@@ -123,7 +123,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
-    private final static int DATABASE_VERSION = 4;
+    private final static int DATABASE_VERSION = 5;
     private static final String COL_USER_PHONE = "user_phone";
     //private User currentUser;
     private static DataBaseHelper instance;
@@ -1120,6 +1120,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + " WHERE " + TABLE_CATEGORIES + "." + COL_CATEGORY_ID + "=" + TABLE_GOODS + "." + COL_CATEGORY_ID
                 + " AND " + TABLE_GOODS + "." + COL_CRUD_STATUS + " <> " + DELETED
                 + " AND " + TABLE_GOODS + "." + COL_IS_TO_BUY + " = " + 1
+                + " AND " + TABLE_GOODS + "." + COL_IS_ORDERED + " = " + 0
                 + " AND " + TABLE_CATEGORIES + "." + COL_USERID + "=" + getCurrentUser().getUserId();
 
         db = this.getReadableDatabase();
