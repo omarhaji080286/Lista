@@ -66,6 +66,8 @@ public class MyOrdersActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        SharedPrefManager.getInstance(this).storeCurrentOrdersType(ORDERS_TYPE, R.id.menuOngoingOrders);
+
         rvOrders = findViewById(R.id.rv_orders);
         txtNoOrders = findViewById(R.id.txt_no_orders);
         fabAddOrder = findViewById(R.id.fab_add_order);
