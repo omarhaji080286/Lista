@@ -181,6 +181,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                dialog.dismiss();
+                                Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
                             }
                         }
                     },
