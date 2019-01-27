@@ -32,6 +32,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
     public static final String COL_IS_ORDERED = "is_ordered";
 
+
     //Lista DEV (compte omar.haji@gmail.com)
     //private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
 
@@ -79,6 +80,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DESC_VALUE = "desc_value";
     static final String COL_CO_USER_PHONE = "co_user_phone";
 
+
+    public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
     static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
