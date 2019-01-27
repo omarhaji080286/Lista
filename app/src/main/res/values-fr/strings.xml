@@ -118,4 +118,6 @@
     <string name="my_list">Ma liste</string>
     <string name="account">Compte</string>
     <string name="no_items_to_buy">Il n\'y a pas d\'articles à commander</string>
+    <string name="ongoing_orders">Commandes en cours</string>
+    <string name="closed_orders">Commandes clôturées</string>
 </resources>

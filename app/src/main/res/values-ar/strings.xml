@@ -118,5 +118,7 @@
     <string name="user_name_hint"><i>الاسم و الكنية</i></string>
     <string name="account">الحساب</string>
     <string name="no_items_to_buy">لا توجد أي عناصر لشراء</string>
+    <string name="ongoing_orders">الطلبات الجارية</string>
+    <string name="closed_orders">الطلبات المغلقة</string>
 
 </resources>

@@ -112,7 +112,7 @@
                     android:textStyle="bold"
                     android:padding="1dp"
                     android:gravity="center"
-                    android:visibility="visible"/>
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/txtMyOrders"

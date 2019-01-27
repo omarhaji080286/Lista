@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
@@ -43,13 +45,16 @@ import java.util.Map;
 
 public class MyOrdersActivity extends AppCompatActivity {
 
+
+    private static final String ORDERS_TYPE = "orders_type";
     private final String TAG = "MyOrdersActivity";
-    FloatingActionButton fabAddOrder;
+    private FloatingActionButton fabAddOrder;
     private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
     private List<Order> orders;
     private Dialog dialog;
     private TextView txtNoOrders, txtAddOrder;
+    private List<Order> closedOrders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +89,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         fabAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isThereGoodToBuy()){
+                if (isThereGoodToBuy()) {
                     Intent intent = new Intent(MyOrdersActivity.this, ShopsActivity.class);
                     intent.putExtra(Constants.ORDER_INITIATED, true);
                     startActivity(intent);
@@ -106,6 +111,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         orders = new ArrayList<>();
+        closedOrders = new ArrayList<>();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_ORDERS,
                 new Response.Listener<String>() {
@@ -151,17 +157,32 @@ public class MyOrdersActivity extends AppCompatActivity {
                                     order.setStatusId(JSONShop.getInt("status_id"));
                                     order.setShop(shop);
 
-                                    if (order.getStatusId() != Order.COMPLETED) {
+                                    if (order.getStatusId() != Order.COMPLETED && order.getStatusId() != Order.NOT_SUPPORTED) {
                                         orders.add(order);
+                                    } else {
+                                        closedOrders.add(order);
                                     }
 
                                 }
 
-                                if (orders.size() > 0) {
-                                    myOrdersAdapter.setOrders(orders);
-                                } else {
-                                    txtNoOrders.setVisibility(View.VISIBLE);
+                                int orders_type = SharedPrefManager.getInstance(getApplicationContext()).getCurrentOrdersType(ORDERS_TYPE);
+                                switch (orders_type) {
+                                    case R.id.menuOngoingOrders :
+                                        if (orders.size() > 0) {
+                                            myOrdersAdapter.setOrders(orders);
+                                        } else {
+                                            txtNoOrders.setVisibility(View.VISIBLE);
+                                        }
+                                        break;
+                                    case R.id.menuClosedOrders :
+                                        if (closedOrders.size() > 0) {
+                                            myOrdersAdapter.setOrders(closedOrders);
+                                        } else {
+                                            txtNoOrders.setVisibility(View.VISIBLE);
+                                        }
+                                        break;
                                 }
+
 
                                 dialog.dismiss();
                             }
@@ -208,11 +229,30 @@ public class MyOrdersActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_orders, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            this.finish();
+        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(this);
+
+        switch (id) {
+            case android.R.id.home:
+                this.finish();
+                break;
+            case R.id.menuOngoingOrders:
+                myOrdersAdapter.setOrders(orders);
+                sharedPrefManager.storeCurrentOrdersType(ORDERS_TYPE, R.id.menuOngoingOrders);
+                break;
+            case R.id.menuClosedOrders:
+                myOrdersAdapter.setOrders(closedOrders);
+                sharedPrefManager.storeCurrentOrdersType(ORDERS_TYPE, R.id.menuClosedOrders);
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

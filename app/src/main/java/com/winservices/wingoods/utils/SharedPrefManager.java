@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
+import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 
@@ -110,6 +111,18 @@ public class SharedPrefManager {
     public String getUserImagePath(int serverUserId){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(User.PREFIX_USER + serverUserId, null);
+    }
+
+    public void storeCurrentOrdersType(String key, int value){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public int getCurrentOrdersType(String key){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(key, R.id.menuOngoingOrders);
     }
 
 }

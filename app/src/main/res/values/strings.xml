@@ -120,6 +120,8 @@
     <string name="user_name_hint"><i>Firstname Lastname</i></string>
     <string name="account">Account</string>
     <string name="no_items_to_buy">There are no items to order</string>
+    <string name="ongoing_orders">Ongoing orders</string>
+    <string name="closed_orders">Closed orders</string>
 
 
     <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
