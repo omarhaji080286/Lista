@@ -24,6 +24,8 @@ public class User {
         this.userPhone = userPhone;
     }
 
+    public User(){}
+
     public User(int userId, String email, String password, String userName, int serverUserId, int serverGroupId, String signUpType) {
         this.userId = userId;
         this.email = email;

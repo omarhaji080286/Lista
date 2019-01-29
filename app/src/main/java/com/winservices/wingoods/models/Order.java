@@ -19,6 +19,7 @@ public class Order {
     private Date creationDate;
     private int orderedGoodsNumber;
     private int statusId;
+    private String statusName;
 
     public String getStatusName(){
         switch (statusId){
@@ -37,6 +38,10 @@ public class Order {
             default:
                 return "N/A";
         }
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 
     public int getStatusId() {

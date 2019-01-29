@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,14 +18,18 @@ import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
+import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.ReceivedInvitation;
+import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -227,6 +230,16 @@ public class Synchronizer {
                 insertDescriptions(jsonDescriptionsToSync);
                 Log.d(LOG_TAG, "Sync descriptions completed. " + jsonDescriptionsToSync.length() + " inserted or updated.");
 
+                //updates shops
+                JSONArray jsonShops = jsonObject.getJSONArray("shopsToSync");
+                insertShops(jsonShops);
+                Log.d(LOG_TAG, "Sync shops completed. " + jsonShops.length() + " inserted or updated.");
+
+                //updates orders
+                JSONArray jsonOrders = jsonObject.getJSONArray("ordersToSync");
+                insertOrders(jsonOrders);
+                Log.d(LOG_TAG, "Sync orders completed. " + jsonOrders.length() + " inserted or updated.");
+
             }
 
         } catch (JSONException e){
@@ -234,6 +247,60 @@ public class Synchronizer {
             e.printStackTrace();
         }
     }
+
+    private void insertShops(JSONArray jsonShops) throws JSONException {
+
+        ShopsDataManager shopsDataManager = new ShopsDataManager(context);
+
+        for (int i = 0; i < jsonShops.length(); i++) {
+            JSONObject JSONShop = jsonShops.getJSONObject(i);
+            int serverShopId = JSONShop.getInt("server_shop_id");
+            String shopName = JSONShop.getString("shop_name");
+            String shopPhone = JSONShop.getString("shop_phone");
+
+            Shop shop = new Shop();
+            shop.setServerShopId(serverShopId);
+            shop.setShopName(shopName);
+            shop.setShopPhone(shopPhone);
+
+            shopsDataManager.insertShop(shop);
+        }
+    }
+
+    private void insertOrders(JSONArray jsonOrders) throws JSONException {
+
+        OrdersDataManager ordersDataManager = new OrdersDataManager(context);
+
+        for (int i = 0; i < jsonOrders.length(); i++) {
+            JSONObject JSONShop = jsonOrders.getJSONObject(i);
+            int serverOrderId = JSONShop.getInt("server_order_id");
+            int serverUserId = JSONShop.getInt("server_user_id");
+            int serverShopId = JSONShop.getInt("server_shop_id");
+            Date creationDate = UtilsFunctions.stringToDate(JSONShop.getString("creation_date"));
+            int statusId = JSONShop.getInt("status_id");
+            String statusName = JSONShop.getString("status_name");
+
+
+            Order order = new Order();
+            order.setServerOrderId(serverOrderId);
+
+            User user = new User();
+            user.setServerUserId(serverUserId);
+            order.setUser(user);
+
+            Shop shop = new Shop();
+            shop.setServerShopId(serverShopId);
+            order.setShop(shop);
+
+            order.setCreationDate(creationDate);
+            order.setStatusId(statusId);
+            order.setStatusName(statusName);
+
+            ordersDataManager.insertOrder(order);
+        }
+    }
+
+
 
     private void insertDescriptions(JSONArray jsonDescriptionsToSync) throws JSONException {
 

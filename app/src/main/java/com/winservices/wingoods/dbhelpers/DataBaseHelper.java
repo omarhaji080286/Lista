@@ -13,9 +13,12 @@ import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
+import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.ReceivedInvitation;
+import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -120,15 +123,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "DB_WinGoods.sqlite";
     private static final String TABLE_CATEGORIES = "categories";
     private static final String TABLE_GOODS = "goods";
+    private static final String TABLE_ORDERS = "orders";
+    private static final String TABLE_SHOPS = "shops";
     private static final String COL_GOOD_ID = "good_id";
     private static final String TABLE_USERS = "users";
     private static final String TABLE_RECEIVED_INVITATIONS = "received_invitations";
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
-    private final static int DATABASE_VERSION = 5;
+
     private static final String COL_USER_PHONE = "user_phone";
-    //private User currentUser;
+    private static final String COL_SHOP_PHONE = "shop_phone";
+    private static final String COL_SERVER_ORDER_ID = "server_order_id";
+    private static final String COL_SERVER_SHOP_ID = "server_shop_id";
+    private static final String COL_CREATION_DATE = "creation_date";
+    private static final String COL_ORDER_STATUS_ID = "status_id";
+    private static final String COL_ORDER_STATUS_NAME = "status_name";
+    private static final String COL_SHOP_NAME = "shop_name";
+
+    private final static int DATABASE_VERSION = 6;
+
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
 
@@ -242,6 +256,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "desc_value TEXT, " +
                 "d_category_id INTEGER ) ");
 
+        db.execSQL("CREATE TABLE shops ( " +
+                "server_shop_id INTEGER PRIMARY KEY, " +
+                "shop_name TEXT, " +
+                "shop_phone TEXT ) ");
+
+        db.execSQL("CREATE TABLE orders ( " +
+                "server_order_id INTEGER PRIMARY KEY, " +
+                "server_user_id INTEGER, " +
+                "server_shop_id INTEGER, " +
+                "creation_date TEXT ," +
+                "status_id INTEGER, " +
+                "status_name TEXT, " +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
+
     }
 
     @Override
@@ -253,16 +281,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS categories ");
         db.execSQL("DROP TABLE IF EXISTS co_users ");
         db.execSQL("DROP TABLE IF EXISTS received_invitations ");
+        db.execSQL("DROP TABLE IF EXISTS orders ");
+        db.execSQL("DROP TABLE IF EXISTS shops ");
         db.execSQL("DROP TABLE IF EXISTS users ");
         db.execSQL("DROP TABLE IF EXISTS groups ");
         db.execSQL("DROP TABLE IF EXISTS amounts ");
         db.execSQL("DROP TABLE IF EXISTS descriptions ");
+
 
         onCreate(db);
     }
 
 
     //SELECT QUERIES
+
+    //ORDERS
+
+
 
     //DESCRIPTIONS
 
@@ -278,6 +313,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         + " from " + TABLE_DESCRIPTIONS
                         + " where " + COL_D_CATEGORY_ID + " = " + dCategoryId, null);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1362,6 +1398,35 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     //CREATE QUERIES
+
+    //ORDERS
+
+    boolean insertOrder(Order order) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_SERVER_ORDER_ID, order.getServerOrderId());
+        contentValues.put(COL_SERVER_USER_ID, order.getUser().getServerUserId());
+        contentValues.put(COL_SERVER_SHOP_ID, order.getShop().getServerShopId());
+        contentValues.put(COL_CREATION_DATE, UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm"));
+        contentValues.put(COL_ORDER_STATUS_ID, order.getStatusId());
+        contentValues.put(COL_ORDER_STATUS_NAME, order.getStatusName());
+
+        long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //SHOPS
+
+    boolean insertShop(Shop shop) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_SERVER_SHOP_ID, shop.getServerShopId());
+        contentValues.put(COL_SHOP_PHONE, shop.getShopPhone());
+        contentValues.put(COL_SHOP_NAME, shop.getShopName());
+
+        long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
 
     //DESCRIPTIONS
     boolean insertDesc(Description desc) {
