@@ -279,6 +279,7 @@ public class Synchronizer {
             Date creationDate = UtilsFunctions.stringToDate(JSONShop.getString("creation_date"));
             int statusId = JSONShop.getInt("status_id");
             String statusName = JSONShop.getString("status_name");
+            int orderedGoodsNumber = JSONShop.getInt("ordered_goods_number");
 
 
             Order order = new Order();
@@ -295,6 +296,7 @@ public class Synchronizer {
             order.setCreationDate(creationDate);
             order.setStatusId(statusId);
             order.setStatusName(statusName);
+            order.setOrderedGoodsNumber(orderedGoodsNumber);
 
             ordersDataManager.insertOrder(order);
         }

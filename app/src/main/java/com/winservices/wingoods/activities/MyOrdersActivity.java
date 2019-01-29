@@ -23,6 +23,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.dbhelpers.OrdersDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Order;
@@ -51,10 +52,10 @@ public class MyOrdersActivity extends AppCompatActivity {
     private FloatingActionButton fabAddOrder;
     private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
-    private List<Order> orders;
+    private List<Order> orders, closedOrders;
     private Dialog dialog;
     private TextView txtNoOrders, txtAddOrder;
-    private List<Order> closedOrders;
+    private OrdersDataManager ordersDataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,15 +77,13 @@ public class MyOrdersActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvOrders.setLayoutManager(llm);
         rvOrders.setAdapter(myOrdersAdapter);
+        ordersDataManager = new OrdersDataManager(this);
+        orders = new ArrayList<>();
+        orders.addAll(ordersDataManager.getorders(Order.NOT_CLOSED));
+        myOrdersAdapter.setOrders(orders);
 
         initFabAddOrder();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getOrders(this);
     }
 
     private void initFabAddOrder() {
@@ -109,7 +108,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     }
 
 
-    private void getOrders(final Context context) {
+    /*private void getOrders(final Context context) {
         dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         orders = new ArrayList<>();
@@ -210,9 +209,9 @@ public class MyOrdersActivity extends AppCompatActivity {
             }
         };
         RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
-    }
+    }*/
 
-    private String getJSONForGetOrders() {
+    /*private String getJSONForGetOrders() {
         final JSONObject root = new JSONObject();
         try {
 
@@ -228,7 +227,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         }
 
         return null;
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -246,12 +245,14 @@ public class MyOrdersActivity extends AppCompatActivity {
                 this.finish();
                 break;
             case R.id.menuOngoingOrders:
+                orders.clear();
+                orders.addAll(ordersDataManager.getorders(Order.NOT_CLOSED));
                 myOrdersAdapter.setOrders(orders);
-                sharedPrefManager.storeCurrentOrdersType(ORDERS_TYPE, R.id.menuOngoingOrders);
                 break;
             case R.id.menuClosedOrders:
-                myOrdersAdapter.setOrders(closedOrders);
-                sharedPrefManager.storeCurrentOrdersType(ORDERS_TYPE, R.id.menuClosedOrders);
+                orders.clear();
+                orders.addAll(ordersDataManager.getorders(Order.CLOSED));
+                myOrdersAdapter.setOrders(orders);
                 break;
         }
 

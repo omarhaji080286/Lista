@@ -12,6 +12,9 @@ public class Order {
     public static final int COMPLETED = 5;
     public static final int NOT_SUPPORTED = 6;
 
+    public static final int ALL = 100;
+    public static final int NOT_CLOSED = 101;
+    public static final int CLOSED = 102;
 
     private int serverOrderId;
     private User user;

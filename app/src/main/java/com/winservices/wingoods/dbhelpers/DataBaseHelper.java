@@ -135,13 +135,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_USER_PHONE = "user_phone";
     private static final String COL_SHOP_PHONE = "shop_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
-    private static final String COL_SERVER_SHOP_ID = "server_shop_id";
-    private static final String COL_CREATION_DATE = "creation_date";
-    private static final String COL_ORDER_STATUS_ID = "status_id";
-    private static final String COL_ORDER_STATUS_NAME = "status_name";
-    private static final String COL_SHOP_NAME = "shop_name";
+    static final String COL_SERVER_SHOP_ID = "server_shop_id";
+    static final String COL_CREATION_DATE = "creation_date";
+    static final String COL_ORDER_STATUS_ID = "status_id";
+    static final String COL_ORDER_STATUS_NAME = "status_name";
+    static final String COL_SHOP_NAME = "shop_name";
+    static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
 
-    private final static int DATABASE_VERSION = 6;
+    private final static int DATABASE_VERSION = 7;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -267,7 +268,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_shop_id INTEGER, " +
                 "creation_date TEXT ," +
                 "status_id INTEGER, " +
-                "status_name TEXT, " +
+                "status_name TEXT," +
+                "ordered_goods_number INTEGER," +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
     }
@@ -297,7 +299,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //ORDERS
 
+    public Cursor getorders(int groupedStatus) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            switch (groupedStatus){
+                case Order.ALL :
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+                            + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
+                            + " WHERE " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                    break;
+                case Order.NOT_CLOSED :
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+                            + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID +" NOT IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED +")"
+                            + " AND " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                    break;
+                case Order.CLOSED :
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+                            + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID +" IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED +")"
+                            + " AND " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                    break;
 
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     //DESCRIPTIONS
 
@@ -1407,9 +1438,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_ORDER_ID, order.getServerOrderId());
         contentValues.put(COL_SERVER_USER_ID, order.getUser().getServerUserId());
         contentValues.put(COL_SERVER_SHOP_ID, order.getShop().getServerShopId());
-        contentValues.put(COL_CREATION_DATE, UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm"));
+        contentValues.put(COL_CREATION_DATE, UtilsFunctions.dateToString(order.getCreationDate(), "yyyy-MM-dd HH:mm:ss"));
         contentValues.put(COL_ORDER_STATUS_ID, order.getStatusId());
         contentValues.put(COL_ORDER_STATUS_NAME, order.getStatusName());
+        contentValues.put(COL_ORDERED_GOODS_NUMBER, order.getOrderedGoodsNumber());
 
         long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);
@@ -1686,5 +1718,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_CO_USERS, null, contentValues);
         return (result != -1);
     }
+
 
 }
