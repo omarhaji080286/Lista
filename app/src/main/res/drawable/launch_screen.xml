@@ -7,10 +7,10 @@
     <item android:drawable="@android:color/white"/>
 
     <!-- Your product logo - 144dp color version of your app icon -->
-    <item>
+    <item android:gravity="center">
 
         <bitmap
-            android:src="@drawable/logo"
+            android:src="@drawable/lista_logo_144"
             android:gravity="center" />
 
     </item>

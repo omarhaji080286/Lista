@@ -16,7 +16,7 @@
         android:id="@+id/imageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:srcCompat="@drawable/logo"
+        app:srcCompat="@mipmap/lista_logo"
         android:contentDescription="@string/logo" />
 
     <TextView
