@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    android:id="@+id/cl_order_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_order_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -13,149 +12,120 @@
         android:layout_margin="5dp">
 
         <android.support.constraint.ConstraintLayout
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_marginStart="5dp"
+            android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless">
 
             <ImageView
                 android:id="@+id/img_shop"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:src="@drawable/spices"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <TextView
-                android:id="@+id/label_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:text="Shop :"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/img_shop"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                android:layout_marginTop="5dp"/>
 
             <TextView
                 android:id="@+id/txt_shop_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chez Karim"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/label_shop"
                 android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="Chez Karim"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/img_shop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_shop"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/labelStatus"
+                style="@style/TextInOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="status :"
+                app:layout_constraintStart_toEndOf="@+id/img_shop"
+                app:layout_constraintTop_toTopOf="@+id/img_shop"
+                tools:layout_editor_absoluteX="98dp"
+                tools:layout_editor_absoluteY="21dp" />
+
+            <TextView
+                android:id="@+id/txt_order_status"
+                style="@style/TextInOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SENT"
+                app:layout_constraintStart_toEndOf="@+id/labelStatus"
+                app:layout_constraintTop_toTopOf="@+id/img_shop"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/label_order_id"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:text="Order reference : "
-                app:layout_constraintTop_toBottomOf="@+id/label_shop"
-                app:layout_constraintLeft_toRightOf="@+id/img_shop"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                android:text="Réf :"
+                app:layout_constraintStart_toEndOf="@+id/img_shop"
+                app:layout_constraintTop_toBottomOf="@+id/labelStatus" />
 
             <TextView
                 android:id="@+id/txt_order_id"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
                 android:text="12"
-                app:layout_constraintTop_toBottomOf="@+id/txt_shop_name"
-                app:layout_constraintLeft_toRightOf="@+id/label_order_id"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                app:layout_constraintStart_toEndOf="@+id/label_order_id"
+                app:layout_constraintTop_toBottomOf="@+id/txt_order_status"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/label_creation_date"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:text="Order date :"
-                app:layout_constraintTop_toBottomOf="@+id/label_order_id"
+                android:text="Date "
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                app:layout_constraintTop_toBottomOf="@+id/label_order_id" />
 
             <TextView
                 android:id="@+id/txt_date"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
                 android:text="12/10/2018 10:58"
                 app:layout_constraintLeft_toRightOf="@+id/label_creation_date"
                 app:layout_constraintTop_toBottomOf="@+id/txt_order_id"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/label_items_number"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
                 android:text="Items :"
-                app:layout_constraintTop_toBottomOf="@+id/label_creation_date"
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                app:layout_constraintTop_toBottomOf="@+id/label_creation_date" />
 
             <TextView
                 android:id="@+id/txt_ordered_items_number"
+                style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintTop_toBottomOf="@id/txt_date"
                 app:layout_constraintLeft_toRightOf="@+id/label_items_number"
-                android:layout_marginStart="5dp"
-                android:textSize="12sp"/>
+                app:layout_constraintTop_toBottomOf="@id/txt_date"
+                android:textStyle="bold"/>
 
             <ImageView
                 android:id="@+id/ic_arrow_right_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_right_black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-
-            <LinearLayout
-                android:id="@+id/ll_order_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintRight_toLeftOf="@+id/ic_arrow_right_black"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="10dp">
-
-                <TextView
-                    android:id="@+id/txt_order_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SENT"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_gravity="center"
-                    android:textSize="12sp"/>
-
-                <ImageView
-                    android:id="@+id/img_order_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/green_button"
-                    android:visibility="gone"
-                    android:layout_gravity="center"/>
-
-            </LinearLayout>
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </android.support.constraint.ConstraintLayout>

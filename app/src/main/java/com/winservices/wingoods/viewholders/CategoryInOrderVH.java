@@ -19,7 +19,6 @@ public class CategoryInOrderVH extends GroupViewHolder {
         super(itemView);
 
         container = itemView.findViewById(R.id.ll_container);
-        icon = itemView.findViewById(R.id.img_category_icon);
         txtCategoryName = itemView.findViewById(R.id.txt_category_name);
 
     }

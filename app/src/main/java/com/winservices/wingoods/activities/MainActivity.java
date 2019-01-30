@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(context, context.getResources().getString(R.string.category_add_success), Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                     collapseFab();
-                                    //displaySelectedScreen(fragmentId);
+                                    SyncHelper.sync(getApplicationContext());
                                     break;
                                 case Constants.DATAEXISTS:
                                     Toast.makeText(context, context.getResources().getString(R.string.category_exists), Toast.LENGTH_SHORT).show();

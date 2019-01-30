@@ -176,4 +176,14 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="TextInOrder">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_content_size_average</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_marginStart">@dimen/margin_small</item>
+        <item name="android:layout_marginEnd">@dimen/margin_small</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
+        <item name="android:layout_marginBottom">@dimen/margin_small</item>
+    </style>
+
 </resources>

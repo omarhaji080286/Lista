@@ -25,7 +25,6 @@ public class OrderVH extends RecyclerView.ViewHolder {
         arrowRight= itemView.findViewById(R.id.ic_arrow_right_black);
         txtDate = itemView.findViewById(R.id.txt_date);
         txtOrderStatus = itemView.findViewById(R.id.txt_order_status);
-        imgOrderStatus = itemView.findViewById(R.id.img_order_status);
         clContainer = itemView.findViewById(R.id.cl_order_container);
 
     }
