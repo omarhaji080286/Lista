@@ -122,6 +122,15 @@
     <string name="no_items_to_buy">There are no items to order</string>
     <string name="ongoing_orders">Ongoing orders</string>
     <string name="closed_orders">Closed orders</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 
 
     <string name="sync_account_type" translatable="false">wingoods.winservices.com</string>
@@ -132,5 +141,6 @@
     <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
     <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
     <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
+    <string name="collect_time">Collect time</string>
 
 </resources>

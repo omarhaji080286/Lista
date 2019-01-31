@@ -120,5 +120,15 @@
     <string name="no_items_to_buy">لا توجد أي عناصر لشراء</string>
     <string name="ongoing_orders">الطلبات الجارية</string>
     <string name="closed_orders">الطلبات المغلقة</string>
+    <string name="collect_time">وقت التسليم</string>
+    <string name="monday">الإثنين</string>
+    <string name="tuesday">الثلاثاء</string>
+    <string name="wednesday">الأربعاء</string>
+    <string name="thursday">الخميس</string>
+    <string name="friday">الجمعة</string>
+    <string name="saturday">السبت</string>
+    <string name="sunday">الأحد</string>
+    <string name="today">اليوم</string>
+    <string name="tomorrow">غدا</string>
 
 </resources>

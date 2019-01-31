@@ -6,20 +6,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -45,6 +48,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,8 +61,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private int selectedShopId;
     private RecyclerView rvCategoriesToOrder;
-    private Dialog dialog;
+    //private Dialog dialog;
     private GridLayoutManager glm;
+    private NumberPicker pickerDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +95,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private void sendOrder() {
         if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
             if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
-                addOrder(this);
+                selectCollectTime();
             } else {
                 Toast.makeText(this, R.string.set_descriptions, Toast.LENGTH_SHORT).show();
                 List<Good> goodsToComplete = categoriesToOrderAdapter.getGoodsToComplete();
@@ -103,6 +109,94 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             Toast.makeText(this, R.string.empty_order, Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void selectCollectTime() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        View mView = LayoutInflater.from(this)
+                .inflate(R.layout.fragment_collect_time, null, false);
+
+        final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
+        final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
+        Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
+
+        String[] days = getDays();
+        final String[] collectTimes = getCollectTimes(0);
+
+        pickerDay.setMinValue(0);
+        pickerDay.setMaxValue(days.length - 1);
+        pickerDay.setDisplayedValues(days);
+
+        pickerTime.setMinValue(0);
+        pickerTime.setMaxValue(collectTimes.length - 1);
+        pickerTime.setDisplayedValues(collectTimes);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialogTime = mBuilder.create();
+        dialogTime.setTitle(R.string.collect_time);
+        dialogTime.show();
+
+        btnCollectTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogTime.dismiss();
+                addOrder(OrderActivity.this);
+            }
+        });
+
+        pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                String[] newCollectTimes = getCollectTimes(newVal);
+                pickerTime.setDisplayedValues(null);
+                pickerTime.setMaxValue(newCollectTimes.length - 1);
+                pickerTime.setDisplayedValues(newCollectTimes);
+            }
+        });
+    }
+
+    private String[] getDays() {
+        final String[] weekdays = getResources().getStringArray(R.array.days);
+        String[] days = new String[7];
+        days[0] = getResources().getString(R.string.today);
+        days[1] = getResources().getString(R.string.tomorrow) ;
+
+        for (int i = 2; i < 7; i++) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, i);
+            days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 3) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+        }
+        return days;
+    }
+
+    private String[] getCollectTimes(int pickerDayValue) {
+
+        String[] times;
+
+        if (pickerDayValue == 0) {
+            Calendar rightNow = Calendar.getInstance();
+
+            int start = rightNow.get(Calendar.HOUR_OF_DAY) + 2;
+            int end = start + 1;
+
+            times = new String[22 - start];
+            times[0] = start + ":00 - " + end + ":00";
+            for (int i = 1; i < times.length; i++) {
+                start = start + 1;
+                end = end + 1;
+                times[i] = start + ":00 - " + end + ":00";
+            }
+
+        } else {
+            times = new String[13];
+            for (int i = 0; i < times.length; i++) {
+                times[i] = (i + 9) + ":00 - " + (i + 10) + ":00";
+            }
+
+        }
+
+        return times;
+    }
+
 
     private void animateItem(final int position) {
         new Handler().postDelayed(new Runnable() {
@@ -156,7 +250,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
     private void addOrder(final Context context) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
-            dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
+            final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
             dialog.show();
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_ADD_ORDER,

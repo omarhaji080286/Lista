@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -56,7 +57,7 @@ public class UtilsFunctions {
 
     public static AlertDialog.Builder getDialogBuilder(LayoutInflater layoutInflater, Context context, int msgId){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.myDialog));
         View view = layoutInflater.inflate(R.layout.progress, null);
         TextView msg = view.findViewById(R.id.txt_msg_progress);
         msg.setText(context.getResources().getString(msgId));
@@ -223,6 +224,13 @@ public class UtilsFunctions {
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
         byte[] imgByte = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(imgByte, Base64.DEFAULT);
+    }
+
+    public static String to2digits(int number) {
+        if (number >= 0 && number < 10) {
+            return "0" + String.valueOf(number);
+        }
+        return String.valueOf(number);
     }
 
 }

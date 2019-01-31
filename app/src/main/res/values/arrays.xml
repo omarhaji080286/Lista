@@ -28,4 +28,14 @@
         <item>@drawable/others</item>
     </integer-array>
 
+    <string-array name="days">
+        <item>@string/sunday</item>
+        <item>@string/monday</item>
+        <item>@string/tuesday</item>
+        <item>@string/wednesday</item>
+        <item>@string/thursday</item>
+        <item>@string/friday</item>
+        <item>@string/saturday</item>
+    </string-array>
+
 </resources>
