@@ -49,7 +49,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +63,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     //private Dialog dialog;
     private GridLayoutManager glm;
     private NumberPicker pickerDay;
+    private String[] collectTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +111,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     }
 
     private void selectCollectTime() {
+
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         View mView = LayoutInflater.from(this)
                 .inflate(R.layout.fragment_collect_time, null, false);
@@ -119,8 +120,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
         Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
 
-        String[] days = getDays();
-        final String[] collectTimes = getCollectTimes(0);
+        final String[] days = getDays();
+        collectTimes = getCollectTimes(0);
 
         pickerDay.setMinValue(0);
         pickerDay.setMaxValue(days.length - 1);
@@ -139,26 +140,59 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             @Override
             public void onClick(View view) {
                 dialogTime.dismiss();
-                addOrder(OrderActivity.this);
+
+                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+
+                addOrder(OrderActivity.this, startTime, endTime);
             }
         });
 
         pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                String[] newCollectTimes = getCollectTimes(newVal);
+                collectTimes = getCollectTimes(newVal);
                 pickerTime.setDisplayedValues(null);
-                pickerTime.setMaxValue(newCollectTimes.length - 1);
-                pickerTime.setDisplayedValues(newCollectTimes);
+                pickerTime.setMaxValue(collectTimes.length - 1);
+                pickerTime.setDisplayedValues(collectTimes);
             }
         });
     }
+
+    private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+        String day;
+        String startTime;
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, pickerDayValue);
+        day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
+        startTime = day + " " + pickerTimeDisplayedValue.substring(0, 5);
+
+        Log.d(TAG, "start time: " + startTime);
+
+        return startTime;
+    }
+
+    private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+        String day;
+        String startTime;
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, pickerDayValue);
+        day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
+        startTime = day + " " + pickerTimeDisplayedValue.substring(8, 13);
+
+        Log.d(TAG, "end Time: " + startTime);
+
+        return startTime;
+    }
+
 
     private String[] getDays() {
         final String[] weekdays = getResources().getStringArray(R.array.days);
         String[] days = new String[7];
         days[0] = getResources().getString(R.string.today);
-        days[1] = getResources().getString(R.string.tomorrow) ;
+        days[1] = getResources().getString(R.string.tomorrow);
 
         for (int i = 2; i < 7; i++) {
             Calendar cal = Calendar.getInstance();
@@ -179,17 +213,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             int end = start + 1;
 
             times = new String[22 - start];
-            times[0] = start + ":00 - " + end + ":00";
+            times[0] = UtilsFunctions.to2digits(start) + ":00 - " + UtilsFunctions.to2digits(end) + ":00";
             for (int i = 1; i < times.length; i++) {
                 start = start + 1;
                 end = end + 1;
-                times[i] = start + ":00 - " + end + ":00";
+                times[i] = UtilsFunctions.to2digits(start) + ":00 - " + UtilsFunctions.to2digits(end) + ":00";
             }
 
         } else {
             times = new String[13];
             for (int i = 0; i < times.length; i++) {
-                times[i] = (i + 9) + ":00 - " + (i + 10) + ":00";
+                times[i] = UtilsFunctions.to2digits(i + 9) + ":00 - " + UtilsFunctions.to2digits(i + 10) + ":00";
             }
 
         }
@@ -248,7 +282,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private void addOrder(final Context context) {
+    private void addOrder(final Context context, final String startTime, final String endTime) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
             final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
             dialog.show();
@@ -290,7 +324,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
-                    postData.put("jsonData", "" + getJSONForAddOrder());
+                    postData.put("jsonData", "" + getJSONForAddOrder(startTime, endTime));
                     postData.put("language", "" + Locale.getDefault().getLanguage());
                     return postData;
                 }
@@ -302,7 +336,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private String getJSONForAddOrder() {
+    private String getJSONForAddOrder(String startTime, String endTime) {
         final JSONObject root = new JSONObject();
         try {
 
@@ -312,6 +346,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             root.put("serverUserId", currentUser.getServerUserId());
             root.put("serverShopId", selectedShopId);
             root.put("statusId", Order.REGISTERED);
+            root.put("startTime", startTime);
+            root.put("endTime", endTime);
 
             JSONArray jsonGoods = new JSONArray();
             for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
