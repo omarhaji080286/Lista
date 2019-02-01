@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -71,8 +72,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     }
 
     private void completeOrder(final int serverOrderId) {
-        final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
-        dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_COMPLETE_ORDER,
                 new Response.Listener<String>() {
@@ -84,11 +83,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
                             String message = jsonObject.getString("message");
                             if (error) {
                                 //error in server
-                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "onResponse error: " + message);
                             } else {
-                                Toast.makeText(getApplicationContext(), "Order completed", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "order completed: ");
                             }
-                            dialog.dismiss();
                             SyncHelper.sync(getApplicationContext());
 
                         } catch (JSONException e) {
@@ -99,7 +97,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        dialog.dismiss();
+                        //dialog.dismiss();
                     }
                 }
         ) {
@@ -239,7 +237,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
             builder.setTitle(R.string.order_completed);
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    completeOrder(serverOrderId);
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            completeOrder(serverOrderId);
+                        }
+                    });
                     dialog.dismiss();
                     finish();
                 }
