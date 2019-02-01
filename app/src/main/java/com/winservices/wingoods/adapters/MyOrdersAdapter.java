@@ -9,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.OrderDetailsActivity;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
@@ -54,6 +52,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
+        holder.txtCollectTime.setText(order.getDisplayedCollectTime(context));
+
+        String collectTime ;
 
         Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
         holder.imgShop.setImageBitmap(bitmap);

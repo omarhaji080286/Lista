@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.SignUpFragment;
 import com.winservices.wingoods.fragments.WelcomeFragment;
@@ -40,5 +41,11 @@ public class LauncherActivity extends AppCompatActivity {
         manager.beginTransaction()
                 .replace(R.id.frameLauncherActivity, fragment, tag)
                 .commit();
+    }
+
+    @Override
+    protected void onResume() {
+        SyncHelper.sync(this);
+        super.onResume();
     }
 }

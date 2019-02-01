@@ -197,7 +197,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         for (int i = 2; i < 7; i++) {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, i);
-            days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 3) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+            days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 2) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
         }
         return days;
     }

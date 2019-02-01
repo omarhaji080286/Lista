@@ -1,9 +1,11 @@
 package com.winservices.wingoods.activities;
 
-import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,34 +17,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.OrdersDataManager;
-import com.winservices.wingoods.dbhelpers.RequestHandler;
-import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.Order;
-import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
-import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
-import com.winservices.wingoods.utils.SharedPrefManager;
-import com.winservices.wingoods.utils.UtilsFunctions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MyOrdersActivity extends AppCompatActivity {
 
@@ -52,10 +35,10 @@ public class MyOrdersActivity extends AppCompatActivity {
     private FloatingActionButton fabAddOrder;
     private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
-    private List<Order> orders, closedOrders;
-    private Dialog dialog;
-    private TextView txtNoOrders, txtAddOrder;
+    private List<Order> orders;
+    private TextView txtNoOrders;
     private OrdersDataManager ordersDataManager;
+    private SyncReceiverMyOrders syncReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,23 +50,34 @@ public class MyOrdersActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        SharedPrefManager.getInstance(this).storeCurrentOrdersType(ORDERS_TYPE, R.id.menuOngoingOrders);
+        syncReceiver = new SyncReceiverMyOrders();
 
         rvOrders = findViewById(R.id.rv_orders);
         txtNoOrders = findViewById(R.id.txt_no_orders);
         fabAddOrder = findViewById(R.id.fab_add_order);
 
+        orders = new ArrayList<>();
+        ordersDataManager = new OrdersDataManager(this);
+        orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
+
         myOrdersAdapter = new MyOrdersAdapter(this);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvOrders.setLayoutManager(llm);
         rvOrders.setAdapter(myOrdersAdapter);
-        ordersDataManager = new OrdersDataManager(this);
-        orders = new ArrayList<>();
-        orders.addAll(ordersDataManager.getorders(Order.NOT_CLOSED));
+
         myOrdersAdapter.setOrders(orders);
+        updateMessageVisibility();
 
         initFabAddOrder();
 
+    }
+
+    private void updateMessageVisibility() {
+        if (orders.size() == 0) {
+            txtNoOrders.setVisibility(View.VISIBLE);
+        } else {
+            txtNoOrders.setVisibility(View.GONE);
+        }
     }
 
     private void initFabAddOrder() {
@@ -107,128 +101,6 @@ public class MyOrdersActivity extends AppCompatActivity {
         return (goodsToBuyNb > 0);
     }
 
-
-    /*private void getOrders(final Context context) {
-        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
-        dialog.show();
-        orders = new ArrayList<>();
-        closedOrders = new ArrayList<>();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                DataBaseHelper.HOST_URL_GET_ORDERS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //error in server
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                            } else {
-                                JSONArray JSONOrders = jsonObject.getJSONArray("orders");
-
-                                for (int i = 0; i < JSONOrders.length(); i++) {
-
-                                    JSONObject JSONShop = JSONOrders.getJSONObject(i);
-
-                                    int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
-                                    String shopTypeName = JSONShop.getString("shop_type_name");
-                                    ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
-
-                                    Shop shop = new Shop();
-                                    shop.setServerShopId(JSONShop.getInt("server_shop_id"));
-                                    shop.setShopName(JSONShop.getString("shop_name"));
-                                    shop.setShopAdress(JSONShop.getString("shop_adress"));
-                                    shop.setShopEmail(JSONShop.getString("shop_email"));
-                                    shop.setShopPhone(JSONShop.getString("shop_phone"));
-                                    shop.setLongitude(JSONShop.getDouble("longitude"));
-                                    shop.setLatitude(JSONShop.getDouble("latitude"));
-
-                                    shop.setShopType(shopType);
-
-                                    String creationDateString = JSONShop.getString("creation_date");
-
-                                    Date date = UtilsFunctions.stringToDate(creationDateString);
-
-                                    Order order = new Order();
-                                    order.setServerOrderId(JSONShop.getInt("server_order_id"));
-                                    order.setCreationDate(date);
-                                    order.setOrderedGoodsNumber(JSONShop.getInt("ordered_goods_number"));
-                                    order.setStatusId(JSONShop.getInt("status_id"));
-                                    order.setShop(shop);
-
-                                    if (order.getStatusId() != Order.COMPLETED && order.getStatusId() != Order.NOT_SUPPORTED) {
-                                        orders.add(order);
-                                    } else {
-                                        closedOrders.add(order);
-                                    }
-
-                                }
-
-                                int orders_type = SharedPrefManager.getInstance(getApplicationContext()).getCurrentOrdersType(ORDERS_TYPE);
-                                switch (orders_type) {
-                                    case R.id.menuOngoingOrders :
-                                        if (orders.size() > 0) {
-                                            myOrdersAdapter.setOrders(orders);
-                                        } else {
-                                            txtNoOrders.setVisibility(View.VISIBLE);
-                                        }
-                                        break;
-                                    case R.id.menuClosedOrders :
-                                        if (closedOrders.size() > 0) {
-                                            myOrdersAdapter.setOrders(closedOrders);
-                                        } else {
-                                            txtNoOrders.setVisibility(View.VISIBLE);
-                                        }
-                                        break;
-                                }
-
-
-                                dialog.dismiss();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                        dialog.dismiss();
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> postData = new HashMap<>();
-                postData.put("jsonData", "" + getJSONForGetOrders());
-                return postData;
-            }
-        };
-        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
-    }*/
-
-    /*private String getJSONForGetOrders() {
-        final JSONObject root = new JSONObject();
-        try {
-
-            UsersDataManager usersDataManager = new UsersDataManager(this);
-            User currentUser = usersDataManager.getCurrentUser();
-
-            root.put("serverUserId", currentUser.getServerUserId());
-
-            return root.toString(1);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Can't format JSON");
-        }
-
-        return null;
-    }*/
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_orders, menu);
@@ -238,7 +110,6 @@ public class MyOrdersActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(this);
 
         switch (id) {
             case android.R.id.home:
@@ -246,17 +117,55 @@ public class MyOrdersActivity extends AppCompatActivity {
                 break;
             case R.id.menuOngoingOrders:
                 orders.clear();
-                orders.addAll(ordersDataManager.getorders(Order.NOT_CLOSED));
+                orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                updateMessageVisibility();
                 break;
             case R.id.menuClosedOrders:
                 orders.clear();
-                orders.addAll(ordersDataManager.getorders(Order.CLOSED));
+                orders.addAll(ordersDataManager.getOrders(Order.CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                updateMessageVisibility();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(syncReceiver);
+    }
+
+    public class SyncReceiverMyOrders extends BroadcastReceiver {
+
+        private Handler handler; // Handler used to execute code on the UI thread
+
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            // Post the UI updating code to our Handler
+
+            this.handler = new Handler();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    orders.clear();
+                    orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
+                    myOrdersAdapter.setOrders(orders);
+                    updateMessageVisibility();
+
+                    Log.d(TAG, "Sync BroadCast received");
+                }
+            });
+        }
     }
 
 

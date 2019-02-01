@@ -113,14 +113,14 @@ public class SharedPrefManager {
         return sharedPreferences.getString(User.PREFIX_USER + serverUserId, null);
     }
 
-    public void storeCurrentOrdersType(String key, int value){
+    public void storeConsultedOrderId(String key, int value){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(key, value);
         editor.apply();
     }
 
-    public int getCurrentOrdersType(String key){
+    public int getConsultedOrderId(String key){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(key, R.id.menuOngoingOrders);
     }

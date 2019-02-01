@@ -11,7 +11,7 @@ import com.winservices.wingoods.R;
 
 public class OrderVH extends RecyclerView.ViewHolder {
 
-    public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus;
+    public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime;
     public ImageView imgShop, arrowRight, imgOrderStatus;
     public ConstraintLayout clContainer;
 
@@ -26,6 +26,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
         txtDate = itemView.findViewById(R.id.txt_date);
         txtOrderStatus = itemView.findViewById(R.id.txt_order_status);
         clContainer = itemView.findViewById(R.id.cl_order_container);
+        txtCollectTime = itemView.findViewById(R.id.txt_collect_time);
 
     }
 }

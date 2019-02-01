@@ -82,6 +82,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DESC_ID = "desc_id";
     static final String COL_DESC_VALUE = "desc_value";
     static final String COL_CO_USER_PHONE = "co_user_phone";
+    static final String COL_START_TIME = "start_time";
+    static final String COL_END_TIME = "end_time";
+
 
 
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
@@ -270,6 +273,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "status_id INTEGER, " +
                 "status_name TEXT," +
                 "ordered_goods_number INTEGER," +
+                "start_time TEXT," +
+                "end_time TEXT," +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
     }
@@ -299,7 +304,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //ORDERS
 
-    public Cursor getorders(int groupedStatus) {
+    public Cursor getOrders(int groupedStatus) {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
@@ -1442,6 +1447,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_ORDER_STATUS_ID, order.getStatusId());
         contentValues.put(COL_ORDER_STATUS_NAME, order.getStatusName());
         contentValues.put(COL_ORDERED_GOODS_NUMBER, order.getOrderedGoodsNumber());
+        contentValues.put(COL_START_TIME, order.getStartTime());
+        contentValues.put(COL_END_TIME, order.getEndTime());
 
         long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

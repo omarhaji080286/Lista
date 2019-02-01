@@ -1,8 +1,12 @@
 package com.winservices.wingoods.fragments;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -29,6 +33,7 @@ import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 
 import org.json.JSONException;
@@ -48,6 +53,7 @@ public class WelcomeFragment extends Fragment {
     private ConstraintLayout consLayMyGoods, consLayMyOrders;
     private LinearLayout linlayShops, linlayProfile;
     private TextView txtAvailableOrders;
+    private SyncReceiverWelcome syncReceiver;
 
     public WelcomeFragment() {
         // Required empty public constructor
@@ -64,6 +70,8 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        syncReceiver = new SyncReceiverWelcome();
 
         consLayMyGoods = view.findViewById(R.id.consLayMyGoods);
         consLayMyOrders = view.findViewById(R.id.consLayMyOrders);
@@ -107,6 +115,7 @@ public class WelcomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getAvailableOrdersNum();
+        getActivity().registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
     }
 
     private void getAvailableOrdersNum() {
@@ -171,4 +180,32 @@ public class WelcomeFragment extends Fragment {
             Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+            getActivity().unregisterReceiver(syncReceiver);
+    }
+
+    public class SyncReceiverWelcome extends BroadcastReceiver {
+
+        private Handler handler; // Handler used to execute code on the UI thread
+
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            // Post the UI updating code to our Handler
+
+            this.handler = new Handler();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    getAvailableOrdersNum();
+
+                    Log.d(TAG, "Sync BroadCast received");
+                }
+            });
+        }
+    }
+
 }

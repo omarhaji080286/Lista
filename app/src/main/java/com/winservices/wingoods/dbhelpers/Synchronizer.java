@@ -272,14 +272,16 @@ public class Synchronizer {
         OrdersDataManager ordersDataManager = new OrdersDataManager(context);
 
         for (int i = 0; i < jsonOrders.length(); i++) {
-            JSONObject JSONShop = jsonOrders.getJSONObject(i);
-            int serverOrderId = JSONShop.getInt("server_order_id");
-            int serverUserId = JSONShop.getInt("server_user_id");
-            int serverShopId = JSONShop.getInt("server_shop_id");
-            Date creationDate = UtilsFunctions.stringToDate(JSONShop.getString("creation_date"));
-            int statusId = JSONShop.getInt("status_id");
-            String statusName = JSONShop.getString("status_name");
-            int orderedGoodsNumber = JSONShop.getInt("ordered_goods_number");
+            JSONObject JSONOrder = jsonOrders.getJSONObject(i);
+            int serverOrderId = JSONOrder.getInt("server_order_id");
+            int serverUserId = JSONOrder.getInt("server_user_id");
+            int serverShopId = JSONOrder.getInt("server_shop_id");
+            Date creationDate = UtilsFunctions.stringToDate(JSONOrder.getString("creation_date"));
+            int statusId = JSONOrder.getInt("status_id");
+            String statusName = JSONOrder.getString("status_name");
+            int orderedGoodsNumber = JSONOrder.getInt("ordered_goods_number");
+            String startTime = JSONOrder.getString("start_time");
+            String endTime = JSONOrder.getString("end_time");
 
 
             Order order = new Order();
@@ -297,6 +299,8 @@ public class Synchronizer {
             order.setStatusId(statusId);
             order.setStatusName(statusName);
             order.setOrderedGoodsNumber(orderedGoodsNumber);
+            order.setStartTime(startTime);
+            order.setEndTime(endTime);
 
             ordersDataManager.insertOrder(order);
         }

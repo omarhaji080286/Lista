@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.utils.SharedPrefManager;
 
 public class ListaMessagingService extends FirebaseMessagingService {
@@ -46,5 +47,7 @@ public class ListaMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+        SyncHelper.sync(getApplicationContext());
+
     }
 }

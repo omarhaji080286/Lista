@@ -24,11 +24,11 @@ public class OrdersDataManager {
     }
 
     void insertOrder(Order order) {
-            db.insertOrder(order);
+        db.insertOrder(order);
     }
 
-    public List<Order> getorders(int groupedStatus) {
-        Cursor cursor = db.getorders(groupedStatus);
+    public List<Order> getOrders(int groupedStatus) {
+        Cursor cursor = db.getOrders(groupedStatus);
         List<Order> orders = new ArrayList<>();
 
         if (cursor.getCount() != 0) {
@@ -41,6 +41,8 @@ public class OrdersDataManager {
                 String statusName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_STATUS_NAME));
                 int orderedGoodsNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_ORDERED_GOODS_NUMBER));
                 String shopName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_NAME));
+                String startTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_START_TIME));
+                String endTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_END_TIME));
 
                 Order order = new Order();
                 order.setServerOrderId(serverOrderId);
@@ -58,6 +60,8 @@ public class OrdersDataManager {
                 order.setStatusId(statusId);
                 order.setStatusName(statusName);
                 order.setOrderedGoodsNumber(orderedGoodsNumber);
+                order.setStartTime(startTime);
+                order.setEndTime(endTime);
 
                 orders.add(order);
             }

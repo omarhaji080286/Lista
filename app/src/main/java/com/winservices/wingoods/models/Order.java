@@ -1,9 +1,22 @@
 package com.winservices.wingoods.models;
 
 
+import android.content.Context;
+import android.util.Log;
+
+import com.winservices.wingoods.R;
+import com.winservices.wingoods.utils.UtilsFunctions;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class Order {
+
+    private static final String TAG = Order.class.getSimpleName();
 
     public static final int REGISTERED = 1;
     public static final int READ = 2;
@@ -23,6 +36,8 @@ public class Order {
     private int orderedGoodsNumber;
     private int statusId;
     private String statusName;
+    private String startTime;
+    private String endTime;
 
     public String getStatusName(){
         switch (statusId){
@@ -41,6 +56,62 @@ public class Order {
             default:
                 return "N/A";
         }
+    }
+
+    public String getDisplayedCollectTime(Context context){
+        String displayedCollectTime;
+        String day = "empty";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+
+        Date collectDay = null;
+        Date today = null;
+        try {
+            collectDay = sdf.parse(this.startTime);
+            today = sdf.parse(UtilsFunctions.dateToString(Calendar.getInstance().getTime(),"yyyy-MM-dd"));
+
+            long diffMilli = collectDay.getTime() - today.getTime();
+            String diff = String.valueOf(TimeUnit.DAYS.convert(diffMilli, TimeUnit.MILLISECONDS)).substring(0,1);
+
+            switch (diff){
+                case "0":
+                    day = context.getResources().getString(R.string.today);
+                    break;
+                case "1":
+                    day = context.getResources().getString(R.string.tomorrow);
+                    break;
+                default:
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(collectDay);
+                    day = UtilsFunctions.getDayOfWeek(context,cal.get(Calendar.DAY_OF_WEEK)) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+                    break;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String time = this.startTime.substring(11,16) + " - " + this.endTime.substring(11,16);
+
+        Log.d(TAG, "DisplayedCollectTime: " + day + " " + time);
+
+        return day + " " + time;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public void setStatusName(String statusName) {

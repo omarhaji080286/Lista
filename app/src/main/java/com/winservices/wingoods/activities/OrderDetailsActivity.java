@@ -1,11 +1,9 @@
 package com.winservices.wingoods.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +21,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.OrderDetailsAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.utils.Constants;
@@ -43,7 +42,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private static final String TAG = "OrderDetailsActivity";
     private RecyclerView rvOrderDetails;
     private List<OrderedGood> orderedGoods;
-    private Dialog dialog;
     private int serverOrderId;
     private int orderStatus;
 
@@ -66,15 +64,14 @@ public class OrderDetailsActivity extends AppCompatActivity {
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
         orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
 
-        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
-        dialog.show();
+
         getOrderedGoods(this);
 
 
     }
 
     private void completeOrder(final int serverOrderId) {
-        dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
         dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_COMPLETE_ORDER,
@@ -92,6 +89,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Order completed", Toast.LENGTH_SHORT).show();
                             }
                             dialog.dismiss();
+                            SyncHelper.sync(getApplicationContext());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -139,7 +137,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
     }
 
     private void getOrderedGoods(final Context context) {
-
+        final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+        dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_ORDERED_GOODS,
                 new Response.Listener<String>() {
