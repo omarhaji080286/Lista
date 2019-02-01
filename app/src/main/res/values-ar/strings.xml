@@ -130,5 +130,11 @@
     <string name="sunday">الأحد</string>
     <string name="today">اليوم</string>
     <string name="tomorrow">غدا</string>
+    <string name="status">وضع:</string>
+    <string name="ref">رقم الطلب :</string>
+    <string name="date">التاريخ :</string>
+    <string name="items">العناصر :</string>
+    <string name="forTime">من أجل :</string>
+
 
 </resources>

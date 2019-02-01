@@ -22,7 +22,8 @@
                 android:layout_height="90dp"
                 android:layout_marginTop="5dp"
                 android:src="@drawable/spices"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/description" />
 
             <TextView
                 android:id="@+id/txt_shop_name"
@@ -31,7 +32,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="Chez Karim"
+                android:text="@string/shop_name"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -45,7 +46,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="status :"
+                android:text="@string/status"
                 app:layout_constraintStart_toEndOf="@+id/img_shop"
                 app:layout_constraintTop_toTopOf="@+id/img_shop"
                 tools:layout_editor_absoluteX="98dp"
@@ -56,7 +57,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SENT"
+                android:text="@string/status"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/labelStatus"
                 app:layout_constraintTop_toTopOf="@+id/img_shop" />
@@ -66,7 +67,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Réf :"
+                android:text="@string/ref"
                 app:layout_constraintStart_toEndOf="@+id/img_shop"
                 app:layout_constraintTop_toBottomOf="@+id/labelStatus" />
 
@@ -75,7 +76,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12"
+                android:text="@string/ref"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/label_order_id"
                 app:layout_constraintTop_toBottomOf="@+id/txt_order_status" />
@@ -85,7 +86,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date "
+                android:text="@string/date"
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
                 app:layout_constraintTop_toBottomOf="@+id/label_order_id" />
 
@@ -94,7 +95,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12/10/2018 10:58"
+                android:text="@string/date"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@+id/label_creation_date"
                 app:layout_constraintTop_toBottomOf="@+id/txt_order_id" />
@@ -104,7 +105,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Items :"
+                android:text="@string/items"
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
                 app:layout_constraintTop_toBottomOf="@+id/label_creation_date" />
 
@@ -113,7 +114,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20"
+                android:text="@string/items"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@+id/label_items_number"
                 app:layout_constraintTop_toBottomOf="@id/txt_date" />
@@ -123,7 +124,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="for : "
+                android:text="@string/forTime"
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
                 app:layout_constraintTop_toBottomOf="@+id/label_items_number" />
 
@@ -133,7 +134,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="today 10:00 - 11:00"
+                android:text="@string/forTime"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/label_collect_time"
@@ -146,7 +147,8 @@
                 android:src="@drawable/ic_arrow_right_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/description" />
 
 
         </android.support.constraint.ConstraintLayout>

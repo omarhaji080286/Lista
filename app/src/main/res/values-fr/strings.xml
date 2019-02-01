@@ -130,4 +130,10 @@
     <string name="sunday">Dimanche</string>
     <string name="today">Aujourd\'hui</string>
     <string name="tomorrow">Demain</string>
+    <string name="status">état :</string>
+    <string name="ref">Réf :</string>
+    <string name="date">Date :</string>
+    <string name="items">Nb d\'articles :</string>
+    <string name="forTime">Pour :</string>
+
 </resources>
