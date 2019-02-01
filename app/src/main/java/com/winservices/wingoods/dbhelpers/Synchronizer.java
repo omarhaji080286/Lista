@@ -257,11 +257,15 @@ public class Synchronizer {
             int serverShopId = JSONShop.getInt("server_shop_id");
             String shopName = JSONShop.getString("shop_name");
             String shopPhone = JSONShop.getString("shop_phone");
+            String openingTime = JSONShop.getString("opening_time");
+            String closingTime = JSONShop.getString("closing_time");
 
             Shop shop = new Shop();
             shop.setServerShopId(serverShopId);
             shop.setShopName(shopName);
             shop.setShopPhone(shopPhone);
+            shop.setOpeningTime(openingTime);
+            shop.setClosingTime(closingTime);
 
             shopsDataManager.insertShop(shop);
         }

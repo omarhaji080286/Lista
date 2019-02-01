@@ -40,6 +40,8 @@ public class Shop implements Parcelable {
     private Country country;
     private String markerId;
     private List<DefaultCategory> defaultCategories;
+    private String openingTime;
+    private String closingTime;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -74,6 +76,22 @@ public class Shop implements Parcelable {
 
     public void setDefaultCategories(List<DefaultCategory> defaultCategories) {
         this.defaultCategories = defaultCategories;
+    }
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
     }
 
     public String getMarkerId() {

@@ -136,7 +136,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
 
     private static final String COL_USER_PHONE = "user_phone";
-    private static final String COL_SHOP_PHONE = "shop_phone";
+    static final String COL_SHOP_PHONE = "shop_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
     static final String COL_SERVER_SHOP_ID = "server_shop_id";
     static final String COL_CREATION_DATE = "creation_date";
@@ -144,8 +144,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_ORDER_STATUS_NAME = "status_name";
     static final String COL_SHOP_NAME = "shop_name";
     static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
+    static final String COL_OPENING_TIME = "opening_time";
+    static final String COL_CLOSING_TIME = "closing_time";
 
-    private final static int DATABASE_VERSION = 7;
+    private final static int DATABASE_VERSION = 8;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -263,7 +265,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE shops ( " +
                 "server_shop_id INTEGER PRIMARY KEY, " +
                 "shop_name TEXT, " +
-                "shop_phone TEXT ) ");
+                "shop_phone TEXT, " +
+                "opening_time TEXT, " +
+                "closing_time TEXT ) ");
 
         db.execSQL("CREATE TABLE orders ( " +
                 "server_order_id INTEGER PRIMARY KEY, " +
@@ -301,6 +305,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //SELECT QUERIES
+
+    //SHOPS
+    Cursor getShopById(int serverShopId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_SHOPS
+                    + " where " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     //ORDERS
 
@@ -1462,6 +1481,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_SHOP_ID, shop.getServerShopId());
         contentValues.put(COL_SHOP_PHONE, shop.getShopPhone());
         contentValues.put(COL_SHOP_NAME, shop.getShopName());
+        contentValues.put(COL_OPENING_TIME, shop.getOpeningTime());
+        contentValues.put(COL_CLOSING_TIME, shop.getClosingTime());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

@@ -33,6 +33,7 @@ import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.ShopsDataManager;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
@@ -60,9 +61,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private int selectedShopId;
     private RecyclerView rvCategoriesToOrder;
-    //private Dialog dialog;
     private GridLayoutManager glm;
-    private NumberPicker pickerDay;
     private String[] collectTimes;
 
     @Override
@@ -120,12 +119,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
         Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
 
-        final String[] days = getDays();
-        collectTimes = getCollectTimes(0);
 
+        ShopsDataManager shopsDataManager = new ShopsDataManager(this);
+        final Shop shop = shopsDataManager.getShopById(selectedShopId);
+
+
+        final String[] days = getDays(shop.getClosingTime());
         pickerDay.setMinValue(0);
         pickerDay.setMaxValue(days.length - 1);
         pickerDay.setDisplayedValues(days);
+
+        collectTimes = getCollectTimes(days[0], shop.getOpeningTime(), shop.getClosingTime());
 
         pickerTime.setMinValue(0);
         pickerTime.setMaxValue(collectTimes.length - 1);
@@ -151,7 +155,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                collectTimes = getCollectTimes(newVal);
+                collectTimes = getCollectTimes(days[newVal], shop.getOpeningTime(), shop.getClosingTime());
                 pickerTime.setDisplayedValues(null);
                 pickerTime.setMaxValue(collectTimes.length - 1);
                 pickerTime.setDisplayedValues(collectTimes);
@@ -188,31 +192,58 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     }
 
 
-    private String[] getDays() {
+    private String[] getDays(String closingTime) {
         final String[] weekdays = getResources().getStringArray(R.array.days);
+        Calendar calendar = Calendar.getInstance();
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
         String[] days = new String[7];
-        days[0] = getResources().getString(R.string.today);
-        days[1] = getResources().getString(R.string.tomorrow);
 
-        for (int i = 2; i < 7; i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, i);
-            days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 2) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+        if (Integer.parseInt(closingTime.substring(0, 2)) <= hourOfDay + 2) {
+            days[0] = getResources().getString(R.string.tomorrow);
+
+            for (int i = 1; i < days.length; i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, i);
+                days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 2) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+            }
+
+        } else {
+            days[0] = getResources().getString(R.string.today);
+            days[1] = getResources().getString(R.string.tomorrow);
+
+            for (int i = 2; i < days.length; i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, i);
+                days[i] = weekdays[(i + Calendar.DAY_OF_WEEK - 2) % 7] + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+            }
         }
+
+
         return days;
     }
 
-    private String[] getCollectTimes(int pickerDayValue) {
+    private String[] getCollectTimes(String pickerDayDisplayedValue, String openingTime, String closingTime) {
 
         String[] times;
 
-        if (pickerDayValue == 0) {
-            Calendar rightNow = Calendar.getInstance();
+        int minStart;
+        int maxEnd;
 
-            int start = rightNow.get(Calendar.HOUR_OF_DAY) + 2;
+        try {
+            minStart = Integer.parseInt(openingTime.substring(0, 2));
+            maxEnd = Integer.parseInt(closingTime.substring(0, 2));
+        } catch (NumberFormatException e) {
+            minStart = 9;
+            maxEnd = 23;
+        }
+
+
+        if (pickerDayDisplayedValue.equals(getResources().getString(R.string.today))) {
+            Calendar rightNow = Calendar.getInstance();
+            int start = Math.max(rightNow.get(Calendar.HOUR_OF_DAY) + 2, minStart);
             int end = start + 1;
 
-            times = new String[22 - start];
+            times = new String[maxEnd - start];
             times[0] = UtilsFunctions.to2digits(start) + ":00 - " + UtilsFunctions.to2digits(end) + ":00";
             for (int i = 1; i < times.length; i++) {
                 start = start + 1;
@@ -221,9 +252,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             }
 
         } else {
-            times = new String[13];
+            times = new String[maxEnd - minStart];
             for (int i = 0; i < times.length; i++) {
-                times[i] = UtilsFunctions.to2digits(i + 9) + ":00 - " + UtilsFunctions.to2digits(i + 10) + ":00";
+                times[i] = UtilsFunctions.to2digits(i + minStart) + ":00 - " + UtilsFunctions.to2digits(i + minStart + 1) + ":00";
             }
 
         }
