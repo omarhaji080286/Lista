@@ -59,7 +59,6 @@ public class Order {
     }
 
     public String getDisplayedCollectTime(Context context){
-        String displayedCollectTime;
         String day = "empty";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
