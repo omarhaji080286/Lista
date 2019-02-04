@@ -16,6 +16,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,7 +120,7 @@ public class CategoriesToOrderAdapter
         final MultiAutoCompleteTextView editBrand = mView.findViewById(R.id.macBrand);
 
         final LinearLayout llQuantity = mView.findViewById(R.id.llQuantity);
-        final GridLayout gridAmounts = mView.findViewById(R.id.gridAmounts);
+        final NumberPicker pickerAmounts = mView.findViewById(R.id.pickerAmounts);
 
         final Button btnQuantity = mView.findViewById(R.id.btnQuantity);
         final Button btnGrammage = mView.findViewById(R.id.btnGrammage);
@@ -299,7 +300,7 @@ public class CategoriesToOrderAdapter
         btnQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
                 changeButtonsBackGround(view, btnGrammage, btnLitrage, btnDh);
             }
         });
@@ -307,21 +308,21 @@ public class CategoriesToOrderAdapter
         btnGrammage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnLitrage, btnDh);
             }
         });
         btnLitrage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnDh);
             }
         });
         btnDh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, gridAmounts);
+                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
                 changeButtonsBackGround(view, btnQuantity, btnGrammage, btnLitrage);
             }
         });
@@ -385,69 +386,53 @@ public class CategoriesToOrderAdapter
     }
 
     private void changeContent(final View view, LinearLayout llQuantity,
-                               final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand, final GridLayout gridAmounts) {
+                               final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand, final NumberPicker pickerAmounts) {
         switch (view.getId()) {
             case R.id.btnQuantity:
                 llQuantity.setVisibility(View.VISIBLE);
-                gridAmounts.setVisibility(View.GONE);
+                pickerAmounts.setVisibility(View.GONE);
                 break;
             default:
                 llQuantity.setVisibility(View.GONE);
-                gridAmounts.removeAllViews();
-                gridAmounts.setVisibility(View.VISIBLE);
-                gridAmounts.post(new Runnable() {
+                pickerAmounts.setVisibility(View.VISIBLE);
+                pickerAmounts.post(new Runnable() {
                     @Override
                     public void run() {
-                        setGridValues(view.getId(), gridAmounts, editBrand, txtGoodDesc);
+                        setPickerValues(view.getId(), pickerAmounts, txtGoodDesc, editBrand);
                     }
                 });
         }
     }
 
-    private void setGridValues(final int viewId, final GridLayout gridAmounts, final MultiAutoCompleteTextView editBrand, final TextView txtGoodDesc) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        int gWidth = gridAmounts.getWidth();
-        int columnCount = gridAmounts.getColumnCount();
-        int marginGridCell = (int) context.getResources().getDimension(R.dimen.margin_grid_cell);
-        int w = gWidth / columnCount;
-        int h = (int) (w * 0.60);
-        final List<Amount> amounts = getUnitsValues(viewId);
+    private void setPickerValues(int viewId, final NumberPicker pickerAmounts, final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand) {
+        List<Amount> amounts = getUnitsValues(viewId);
+        final String[] amountsStr = amountsToString(amounts);
+        pickerAmounts.setDisplayedValues(null);
+        pickerAmounts.setMaxValue(amountsStr.length - 1);
+        pickerAmounts.setDisplayedValues(amountsStr);
 
-        for (int i = 0; i < amounts.size(); i++) {
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.setGravity(Gravity.CENTER);
-            params.setMargins(0, 0, marginGridCell, marginGridCell);
-            params.width = w;
-            params.height = h;
-            final View childAmount = inflater.inflate(R.layout.item_amount_in_grid, null);
-
-            final Amount amount = amounts.get(i);
-            final TextView tvTitle = childAmount.findViewById(R.id.txtAmount);
-            tvTitle.setText(amount.getAmountValue());
-            childAmount.setTag(amount.getAmountId());
-            childAmount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tvTitle.setBackgroundColor(context.getResources().getColor(R.color.colorGreen1));
-                    refreshGoodDesc(gridAmounts, amount, amounts, editBrand, txtGoodDesc);
-                }
-            });
-            gridAmounts.addView(childAmount, params);
-        }
+        pickerAmounts.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
+                refreshGoodDesc(amountsStr[newVal], editBrand, txtGoodDesc);
+            }
+        });
     }
 
-    private void refreshGoodDesc(GridLayout gridAmounts, Amount amount, List<Amount> amounts,
-                                 MultiAutoCompleteTextView editBrand, TextView txtGoodDesc) {
+    private void refreshGoodDesc(String amountStr, MultiAutoCompleteTextView editBrand, TextView txtGoodDesc) {
 
-        for (int j = 0; j < amounts.size(); j++) {
-            if (amounts.get(j).getAmountId() != amount.getAmountId())
-                gridAmounts.getChildAt(j).findViewById(R.id.txtAmount).setBackgroundColor(context.getResources().getColor(R.color.colorBlue1));
-        }
-
-        amountValue = amount.getAmountValue();
+        amountValue = amountStr;
         String goodDesc = "( " + editBrand.getText().toString() + " " + amountValue + " )";
         txtGoodDesc.setText(goodDesc);
 
+    }
+
+    private String[] amountsToString(List<Amount> amounts) {
+        String[] amountsStr = new String[amounts.size()];
+        for (int i = 0; i < amounts.size(); i++) {
+            amountsStr[i] = amounts.get(i).getAmountValue();
+        }
+        return amountsStr;
     }
 
     private void changeButtonsBackGround(View view, Button btn1, Button btn2, Button btn3) {

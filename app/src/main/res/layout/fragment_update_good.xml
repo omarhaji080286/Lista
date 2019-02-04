@@ -176,12 +176,11 @@
 
             </LinearLayout>
 
-            <GridLayout
-                android:id="@+id/gridAmounts"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnCount="4"
-                android:visibility="gone" />
+            <NumberPicker
+                android:id="@+id/pickerAmounts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
