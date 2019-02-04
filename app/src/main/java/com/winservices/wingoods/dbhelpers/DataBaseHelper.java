@@ -329,14 +329,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 case Order.NOT_CLOSED:
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED + ")"
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
                 case Order.CLOSED:
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED + ")"
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;

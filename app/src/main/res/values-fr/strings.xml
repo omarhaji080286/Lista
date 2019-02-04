@@ -140,5 +140,6 @@
     <string name="can_collect">Vous pouvez récupérer votre commande</string>
     <string name="completed">Clôturé</string>
     <string name="not_supported">Articles non disponibles</string>
+    <string name="ok">Ok</string>
 
 </resources>

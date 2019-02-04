@@ -3,6 +3,7 @@ package com.winservices.wingoods.viewholders;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
     public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime;
     public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported;
     public ConstraintLayout clContainer;
+    public Button btnCompleteOrder;
 
     public OrderVH(View itemView) {
         super(itemView);
@@ -31,6 +33,8 @@ public class OrderVH extends RecyclerView.ViewHolder {
         imgRead = itemView.findViewById(R.id.imgRead);
         imgAvailable = itemView.findViewById(R.id.imgAvailable);
         imgClosedOrNotSuported = itemView.findViewById(R.id.imgClosedOrNotSuported);
+        btnCompleteOrder = itemView.findViewById(R.id.btnCompleteOrder);
+
 
     }
 }

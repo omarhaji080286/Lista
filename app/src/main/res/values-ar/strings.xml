@@ -140,6 +140,7 @@
     <string name="can_collect">يمكنك الحصول على طلبك</string>
     <string name="completed">منجز</string>
     <string name="not_supported">العناصر غير متوفرة</string>
+    <string name="ok">Ok</string>
 
 
 </resources>

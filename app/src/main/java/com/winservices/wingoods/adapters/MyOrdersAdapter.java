@@ -3,14 +3,25 @@ package com.winservices.wingoods.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.activities.MyOrdersActivity;
 import com.winservices.wingoods.activities.OrderDetailsActivity;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.OrdersDataManager;
+import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.utils.Constants;
@@ -19,11 +30,17 @@ import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.OrderVH;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
+    private static final String TAG = MyOrdersActivity.class.getSimpleName();
     private Context context;
     private List<Order> orders = new ArrayList<>();
 
@@ -72,8 +89,27 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
             }
         });
 
+        holder.btnCompleteOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        completeOrder(order.getServerOrderId());
+                    }
+                });
+            }
+        });
+
+
+
         switch (order.getStatusId()){
             case Order.REGISTERED :
+                holder.btnCompleteOrder.setVisibility(View.GONE);
+                holder.imgRegistered.setVisibility(View.VISIBLE);
+                holder.imgRead.setVisibility(View.VISIBLE);
+                holder.imgAvailable.setVisibility(View.VISIBLE);
                 holder.imgRegistered.setImageResource(R.drawable.checked);
                 holder.imgRead.setImageResource(R.drawable.checked_gray);
                 holder.imgAvailable.setImageResource(R.drawable.checked_gray);
@@ -81,6 +117,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.txtOrderStatus.setText(context.getString(R.string.registered));
                 break;
             case Order.READ :
+                holder.btnCompleteOrder.setVisibility(View.GONE);
+                holder.imgRegistered.setVisibility(View.VISIBLE);
+                holder.imgRead.setVisibility(View.VISIBLE);
+                holder.imgAvailable.setVisibility(View.VISIBLE);
                 holder.imgRegistered.setImageResource(R.drawable.checked);
                 holder.imgRead.setImageResource(R.drawable.checked);
                 holder.imgAvailable.setImageResource(R.drawable.checked_gray);
@@ -89,6 +129,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
                 break;
             case Order.AVAILABLE :
+                holder.btnCompleteOrder.setVisibility(View.GONE);
+                holder.imgRegistered.setVisibility(View.VISIBLE);
+                holder.imgRead.setVisibility(View.VISIBLE);
+                holder.imgAvailable.setVisibility(View.VISIBLE);
                 holder.imgRegistered.setImageResource(R.drawable.checked);
                 holder.imgRead.setImageResource(R.drawable.checked);
                 holder.imgAvailable.setImageResource(R.drawable.checked);
@@ -97,6 +141,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
                 break;
             case Order.COMPLETED :
+                holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.GONE);
                 holder.imgRead.setVisibility(View.GONE);
                 holder.imgAvailable.setVisibility(View.GONE);
@@ -112,6 +157,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setImageResource(R.drawable.not_supported);
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.not_supported));
+                holder.btnCompleteOrder.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -120,4 +166,62 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     public int getItemCount() {
         return orders.size();
     }
+
+    private void completeOrder(final int serverOrderId) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_COMPLETE_ORDER,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Log.d(TAG, "onResponse error: " + message);
+                            } else {
+                                Log.d(TAG, "order completed: ");
+                            }
+                            SyncHelper.sync(context);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //dialog.dismiss();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonRequest", "" + getJSONForUpdateOrder(serverOrderId));
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+    }
+
+    private String getJSONForUpdateOrder(int serverOrderId) {
+        final JSONObject root = new JSONObject();
+        try {
+
+            root.put("server_order_id", serverOrderId);
+            root.put("status_id", Order.COMPLETED);
+
+            return root.toString(1);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't format JSON");
+        }
+
+        return null;
+    }
+
+
 }
