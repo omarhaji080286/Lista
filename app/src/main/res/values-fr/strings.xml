@@ -135,5 +135,10 @@
     <string name="date">Date :</string>
     <string name="items">Nb d\'articles :</string>
     <string name="forTime">Pour :</string>
+    <string name="registered">Enregistré</string>
+    <string name="read">Lu par le magasin</string>
+    <string name="can_collect">Vous pouvez récupérer votre commande</string>
+    <string name="completed">Clôturé</string>
+    <string name="not_supported">Articles non disponibles</string>
 
 </resources>

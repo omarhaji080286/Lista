@@ -53,9 +53,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
         holder.txtCollectTime.setText(order.getDisplayedCollectTime(context));
-
-        String collectTime ;
-
         Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
         holder.imgShop.setImageBitmap(bitmap);
 
@@ -74,6 +71,49 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
             }
         });
+
+        switch (order.getStatusId()){
+            case Order.REGISTERED :
+                holder.imgRegistered.setImageResource(R.drawable.checked);
+                holder.imgRead.setImageResource(R.drawable.checked_gray);
+                holder.imgAvailable.setImageResource(R.drawable.checked_gray);
+                holder.imgClosedOrNotSuported.setVisibility(View.GONE);
+                holder.txtOrderStatus.setText(context.getString(R.string.registered));
+                break;
+            case Order.READ :
+                holder.imgRegistered.setImageResource(R.drawable.checked);
+                holder.imgRead.setImageResource(R.drawable.checked);
+                holder.imgAvailable.setImageResource(R.drawable.checked_gray);
+                holder.imgClosedOrNotSuported.setVisibility(View.GONE);
+                holder.txtOrderStatus.setText(context.getString(R.string.read));
+
+                break;
+            case Order.AVAILABLE :
+                holder.imgRegistered.setImageResource(R.drawable.checked);
+                holder.imgRead.setImageResource(R.drawable.checked);
+                holder.imgAvailable.setImageResource(R.drawable.checked);
+                holder.imgClosedOrNotSuported.setVisibility(View.GONE);
+                holder.txtOrderStatus.setText(context.getString(R.string.can_collect));
+
+                break;
+            case Order.COMPLETED :
+                holder.imgRegistered.setVisibility(View.GONE);
+                holder.imgRead.setVisibility(View.GONE);
+                holder.imgAvailable.setVisibility(View.GONE);
+                holder.imgClosedOrNotSuported.setImageResource(R.drawable.completed);
+                holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
+                holder.txtOrderStatus.setText(context.getString(R.string.completed));
+
+                break;
+            case Order.NOT_SUPPORTED:
+                holder.imgRegistered.setVisibility(View.GONE);
+                holder.imgRead.setVisibility(View.GONE);
+                holder.imgAvailable.setVisibility(View.GONE);
+                holder.imgClosedOrNotSuported.setImageResource(R.drawable.not_supported);
+                holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
+                holder.txtOrderStatus.setText(context.getString(R.string.not_supported));
+                break;
+        }
     }
 
     @Override

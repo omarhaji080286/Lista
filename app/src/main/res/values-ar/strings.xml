@@ -135,6 +135,11 @@
     <string name="date">التاريخ :</string>
     <string name="items">العناصر :</string>
     <string name="forTime">من أجل :</string>
+    <string name="registered">مسجل</string>
+    <string name="read">تلاه المحل</string>
+    <string name="can_collect">يمكنك الحصول على طلبك</string>
+    <string name="completed">منجز</string>
+    <string name="not_supported">العناصر غير متوفرة</string>
 
 
 </resources>
