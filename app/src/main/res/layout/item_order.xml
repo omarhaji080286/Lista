@@ -84,13 +84,17 @@
             <TextView
                 android:id="@+id/txt_order_status"
                 style="@style/TextInOrder"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/status"
                 android:textStyle="bold"
+                android:singleLine="false"
+                android:scrollHorizontally="false"
                 app:layout_constraintStart_toEndOf="@+id/linlayStatusImg"
                 app:layout_constraintTop_toTopOf="@+id/linlayStatusImg"
-                app:layout_constraintBottom_toBottomOf="@+id/linlayStatusImg"/>
+                app:layout_constraintBottom_toBottomOf="@+id/linlayStatusImg"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="start"/>
 
             <TextView
                 android:id="@+id/label_order_id"

@@ -41,10 +41,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
-
-    // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
-
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
@@ -84,9 +80,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_CO_USER_PHONE = "co_user_phone";
     static final String COL_START_TIME = "start_time";
     static final String COL_END_TIME = "end_time";
-
-
-
+    static final String COL_SHOP_PHONE = "shop_phone";
+    static final String COL_SERVER_SHOP_ID = "server_shop_id";
+    static final String COL_CREATION_DATE = "creation_date";
+    static final String COL_ORDER_STATUS_ID = "status_id";
+    static final String COL_ORDER_STATUS_NAME = "status_name";
+    static final String COL_SHOP_NAME = "shop_name";
+    static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
+    static final String COL_OPENING_TIME = "opening_time";
+    static final String COL_CLOSING_TIME = "closing_time";
+    // Lista LOCAL (compte root)
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
@@ -109,7 +113,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
     public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST + "uploadUserImage.php";
-
     public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
@@ -134,19 +137,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_PASSWORD = "password";
     private static final String COL_USERNAME = "user_name";
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
-
     private static final String COL_USER_PHONE = "user_phone";
-    static final String COL_SHOP_PHONE = "shop_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
-    static final String COL_SERVER_SHOP_ID = "server_shop_id";
-    static final String COL_CREATION_DATE = "creation_date";
-    static final String COL_ORDER_STATUS_ID = "status_id";
-    static final String COL_ORDER_STATUS_NAME = "status_name";
-    static final String COL_SHOP_NAME = "shop_name";
-    static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
-    static final String COL_OPENING_TIME = "opening_time";
-    static final String COL_CLOSING_TIME = "closing_time";
-
     private final static int DATABASE_VERSION = 8;
 
     private static DataBaseHelper instance;
@@ -327,23 +319,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
-            switch (groupedStatus){
-                case Order.ALL :
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+            switch (groupedStatus) {
+                case Order.ALL:
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                            + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
-                case Order.NOT_CLOSED :
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+                case Order.NOT_CLOSED:
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID +" NOT IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED +")"
-                            + " AND " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED + ")"
+                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
-                case Order.CLOSED :
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS +".* ," + TABLE_SHOPS+"."+COL_SHOP_NAME
+                case Order.CLOSED:
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID +" IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED +")"
-                            + " AND " + TABLE_ORDERS+"."+COL_SERVER_SHOP_ID+"="+TABLE_ORDERS+"."+COL_SERVER_SHOP_ID, null);
+                            + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.NOT_SUPPORTED + "," + Order.COMPLETED + ")"
+                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
 
             }
