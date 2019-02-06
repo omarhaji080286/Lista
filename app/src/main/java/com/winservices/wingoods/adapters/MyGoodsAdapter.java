@@ -106,6 +106,8 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             public void onClick(View view) {
 
 
+                if (good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
+
                 good.setToBuy(!goodItem.isToBuy());
                 goodItem.setToBuy(!goodItem.isToBuy());
                 good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
@@ -472,7 +474,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                        storeDescription(editBrand.getText().toString(), category.getDCategoryId());
+                            storeDescription(editBrand.getText().toString(), category.getDCategoryId());
                         }
                     });
                 }

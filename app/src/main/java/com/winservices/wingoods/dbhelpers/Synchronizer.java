@@ -391,12 +391,14 @@ public class Synchronizer {
             int serverCategoryId = JSONGood.getInt("serverCategoryId");
             int quantityLevelId = 0;
             int categoryId = categoriesDataProvider.getCategoryByServerCategoryId(serverCategoryId).getCategoryId();
+            int usesNumber = JSONGood.getInt("uses_number");
 
             Good good = new Good(goodName, categoryId, quantityLevelId, (isToBuy==1),
                     sync, email, serverGoodId, serverCategoryId);
             good.setGoodDesc(goodDesc);
             good.setIsOrdered(isOrdered);
             good.setCrudStatus(crudStatus);
+            good.setUsesNumber(usesNumber);
 
             dataManager.addGood(good);
 

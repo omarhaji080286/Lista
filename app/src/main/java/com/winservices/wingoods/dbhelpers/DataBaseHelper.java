@@ -141,7 +141,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
     static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
     static final String COL_SHOP_TYPE_NAME = "shop_type_name";
-    private final static int DATABASE_VERSION = 10;
+    static final String COL_USES_NUMBER = "uses_number";
+
+    private final static int DATABASE_VERSION = 1;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -233,6 +235,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "crud_status INTEGER, " +
                 "server_good_id INTEGER, " +
                 "is_ordered INTEGER, " +
+                "uses_number INTEGER, " +
                 "FOREIGN KEY (category_id) REFERENCES categories (category_id)) ");
 
         db.execSQL("CREATE TABLE received_invitations ( " +
@@ -1264,6 +1267,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
         contentValues.put(COL_GOOD_DESC, good.getGoodDesc());
         contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
+        contentValues.put(COL_USES_NUMBER, good.getUsesNumber());
 
         int affectedRows = 0;
         db.beginTransaction();
@@ -1698,6 +1702,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_CRUD_STATUS, good.getCrudStatus());
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
         contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
+        contentValues.put(COL_USES_NUMBER, good.getUsesNumber());
 
         long result = db.insert(TABLE_GOODS, null, contentValues);
         return (result != -1);
