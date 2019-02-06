@@ -91,9 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="95"
-            android:ems="10"
+            android:maxLength="13"
             android:hint="@string/your_firend_phone"
-            android:text="+212666285728"
             android:inputType="phone"
             android:textSize="15sp"/>
 

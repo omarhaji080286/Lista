@@ -15,7 +15,7 @@
         android:id="@+id/txt_city_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="Nom de la ville "
+        android:text="@string/city"
         android:layout_weight="90"
         android:gravity="center_vertical"
         android:layout_marginEnd="10dp"/>

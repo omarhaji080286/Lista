@@ -133,13 +133,13 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 }
 
                 //TODO - remove comment for release
-                /*coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
+                coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
 
                 if ((coUserPhone.length() != 13) || (!coUserPhone.substring(0, 4).equals("+212"))) {
                     editPhoneInvitation.setError(getString(R.string.not_valid_phone));
                     editPhoneInvitation.requestFocus();
                     return;
-                }*/
+                }
 
                 if (coUserPhone.equals(user.getUserPhone())) {
                     editPhoneInvitation.setError(getString(R.string.cant_invite_your_self));
