@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -43,6 +44,8 @@ public class OrdersDataManager {
                 String shopName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_NAME));
                 String startTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_START_TIME));
                 String endTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_END_TIME));
+                int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+                String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
 
                 Order order = new Order();
                 order.setServerOrderId(serverOrderId);
@@ -55,6 +58,9 @@ public class OrdersDataManager {
                 shop.setServerShopId(serverShopId);
                 shop.setShopName(shopName);
                 order.setShop(shop);
+
+                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                shop.setShopType(shopType);
 
                 order.setCreationDate(creationDate);
                 order.setStatusId(statusId);

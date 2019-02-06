@@ -139,7 +139,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
     private static final String COL_USER_PHONE = "user_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
-    private final static int DATABASE_VERSION = 8;
+    static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
+    static final String COL_SHOP_TYPE_NAME = "shop_type_name";
+    private final static int DATABASE_VERSION = 10;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -259,7 +261,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "shop_name TEXT, " +
                 "shop_phone TEXT, " +
                 "opening_time TEXT, " +
-                "closing_time TEXT ) ");
+                "closing_time TEXT," +
+                "server_shop_type_id INTEGER," +
+                "shop_type_name TEXT ) ");
 
         db.execSQL("CREATE TABLE orders ( " +
                 "server_order_id INTEGER PRIMARY KEY, " +
@@ -321,20 +325,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         try {
             switch (groupedStatus) {
                 case Order.ALL:
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
                 case Order.NOT_CLOSED:
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
                 case Order.CLOSED:
-                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + "." + COL_SHOP_NAME
+                    res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
@@ -1478,6 +1482,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SHOP_NAME, shop.getShopName());
         contentValues.put(COL_OPENING_TIME, shop.getOpeningTime());
         contentValues.put(COL_CLOSING_TIME, shop.getClosingTime());
+        contentValues.put(COL_SERVER_SHOP_TYPE_ID, shop.getShopType().getServerShopTypeId());
+        contentValues.put(COL_SHOP_TYPE_NAME, shop.getShopType().getShopTypeName());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

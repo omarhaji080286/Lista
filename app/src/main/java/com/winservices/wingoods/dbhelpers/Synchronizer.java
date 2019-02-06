@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
@@ -21,8 +22,10 @@ import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONArray;
@@ -259,6 +262,11 @@ public class Synchronizer {
             String shopPhone = JSONShop.getString("shop_phone");
             String openingTime = JSONShop.getString("opening_time");
             String closingTime = JSONShop.getString("closing_time");
+            int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
+            String shopTypeName = JSONShop.getString("shop_type_name");
+            String shopTypeImage = JSONShop.getString("shop_type_image");
+
+            SharedPrefManager.getInstance(context).storeImageToFile(shopTypeImage, "png", ShopType.PREFIX_SHOP_TYPE, serverShopTypeId);
 
             Shop shop = new Shop();
             shop.setServerShopId(serverShopId);
@@ -266,6 +274,9 @@ public class Synchronizer {
             shop.setShopPhone(shopPhone);
             shop.setOpeningTime(openingTime);
             shop.setClosingTime(closingTime);
+
+            ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+            shop.setShopType(shopType);
 
             shopsDataManager.insertShop(shop);
         }

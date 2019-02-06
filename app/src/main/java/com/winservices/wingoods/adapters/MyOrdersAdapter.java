@@ -24,6 +24,7 @@ import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -67,11 +68,17 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm");
 
         holder.txtShopName.setText(order.getShop().getShopName());
+        holder.txtShopTypeName.setText(order.getShop().getShopType().getShopTypeName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
         holder.txtCollectTime.setText(order.getDisplayedCollectTime(context));
         Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
         holder.imgShop.setImageBitmap(bitmap);
+
+        String path = SharedPrefManager.getInstance(context).getImagePath(ShopType.PREFIX_SHOP_TYPE+order.getShop().getShopType().getServerShopTypeId());
+        Bitmap bitmapShopType = UtilsFunctions.getOrientedBitmap(path);
+        holder.imgShopType.setImageBitmap(bitmapShopType);
+
 
         holder.txtDate.setText(dateString);
         holder.txtOrderStatus.setText(order.getStatusName());

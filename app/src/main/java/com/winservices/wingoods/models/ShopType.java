@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class ShopType implements Serializable {
 
+    public static final String PREFIX_SHOP_TYPE = "shop_type_";
     private int serverShopTypeId;
     private String shopTypeName;
 
