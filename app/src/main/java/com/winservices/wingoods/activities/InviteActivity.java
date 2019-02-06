@@ -132,7 +132,6 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                //TODO - remove comment for release
                 coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
 
                 if ((coUserPhone.length() != 13) || (!coUserPhone.substring(0, 4).equals("+212"))) {

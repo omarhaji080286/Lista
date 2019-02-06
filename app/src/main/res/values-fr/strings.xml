@@ -141,5 +141,6 @@
     <string name="completed">Clôturé</string>
     <string name="not_supported">Articles non disponibles</string>
     <string name="ok">Ok</string>
+    <string name="invite_phone_hint">+2121234567890</string>
 
 </resources>

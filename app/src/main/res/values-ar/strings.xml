@@ -141,6 +141,7 @@
     <string name="completed">منجز</string>
     <string name="not_supported">العناصر غير متوفرة</string>
     <string name="ok">Ok</string>
+    <string name="invite_phone_hint">+2121234567890</string>
 
 
 </resources>

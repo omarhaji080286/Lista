@@ -153,6 +153,7 @@
     <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="collect_time">Collect time</string>
     <string name="ok">Ok</string>
+    <string name="invite_phone_hint">+2121234567890</string>
 
 
 </resources>
