@@ -471,6 +471,7 @@ public class SignUpFragment extends Fragment {
                 String email = currentUser.getEmail();
                 int serverCategoryId = jsonGood.getInt("server_category_id");
                 int isOrdered = jsonGood.getInt("is_ordered");
+                int usesNumber = jsonGood.getInt("uses_number");
                 int crudStatus = 0;
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
@@ -482,6 +483,7 @@ public class SignUpFragment extends Fragment {
                 good.setCrudStatus(crudStatus);
                 good.setGoodDesc(goodDesc);
                 good.setIsOrdered(isOrdered);
+                good.setUsesNumber(usesNumber);
 
                 DataManager dataManager = new DataManager(getContext());
                 dataManager.addGood(good);

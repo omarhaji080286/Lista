@@ -9,6 +9,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ import java.util.List;
 
 public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupViewHolder, GoodItemViewHolder> {
 
+    private final static String TAG = MyGoodsAdapter.class.getSimpleName();
     private Context context;
     private List<CategoryGroup> groups;
     private String amountValue = "";
@@ -105,8 +107,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             @Override
             public void onClick(View view) {
 
-
-                if (good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
+                if (!good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
 
                 good.setToBuy(!goodItem.isToBuy());
                 goodItem.setToBuy(!goodItem.isToBuy());

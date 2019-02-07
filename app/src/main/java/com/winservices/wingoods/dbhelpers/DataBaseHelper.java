@@ -1131,7 +1131,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " AND " + TABLE_GOODS + "." + COL_CATEGORY_ID + "=" + categoryId
                     + " AND " + TABLE_GOODS + "." + COL_GOOD_NAME + " LIKE '%" + searchGoodName + "%'"
                     + " AND " + TABLE_GOODS + "." + COL_CRUD_STATUS + " <> -1"
-                    + " ORDER BY " + TABLE_GOODS + "." + COL_IS_TO_BUY + " DESC, " + TABLE_GOODS + "." + COL_GOOD_NAME + " ASC";
+                    + " ORDER BY "  + TABLE_GOODS + "." + COL_IS_TO_BUY + " DESC, "
+                                    + TABLE_GOODS + "." + COL_USES_NUMBER + " DESC, "
+                                    + TABLE_GOODS + "." + COL_GOOD_NAME + " ASC";
 
             res = db.rawQuery(sql, null);
         } catch (Exception e) {
@@ -1683,7 +1685,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return (affectedRows1 + affectedRows2 > 0);
     }
-
 
     //GOODS
 
