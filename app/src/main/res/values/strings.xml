@@ -154,6 +154,9 @@
     <string name="collect_time">Collect time</string>
     <string name="ok">Ok</string>
     <string name="invite_phone_hint">+2121234567890</string>
+    <string name="no_shops_referenced">There is currently no referenced store to process items on your list. We are working hard to improve that! Thank you for your understanding.</string>
+    <string name="got_it">Got it</string>
+    <string name="referenced_shops">Referenced shops</string>
 
 
 </resources>

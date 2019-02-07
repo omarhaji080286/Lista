@@ -3,8 +3,10 @@ package com.winservices.wingoods.activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -21,13 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.SectionPageAdapter;
+import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.fragments.ShopsList;
@@ -99,14 +101,15 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                            }
+            }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
 
         Intent intent = getIntent();
@@ -154,7 +157,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         mSectionPageAdapter.addFragment(shopsList, "");
         mViewPager.setAdapter(mSectionPageAdapter);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(0);
         setupTabIcons();
 
     }
@@ -201,6 +204,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                             if (error) {
                                 //error in server
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             } else {
                                 JSONArray JSONShops = jsonObject.getJSONArray("shops");
 
@@ -212,7 +216,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                                     JSONArray JSONDCategories = JSONShop.getJSONArray("d_categories");
                                     List<DefaultCategory> defaultCategories = new ArrayList<>();
                                     for (int j = 0; j < JSONDCategories.length(); j++) {
-                                        JSONObject JSONDCategory =  JSONDCategories.getJSONObject(j);
+                                        JSONObject JSONDCategory = JSONDCategories.getJSONObject(j);
                                         int dCategoryId = JSONDCategory.getInt("d_category_id");
                                         String dCategoryName = JSONDCategory.getString("d_category_name");
 
@@ -246,15 +250,30 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                                     shop.setCountry(country);
 
                                     String shopImage = JSONShop.getString("shop_image");
-                                    if (!shopImage.equals(Shop.DEFAULT_IMAGE)) storeImageToFile(shopImage, shop.getServerShopId());
+                                    if (!shopImage.equals(Shop.DEFAULT_IMAGE))
+                                        storeImageToFile(shopImage, shop.getServerShopId());
 
-                                    shops.add(shop);
-                                    shopsFirstList.add(shop);
+                                    if (orderInitiated){
+                                        if (canGetOrder(shop)) {
+                                            shops.add(shop);
+                                            shopsFirstList.add(shop);
+                                        }
+                                    } else {
+                                        shops.add(shop);
+                                        shopsFirstList.add(shop);
+                                    }
+
+
                                 }
-                                setupViewPagerAdapter(shops);
+                                dialog.dismiss();
+                                if (shops.size() > 0) {
+                                    setupViewPagerAdapter(shops);
+                                } else {
+                                   setDialogNoShops();
+                                }
                             }
 
-                            dialog.dismiss();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -276,6 +295,22 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
             }
         };
         RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+    }
+
+    private void setDialogNoShops() {
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Objects.requireNonNull(this));
+        builder.setMessage(R.string.no_shops_referenced);
+        builder.setTitle(R.string.referenced_shops);
+
+        builder.setNegativeButton(R.string.got_it, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        Dialog dialog = builder.create();
+        dialog.show();
+
     }
 
     @Override
@@ -372,11 +407,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
     private void storeImageToFile(final String shopImage, final int serverShopId) {
         final String file_path = this.getFilesDir().getPath() + "/jpg";
-        Thread thread = new Thread(){
+        Thread thread = new Thread() {
             public void run() {
                 File dir = new File(file_path);
                 if (!dir.exists()) {
-                    if (dir.mkdirs()){
+                    if (dir.mkdirs()) {
                         Log.d(TAG, "Files created");
                     }
                 }
@@ -391,10 +426,17 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                SharedPrefManager.getInstance(getApplicationContext()).storeShopImagePath(serverShopId,file.getAbsolutePath());
+                SharedPrefManager.getInstance(getApplicationContext()).storeShopImagePath(serverShopId, file.getAbsolutePath());
             }
         };
         thread.run();
+
+    }
+
+    private boolean canGetOrder(Shop shop) {
+
+        CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
+        return (categoriesDataProvider.getCategoriesForOrder(shop).size() > 0);
 
     }
 

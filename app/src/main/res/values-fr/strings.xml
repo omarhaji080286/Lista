@@ -142,5 +142,9 @@
     <string name="not_supported">Articles non disponibles</string>
     <string name="ok">Ok</string>
     <string name="invite_phone_hint">+2121234567890</string>
+    <string name="no_shops_referenced">Il n\'y a actuellement aucun magasin référencé pour traiter les éléments de votre liste. Nous travaillons dur pour améliorer cela. Merci de votre compréhension.</string>
+    <string name="got_it">Ok</string>
+    <string name="referenced_shops">Magasins référencés</string>
+
 
 </resources>

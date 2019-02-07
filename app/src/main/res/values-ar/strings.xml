@@ -142,6 +142,9 @@
     <string name="not_supported">العناصر غير متوفرة</string>
     <string name="ok">Ok</string>
     <string name="invite_phone_hint">+2121234567890</string>
+    <string name="no_shops_referenced">لا يوجد حاليًا متجر للاستجابة لالعناصر في قائمتكم. نحن نعمل بجد لتحسين ذلك. شكرا لتفهمكم.</string>
+    <string name="got_it">Got it</string>
+    <string name="referenced_shops">المحلات المشار إليها</string>
 
 
 </resources>
