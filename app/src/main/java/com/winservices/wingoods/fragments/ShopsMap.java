@@ -384,7 +384,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
         for (int i = 0; i < shops.size(); i++) {
             final Shop shop = shops.get(i);
-            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+            BitmapDescriptor bitmapDescriptor;
 
             switch (shop.getShopType().getServerShopTypeId()) {
                 case 1:
@@ -396,6 +396,9 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                 case 3:
                     bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                     break;
+                default :
+                    bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+
             }
 
             final MarkerOptions shopOptions = new MarkerOptions()
