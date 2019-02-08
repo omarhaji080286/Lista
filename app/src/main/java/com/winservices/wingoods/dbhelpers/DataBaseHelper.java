@@ -143,7 +143,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_TYPE_NAME = "shop_type_name";
     static final String COL_USES_NUMBER = "uses_number";
 
-    private final static int DATABASE_VERSION = 1;
+    private final static int DATABASE_VERSION = 2;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;

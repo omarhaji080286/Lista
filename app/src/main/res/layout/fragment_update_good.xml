@@ -16,7 +16,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"
         android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,11 +25,12 @@
             android:id="@+id/txtGoodName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="false"
             android:layout_gravity="center"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="2dp"
             android:text="@string/good_s_name"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -38,8 +39,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text=" ( ? )"
+            android:singleLine="false"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:visibility="visible" />
 
     </LinearLayout>
