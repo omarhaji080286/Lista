@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isThereGoodToBuy()) {
+                    SyncHelper.sync(context);
                     Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
                     intent.putExtra(Constants.ORDER_INITIATED, true);
                     startActivity(intent);
