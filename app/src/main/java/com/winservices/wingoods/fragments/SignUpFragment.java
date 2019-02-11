@@ -348,7 +348,9 @@ public class SignUpFragment extends Fragment {
                         public void onErrorResponse(VolleyError error) {
                             //Registering FAILED
                             dialog.dismiss();
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                            error.printStackTrace();
+                            Log.d(TAG, "onErrorResponse: " + error.toString());
                         }
                     }
             ) {

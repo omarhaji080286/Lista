@@ -40,7 +40,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
 
     //Lista ALPHA (compte karimamrani0909@gmail.com)
-    //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+    private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
+
+    // Lista LOCAL (compte root)
+    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
+
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
     public static final String GOODS_NUMBER = "goods_number";
@@ -89,8 +94,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
-    // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
@@ -143,7 +147,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_TYPE_NAME = "shop_type_name";
     static final String COL_USES_NUMBER = "uses_number";
 
-    private final static int DATABASE_VERSION = 2;
+    private final static int DATABASE_VERSION = 3;
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
