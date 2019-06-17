@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:maxLength="9"
-                android:hint="123456789"
+                android:text="666285728"
                 android:visibility="visible"/>
 
         </LinearLayout>
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/EditText"
-            android:hint="@string/user_name_hint"
+            android:text="@string/user_name_hint"
             android:layout_margin="@dimen/text_content_margin_large"
             android:maxLength="30"/>
 
@@ -103,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="@string/hint_verification_code"
+            android:text="@string/hint_verification_code"
             android:maxLength="6"
             android:visibility="gone" />
 

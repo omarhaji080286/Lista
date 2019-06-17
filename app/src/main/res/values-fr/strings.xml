@@ -103,7 +103,7 @@
     <string name="hint_phone_number">123456789</string>
     <string name="hint_verification_code">123456</string>
     <string name="sms_sent_to">Nous venons d\'envoyer un SMS à&#160;</string>
-    <string name="with_code">&#160;avec un code pour à saisir ici </string>
+    <string name="with_code">&#160;avec un code à saisir ici </string>
     <string name="phone_required">Le numéro de téléphone est obligatoire</string>
     <string name="not_valid_phone">Prière d\'entrer un numéro de téléphone valide</string>
     <string name="code_required">Prière de saisir le code de vérification</string>
