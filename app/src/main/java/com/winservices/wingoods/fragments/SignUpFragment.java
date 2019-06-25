@@ -290,8 +290,9 @@ public class SignUpFragment extends Fragment {
                                 String message = jsonObject.getString("message");
                                 dialog.dismiss();
                                 if (error) {
-                                    //Registring FAILED
+                                    //Registering FAILED
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "onResponse: Registering failed, " + message);
                                 } else {
                                     //Registering OK
                                     //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
