@@ -107,7 +107,7 @@
     <string name="phone_required">Le numéro de téléphone est obligatoire</string>
     <string name="not_valid_phone">Prière d\'entrer un numéro de téléphone valide</string>
     <string name="code_required">Prière de saisir le code de vérification</string>
-    <string name="not_valid_code">VLE code de vérification saisi est incorrecte</string>
+    <string name="not_valid_code">Le code de vérification saisi est incorrecte</string>
     <string name="signing_up">Enregistrement en cours…</string>
     <string name="welcome_msg">Bienvenue à Lista</string>
     <string name="your_firend_phone">Le téléphone de votre ami</string>
@@ -145,6 +145,7 @@
     <string name="no_shops_referenced">Il n\'y a actuellement aucun magasin référencé pour traiter les éléments de votre liste. Nous travaillons dur pour améliorer cela. Merci de votre compréhension.</string>
     <string name="got_it">Ok</string>
     <string name="referenced_shops">Magasins référencés</string>
+    <string name="sign_in_failed">L\'enregistrement a échoué. Veuillez réessayer.</string>
 
 
 </resources>

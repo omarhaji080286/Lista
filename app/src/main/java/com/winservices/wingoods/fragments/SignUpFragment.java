@@ -86,6 +86,7 @@ public class SignUpFragment extends Fragment {
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
             Log.d(TAG, "onVerificationCompleted: " + phoneAuthCredential.getSignInMethod());
             signInWithPhoneAuthCredential(phoneAuthCredential);
+            //registerUserToAppServer(getContext(), getUserToRegister());
         }
 
         @Override
@@ -238,31 +239,12 @@ public class SignUpFragment extends Fragment {
                                     Log.d(TAG, "signIn success - phone number : " + user.getPhoneNumber());
                                     Log.d(TAG, "signIn success - display name : " + user.getDisplayName());
 
-                                    String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
-
-                                    //TODO - for for release
-                                    String phone = "+212" + editPhone.getText().toString();
-
-                                    //TODO - For test
-                                    //String phone = "+16" + editPhone.getText().toString();
-
-                                    String userName = editUserName.getText().toString();
-
-                                    User userToRegister = new User(phone);
-
-                                    userToRegister.setFcmToken(fcmToken);
-                                    userToRegister.setSignUpType(DataBaseHelper.LISTA);
-
-                                    //TODO - must adjust
-                                    userToRegister.setEmail(phone + "@gmail.com");
-                                    userToRegister.setUserName(userName);
-
-                                    registerUserToAppServer(getContext(), userToRegister);
+                                    registerUserToAppServer(getContext(), getUserToRegister());
 
                                 } else {
                                     Log.d(TAG, "signIn : failure = " + task.getException());
-                                    editVerifCode.setError(getString(R.string.not_valid_code));
-                                    editVerifCode.requestFocus();
+                                    Toast.makeText(getContext(), R.string.sign_in_failed, Toast.LENGTH_SHORT).show();
+
                                     /*if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                                     }*/
@@ -270,6 +252,29 @@ public class SignUpFragment extends Fragment {
                             }
                         }
                 );
+    }
+
+    private User getUserToRegister(){
+        String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
+
+        //TODO - for for release
+        String phone = "+212" + editPhone.getText().toString();
+
+        //TODO - For test
+        //String phone = "+16" + editPhone.getText().toString();
+
+        String userName = editUserName.getText().toString();
+
+        User userToRegister = new User(phone);
+
+        userToRegister.setFcmToken(fcmToken);
+        userToRegister.setSignUpType(DataBaseHelper.LISTA);
+
+        //TODO - must adjust
+        userToRegister.setEmail(phone + "@gmail.com");
+        userToRegister.setUserName(userName);
+
+        return userToRegister;
     }
 
     public void registerUserToAppServer(final Context context, final User userToRegister) {
@@ -288,11 +293,13 @@ public class SignUpFragment extends Fragment {
                                 JSONObject jsonObject = new JSONObject(response);
                                 boolean error = jsonObject.getBoolean("error");
                                 String message = jsonObject.getString("message");
-                                dialog.dismiss();
+
                                 if (error) {
                                     //Registering FAILED
+                                    dialog.dismiss();
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                                     Log.d(TAG, "onResponse: Registering failed, " + message);
+
                                 } else {
                                     //Registering OK
                                     //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -339,6 +346,7 @@ public class SignUpFragment extends Fragment {
                                     Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
 
                                 }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
