@@ -51,6 +51,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // Lista LWS_PROD
     private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
 
+    private final static int DATABASE_VERSION = 4;
+
 
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
     public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
@@ -153,7 +155,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_TYPE_NAME = "shop_type_name";
     static final String COL_USES_NUMBER = "uses_number";
 
-    private final static int DATABASE_VERSION = 3;
+
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
