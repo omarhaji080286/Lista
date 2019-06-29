@@ -43,15 +43,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
 
     // Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
     // Lista LWS_PRE_PROD
     //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
 
     // Lista LWS_PROD
-    private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
+    //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
 
-    private final static int DATABASE_VERSION = 4;
+    private final static int DATABASE_VERSION = 5;
 
 
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -154,6 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
     static final String COL_SHOP_TYPE_NAME = "shop_type_name";
     static final String COL_USES_NUMBER = "uses_number";
+    static final String COL_VISIBILITY = "visibility";
 
 
 
@@ -278,6 +279,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "opening_time TEXT, " +
                 "closing_time TEXT," +
                 "server_shop_type_id INTEGER," +
+                "visibility INTEGER," +
                 "shop_type_name TEXT ) ");
 
         db.execSQL("CREATE TABLE orders ( " +
@@ -343,6 +345,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
                 case Order.NOT_CLOSED:
@@ -350,6 +353,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
                 case Order.CLOSED:
@@ -357,6 +361,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.COMPLETED + ")"
                             + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
 
@@ -1502,6 +1507,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_CLOSING_TIME, shop.getClosingTime());
         contentValues.put(COL_SERVER_SHOP_TYPE_ID, shop.getShopType().getServerShopTypeId());
         contentValues.put(COL_SHOP_TYPE_NAME, shop.getShopType().getShopTypeName());
+        contentValues.put(COL_VISIBILITY, shop.getVisibility());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

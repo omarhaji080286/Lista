@@ -42,6 +42,7 @@ public class Shop implements Parcelable {
     private List<DefaultCategory> defaultCategories;
     private String openingTime;
     private String closingTime;
+    private int visibility;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -55,6 +56,7 @@ public class Shop implements Parcelable {
         this.city = (City) input.readSerializable();
         this.country = (Country) input.readSerializable();
         this.defaultCategories = new ArrayList<>();
+        this.visibility = input.readInt();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
 
     }
@@ -182,6 +184,14 @@ public class Shop implements Parcelable {
         this.country = country;
     }
 
+    public int getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -200,6 +210,7 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(city);
         parcel.writeSerializable(country);
         parcel.writeTypedList(defaultCategories);
+        parcel.writeInt(visibility);
 
     }
 

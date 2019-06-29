@@ -265,6 +265,7 @@ public class Synchronizer {
             int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
             String shopTypeName = JSONShop.getString("shop_type_name");
             String shopTypeImage = JSONShop.getString("shop_type_image");
+            int visibility = JSONShop.getInt("visibility");
 
             SharedPrefManager.getInstance(context).storeImageToFile(shopTypeImage, "png", ShopType.PREFIX_SHOP_TYPE, serverShopTypeId);
 
@@ -274,6 +275,7 @@ public class Synchronizer {
             shop.setShopPhone(shopPhone);
             shop.setOpeningTime(openingTime);
             shop.setClosingTime(closingTime);
+            shop.setVisibility(visibility);
 
             ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
             shop.setShopType(shopType);

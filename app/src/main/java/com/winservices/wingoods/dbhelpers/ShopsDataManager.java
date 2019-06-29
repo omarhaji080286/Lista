@@ -31,6 +31,7 @@ public class ShopsDataManager {
         String shopPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_PHONE));
         String openingTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_OPENING_TIME));
         String closingTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CLOSING_TIME));
+        int visibility = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_VISIBILITY));
 
         Log.d(TAG, Constants.TAG_LISTA + "getShopById called");
         Shop shop = new Shop();
@@ -39,6 +40,7 @@ public class ShopsDataManager {
         shop.setShopPhone(shopPhone);
         shop.setOpeningTime(openingTime);
         shop.setClosingTime(closingTime);
+        shop.setVisibility(visibility);
 
         return shop;
 

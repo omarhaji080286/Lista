@@ -276,6 +276,9 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
+                        } finally {
+                            dialog.dismiss();
                         }
                     }
                 },
