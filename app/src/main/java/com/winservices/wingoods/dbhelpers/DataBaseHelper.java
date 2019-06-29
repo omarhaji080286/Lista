@@ -43,10 +43,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
 
     // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
     // Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
 
     // Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
@@ -344,7 +344,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 case Order.ALL:
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
-                            + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + " = " + TABLE_SHOPS + "." + COL_SERVER_SHOP_ID
                             + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
@@ -352,7 +352,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " NOT IN (" + Order.COMPLETED + ")"
-                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + " = " + TABLE_SHOPS + "." + COL_SERVER_SHOP_ID
                             + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
@@ -360,7 +360,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
                             + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
                             + " WHERE " + TABLE_ORDERS + "." + COL_ORDER_STATUS_ID + " IN (" + Order.COMPLETED + ")"
-                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + "=" + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID
+                            + " AND " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + " = " + TABLE_SHOPS + "." + COL_SERVER_SHOP_ID
                             + " AND " + TABLE_SHOPS + "." + COL_VISIBILITY + " = 1"
                             + " ORDER BY " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " DESC", null);
                     break;
