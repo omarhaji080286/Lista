@@ -36,22 +36,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ORDERED = "is_ordered";
 
 
-    //Lista DEV (compte omar.haji@gmail.com)
-    //private static final String HOST = "http://lista.onlinewebshop.net/webservices/";
-
-    //Lista ALPHA (compte karimamrani0909@gmail.com)
-    //private static final String HOST = "http://lista-alpha.onlinewebshop.net/webservices/";
-
     // Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
     // Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
 
     // Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
 
-    private final static int DATABASE_VERSION = 5;
+    private final static int DATABASE_VERSION = 6;
 
 
     public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -156,8 +150,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_USES_NUMBER = "uses_number";
     static final String COL_VISIBILITY = "visibility";
 
-
-
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
 
@@ -188,7 +180,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         this.db = db;
 
-        db.execSQL("CREATE TABLE users ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS users ( " +
                 "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "email TEXT, " +
                 "password TEXT, " +
@@ -201,7 +193,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "user_phone TEXT " +
                 ")");
 
-        db.execSQL("CREATE TABLE groups ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS groups ( " +
                 "group_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "group_name TEXT," +
                 "owner_email TEXT," +
@@ -210,7 +202,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "sync_status INTEGER " +
                 ")");
 
-        db.execSQL("CREATE TABLE co_users (" +
+        db.execSQL("CREATE TABLE IF NOT EXISTS co_users (" +
                 "co_user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "co_user_email TEXT, " +
                 "user_id INTEGER, " +
@@ -223,7 +215,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_user_id INTEGER, " +
                 "FOREIGN KEY (user_id) REFERENCES users (user_id)) ");
 
-        db.execSQL("CREATE TABLE categories ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS categories ( " +
                 "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "category_name TEXT, " +
                 "category_color INTEGER, " +
@@ -236,7 +228,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "d_category_id INTEGER, " +
                 "FOREIGN KEY (user_id) REFERENCES users (user_id) ) ");
 
-        db.execSQL("CREATE TABLE goods (" +
+        db.execSQL("CREATE TABLE IF NOT EXISTS goods (" +
                 "good_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "good_name TEXT, " +
                 "good_desc TEXT, " +
@@ -251,7 +243,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "uses_number INTEGER, " +
                 "FOREIGN KEY (category_id) REFERENCES categories (category_id)) ");
 
-        db.execSQL("CREATE TABLE received_invitations ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS received_invitations ( " +
                 "received_invitation_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "sender_phone TEXT, " +
                 "invitation_response INTEGER, " +
@@ -260,19 +252,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_co_user_id INTEGER, " +
                 "FOREIGN KEY (user_id) REFERENCES users (user_id)) ");
 
-        db.execSQL("CREATE TABLE amounts ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS amounts ( " +
                 "amount_id INTEGER PRIMARY KEY, " +
                 "amount_value TEXT, " +
                 "amount_type_id INTEGER, " +
                 "amount_type_name TEXT ) ");
 
-        db.execSQL("CREATE TABLE descriptions ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS descriptions ( " +
                 "device_desc_id INTEGER PRIMARY KEY, " +
                 "desc_id INTEGER, " +
                 "desc_value TEXT, " +
                 "d_category_id INTEGER ) ");
 
-        db.execSQL("CREATE TABLE shops ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS shops ( " +
                 "server_shop_id INTEGER PRIMARY KEY, " +
                 "shop_name TEXT, " +
                 "shop_phone TEXT, " +
@@ -282,7 +274,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "visibility INTEGER," +
                 "shop_type_name TEXT ) ");
 
-        db.execSQL("CREATE TABLE orders ( " +
+        db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
                 "server_order_id INTEGER PRIMARY KEY, " +
                 "server_user_id INTEGER, " +
                 "server_shop_id INTEGER, " +
@@ -301,17 +293,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        db.execSQL("DROP TABLE IF EXISTS goods ");
+        /*db.execSQL("DROP TABLE IF EXISTS goods ");
         db.execSQL("DROP TABLE IF EXISTS categories ");
         db.execSQL("DROP TABLE IF EXISTS co_users ");
         db.execSQL("DROP TABLE IF EXISTS received_invitations ");
-        db.execSQL("DROP TABLE IF EXISTS orders ");
+        db.execSQL("DROP TABLE IF EXISTS orders ");*/
         db.execSQL("DROP TABLE IF EXISTS shops ");
-        db.execSQL("DROP TABLE IF EXISTS users ");
+        /*db.execSQL("DROP TABLE IF EXISTS users ");
         db.execSQL("DROP TABLE IF EXISTS groups ");
         db.execSQL("DROP TABLE IF EXISTS amounts ");
-        db.execSQL("DROP TABLE IF EXISTS descriptions ");
-
+        db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
 
         onCreate(db);
     }
