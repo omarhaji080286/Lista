@@ -18,9 +18,10 @@ public class Constants {
 
     public static final int JOB_ID = 101;
 
-    public static final String SHOP_TYPE_1 ="Alimentation generale";
+    public static final String SHOP_TYPE_1 ="Boutique généraliste";
     public static final String SHOP_TYPE_2 ="Boucher";
-    public static final String SHOP_TYPE_3 ="Fruits & Legumes";
+    public static final String SHOP_TYPE_3 ="Fruits & Légumes";
+    public static final String SHOP_TYPE_4 ="Entretien & Hygiène";
 
     public static final String CATEGORY_TO_ORDER = "serverCategoryIdToOrder";
     public static final String ACTION_REFRESH_AFTER_SYNC = "action_refresh_after_sync";

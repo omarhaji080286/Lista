@@ -55,8 +55,8 @@ public class Shop implements Parcelable {
         this.shopType = (ShopType) input.readSerializable();
         this.city = (City) input.readSerializable();
         this.country = (Country) input.readSerializable();
-        this.defaultCategories = new ArrayList<>();
         this.visibility = input.readInt();
+        this.defaultCategories = new ArrayList<>();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
 
     }
@@ -209,8 +209,9 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(shopType);
         parcel.writeSerializable(city);
         parcel.writeSerializable(country);
-        parcel.writeTypedList(defaultCategories);
         parcel.writeInt(visibility);
+        parcel.writeTypedList(defaultCategories);
+
 
     }
 

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 
 import java.io.File;
@@ -112,6 +113,12 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(User.PREFIX_USER + serverUserId, null);
     }
+
+    public String getShopTypeImagePath(int shopTypeId){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(ShopType.PREFIX_SHOP_TYPE + shopTypeId, null);
+    }
+
 
     /*public void storeConsultedOrderId(String key, int value){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);

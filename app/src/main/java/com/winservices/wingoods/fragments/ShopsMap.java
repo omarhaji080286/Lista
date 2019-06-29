@@ -207,17 +207,38 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         shopName.setText(marker.getTitle());
                         shopType.setText(marker.getSnippet());
 
+                        Bitmap bitmap = null;
+
+                        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(getContext());
+                        String iconPath;
+
+
                         switch (marker.getSnippet()) {
                             case Constants.SHOP_TYPE_1:
-                                shopIcon.setImageResource(R.drawable.others);
+                                iconPath = sharedPrefManager.getShopTypeImagePath(1);
+                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                shopIcon.setImageBitmap(bitmap);
                                 break;
                             case Constants.SHOP_TYPE_2:
-                                shopIcon.setImageResource(R.drawable.steak);
+                                iconPath = sharedPrefManager.getShopTypeImagePath(2);
+                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                shopIcon.setImageBitmap(bitmap);
                                 break;
                             case Constants.SHOP_TYPE_3:
-                                shopIcon.setImageResource(R.drawable.fruit);
+                                iconPath = sharedPrefManager.getShopTypeImagePath(9);
+                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                shopIcon.setImageBitmap(bitmap);
+                                break;
+                            case Constants.SHOP_TYPE_4:
+                                iconPath = sharedPrefManager.getShopTypeImagePath(6);
+                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                shopIcon.setImageBitmap(bitmap);
+                                break;
+                            default:
+                                shopIcon.setImageResource(R.drawable.others);
                                 break;
                         }
+
 
                         return v;
                     }
@@ -301,85 +322,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
     }
 
-    /*private void getShopDetails(final int serverShopId) {
-        currentShop = new Shop();
-        currentShop.setServerShopId(serverShopId);
-
-        final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), getContext(), R.string.loading).create();
-        dialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                DataBaseHelper.HOST_URL_GET_SHOP_DETAILS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //error in server
-                                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                            } else {
-                                JSONObject JSONShop = jsonObject.getJSONObject("shopDetails");
-
-                                JSONArray JSONCategories = JSONShop.getJSONArray("d_categories");
-                                Log.d(TAG, "categories: " + JSONCategories.toString());
-
-                                int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
-                                String shopTypeName = JSONShop.getString("shop_type_name");
-                                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
-
-                                int serverCountryId = JSONShop.getInt("server_country_id");
-                                String countryName = JSONShop.getString("country_name");
-                                Country country = new Country(serverCountryId, countryName);
-
-                                int serverCityId = JSONShop.getInt("server_city_id");
-                                String cityName = JSONShop.getString("city_name");
-                                City city = new City(serverCityId, cityName, country);
-
-                                currentShop.setServerShopId(JSONShop.getInt("server_shop_id"));
-                                currentShop.setShopName(JSONShop.getString("shop_name"));
-                                currentShop.setShopAdress(JSONShop.getString("shop_adress"));
-                                currentShop.setShopEmail(JSONShop.getString("shop_email"));
-                                currentShop.setShopPhone(JSONShop.getString("shop_phone"));
-                                currentShop.setLongitude(JSONShop.getDouble("longitude"));
-                                currentShop.setLatitude(JSONShop.getDouble("latitude"));
-                                currentShop.setShopType(shopType);
-                                currentShop.setCity(city);
-                                currentShop.setCountry(country);
-
-                                //String shopImage = JSONShop.getString("shop_image");
-                                //SharedPrefManager.storeImageToFile(shopImage, shop.getServerShopId());
-
-                            }
-
-                            dialog.dismiss();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        dialog.dismiss();
-                        Log.d(TAG, "error on response: " + error.getMessage());
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> postData = new HashMap<>();
-                postData.put("jsonRequest", String.valueOf(serverShopId));
-                return postData;
-            }
-        };
-        RequestHandler.getInstance(getContext()).addToRequestQueue(stringRequest);
-
-    }*/
-
     private void addShopsMarkers(final ArrayList<Shop> shops) {
 
         for (int i = 0; i < shops.size(); i++) {
@@ -398,7 +340,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     break;
                 default :
                     bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-
             }
 
             final MarkerOptions shopOptions = new MarkerOptions()
