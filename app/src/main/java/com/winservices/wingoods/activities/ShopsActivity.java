@@ -249,10 +249,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                                     shop.setCity(city);
                                     shop.setCountry(country);
 
-                                    String shopImage = JSONShop.getString("shop_image");
-                                    if (!shopImage.equals(Shop.DEFAULT_IMAGE))
-                                        storeImageToFile(shopImage, shop.getServerShopId());
-
                                     if (orderInitiated){
                                         if (canGetOrder(shop)) {
                                             shops.add(shop);
@@ -407,34 +403,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         return true;
     }
 
-
-    private void storeImageToFile(final String shopImage, final int serverShopId) {
-        final String file_path = this.getFilesDir().getPath() + "/jpg";
-        Thread thread = new Thread() {
-            public void run() {
-                File dir = new File(file_path);
-                if (!dir.exists()) {
-                    if (dir.mkdirs()) {
-                        Log.d(TAG, "Files created");
-                    }
-                }
-                File file = new File(dir, "lista_pro_shop_" + serverShopId + ".jpg");
-                FileOutputStream fOut;
-                try {
-                    fOut = new FileOutputStream(file);
-                    Bitmap bitmap = UtilsFunctions.stringToBitmap(getApplicationContext(), shopImage);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
-                    fOut.flush();
-                    fOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                SharedPrefManager.getInstance(getApplicationContext()).storeShopImagePath(serverShopId, file.getAbsolutePath());
-            }
-        };
-        thread.run();
-
-    }
 
     private boolean canGetOrder(Shop shop) {
 

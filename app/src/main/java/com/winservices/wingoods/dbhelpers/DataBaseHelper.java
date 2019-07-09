@@ -41,18 +41,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     // Lista LWS_PRE_PROD
     private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
+    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/uploads/shopImages/";
 
     // Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
+    //public static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/uploads/shopImages/";
 
     private final static int DATABASE_VERSION = 6;
 
 
-    public static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
-    public static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
-    public static final String GOODS_NUMBER = "goods_number";
+    static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
+    static final String ORDERED_GOODS_NUMBER = "ordered_goods_number";
+    static final String GOODS_NUMBER = "goods_number";
     public static final String TAG = "DataBaseHelper";
-    public static final String COL_SERVER_USER_ID = "server_user_id";
+    static final String COL_SERVER_USER_ID = "server_user_id";
     static final String COL_EMAIL = "email";
     static final String COL_USERID = "user_id";
     static final String COL_SYNC_STATUS = "sync_status";
@@ -60,7 +62,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_CATEGORY_ICON = "category_icon";
     static final String COL_CRUD_STATUS = "crud_status";
     static final String COL_D_CATEGORY_ID = "d_category_id";
-    static final String COL_AMOUNT_ID = "amount_id";
+    private static final String COL_AMOUNT_ID = "amount_id";
     static final String COL_AMOUNT_VALUE = "amount_value";
     static final String COL_AMOUNT_TYPE_ID = "amount_type_id";
     static final String COL_AMOUNT_TYPE_NAME = "amount_type_name";
@@ -79,9 +81,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_GOOD_DESC = "good_desc";
     static final String COL_QUANTITY_LEVEL = "quantity_level";
     static final String COL_IS_TO_BUY = "is_to_buy";
-    static final String RED_GOODS = "red_goods";
-    static final String ORANGE_GOODS = "orange_goods";
-    static final String GREEN_GOODS = "green_goods";
+    private static final String RED_GOODS = "red_goods";
+    private static final String ORANGE_GOODS = "orange_goods";
+    private static final String GREEN_GOODS = "green_goods";
     static final String COL_DESC_ID = "desc_id";
     static final String COL_DESC_VALUE = "desc_value";
     static final String COL_CO_USER_PHONE = "co_user_phone";
@@ -116,7 +118,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String HOST_URL_ADD_ORDER = HOST + "addOrder.php";
     public static final String HOST_URL_GET_ORDERS = HOST + "getOrders.php";
     public static final String HOST_URL_GET_ORDERED_GOODS = HOST + "getOrderedGoods.php";
-    public static final String HOST_URL_SYNC = HOST + "sync.php";
+    static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
     public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST + "uploadUserImage.php";
     public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
@@ -145,10 +147,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
     private static final String COL_USER_PHONE = "user_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
-    static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
-    static final String COL_SHOP_TYPE_NAME = "shop_type_name";
-    static final String COL_USES_NUMBER = "uses_number";
+    private static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
+    private static final String COL_SHOP_TYPE_NAME = "shop_type_name";
+    private static final String COL_USES_NUMBER = "uses_number";
     static final String COL_VISIBILITY = "visibility";
+    static final String COL_SERVER_COUNTRY_ID = "server_country_id";
+    static final String COL_COUNTRY_NAME = "country_name";
+    static final String COL_SERVER_CITY_ID = "server_city_id";
+    static final String COL_CITY_NAME = "city_name";
+    static final String COL_SHOP_ADRESS = "shop_adress";
+    static final String COL_SHOP_EMAIL = "shop_email";
+    static final String COL_LONGITUDE = "longitude";
+    static final String COL_LATITUDE = "latitude";
+
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -269,15 +280,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "shop_name TEXT, " +
                 "shop_phone TEXT, " +
                 "opening_time TEXT, " +
-                "closing_time TEXT," +
-                "server_shop_type_id INTEGER," +
-                "visibility INTEGER," +
+                "closing_time TEXT, " +
+                "server_shop_type_id INTEGER, " +
+                "visibility INTEGER, " +
+                "server_country_id INTEGER, " +
+                "country_name TEXT, " +
+                "server_city_id INTEGER, " +
+                "city_name TEXT, " +
+                "shop_adress TEXT, " +
+                "shop_email TEXT, " +
+                "longitude REAL, " +
+                "latitude REAL, " +
+                "server_shop_type_id INTEGER, " +
                 "shop_type_name TEXT ) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
-                "server_order_id INTEGER PRIMARY KEY, " +
                 "server_user_id INTEGER, " +
                 "server_shop_id INTEGER, " +
+                "server_order_id INTEGER PRIMARY KEY, " +
                 "creation_date TEXT ," +
                 "status_id INTEGER, " +
                 "status_name TEXT," +
@@ -296,8 +316,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         /*db.execSQL("DROP TABLE IF EXISTS goods ");
         db.execSQL("DROP TABLE IF EXISTS categories ");
         db.execSQL("DROP TABLE IF EXISTS co_users ");
-        db.execSQL("DROP TABLE IF EXISTS received_invitations ");
-        db.execSQL("DROP TABLE IF EXISTS orders ");*/
+        db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
+        db.execSQL("DROP TABLE IF EXISTS orders ");
         db.execSQL("DROP TABLE IF EXISTS shops ");
         /*db.execSQL("DROP TABLE IF EXISTS users ");
         db.execSQL("DROP TABLE IF EXISTS groups ");
@@ -318,6 +338,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             res = db.rawQuery("select " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
                     + " from " + TABLE_SHOPS
                     + " where " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Cursor getAllShops(){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_SHOPS, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

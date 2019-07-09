@@ -23,7 +23,10 @@ public class SyncHelper {
         protected Void doInBackground(Void... voids) {
             UsersDataManager usersDataManager = new UsersDataManager(synchronizer.context);
             User user = usersDataManager.getCurrentUser();
-            if (user != null) synchronizer.sync();
+            if (user != null){
+                synchronizer.sync();
+                synchronizer.loadShopImages();
+            }
             return null;
         }
     }

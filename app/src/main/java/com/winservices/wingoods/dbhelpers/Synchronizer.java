@@ -3,6 +3,8 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,7 +17,9 @@ import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.Country;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
@@ -52,6 +56,22 @@ public class Synchronizer {
         this.context = context;
     }
 
+
+    public void loadShopImages(){
+
+        ShopsDataManager shopsDataManager = new ShopsDataManager(context);
+        List<Shop> shops = shopsDataManager.getAllShops();
+
+        Bitmap shopImg = null;
+        for (int i = 0; i < shops.size(); i++) {
+            String shopImgUrl = DataBaseHelper.SHOPS_IMG_URL + shops.get(i).getServerShopId() + ".jpg";
+
+            shopImg = UtilsFunctions.loadImageFromUrl(shopImgUrl);
+            UtilsFunctions.storeImageToFile(context, shopImg, shops.get(i).getServerShopId());
+
+        }
+
+    }
 
     public void sync(){
         Log.d(LOG_TAG, "Starting sync");
@@ -267,17 +287,31 @@ public class Synchronizer {
             String shopTypeImage = JSONShop.getString("shop_type_image");
             int visibility = JSONShop.getInt("visibility");
 
+            ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
             SharedPrefManager.getInstance(context).storeImageToFile(shopTypeImage, "png", ShopType.PREFIX_SHOP_TYPE, serverShopTypeId);
 
+            int serverCountryId = JSONShop.getInt("server_country_id");
+            String countryName = JSONShop.getString("country_name");
+            Country country = new Country(serverCountryId, countryName);
+
+            int serverCityId = JSONShop.getInt("server_city_id");
+            String cityName = JSONShop.getString("city_name");
+            City city = new City(serverCityId, cityName, country);
+
             Shop shop = new Shop();
+
             shop.setServerShopId(serverShopId);
             shop.setShopName(shopName);
             shop.setShopPhone(shopPhone);
             shop.setOpeningTime(openingTime);
             shop.setClosingTime(closingTime);
             shop.setVisibility(visibility);
-
-            ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+            shop.setShopAdress(JSONShop.getString("shop_adress"));
+            shop.setShopEmail(JSONShop.getString("shop_email"));
+            shop.setLongitude(JSONShop.getDouble("longitude"));
+            shop.setLatitude(JSONShop.getDouble("latitude"));
+            shop.setCity(city);
+            shop.setCountry(country);
             shop.setShopType(shopType);
 
             shopsDataManager.insertShop(shop);

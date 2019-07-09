@@ -23,10 +23,15 @@ import android.widget.TextView;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -292,5 +297,66 @@ public class UtilsFunctions {
         }
         return day;
     }
+
+    public static Bitmap loadImageFromUrl(String url) {
+
+        Bitmap bm;
+        try {
+
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+
+            conn.connect();
+            InputStream is = null;
+            try
+            {
+                is= conn.getInputStream();
+            }catch(IOException e)
+            {
+                return null;
+            }
+
+            BufferedInputStream bis = new BufferedInputStream(is);
+
+            bm = BitmapFactory.decodeStream(bis);
+
+            bis.close();
+            is.close();
+
+        } catch (IOException e) {
+            return null;
+        }
+
+        return  Bitmap.createScaledBitmap(bm,100,100,true);
+
+    }
+
+    public static void storeImageToFile(final Context context, final Bitmap shopImg, final int serverShopId) {
+        final String file_path = context.getFilesDir().getPath() + "/jpg";
+        Thread thread = new Thread() {
+            public void run() {
+                File dir = new File(file_path);
+                if (!dir.exists()) {
+                    if (dir.mkdirs()) {
+                        Log.d(TAG, "Files created");
+                    }
+                }
+                File file = new File(dir, "lista_pro_shop_" + serverShopId + ".jpg");
+                FileOutputStream fOut;
+                try {
+                    fOut = new FileOutputStream(file);
+                    shopImg.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
+                    fOut.flush();
+                    fOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                SharedPrefManager.getInstance(context).storeShopImagePath(serverShopId, file.getAbsolutePath());
+            }
+        };
+        thread.run();
+
+    }
+
 
 }
