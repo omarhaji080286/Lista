@@ -10,6 +10,7 @@ import android.util.Log;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
@@ -47,7 +48,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
     //public static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 6;
+    private final static int DATABASE_VERSION = 7;
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -147,9 +148,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COL_DEVICE_DESC_ID = "device_desc_id";
     private static final String COL_USER_PHONE = "user_phone";
     private static final String COL_SERVER_ORDER_ID = "server_order_id";
-    private static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
-    private static final String COL_SHOP_TYPE_NAME = "shop_type_name";
-    private static final String COL_USES_NUMBER = "uses_number";
+    static final String COL_SERVER_SHOP_TYPE_ID = "server_shop_type_id";
+    static final String COL_SHOP_TYPE_NAME = "shop_type_name";
+    static final String COL_USES_NUMBER = "uses_number";
     static final String COL_VISIBILITY = "visibility";
     static final String COL_SERVER_COUNTRY_ID = "server_country_id";
     static final String COL_COUNTRY_NAME = "country_name";
@@ -159,7 +160,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_EMAIL = "shop_email";
     static final String COL_LONGITUDE = "longitude";
     static final String COL_LATITUDE = "latitude";
-
+    static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
+    static final String COL_D_CATEGORY_NAME = "d_category_name";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -291,7 +293,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "shop_email TEXT, " +
                 "longitude REAL, " +
                 "latitude REAL, " +
-                "server_shop_type_id INTEGER, " +
                 "shop_type_name TEXT ) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
@@ -304,6 +305,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "ordered_goods_number INTEGER," +
                 "start_time TEXT," +
                 "end_time TEXT," +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS default_categories ( " +
+                "d_category_id INTEGER, " +
+                "d_category_name TEXT, " +
+                "server_shop_id INTEGER, " +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
     }
@@ -330,6 +337,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //SELECT QUERIES
 
+    //DEFAULT CATEGORIES
+    Cursor getDCategoriesByShopId(int serverShopId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_D_CATEGORY_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_DEFAULT_CATEGORIES
+                    + " WHERE " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
     //SHOPS
     Cursor getShopById(int serverShopId) {
         db = this.getReadableDatabase();
@@ -349,7 +371,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor res = null;
         try {
             res = db.rawQuery("select " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
-                    + " from " + TABLE_SHOPS, null);
+                    + " from " + TABLE_SHOPS
+                    + " Where " + COL_VISIBILITY + " = 1", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1499,6 +1522,41 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //CREATE QUERIES
 
+    //DEFAULT CATEGORIES
+    boolean insertDefaultCategory(DefaultCategory defaultCategory) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_D_CATEGORY_ID, defaultCategory.getDCategoryId());
+        contentValues.put(COL_D_CATEGORY_NAME, defaultCategory.getDCategoryName());
+        contentValues.put(COL_SERVER_SHOP_ID, defaultCategory.getServerShopId());
+
+        long result = db.insertWithOnConflict(TABLE_DEFAULT_CATEGORIES, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    boolean deleteAllDefaultCategories() {
+        db = this.getWritableDatabase();
+        db.beginTransaction();
+        boolean res = false;
+        try {
+
+            db.execSQL("DELETE FROM " + TABLE_DEFAULT_CATEGORIES
+                    + " WHERE 1 ");
+
+            res = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            res = false;
+        } finally {
+            if (res) db.setTransactionSuccessful();
+            db.endTransaction();
+        }
+        return res;
+    }
+
+
+
     //ORDERS
 
     boolean insertOrder(Order order) {
@@ -1531,6 +1589,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_SHOP_TYPE_ID, shop.getShopType().getServerShopTypeId());
         contentValues.put(COL_SHOP_TYPE_NAME, shop.getShopType().getShopTypeName());
         contentValues.put(COL_VISIBILITY, shop.getVisibility());
+        contentValues.put(COL_SERVER_COUNTRY_ID, shop.getCountry().getServerCountryId());
+        contentValues.put(COL_COUNTRY_NAME, shop.getCountry().getCountryName());
+        contentValues.put(COL_SERVER_CITY_ID, shop.getCity().getServerCityId());
+        contentValues.put(COL_CITY_NAME, shop.getCity().getCityName());
+        contentValues.put(COL_SHOP_ADRESS, shop.getShopAdress());
+        contentValues.put(COL_SHOP_EMAIL, shop.getShopEmail());
+        contentValues.put(COL_LONGITUDE, shop.getLongitude());
+        contentValues.put(COL_LATITUDE, shop.getLatitude());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

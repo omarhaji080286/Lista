@@ -20,6 +20,7 @@ import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
@@ -36,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -275,6 +277,8 @@ public class Synchronizer {
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(context);
 
+        shopsDataManager.deleteAllDefaultCategories();
+
         for (int i = 0; i < jsonShops.length(); i++) {
             JSONObject JSONShop = jsonShops.getJSONObject(i);
             int serverShopId = JSONShop.getInt("server_shop_id");
@@ -298,6 +302,18 @@ public class Synchronizer {
             String cityName = JSONShop.getString("city_name");
             City city = new City(serverCityId, cityName, country);
 
+            JSONArray JSONDCategories = JSONShop.getJSONArray("d_categories");
+            List<DefaultCategory> defaultCategories = new ArrayList<>();
+            for (int j = 0; j < JSONDCategories.length(); j++) {
+                JSONObject JSONDCategory = JSONDCategories.getJSONObject(j);
+                int dCategoryId = JSONDCategory.getInt("d_category_id");
+                String dCategoryName = JSONDCategory.getString("d_category_name");
+
+                DefaultCategory dCategory = new DefaultCategory(dCategoryId, dCategoryName);
+                dCategory.setServerShopId(serverShopId);
+                defaultCategories.add(dCategory);
+            }
+
             Shop shop = new Shop();
 
             shop.setServerShopId(serverShopId);
@@ -313,6 +329,7 @@ public class Synchronizer {
             shop.setCity(city);
             shop.setCountry(country);
             shop.setShopType(shopType);
+            shop.setDefaultCategories(defaultCategories);
 
             shopsDataManager.insertShop(shop);
         }

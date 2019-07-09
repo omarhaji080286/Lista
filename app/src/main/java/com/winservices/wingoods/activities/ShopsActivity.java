@@ -32,6 +32,7 @@ import com.winservices.wingoods.adapters.SectionPageAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
+import com.winservices.wingoods.dbhelpers.ShopsDataManager;
 import com.winservices.wingoods.fragments.ShopsList;
 import com.winservices.wingoods.fragments.ShopsMap;
 import com.winservices.wingoods.models.City;
@@ -121,7 +122,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
             llFooter.setVisibility(View.GONE);
         }
 
-        getShops(this);
+        getShops();
 
     }
 
@@ -190,111 +191,34 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         this.finish();
     }
 
-    private void getShops(final Context context) {
+    private void getShops(){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                DataBaseHelper.HOST_URL_GET_SHOPS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //error in server
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            } else {
-                                JSONArray JSONShops = jsonObject.getJSONArray("shops");
+        ShopsDataManager shopsDataManager = new ShopsDataManager(this);
+        List<Shop> shopsFromDB = shopsDataManager.getAllShops();
 
-                                for (int i = 0; i < JSONShops.length(); i++) {
-                                    JSONObject JSONShop = JSONShops.getJSONObject(i);
-
-                                    Shop shop = new Shop();
-
-                                    JSONArray JSONDCategories = JSONShop.getJSONArray("d_categories");
-                                    List<DefaultCategory> defaultCategories = new ArrayList<>();
-                                    for (int j = 0; j < JSONDCategories.length(); j++) {
-                                        JSONObject JSONDCategory = JSONDCategories.getJSONObject(j);
-                                        int dCategoryId = JSONDCategory.getInt("d_category_id");
-                                        String dCategoryName = JSONDCategory.getString("d_category_name");
-
-                                        DefaultCategory dCategory = new DefaultCategory(dCategoryId, dCategoryName);
-                                        defaultCategories.add(dCategory);
-                                    }
-
-                                    shop.setDefaultCategories(defaultCategories);
-
-                                    int serverShopTypeId = JSONShop.getInt("server_shop_type_id");
-                                    String shopTypeName = JSONShop.getString("shop_type_name");
-                                    ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
-
-                                    int serverCountryId = JSONShop.getInt("server_country_id");
-                                    String countryName = JSONShop.getString("country_name");
-                                    Country country = new Country(serverCountryId, countryName);
-
-                                    int serverCityId = JSONShop.getInt("server_city_id");
-                                    String cityName = JSONShop.getString("city_name");
-                                    City city = new City(serverCityId, cityName, country);
-
-                                    shop.setServerShopId(JSONShop.getInt("server_shop_id"));
-                                    shop.setShopName(JSONShop.getString("shop_name"));
-                                    shop.setShopAdress(JSONShop.getString("shop_adress"));
-                                    shop.setShopEmail(JSONShop.getString("shop_email"));
-                                    shop.setShopPhone(JSONShop.getString("shop_phone"));
-                                    shop.setLongitude(JSONShop.getDouble("longitude"));
-                                    shop.setLatitude(JSONShop.getDouble("latitude"));
-                                    shop.setShopType(shopType);
-                                    shop.setCity(city);
-                                    shop.setCountry(country);
-
-                                    if (orderInitiated){
-                                        if (canGetOrder(shop)) {
-                                            shops.add(shop);
-                                            shopsFirstList.add(shop);
-                                        }
-                                    } else {
-                                        shops.add(shop);
-                                        shopsFirstList.add(shop);
-                                    }
-
-
-                                }
-                                dialog.dismiss();
-                                if (shops.size() > 0) {
-                                    setupViewPagerAdapter(shops);
-                                } else {
-                                   setDialogNoShops();
-                                }
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
-                        } finally {
-                            dialog.dismiss();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                        dialog.dismiss();
-                    }
+        for (int i = 0; i < shopsFromDB.size(); i++) {
+            Shop shop = shopsFromDB.get(i);
+            if (orderInitiated){
+                if (canGetOrder(shop)) {
+                    shops.add(shop);
+                    shopsFirstList.add(shop);
                 }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> postData = new HashMap<>();
-                postData.put("jsonData", "");
-                return postData;
+            } else {
+                shops.add(shop);
+                shopsFirstList.add(shop);
             }
-        };
-        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+        }
+        dialog.dismiss();
+
+        if (shops.size() > 0) {
+            setupViewPagerAdapter(shops);
+        } else {
+            setDialogNoShops();
+        }
+
+
     }
+
 
     private void setDialogNoShops() {
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Objects.requireNonNull(this));

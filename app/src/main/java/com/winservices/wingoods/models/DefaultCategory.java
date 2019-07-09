@@ -20,10 +20,19 @@ public class DefaultCategory implements Parcelable {
 
     private int dCategoryId;
     private String dCategoryName;
+    private int serverShopId;
 
     public DefaultCategory(int dCategoryId, String dCategoryName) {
         this.dCategoryId = dCategoryId;
         this.dCategoryName = dCategoryName;
+    }
+
+    public int getServerShopId() {
+        return serverShopId;
+    }
+
+    public void setServerShopId(int serverShopId) {
+        this.serverShopId = serverShopId;
     }
 
     public int getDCategoryId() {

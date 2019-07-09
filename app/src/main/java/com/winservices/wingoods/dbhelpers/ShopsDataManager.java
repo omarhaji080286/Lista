@@ -5,7 +5,9 @@ import android.database.Cursor;
 
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,14 @@ public class ShopsDataManager {
 
     void insertShop(Shop shop) {
         db.insertShop(shop);
+        for (int i = 0; i < shop.getDefaultCategories().size(); i++) {
+            db.insertDefaultCategory(shop.getDefaultCategories().get(i));
+        }
+
+    }
+
+    public void deleteAllDefaultCategories(){
+        db.deleteAllDefaultCategories();
     }
 
     public Shop getShopById(int serverShopId) {
@@ -43,6 +53,8 @@ public class ShopsDataManager {
         String shopEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_EMAIL));
         double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LONGITUDE));
         double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
+        int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+        String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
 
         Shop shop = new Shop();
         shop.setServerShopId(serverShopId);
@@ -56,17 +68,44 @@ public class ShopsDataManager {
         shop.setLongitude(longitude);
         shop.setLatitude(latitude);
 
+        shop.setDefaultCategories(getDCategories(serverShopId));
+
         Country country = new Country(serverCountryId, countryName);
         shop.setCountry(country);
 
         City city = new City(serverCityId, cityName, country);
         shop.setCity(city);
 
+        ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+        shop.setShopType(shopType);
+
         return shop;
 
     }
 
-    List<Shop> getAllShops(){
+    private List<DefaultCategory> getDCategories(int serverShopId){
+        Cursor cursor = db.getDCategoriesByShopId(serverShopId);
+        List<DefaultCategory> dCategories = new ArrayList<>();
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                int dCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String dCategoryName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_D_CATEGORY_NAME));
+
+                DefaultCategory dCategory = new DefaultCategory();
+                dCategory.setServerShopId(serverShopId);
+                dCategory.setDCategoryId(dCategoryId);
+                dCategory.setDCategoryName(dCategoryName);
+
+                dCategories.add(dCategory);
+
+            }
+            cursor.close();
+        }
+        return dCategories;
+    }
+
+    public List<Shop> getAllShops(){
         Cursor cursor = db.getAllShops();
         List<Shop> shops = new ArrayList<>();
 
@@ -86,6 +125,8 @@ public class ShopsDataManager {
                 String shopEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_EMAIL));
                 double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LONGITUDE));
                 double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
+                int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+                String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
 
                 Shop shop = new Shop();
                 shop.setServerShopId(serverShopId);
@@ -104,6 +145,11 @@ public class ShopsDataManager {
 
                 City city = new City(serverCityId, cityName, country);
                 shop.setCity(city);
+
+                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                shop.setShopType(shopType);
+
+                shop.setDefaultCategories(getDCategories(serverShopId));
 
                 shops.add(shop);
             }
