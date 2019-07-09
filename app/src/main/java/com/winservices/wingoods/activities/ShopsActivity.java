@@ -422,7 +422,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
                 FileOutputStream fOut;
                 try {
                     fOut = new FileOutputStream(file);
-                    Bitmap bitmap = UtilsFunctions.stringToBitmap(shopImage);
+                    Bitmap bitmap = UtilsFunctions.stringToBitmap(getApplicationContext(), shopImage);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
                     fOut.flush();
                     fOut.close();

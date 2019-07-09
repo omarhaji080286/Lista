@@ -83,7 +83,7 @@ public class CategoriesToOrderAdapter
         Category category = categoriesDataProvider.getCategoryById(((CategoryGroup) group).getCategoryId());
 
         String imagePath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY + category.getDCategoryId());
-        Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+        Bitmap bitmap = UtilsFunctions.getPNG(imagePath);
 
         holder.imgCategory.setImageBitmap(bitmap);
         holder.txtCategoryName.setText(category.getCategoryName());

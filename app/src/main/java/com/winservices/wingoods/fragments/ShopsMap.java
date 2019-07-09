@@ -216,22 +216,22 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         switch (marker.getSnippet()) {
                             case Constants.SHOP_TYPE_1:
                                 iconPath = sharedPrefManager.getShopTypeImagePath(1);
-                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                bitmap = UtilsFunctions.getPNG(iconPath);
                                 shopIcon.setImageBitmap(bitmap);
                                 break;
                             case Constants.SHOP_TYPE_2:
                                 iconPath = sharedPrefManager.getShopTypeImagePath(2);
-                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                bitmap = UtilsFunctions.getPNG(iconPath);
                                 shopIcon.setImageBitmap(bitmap);
                                 break;
                             case Constants.SHOP_TYPE_3:
                                 iconPath = sharedPrefManager.getShopTypeImagePath(9);
-                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                bitmap = UtilsFunctions.getPNG(iconPath);
                                 shopIcon.setImageBitmap(bitmap);
                                 break;
                             case Constants.SHOP_TYPE_4:
                                 iconPath = sharedPrefManager.getShopTypeImagePath(6);
-                                bitmap = UtilsFunctions.getOrientedBitmap(iconPath);
+                                bitmap = UtilsFunctions.getPNG(iconPath);
                                 shopIcon.setImageBitmap(bitmap);
                                 break;
                             default:

@@ -76,7 +76,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.imgShop.setImageBitmap(bitmap);
 
         String path = SharedPrefManager.getInstance(context).getImagePath(ShopType.PREFIX_SHOP_TYPE+order.getShop().getShopType().getServerShopTypeId());
-        Bitmap bitmapShopType = UtilsFunctions.getOrientedBitmap(path);
+        Bitmap bitmapShopType = UtilsFunctions.getPNG(path);
         holder.imgShopType.setImageBitmap(bitmapShopType);
 
 

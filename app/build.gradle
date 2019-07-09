@@ -6,8 +6,8 @@ android {
         applicationId "com.winservices.wingoods"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 8
-        versionName "1.0.4"
+        versionCode 10
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +24,18 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 public class UtilsFunctions {
+
+    public static final String TAG = UtilsFunctions.class.getSimpleName();
 
     //Spinner loader
     public static SimpleCursorAdapter getSpinnerAdapter(Context context){
@@ -137,10 +143,23 @@ public class UtilsFunctions {
         return date;
     }
 
-    public static Bitmap stringToBitmap(String encodedImage) {
+    public static Bitmap stringToBitmap(Context context, String encodedImage) {
 
         byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (bitmap!=null){
+            return bitmap;
+        } else {
+            return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_shop_image);
+        }
+
 
     }
 
@@ -151,7 +170,20 @@ public class UtilsFunctions {
                 matrix, true);
     }
 
+    public static Bitmap getPNG(String PNGPath){
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapFactory.decodeFile(PNGPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+
+    }
+
     public static Bitmap getOrientedBitmap(String photoPath) {
+        Log.d(TAG, "getOrientedBitmap: " + photoPath);
         ExifInterface ei = null;
         try {
             ei = new ExifInterface(photoPath);

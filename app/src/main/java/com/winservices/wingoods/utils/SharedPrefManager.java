@@ -73,7 +73,7 @@ public class SharedPrefManager {
                 FileOutputStream fOut;
                 try {
                     fOut = new FileOutputStream(file);
-                    Bitmap bitmap = UtilsFunctions.stringToBitmap(encodedImage);
+                    Bitmap bitmap = UtilsFunctions.stringToBitmap(context, encodedImage);
                     Bitmap.CompressFormat compressFormat;
                     switch (imageType){
                         case "png":
@@ -118,18 +118,5 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(ShopType.PREFIX_SHOP_TYPE + shopTypeId, null);
     }
-
-
-    /*public void storeConsultedOrderId(String key, int value){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key, value);
-        editor.apply();
-    }
-
-    public int getConsultedOrderId(String key){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(key, R.id.menuOngoingOrders);
-    }*/
 
 }

@@ -156,7 +156,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         String imgPath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY + category.getDCategoryId());
         if (imgPath != null) {
-            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imgPath);
+            Bitmap bitmap = UtilsFunctions.getPNG(imgPath);
             holder.categoryIcon.setImageBitmap(bitmap);
         } else {
             holder.categoryIcon.setImageResource(R.drawable.others);

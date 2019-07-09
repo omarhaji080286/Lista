@@ -37,10 +37,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     // Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
+    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
 
     // Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
 
     // Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";

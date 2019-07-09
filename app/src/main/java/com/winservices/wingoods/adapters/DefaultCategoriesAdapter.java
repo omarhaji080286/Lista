@@ -43,7 +43,7 @@ public class DefaultCategoriesAdapter extends RecyclerView.Adapter<DefaultCatego
         DefaultCategory dCategory = dCategories.get(position);
 
         String imagePath = SharedPrefManager.getInstance(context).getImagePath(DefaultCategory.PREFIX_D_CATEGORY+dCategory.getDCategoryId());
-        Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+        Bitmap bitmap = UtilsFunctions.getPNG(imagePath);
 
         holder.imgDCategory.setImageBitmap(bitmap);
 
