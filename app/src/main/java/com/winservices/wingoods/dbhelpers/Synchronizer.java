@@ -69,7 +69,7 @@ public class Synchronizer {
             String shopImgUrl = DataBaseHelper.SHOPS_IMG_URL + shops.get(i).getServerShopId() + ".jpg";
 
             shopImg = UtilsFunctions.loadImageFromUrl(shopImgUrl);
-            UtilsFunctions.storeImageToFile(context, shopImg, shops.get(i).getServerShopId());
+            if (shopImg != null) UtilsFunctions.storeImageToFile(context, shopImg, shops.get(i).getServerShopId());
 
         }
 
