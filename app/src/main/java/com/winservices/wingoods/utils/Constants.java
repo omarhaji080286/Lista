@@ -34,4 +34,9 @@ public class Constants {
     public static final String ORDER_STATUS = "order_status" ;
     public static final int USER_D_CATEGORY_ID = 99;
     public static final String ORDER_INITIATED = "orderInitiated";
+
+    public static final String FCM_NOTIFICATION_UPDATE = "update";
+    public static final String FCM_DATA_KEY_1 = "fcm_data_key_1";
+
+
 }
