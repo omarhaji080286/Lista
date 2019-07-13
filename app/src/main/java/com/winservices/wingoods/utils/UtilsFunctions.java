@@ -1,6 +1,8 @@
 package com.winservices.wingoods.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
@@ -35,6 +38,7 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -345,7 +349,7 @@ public class UtilsFunctions {
                 FileOutputStream fOut;
                 try {
                     fOut = new FileOutputStream(file);
-                    shopImg.compress(Bitmap.CompressFormat.JPEG, 60, fOut);
+                    shopImg.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
                     fOut.flush();
                     fOut.close();
                 } catch (IOException e) {
@@ -357,6 +361,5 @@ public class UtilsFunctions {
         thread.run();
 
     }
-
 
 }

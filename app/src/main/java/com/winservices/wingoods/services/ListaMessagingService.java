@@ -7,11 +7,15 @@ import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.bumptech.glide.util.Util;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.winservices.wingoods.R;
@@ -19,7 +23,9 @@ import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
+import java.util.List;
 import java.util.Map;
 
 public class ListaMessagingService extends FirebaseMessagingService {
@@ -78,17 +84,12 @@ public class ListaMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String title, String body, Intent intent) {
 
-        int notifyID = 1;
         String CHANNEL_ID = "my_channel_01";// The id of the channel.
-        CharSequence name = "notif channel";// The user-visible name of the channel.
-        int importance = 0;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            importance = NotificationManager.IMPORTANCE_HIGH;
-        }
 
         //Define the intent that will fire when the user taps the notification
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        int requestID = (int) System.currentTimeMillis();
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Create a notification and set the notification channel.
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -102,12 +103,18 @@ public class ListaMessagingService extends FirebaseMessagingService {
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+
+        int importance = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            importance = NotificationManager.IMPORTANCE_HIGH;
+        }
+        CharSequence name = "Lista FCM channel";// The user-visible name of the channel.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
             mNotificationManager.createNotificationChannel(mChannel);
         }
 
-        mNotificationManager.notify(notifyID , notification);
+        mNotificationManager.notify(requestID , notification);
 
     }
 
@@ -117,22 +124,30 @@ public class ListaMessagingService extends FirebaseMessagingService {
         Intent intent =  new Intent(this, LauncherActivity.class);
 
         String data_value_1 = data.get(Constants.FCM_DATA_KEY_1);
+        final String appPackageName = getPackageName();
 
         if( data_value_1 != null){
-
             if (data_value_1.equals(Constants.FCM_NOTIFICATION_UPDATE)){
-
-                final String appPackageName = getPackageName();
                 try {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
                 } catch (ActivityNotFoundException anfe) {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
                 }
-
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             }
-
         }
+
+        PackageManager manager = this.getPackageManager();
+        List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
+        if (infos.size() > 0) {
+            //Then there is an Application(s) can handle your intent
+            Log.d(TAG, "Notification intent ok");
+        } else {
+            //No Application can handle your intent
+            Log.d(TAG, "Notification intent ok NOT ok");
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+        }
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         return intent;
     }

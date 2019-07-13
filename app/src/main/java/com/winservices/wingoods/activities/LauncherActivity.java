@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import com.winservices.wingoods.fragments.SignUpFragment;
 import com.winservices.wingoods.fragments.WelcomeFragment;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -27,14 +29,11 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         Bundle extras = getIntent().getExtras();
 
         if(extras!=null){
             String data_value_1 = extras.getString(Constants.FCM_DATA_KEY_1);
-            Log.d(TAG, "data_value_1: " + data_value_1);
-
-            if (data_value_1 != null && data_value_1.equals(Constants.FCM_NOTIFICATION_UPDATE)) {
+             if (data_value_1 != null && data_value_1.equals(Constants.FCM_NOTIFICATION_UPDATE)) {
                 this.finish();
                 showAppOnGooglePlay();
             } else {
@@ -50,13 +49,18 @@ public class LauncherActivity extends AppCompatActivity {
 
         final String appPackageName = getPackageName();
         Intent intent;
-        try {
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
-        }
 
-        startActivity(intent);
+        try {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));;
+            startActivity(intent);
+        } catch (ActivityNotFoundException e){
+            e.printStackTrace();
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            launchApp();
+        }
 
     }
 
