@@ -9,13 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.bumptech.glide.util.Util;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.winservices.wingoods.R;
@@ -23,7 +21,6 @@ import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
-import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.List;
 import java.util.Map;
@@ -123,7 +120,7 @@ public class ListaMessagingService extends FirebaseMessagingService {
 
         Intent intent =  new Intent(this, LauncherActivity.class);
 
-        String data_value_1 = data.get(Constants.FCM_DATA_KEY_1);
+        String data_value_1 = data.get(Constants.FCM_TYPE);
         final String appPackageName = getPackageName();
 
         if( data_value_1 != null){

@@ -30,8 +30,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int IS_LOGGED_IN = 1;
     public static final int IS_NOT_LOGGED_IN = 0;
     //sign up type
-    public static final String GOOGLE = "google";
-    public static final String FACEBOOK = "facebook";
     public static final String LISTA = "lista";
     public static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
     public static final String COL_IS_ORDERED = "is_ordered";

@@ -25,6 +25,7 @@ import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
+import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -100,6 +101,8 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
             @Override
             public void onClick(View view) {
 
+                view.setBackgroundColor(context.getResources().getColor(R.color.colorGray));
+                view.setEnabled(false);
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {

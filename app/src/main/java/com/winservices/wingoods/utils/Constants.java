@@ -36,7 +36,7 @@ public class Constants {
     public static final String ORDER_INITIATED = "orderInitiated";
 
     public static final String FCM_NOTIFICATION_UPDATE = "update";
-    public static final String FCM_DATA_KEY_1 = "fcm_data_key_1";
+    public static final String FCM_TYPE = "fcm_type";
 
 
 }

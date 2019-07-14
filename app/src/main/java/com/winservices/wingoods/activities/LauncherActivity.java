@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
@@ -16,14 +15,11 @@ import com.winservices.wingoods.fragments.SignUpFragment;
 import com.winservices.wingoods.fragments.WelcomeFragment;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
-import com.winservices.wingoods.utils.UtilsFunctions;
 
 public class LauncherActivity extends AppCompatActivity {
 
     private static final String TAG = LauncherActivity.class.getSimpleName();
     private String currentFragTag = "none";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +28,8 @@ public class LauncherActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         if(extras!=null){
-            String data_value_1 = extras.getString(Constants.FCM_DATA_KEY_1);
-             if (data_value_1 != null && data_value_1.equals(Constants.FCM_NOTIFICATION_UPDATE)) {
+            String fcmType = extras.getString(Constants.FCM_TYPE);
+             if (fcmType != null && fcmType.equals(Constants.FCM_NOTIFICATION_UPDATE)) {
                 this.finish();
                 showAppOnGooglePlay();
             } else {
