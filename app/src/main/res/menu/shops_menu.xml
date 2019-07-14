@@ -7,7 +7,7 @@
         android:title="@string/search"
         app:showAsAction="ifRoom"
         app:actionLayout="@layout/search_in_menu"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
         android:id="@+id/item_filter_shops"

@@ -4,9 +4,9 @@ package com.winservices.wingoods.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +26,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -257,10 +255,10 @@ public class SignUpFragment extends Fragment {
         String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
         //TODO - for release
-        String phone = "+212" + editPhone.getText().toString();
+        //String phone = "+212" + editPhone.getText().toString();
 
         //TODO - For test
-        //String phone = "+16" + editPhone.getText().toString();
+        String phone = "+16" + editPhone.getText().toString();
 
         String userName = editUserName.getText().toString();
 

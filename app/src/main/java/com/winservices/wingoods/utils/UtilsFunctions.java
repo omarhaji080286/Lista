@@ -1,16 +1,14 @@
 package com.winservices.wingoods.utils;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Build;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AlertDialog;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -22,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 
@@ -30,7 +27,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -38,9 +34,7 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 public class UtilsFunctions {
 

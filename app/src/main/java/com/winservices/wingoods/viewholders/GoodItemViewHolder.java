@@ -1,13 +1,7 @@
 package com.winservices.wingoods.viewholders;
 
-import android.graphics.drawable.Drawable;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
-import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 

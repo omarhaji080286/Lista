@@ -32,7 +32,7 @@
         <TableRow
             android:gravity="center">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consLayMyGoods"
                 style="@style/WelcomeItem"
                 android:layout_width="140dp"
@@ -57,7 +57,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/imgMyGoods"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/linlayShops"
@@ -84,7 +84,7 @@
         <TableRow
             android:gravity="center">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consLayMyOrders"
                 style="@style/WelcomeItem"
                 android:layout_width="140dp"
@@ -123,7 +123,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/imgMyOrders"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/linlayProfile"

@@ -1,12 +1,13 @@
 package com.winservices.wingoods.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyGoods extends android.support.v4.app.Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class MyGoods extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     public static final String TAG = MyGoods.class.getSimpleName();
 
