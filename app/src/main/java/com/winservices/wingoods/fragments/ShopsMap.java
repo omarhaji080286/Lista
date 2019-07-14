@@ -117,7 +117,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public boolean GoogleServicesAvailable() {
+    private boolean GoogleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(getContext());
         if (isAvailable == ConnectionResult.SUCCESS) {
