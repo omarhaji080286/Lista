@@ -35,15 +35,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ORDERED = "is_ordered";
 
 
-    // Lista LOCAL (compte root)
+    //TODO Lista LOCAL (compte root)
     private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
     static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local//uploads/shopImages/";
 
-    // Lista LWS_PRE_PROD
+    //TODO Lista LWS_PRE_PROD
     //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/uploads/shopImages/";
 
-    // Lista LWS_PROD
+    //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/uploads/shopImages/";
 
