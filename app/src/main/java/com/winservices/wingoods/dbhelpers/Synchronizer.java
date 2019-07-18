@@ -414,6 +414,7 @@ public class Synchronizer {
         for (int i = 0; i < updateUpdatedGoodsByGroupMembers.length(); i++) {
             JSONObject JSONGood = updateUpdatedGoodsByGroupMembers.getJSONObject(i);
             Good good = goodsDataProvider.getGoodByServerGoodId(JSONGood.getInt("serverGoodId"));
+            good.setGoodDesc(JSONGood.getString("goodDesc"));
             good.setGoodName(JSONGood.getString("goodName"));
             good.setQuantityLevelId(JSONGood.getInt("quantityLevel"));
             good.setToBuy((JSONGood.getInt("isToBuy")==1));

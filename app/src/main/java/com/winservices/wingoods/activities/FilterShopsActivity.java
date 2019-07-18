@@ -135,7 +135,7 @@ public class FilterShopsActivity extends AppCompatActivity {
         if (shopsFilterFromIntent.isEnable()) {
             citiesAdapter.setSelectedCities(shopsFilterFromIntent.getSelectedCities());
         }
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager llm = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rvCities.setLayoutManager(llm);
         rvCities.setAdapter(citiesAdapter);
 
@@ -176,6 +176,7 @@ public class FilterShopsActivity extends AppCompatActivity {
                                 }
 
                                 dialog.dismiss();
+
 
                                 prepareCitiesSection(cities);
 
