@@ -6,13 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -21,8 +22,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.OrderDetailsAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
+import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.utils.Constants;
@@ -60,15 +64,17 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         rvOrderDetails = findViewById(R.id.rv_order_goods);
 
-        orderedGoods = new ArrayList<>();
-
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
         orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        orderedGoods = new ArrayList<>();
         getOrderedGoods(this);
-
-
     }
 
     private void completeOrder(final int serverOrderId) {
@@ -85,9 +91,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                 //error in server
                                 Log.d(TAG, "onResponse error: " + message);
                             } else {
-                                Log.d(TAG, "order completed: ");
+                                Log.d(TAG, "order completed ");
                             }
-                            SyncHelper.sync(getApplicationContext());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -97,7 +102,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //dialog.dismiss();
+
                     }
                 }
         ) {
@@ -215,10 +220,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case android.R.id.home:
-                isYourOrderComplete();
-                break;
+        if (id == android.R.id.home) {
+            isYourOrderComplete();
         }
 
         return super.onOptionsItemSelected(item);
@@ -231,8 +234,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
 
     private void isYourOrderComplete() {
-        if ( orderStatus == Order.AVAILABLE ) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(this));
+        if (orderStatus == Order.AVAILABLE) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.did_you_get_your_order);
             builder.setTitle(R.string.order_completed);
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -240,6 +243,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
+                            updateGoods();
                             completeOrder(serverOrderId);
                         }
                     });
@@ -260,10 +264,30 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        orderedGoods = null;
+    private void updateGoods() {
+
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
+        DataManager dataManager = new DataManager(this);
+        for (int i = 0; i < orderedGoods.size(); i++) {
+
+            OrderedGood orderedGood = orderedGoods.get(i);
+
+            Log.d(TAG, "Id: " + orderedGood.getServerGoodId() +
+                    " - Name: " + orderedGood.getGoodName() +
+                    " - status: " + orderedGood.getStatus());
+
+            Good good = goodsDataProvider.getGoodByServerGoodId(orderedGood.getServerGoodId());
+            good.setIsOrdered(Good.IS_NOT_ORDERED);
+            if (orderedGood.getStatus() == OrderedGood.PROCESSED) good.setToBuy(false);
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
+
+            dataManager.updateGood(good);
+
+        }
+
+        SyncHelper.sync(getApplicationContext());
+
     }
+
 
 }

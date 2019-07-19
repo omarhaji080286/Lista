@@ -325,14 +325,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        //clear the job
-        super.onDestroy();
-        DataBaseHelper.closeDB();
-    }
-
-
-    @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(syncReceiver);

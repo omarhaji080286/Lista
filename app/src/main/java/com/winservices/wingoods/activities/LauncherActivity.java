@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.SignUpFragment;
@@ -47,7 +48,7 @@ public class LauncherActivity extends AppCompatActivity {
         Intent intent;
 
         try {
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));;
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
             startActivity(intent);
         } catch (ActivityNotFoundException e){
             e.printStackTrace();
@@ -87,5 +88,12 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onResume() {
         SyncHelper.sync(this);
         super.onResume();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseHelper.closeDB();
     }
 }

@@ -1,9 +1,12 @@
 package com.winservices.wingoods.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +22,13 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MyOrdersActivity;
 import com.winservices.wingoods.activities.OrderDetailsActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.DataManager;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
+import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.utils.Constants;
@@ -30,6 +37,7 @@ import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.OrderVH;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,6 +61,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         notifyDataSetChanged();
     }
 
+
     @Override
     public OrderVH onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_order, parent, false);
@@ -60,7 +69,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     }
 
     @Override
-    public void onBindViewHolder(OrderVH holder, int position) {
+    public void onBindViewHolder( OrderVH holder, int position) {
 
         final Order order = orders.get(position);
 
@@ -99,14 +108,16 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
             @Override
             public void onClick(View view) {
 
-                view.setBackgroundColor(context.getResources().getColor(R.color.colorGray));
-                view.setEnabled(false);
+                orders.remove(order);
+                notifyDataSetChanged();
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
+                        getOrderedGoods(context, order.getServerOrderId());
                         completeOrder(order.getServerOrderId());
                     }
                 });
+
             }
         });
 
@@ -191,7 +202,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                             } else {
                                 Log.d(TAG, "order completed: ");
                             }
-                            SyncHelper.sync(context);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -221,6 +231,109 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
             root.put("server_order_id", serverOrderId);
             root.put("status_id", Order.COMPLETED);
+
+            return root.toString(1);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't format JSON");
+        }
+
+        return null;
+    }
+
+    private void updateGoods(List<OrderedGood> orderedGoods) {
+
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
+        DataManager dataManager = new DataManager(context);
+
+        for (int i = 0; i < orderedGoods.size(); i++) {
+
+            OrderedGood orderedGood = orderedGoods.get(i);
+
+            Log.d(TAG, "Id: " + orderedGood.getServerGoodId() +
+                    " - Name: " + orderedGood.getGoodName() +
+                    " - status: " + orderedGood.getStatus());
+
+            Good good = goodsDataProvider.getGoodByServerGoodId(orderedGood.getServerGoodId());
+            good.setIsOrdered(Good.IS_NOT_ORDERED);
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
+
+            dataManager.updateGood(good);
+
+        }
+
+        SyncHelper.sync(context);
+
+    }
+
+
+    private void getOrderedGoods(final Context context, final int serverOrderId) {
+
+        final List<OrderedGood> orderedGoods = new ArrayList<>();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                DataBaseHelper.HOST_URL_GET_ORDERED_GOODS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                JSONArray JSONOrderedGoods = jsonObject.getJSONArray("orderedGoods");
+
+                                for (int i = 0; i < JSONOrderedGoods.length(); i++) {
+                                    JSONObject JSONOrderedGood = JSONOrderedGoods.getJSONObject(i);
+
+                                    OrderedGood orderedGood = new OrderedGood();
+                                    orderedGood.setServerOrderId(JSONOrderedGood.getInt("server_ordered_good_id"));
+                                    orderedGood.setGoodDesc(JSONOrderedGood.getString("good_desc"));
+                                    orderedGood.setGoodName(JSONOrderedGood.getString("good_name"));
+                                    orderedGood.setServerCategoryId(JSONOrderedGood.getInt("server_category_id"));
+                                    orderedGood.setServerGoodId(JSONOrderedGood.getInt("server_good_id"));
+                                    orderedGood.setServerShopId(JSONOrderedGood.getInt("server_shop_id"));
+                                    orderedGood.setServerUserId(JSONOrderedGood.getInt("server_user_id"));
+                                    orderedGood.setStatus(JSONOrderedGood.getInt("status"));
+
+                                    orderedGoods.add(orderedGood);
+
+                                }
+
+                                updateGoods(orderedGoods);
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //adding coUser failed
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> postData = new HashMap<>();
+                postData.put("jsonData", "" + getJSONForGetOrders(serverOrderId));
+                return postData;
+            }
+        };
+        RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
+    }
+
+    private String getJSONForGetOrders(int serverOrderId) {
+        final JSONObject root = new JSONObject();
+        try {
+
+            root.put("serverOrderId", serverOrderId);
 
             return root.toString(1);
 
