@@ -38,6 +38,7 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
@@ -403,7 +404,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         DataManager dataManager = new DataManager(this);
         for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
             Good good = categoriesToOrderAdapter.getGoodsToOrder().get(i);
-            good.setIsOrdered(1);
+            good.setIsOrdered(Good.IS_ORDERED);
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
             dataManager.updateGood(good);
         }
     }

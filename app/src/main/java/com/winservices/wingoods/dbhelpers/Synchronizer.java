@@ -418,7 +418,7 @@ public class Synchronizer {
             good.setGoodName(JSONGood.getString("goodName"));
             good.setQuantityLevelId(JSONGood.getInt("quantityLevel"));
             good.setToBuy((JSONGood.getInt("isToBuy")==1));
-            good.setSync(JSONGood.getInt("syncStatus"));
+            good.setSync(DataBaseHelper.SYNC_STATUS_OK);
             good.setEmail(JSONGood.getString("email"));
             good.setServerCategoryId(JSONGood.getInt("serverCategoryId"));
             good.setCrudStatus(JSONGood.getInt("crudStatus"));

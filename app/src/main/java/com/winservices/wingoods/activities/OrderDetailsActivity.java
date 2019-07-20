@@ -92,6 +92,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                 Log.d(TAG, "onResponse error: " + message);
                             } else {
                                 Log.d(TAG, "order completed ");
+                                SyncHelper.sync(getApplicationContext());
                             }
 
                         } catch (JSONException e) {
@@ -284,8 +285,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
             dataManager.updateGood(good);
 
         }
-
-        SyncHelper.sync(getApplicationContext());
 
     }
 
