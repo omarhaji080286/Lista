@@ -19,6 +19,10 @@ public class InvitationsDataManager {
         this.db = DataBaseHelper.getInstance(context);
     }
 
+    public boolean isInvitationPending(){
+        return db.isInvitationPending();
+    }
+
     public int addReceivedInvitation( ReceivedInvitation invitation) {
         int result;
         if (db.invitationExists(invitation.getInvitationPhone())) {

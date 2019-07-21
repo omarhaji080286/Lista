@@ -18,6 +18,12 @@ public class ReceivedInvitation {
     private int serverGroupId;
     private String invitationPhone;
 
+    public ReceivedInvitation(int serverCoUserId, int serverGroupId, String invitationPhone) {
+        this.serverCoUserId = serverCoUserId;
+        this.serverGroupId = serverGroupId;
+        this.invitationPhone = invitationPhone;
+    }
+
     public ReceivedInvitation(String invitationPhone, String invitationCategories, int response) {
         this.invitationPhone = invitationPhone;
         this.invitationCategories = invitationCategories;

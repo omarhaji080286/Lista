@@ -274,13 +274,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_invite:
                 startActivity(new Intent(this, InviteActivity.class));
                 break;
-            case R.id.action_receive_invitation:
-                if (NetworkMonitor.checkNetworkConnection(this)) {
-                    startActivity(new Intent(this, ReceiveInvitationActivity.class));
-                } else {
-                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-                }
-                break;
             case R.id.sync:
                 if (NetworkMonitor.checkNetworkConnection(this)) {
                     syncTriggeredByUser = true;

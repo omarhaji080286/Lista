@@ -619,6 +619,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return (cnt > 0);
     }
 
+    boolean isInvitationPending() {
+        String countQuery = "select * from " + TABLE_RECEIVED_INVITATIONS
+                + " where "
+                + COL_INVITATION_RESPONSE + " = " + CoUser.PENDING;
+
+        db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(countQuery, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("DB", e.toString());
+        }
+        int cnt = 0;
+        if (cursor != null) {
+            cnt = cursor.getCount();
+            cursor.close();
+        }
+        return (cnt > 0);
+    }
+
 
     ReceivedInvitation getReceivedInvitation(String senderPhone) {
         db = this.getReadableDatabase();
