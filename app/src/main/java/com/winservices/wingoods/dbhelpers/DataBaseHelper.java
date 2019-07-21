@@ -699,6 +699,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
     //COUSERS
 
     Cursor getNotSyncCoUsers() {
@@ -1327,7 +1328,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     boolean updateReceivedInvitation(ReceivedInvitation invitation) {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_SENDER_PHONE, invitation.getInvitationPhone());
         contentValues.put(COL_INVITATION_RESPONSE, invitation.getResponse());
+        contentValues.put(COL_USERID, getCurrentUser().getUserId());
+        contentValues.put(COL_SERVER_CO_USER_ID, invitation.getServerCoUserId());
+        contentValues.put(COL_SERVER_GROUP_ID, invitation.getServerGroupId());
 
         int affectedRows = 0;
         try {

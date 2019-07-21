@@ -158,6 +158,7 @@ public class WelcomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getAvailableOrdersNum();
+        manageInvitationIcon();
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
     }
 
@@ -230,73 +231,6 @@ public class WelcomeFragment extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(syncReceiver);
     }
 
-    private void loadInvitations(final Context context) {
-        if (NetworkMonitor.checkNetworkConnection(context)) {
-            StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                    DataBaseHelper.HOST_URL_GET_INVITATIONS,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
-
-                                if (error) {
-                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
-                                } else {
-
-                                    JSONArray invitations = jsonObject.getJSONArray("invitations");
-
-                                    for (int j = 0; j < invitations.length(); j = j + 1) {
-
-                                        JSONObject JSONInvitation = invitations.getJSONObject(j);
-
-                                        String senderPhone = JSONInvitation.getString("user_phone");
-                                        int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
-                                        int serverGroupId = JSONInvitation.getInt("server_group_id");
-
-                                        ReceivedInvitation invitation = new ReceivedInvitation(serverCoUserId, serverGroupId, senderPhone);
-                                        invitation.setResponse(CoUser.PENDING);
-
-                                        InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
-                                        invitationsDataManager.addReceivedInvitation(invitation);
-
-                                        invitationsDataManager.addReceivedInvitation(invitation);
-
-                                    }
-
-                                    manageInvitationIcon();
-
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //request failed
-                            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            ) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> postData = new HashMap<>();
-                    UsersDataManager usersDataManager = new UsersDataManager(context);
-                    postData.put("co_user_phone", usersDataManager.getCurrentUser().getUserPhone());
-                    return postData;
-                }
-            };
-            RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
-        } else {
-            // Network Problem
-            Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void manageInvitationIcon() {
 
         if (isInvitationPending()) {
@@ -332,13 +266,15 @@ public class WelcomeFragment extends Fragment {
                 public void run() {
 
                     getAvailableOrdersNum();
-                    loadInvitations(context);
+                    manageInvitationIcon();
 
                     Log.d(TAG, "Sync BroadCast received");
                 }
             });
         }
     }
+
+
 
 
 }

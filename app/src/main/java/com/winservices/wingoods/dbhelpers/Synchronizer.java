@@ -184,6 +184,9 @@ public class Synchronizer {
             //Sync User (if username modified)
             root.put("userName", user.getUserName());
 
+            //For invitations received
+            root.put("coUserPhone", user.getUserPhone());
+
             return root.toString(1);
         } catch (JSONException e) {
             Log.d("LISTA", "Can't format JSON");
@@ -228,8 +231,6 @@ public class Synchronizer {
                 updateUpdatedGoods(jsonUpdatedGoodsServerIds);
                 Log.d(LOG_TAG, "Sync Updated Goods completed. " + jsonUpdatedGoodsServerIds.length() + " updated.");
 
-                //TODO - updates categories status to sync ok
-
                 //inserts categories relative to the group
                 JSONArray jsonGroupCategoriesToSync = jsonObject.getJSONArray("groupCategoriesToSync");
                 insertCategories(jsonGroupCategoriesToSync);
@@ -265,6 +266,11 @@ public class Synchronizer {
                 insertOrders(jsonOrders);
                 Log.d(LOG_TAG, "Sync orders completed. " + jsonOrders.length() + " inserted or updated.");
 
+                //insert or updates invitations
+                JSONArray jsonInvitations = jsonObject.getJSONArray("invitationsToSync");
+                insertInvitations(jsonInvitations);
+                Log.d(LOG_TAG, "Sync invitations completed. " + jsonInvitations.length() + " inserted or updated.");
+
             }
 
         } catch (JSONException e){
@@ -272,6 +278,29 @@ public class Synchronizer {
             e.printStackTrace();
         }
     }
+
+    private void insertInvitations(JSONArray jsonInvitations) throws JSONException {
+
+        InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
+
+        for (int i = 0; i < jsonInvitations.length(); i++) {
+            JSONObject JSONInvitation = jsonInvitations.getJSONObject(i);
+
+            String senderPhone = JSONInvitation.getString("user_phone");
+            int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
+            int serverGroupId = JSONInvitation.getInt("server_group_id");
+            int invitationResponse = JSONInvitation.getInt("invitation_response");
+
+
+            ReceivedInvitation invitation = new ReceivedInvitation(serverCoUserId, serverGroupId, senderPhone);
+            invitation.setResponse(invitationResponse);
+
+            invitationsDataManager.addReceivedInvitation(invitation);
+
+        }
+    }
+
+
 
     private void insertShops(JSONArray jsonShops) throws JSONException {
 

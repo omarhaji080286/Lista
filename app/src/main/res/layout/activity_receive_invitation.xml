@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.winservices.wingoods.activities.ReceiveInvitationActivity">
+    tools:context="com.winservices.wingoods.activities.ReceiveInvitationActivity"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/txt_no_invitations"
