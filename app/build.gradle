@@ -46,11 +46,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     //FireBase - Cloud Messaging
-    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
 
+    //FireBase - Remote config
+    implementation 'com.google.firebase:firebase-config:18.0.0'
+
     //FireBase - SMS
-    implementation 'com.google.firebase:firebase-auth:18.0.0'
+    implementation 'com.google.firebase:firebase-auth:18.1.0'
 
 
 }

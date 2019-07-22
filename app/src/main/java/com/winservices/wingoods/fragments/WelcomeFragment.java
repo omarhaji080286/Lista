@@ -1,11 +1,14 @@
 package com.winservices.wingoods.fragments;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -27,6 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.winservices.wingoods.BuildConfig;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
 import com.winservices.wingoods.activities.MyOrdersActivity;
@@ -43,12 +47,14 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -63,7 +69,7 @@ public class WelcomeFragment extends Fragment {
     private LinearLayout linlayShops, linlayProfile;
     private TextView txtAvailableOrders;
     private SyncReceiverWelcome syncReceiver;
-    private ImageView imgInvitation, imgShare;
+    private ImageView imgInvitation, imgShare, imgGooglePlay;
 
     public WelcomeFragment() {
         // Required empty public constructor
@@ -90,6 +96,7 @@ public class WelcomeFragment extends Fragment {
         txtAvailableOrders = view.findViewById(R.id.txtAvailableOrders);
         imgInvitation = view.findViewById(R.id.imgInvitation);
         imgShare = view.findViewById(R.id.imgShare);
+        imgGooglePlay = view.findViewById(R.id.imgGooglePlay);
 
         SyncHelper.sync(getContext());
 
@@ -128,12 +135,60 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+
+
+    }
+
+    private void manageGooglePlayIcon() {
+
+        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
+        int googlePlayVersion = spm.getGooglePlayVersion();
+
+        int userVersion = BuildConfig.VERSION_CODE;
+        if (googlePlayVersion > userVersion) {
+            imgGooglePlay.setVisibility(View.VISIBLE);
+            AnimationManager am = new AnimationManager(getContext());
+            am.animateItem(imgGooglePlay, R.anim.blink, 1000);
+            imgGooglePlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goToMarket();
+                }
+            });
+        } else {
+            imgGooglePlay.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void goToMarket() {
+        Intent intent;
+        final String appPackageName = Objects.requireNonNull(getContext()).getPackageName();
+        try {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+        } catch (ActivityNotFoundException anfe) {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+        }
+
+        PackageManager manager = Objects.requireNonNull(getContext()).getPackageManager();
+        List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
+        if (infos.size() > 0) {
+            //Then there is an Application(s) can handle your intent
+            Log.d(TAG, "Notification intent ok");
+        } else {
+            //No Application can handle your intent
+            Log.d(TAG, "Notification intent NOT ok");
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+        }
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
     }
 
     private boolean isInvitationPending() {
         InvitationsDataManager invitationsDataManager = new InvitationsDataManager(getContext());
         return invitationsDataManager.isInvitationPending();
-
 
     }
 
@@ -159,6 +214,7 @@ public class WelcomeFragment extends Fragment {
         super.onResume();
         getAvailableOrdersNum();
         manageInvitationIcon();
+        manageGooglePlayIcon();
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
     }
 
@@ -245,7 +301,7 @@ public class WelcomeFragment extends Fragment {
             });
 
             AnimationManager am = new AnimationManager(getContext());
-            am.animateItem(imgInvitation, R.anim.blink, 50);
+            am.animateItem(imgInvitation, R.anim.blink, 1000);
 
         } else {
             imgInvitation.setVisibility(View.GONE);

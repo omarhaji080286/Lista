@@ -34,7 +34,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_share_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/notification/ic_system_update_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -44,9 +44,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_share_blue" />
+                                      <entry key="outputName" value="ic_update_green" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="12214a" />
+                                      <entry key="themeColor" value="a1e205" />
                                     </map>
                                   </option>
                                 </PersistentState>

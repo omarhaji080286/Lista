@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical"
     android:weightSum="100"
@@ -13,44 +13,58 @@
         android:layout_width="match_parent"
         android:layout_height="165dp"
         android:layout_weight="20"
-        android:orientation="horizontal"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
             android:layout_marginTop="20dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            android:orientation="horizontal">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgGooglePlay"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_update_green"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <ImageView
                 android:id="@+id/imgInvitation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_marginEnd="20dp"
                 android:src="@drawable/ic_invit_green"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/imgShare"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imgShare"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_share_white" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_share_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="50dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:src="@mipmap/lista_logo"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:src="@mipmap/lista_logo" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -59,8 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="80">
 
-        <TableRow
-            android:gravity="center">
+        <TableRow android:gravity="center">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consLayMyGoods"
@@ -72,21 +85,21 @@
                 <ImageView
                     android:id="@+id/imgMyGoods"
                     style="@style/WelcomeImgItem"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="TODO"
-                    android:src="@drawable/list_black" />
+                    android:src="@drawable/list_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtMyGoods"
                     style="@style/WelcomeTextItem"
-                    android:text="@string/my_list"
                     android:layout_marginTop="@dimen/margin_small"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/my_list"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgMyGoods"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imgMyGoods" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -106,14 +119,13 @@
                 <TextView
                     android:id="@+id/txtShops"
                     style="@style/WelcomeTextItem"
-                    android:text="@string/shops"/>
+                    android:text="@string/shops" />
 
             </LinearLayout>
 
         </TableRow>
 
-        <TableRow
-            android:gravity="center">
+        <TableRow android:gravity="center">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consLayMyOrders"
@@ -126,34 +138,33 @@
                     android:id="@+id/imgMyOrders"
                     style="@style/WelcomeImgItem"
                     android:contentDescription="TODO"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:src="@drawable/ic_cart_empty_black_128"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/ic_cart_empty_black_128" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/txtAvailableOrders"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintTop_toTopOf="@+id/imgMyOrders"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/imgMyOrders"
                     android:background="@drawable/oval_red_background"
+                    android:gravity="center"
+                    android:padding="1dp"
                     android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:padding="1dp"
-                    android:gravity="center"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imgMyOrders" />
 
                 <TextView
                     android:id="@+id/txtMyOrders"
                     style="@style/WelcomeTextItem"
                     android:text="@string/my_orders"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgMyOrders"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imgMyOrders" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -173,7 +184,7 @@
                 <TextView
                     android:id="@+id/txtProfil"
                     style="@style/WelcomeTextItem"
-                    android:text="@string/account"/>
+                    android:text="@string/account" />
 
             </LinearLayout>
 

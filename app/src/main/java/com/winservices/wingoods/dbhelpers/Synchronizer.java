@@ -4,7 +4,6 @@ package com.winservices.wingoods.dbhelpers;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
@@ -29,6 +27,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.services.RemoteConfigService;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -59,12 +58,17 @@ public class Synchronizer {
     }
 
 
-    public void loadShopImages(){
+    void loadGooglePlayVersion(){
+        RemoteConfigService remoteConfigService = new RemoteConfigService(context);
+        remoteConfigService.loadGooglePlayVersion();
+    }
+
+    void loadShopImages(){
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(context);
         List<Shop> shops = shopsDataManager.getAllShops();
 
-        Bitmap shopImg = null;
+        Bitmap shopImg;
         for (int i = 0; i < shops.size(); i++) {
             String shopImgUrl = DataBaseHelper.SHOPS_IMG_URL + shops.get(i).getServerShopId() + ".jpg";
 
