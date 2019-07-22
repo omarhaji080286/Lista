@@ -140,7 +140,7 @@ public class WelcomeFragment extends Fragment {
     private void shareAppStoreLink() {
 
         String listaLink = "https://play.google.com/store/apps/details?id=com.winservices.wingoods";
-        String mainMessage = "Gagnez du temps avec Lista, l'application qui facilite la corvée des courses ;-)";
+        String mainMessage = Objects.requireNonNull(getContext()).getResources().getString(R.string.share_message);
         String subject = "avec Lista, les courses deviennent fun";
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);

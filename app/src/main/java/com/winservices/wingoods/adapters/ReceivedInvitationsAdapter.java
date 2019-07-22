@@ -42,8 +42,9 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
 
         final ReceivedInvitation receivedInvitation = receivedInvitations.get(position);
 
-        holder.senderEmail.setText(receivedInvitation.getInvitationPhone());
-        holder.categories.setText(receivedInvitation.getInvitationCategories());
+        String phoneAndName =  receivedInvitation.getUserName() + " (" + receivedInvitation.getInvitationPhone() + ")";
+        holder.senderPhoneAndName.setText(phoneAndName);
+        //holder.categories.setText(receivedInvitation.getInvitationCategories());
 
 
         holder.accept.setOnClickListener(new View.OnClickListener() {

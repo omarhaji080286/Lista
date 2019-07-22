@@ -21,7 +21,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_invit_email"
+                    android:id="@+id/txt_phone_and_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
@@ -30,7 +30,8 @@
                     android:gravity="start"
                     android:text="@string/sender_phone"
                     android:textColor="@color/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/txt_invit_categories"
@@ -40,7 +41,8 @@
                     android:layout_weight="25"
                     android:gravity="start"
                     android:text="@string/category_s_name"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
@@ -51,20 +53,24 @@
 
                 <Button
                     android:id="@+id/btn_decline"
-                    style="?android:buttonBarButtonStyle"
+                    style="@style/Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:text="@string/decline"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:background="@color/colorGray"
+                    android:textColor="@color/blueGrey"/>
 
                 <Button
                     android:id="@+id/btn_accept"
-                    style="?android:buttonBarButtonStyle"
+                    style="@style/Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/accept"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/blueGrey"
+                    android:background="@color/green_lista"/>
 
             </LinearLayout>
 

@@ -35,6 +35,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ORDERED = "is_ordered";
 
 
+
     //TODO Lista LOCAL (compte root)
     private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
     static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local//uploads/shopImages/";
@@ -99,6 +100,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
 
+    public static final String HOST_URL_CHECK_CO_USER_REGISTRATION = HOST + "checkCoUserRegistration.php";
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";

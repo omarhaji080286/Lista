@@ -146,6 +146,7 @@
     <string name="got_it">Ok</string>
     <string name="referenced_shops">Magasins référencés</string>
     <string name="sign_in_failed">L\'enregistrement a échoué. Veuillez réessayer.</string>
+    <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
 
 
 </resources>

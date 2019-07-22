@@ -7,6 +7,8 @@ import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 public class User {
 
     public static final String PREFIX_USER = "user_";
+    public static final int IS_REGISTERED = 1;
+    public static final int IS_NOT_REGISTERED = 0;
     private int userId;
     private String email;
     private String password;
