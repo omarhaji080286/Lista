@@ -50,7 +50,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_"+webVersion+"/uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 7;
+    private final static int DATABASE_VERSION = 8;
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -323,16 +323,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        /*db.execSQL("DROP TABLE IF EXISTS goods ");
-        db.execSQL("DROP TABLE IF EXISTS categories ");
-        db.execSQL("DROP TABLE IF EXISTS co_users ");
-        db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
-        db.execSQL("DROP TABLE IF EXISTS orders ");
-        db.execSQL("DROP TABLE IF EXISTS shops ");
-        /*db.execSQL("DROP TABLE IF EXISTS users ");
-        db.execSQL("DROP TABLE IF EXISTS groups ");
-        db.execSQL("DROP TABLE IF EXISTS amounts ");
-        db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+        if (oldVersion <= 7){
+            /*db.execSQL("DROP TABLE IF EXISTS goods ");
+            db.execSQL("DROP TABLE IF EXISTS categories ");
+            db.execSQL("DROP TABLE IF EXISTS co_users ");
+            db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
+            db.execSQL("DROP TABLE IF EXISTS orders ");
+            db.execSQL("DROP TABLE IF EXISTS shops ");
+            /*db.execSQL("DROP TABLE IF EXISTS users ");
+            db.execSQL("DROP TABLE IF EXISTS groups ");
+            db.execSQL("DROP TABLE IF EXISTS amounts ");
+            db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+        }
 
         onCreate(db);
     }

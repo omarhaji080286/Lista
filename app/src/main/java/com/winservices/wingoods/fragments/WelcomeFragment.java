@@ -38,6 +38,7 @@ import com.winservices.wingoods.activities.ProfileActivity;
 import com.winservices.wingoods.activities.ReceiveInvitationActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
+import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
@@ -67,7 +68,7 @@ public class WelcomeFragment extends Fragment {
 
     private ConstraintLayout consLayMyGoods, consLayMyOrders;
     private LinearLayout linlayShops, linlayProfile;
-    private TextView txtAvailableOrders;
+    private TextView txtAvailableOrders, txtItemsToBuyNum;
     private SyncReceiverWelcome syncReceiver;
     private ImageView imgInvitation, imgShare, imgGooglePlay;
 
@@ -97,6 +98,8 @@ public class WelcomeFragment extends Fragment {
         imgInvitation = view.findViewById(R.id.imgInvitation);
         imgShare = view.findViewById(R.id.imgShare);
         imgGooglePlay = view.findViewById(R.id.imgGooglePlay);
+        txtItemsToBuyNum = view.findViewById(R.id.txtItemsToBuyNum);
+
 
         SyncHelper.sync(getContext());
 
@@ -215,7 +218,20 @@ public class WelcomeFragment extends Fragment {
         getAvailableOrdersNum();
         manageInvitationIcon();
         manageGooglePlayIcon();
+        getItemsToBuyNum();
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
+    }
+
+    private void getItemsToBuyNum() {
+        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(getContext());
+        int itemsToBuyNum = goodsDataProvider.getGoodsToBuyNb();
+
+        if (itemsToBuyNum > 0){
+            txtItemsToBuyNum.setVisibility(View.VISIBLE);
+            txtItemsToBuyNum.setText(String.valueOf(itemsToBuyNum));
+        } else {
+            txtItemsToBuyNum.setVisibility(View.GONE);
+        }
     }
 
     private void getAvailableOrdersNum() {
@@ -323,14 +339,14 @@ public class WelcomeFragment extends Fragment {
 
                     getAvailableOrdersNum();
                     manageInvitationIcon();
+                    getItemsToBuyNum();
+                    manageInvitationIcon();
+                    manageGooglePlayIcon();
 
                     Log.d(TAG, "Sync BroadCast received");
                 }
             });
         }
     }
-
-
-
 
 }
