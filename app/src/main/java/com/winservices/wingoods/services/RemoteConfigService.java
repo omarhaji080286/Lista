@@ -28,8 +28,8 @@ public class RemoteConfigService {
     public void loadGooglePlayVersion() {
 
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                //For test only
-                .setMinimumFetchIntervalInSeconds(10)
+                //TODO For test only
+                //.setMinimumFetchIntervalInSeconds(10)
                 .build();
         firebaseRemoteConfig.setConfigSettingsAsync(configSettings);
 

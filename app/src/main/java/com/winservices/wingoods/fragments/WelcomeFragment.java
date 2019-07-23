@@ -104,6 +104,19 @@ public class WelcomeFragment extends Fragment {
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
 
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                manageGooglePlayIcon();
+                manageInvitationIcon();
+
+                Log.d(TAG, "Icons handled");
+            }
+        });
+
+
         consLayMyGoods.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,8 +230,6 @@ public class WelcomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getAvailableOrdersNum();
-        manageInvitationIcon();
-        manageGooglePlayIcon();
         getItemsToBuyNum();
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
 
@@ -340,10 +351,7 @@ public class WelcomeFragment extends Fragment {
                 public void run() {
 
                     getAvailableOrdersNum();
-                    manageInvitationIcon();
                     getItemsToBuyNum();
-                    manageInvitationIcon();
-                    manageGooglePlayIcon();
 
                     Log.d(TAG, "Sync BroadCast received");
                 }

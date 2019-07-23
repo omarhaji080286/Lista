@@ -339,9 +339,6 @@ public class SignUpFragment extends Fragment {
 
                                     dialog.dismiss();
 
-                                    DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
-                                    deviceInfoService.run();
-
                                     Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
                                     LauncherActivity launcherActivity = (LauncherActivity) getActivity();
                                     Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
