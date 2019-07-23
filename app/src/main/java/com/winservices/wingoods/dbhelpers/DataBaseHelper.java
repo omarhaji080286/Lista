@@ -39,18 +39,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private final static String webVersion = "L14_LP6";
 
     //TODO Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_"+webVersion+"/uploads/shopImages/";
+    private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_"+webVersion+"/uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_"+webVersion+"/uploads/shopImages/";
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_"+webVersion+"/uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_"+webVersion+"/uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 8;
+    private final static int DATABASE_VERSION = 7;
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -102,6 +102,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
 
+
+    public static final String HOST_URL_STORE_DEVICE_INFOS = HOST + "storeDeviceInfos.php";
     public static final String HOST_URL_CHECK_CO_USER_REGISTRATION = HOST + "checkCoUserRegistration.php";
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";

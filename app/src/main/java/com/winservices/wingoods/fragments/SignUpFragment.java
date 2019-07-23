@@ -48,6 +48,7 @@ import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
@@ -337,6 +338,9 @@ public class SignUpFragment extends Fragment {
                                     }
 
                                     dialog.dismiss();
+
+                                    DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
+                                    deviceInfoService.run();
 
                                     Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
                                     LauncherActivity launcherActivity = (LauncherActivity) getActivity();

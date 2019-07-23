@@ -9,9 +9,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,14 +43,12 @@ import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
-import com.winservices.wingoods.models.CoUser;
-import com.winservices.wingoods.models.ReceivedInvitation;
+import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,6 +100,9 @@ public class WelcomeFragment extends Fragment {
 
 
         SyncHelper.sync(getContext());
+
+        DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
+        deviceInfoService.run();
 
         consLayMyGoods.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +221,7 @@ public class WelcomeFragment extends Fragment {
         manageGooglePlayIcon();
         getItemsToBuyNum();
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
+
     }
 
     private void getItemsToBuyNum() {
