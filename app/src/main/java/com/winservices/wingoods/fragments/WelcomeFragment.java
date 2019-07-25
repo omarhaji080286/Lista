@@ -104,19 +104,6 @@ public class WelcomeFragment extends Fragment {
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
 
-        Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-
-                manageGooglePlayIcon();
-                manageInvitationIcon();
-
-                Log.d(TAG, "Icons handled");
-            }
-        });
-
-
         consLayMyGoods.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,8 +138,6 @@ public class WelcomeFragment extends Fragment {
                 shareAppStoreLink();
             }
         });
-
-
 
     }
 
@@ -229,8 +214,20 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getAvailableOrdersNum();
-        getItemsToBuyNum();
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                manageGooglePlayIcon();
+                manageInvitationIcon();
+                getAvailableOrdersNum();
+                getItemsToBuyNum();
+
+                Log.d(TAG, "Icons handled");
+            }
+        });
+
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
 
     }
