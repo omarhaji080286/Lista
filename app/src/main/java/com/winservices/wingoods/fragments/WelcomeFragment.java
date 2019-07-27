@@ -141,27 +141,7 @@ public class WelcomeFragment extends Fragment {
 
     }
 
-    private void manageGooglePlayIcon() {
 
-        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
-        int googlePlayVersion = spm.getGooglePlayVersion();
-
-        int userVersion = BuildConfig.VERSION_CODE;
-        if (googlePlayVersion > userVersion) {
-            imgGooglePlay.setVisibility(View.VISIBLE);
-            AnimationManager am = new AnimationManager(getContext());
-            am.animateItem(imgGooglePlay, R.anim.blink, 1000);
-            imgGooglePlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goToMarket();
-                }
-            });
-        } else {
-            imgGooglePlay.setVisibility(View.GONE);
-        }
-
-    }
 
     private void goToMarket() {
         Intent intent;
@@ -311,6 +291,28 @@ public class WelcomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
         Objects.requireNonNull(getActivity()).unregisterReceiver(syncReceiver);
+    }
+
+    private void manageGooglePlayIcon() {
+
+        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
+        int googlePlayVersion = spm.getGooglePlayVersion();
+
+        int userVersion = BuildConfig.VERSION_CODE;
+        if (googlePlayVersion > userVersion) {
+            imgGooglePlay.setVisibility(View.VISIBLE);
+            AnimationManager am = new AnimationManager(getContext());
+            am.animateItem(imgGooglePlay, R.anim.blink, 1000);
+            imgGooglePlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goToMarket();
+                }
+            });
+        } else {
+            imgGooglePlay.setVisibility(View.GONE);
+        }
+
     }
 
     private void manageInvitationIcon() {

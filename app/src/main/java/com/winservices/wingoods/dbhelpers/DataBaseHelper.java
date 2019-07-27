@@ -36,19 +36,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //TODO Version web
-    private final static String webVersion = "L15_LP7";
+    private final static String webVersion = "L16_LP8";
 
     //TODO Lista LOCAL (compte root)
     //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
-    private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
+    //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
 
     private final static int DATABASE_VERSION = 7;
 
