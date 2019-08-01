@@ -55,6 +55,9 @@ dependencies {
     //FireBase - SMS
     implementation 'com.google.firebase:firebase-auth:18.1.0'
 
+    //FireBAse - Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.0.1'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

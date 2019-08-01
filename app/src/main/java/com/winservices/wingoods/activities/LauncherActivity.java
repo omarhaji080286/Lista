@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
@@ -15,12 +16,16 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.SignUpFragment;
 import com.winservices.wingoods.fragments.WelcomeFragment;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.Constants;
 
 public class LauncherActivity extends AppCompatActivity {
 
     private static final String TAG = LauncherActivity.class.getSimpleName();
     private String currentFragTag = "none";
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +69,26 @@ public class LauncherActivity extends AppCompatActivity {
     private void launchApp() {
         setContentView(R.layout.activity_launcher);
 
+        //log event
+        Bundle eventParams = new Bundle();
+        EventService eventService = new EventService(this);
+        eventService.logEvent(FirebaseAnalytics.Event.APP_OPEN, eventParams);
+
         UsersDataManager usersDataManager = new UsersDataManager(this);
         User currentUser = usersDataManager.getCurrentUser();
 
         if (currentUser == null) {
             displayFragment(new SignUpFragment(), SignUpFragment.TAG);
+
         } else {
             displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+
+            //log event
+            eventParams = new Bundle();
+            eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(currentUser.getUserPhone()));
+            eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, currentUser.getUserName());
+            eventService.logEvent(FirebaseAnalytics.Event.LOGIN, eventParams);
+
         }
     }
 
