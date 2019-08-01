@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesInMyGoodsAdapter;
 import com.winservices.wingoods.adapters.MyGoodsAdapter;
@@ -26,6 +27,7 @@ import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
@@ -167,6 +169,13 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
 
             @Override
             public void afterTextChanged(Editable s) {
+
+                //log event
+                Bundle eventParams = new Bundle();
+                eventParams.putString(FirebaseAnalytics.Param.SEARCH_TERM, s.toString());
+                EventService eventService = new EventService(getContext());
+                eventService.logEvent(FirebaseAnalytics.Event.SEARCH, eventParams);
+
             }
         });
 

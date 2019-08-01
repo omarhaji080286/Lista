@@ -18,7 +18,7 @@ public class EventService {
 
     public void logEvent(String eventName, Bundle eventParams){
         //TODO for prod
-        //mFirebaseAnalytics.logEvent(eventName, eventParams);
+        mFirebaseAnalytics.logEvent(eventName, eventParams);
         Log.d(TAG, "event Name = " + eventName);
         Log.d(TAG, "event Params = " + eventParams.toString());
     }
