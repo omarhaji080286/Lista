@@ -39,18 +39,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private final static String webVersion = "L16_LP8";
 
     //TODO Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 7;
+    private final static int DATABASE_VERSION = 8;
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -298,7 +298,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "shop_email TEXT, " +
                 "longitude REAL, " +
                 "latitude REAL, " +
-                "shop_type_name TEXT ) ");
+                "shop_type_name TEXT, " +
+                "is_delivering INTEGER) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
                 "server_user_id INTEGER, " +
