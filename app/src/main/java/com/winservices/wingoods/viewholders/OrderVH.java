@@ -1,7 +1,8 @@
 package com.winservices.wingoods.viewholders;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,7 +15,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
 
     public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime, txtShopTypeName;
     public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType;
-    public ConstraintLayout clContainer;
+    public CardView clContainer;
     public Button btnCompleteOrder;
 
     public OrderVH(View itemView) {

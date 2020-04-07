@@ -4,9 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -97,6 +97,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
 
                                             JSONObject JSONInvitation = invitations.getJSONObject(j);
 
+                                            String userName = JSONInvitation.getString("user_name");
                                             String senderPhone = JSONInvitation.getString("user_phone");
                                             int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
                                             int serverGroupId = JSONInvitation.getInt("server_group_id");
@@ -113,7 +114,7 @@ public class ReceiveInvitationActivity extends AppCompatActivity {
                                                 }
                                             }
 
-                                            ReceivedInvitation invitation = new ReceivedInvitation(senderPhone, categories.toString(), CoUser.PENDING);
+                                            ReceivedInvitation invitation = new ReceivedInvitation(userName, senderPhone, categories.toString(), CoUser.PENDING);
                                             invitation.setServerCoUserId(serverCoUserId);
                                             invitation.setServerGroupId(serverGroupId);
 

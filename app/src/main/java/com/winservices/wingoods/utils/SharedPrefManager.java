@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
-import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
@@ -18,6 +17,7 @@ public class SharedPrefManager {
 
     private static final String SHARED_PREF_NAME = "listaSharedPreferences";
     private static final String KEY_ACCESS_TOKEN = "token";
+    public static final String GOOGLE_PLAY_VERSION_CODE = "google_play_version_code";
     private static SharedPrefManager instance;
     private Context context;
 
@@ -30,6 +30,18 @@ public class SharedPrefManager {
             instance = new SharedPrefManager(context.getApplicationContext());
         }
         return instance;
+    }
+
+    public int getGooglePlayVersion(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(GOOGLE_PLAY_VERSION_CODE, 0);
+    }
+
+    public void storeGooglePlayVersion(int googlePlayVersion) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(GOOGLE_PLAY_VERSION_CODE, googlePlayVersion);
+        editor.apply();
     }
 
     public void storeToken(String token) {

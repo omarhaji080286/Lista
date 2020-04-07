@@ -11,8 +11,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -32,7 +33,7 @@ public class ListaMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-        Log.d(TAG, "onNewToken: "+ token);
+        Log.d(TAG, "onNewToken: " + token);
         storeToken(token);
     }
 
@@ -43,8 +44,8 @@ public class ListaMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        String title="none";
-        String body="none";
+        String title = "none";
+        String body = "none";
         Intent intent = new Intent(this, LauncherActivity.class);
 
         String token = SharedPrefManager.getInstance(getApplicationContext()).getToken();
@@ -75,8 +76,6 @@ public class ListaMessagingService extends FirebaseMessagingService {
         // message, here is where that should be initiated. See sendNotification method below.
         sendNotification(title, body, intent);
     }
-
-
 
 
     private void sendNotification(String title, String body, Intent intent) {
@@ -111,40 +110,52 @@ public class ListaMessagingService extends FirebaseMessagingService {
             mNotificationManager.createNotificationChannel(mChannel);
         }
 
-        mNotificationManager.notify(requestID , notification);
+        mNotificationManager.notify(requestID, notification);
 
     }
 
 
-    private Intent getIntentNotification(Map<String,String> data){
+    private Intent getIntentNotification(Map<String, String> data) {
 
-        Intent intent =  new Intent(this, LauncherActivity.class);
+        Intent intent = new Intent(this, LauncherActivity.class);
 
-        String data_value_1 = data.get(Constants.FCM_TYPE);
+        String fcm_type = data.get(Constants.FCM_TYPE);
         final String appPackageName = getPackageName();
 
-        if( data_value_1 != null){
-            if (data_value_1.equals(Constants.FCM_NOTIFICATION_UPDATE)){
-                try {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
-                } catch (ActivityNotFoundException anfe) {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
-                }
+        if (fcm_type != null) {
+            switch (fcm_type) {
+                case Constants.FCM_NOTIFICATION_UPDATE:
+                    try {
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+                    } catch (ActivityNotFoundException anfe) {
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+                    }
+
+                    PackageManager manager = this.getPackageManager();
+                    List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
+                    if (infos.size() > 0) {
+                        //Then there is an Application(s) can handle your intent
+                        Log.d(TAG, "Notification intent ok");
+                    } else {
+                        //No Application can handle your intent
+                        Log.d(TAG, "Notification intent NOT ok");
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
+                    }
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    break;
+
+                case Constants.FCM_NOTIFICATION_INVITATION:
+                    Log.d(TAG, "fcm_type: " + fcm_type);
+                    break;
+
+                default:
+                    Log.d(TAG, "fcm_type: " + fcm_type);
+                    break;
             }
-        }
 
-        PackageManager manager = this.getPackageManager();
-        List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
-        if (infos.size() > 0) {
-            //Then there is an Application(s) can handle your intent
-            Log.d(TAG, "Notification intent ok");
-        } else {
-            //No Application can handle your intent
-            Log.d(TAG, "Notification intent ok NOT ok");
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
         }
-
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         return intent;
     }

@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +38,7 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
+import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
@@ -403,7 +404,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         DataManager dataManager = new DataManager(this);
         for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
             Good good = categoriesToOrderAdapter.getGoodsToOrder().get(i);
-            good.setIsOrdered(1);
+            good.setIsOrdered(Good.IS_ORDERED);
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
             dataManager.updateGood(good);
         }
     }

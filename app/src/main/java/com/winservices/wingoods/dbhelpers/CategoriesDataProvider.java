@@ -79,10 +79,13 @@ public class CategoriesDataProvider {
 
             Category category = categoriesToOrder.get(i);
             List<Good> notOrderedGoods = goodsDataProvider.getGoodsToOrderByServerCategoryId(category.getServerCategoryId());
-            CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
-            categoryGroup.setCategoryId(category.getCategoryId());
-            categoryGroup.setServerCategoryId(category.getServerCategoryId());
-            groups.add(categoryGroup);
+
+            if (notOrderedGoods.size()>0){
+                CategoryGroup categoryGroup = new CategoryGroup(category.getCategoryName(), notOrderedGoods);
+                categoryGroup.setCategoryId(category.getCategoryId());
+                categoryGroup.setServerCategoryId(category.getServerCategoryId());
+                groups.add(categoryGroup);
+            }
 
         }
 

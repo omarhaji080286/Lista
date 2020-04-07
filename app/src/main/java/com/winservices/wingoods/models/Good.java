@@ -29,6 +29,9 @@ public class Good {
     private int isOrdered;
     private int usesNumber;
 
+    public final static int IS_ORDERED = 1;
+    public final static int IS_NOT_ORDERED = 0;
+
     public void setServerCategoryId(int serverCategoryId) {
         this.serverCategoryId = serverCategoryId;
     }
@@ -231,9 +234,9 @@ public class Good {
 
 
     // for sync adapter purpose
-    public static final String CONTENT_AUTHORITY = "com.winservices.wingoods";
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-    public static final String PATH_GOODS = "goods-path";
+    private static final String CONTENT_AUTHORITY = "com.winservices.wingoods";
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final String PATH_GOODS = "goods-path";
 
     public static class GoodEntry implements BaseColumns{
 
@@ -245,7 +248,7 @@ public class Good {
 
         public static final String _ID = BaseColumns._ID;
 
-        public static final String COLUMN_GOOD_NAME = "good_name";
+        /*public static final String COLUMN_GOOD_NAME = "good_name";
         public static final String COLUMN_QUANTITY_LEVEL = "quantity_level";
         public static final String COLUMN_CATEGORY_ID = "category_id";
         public static final String COLUMN_IS_TO_BUY = "is_to_buy";
@@ -253,7 +256,7 @@ public class Good {
         public static final String COLUMN_EMAIL = "email";
         public static final String COLUMN_CRUD_STATUS = "crud_status";
         public static final String COLUMN_SERVER_GOOD_ID= "server_good_id";
-        public static final String COLUMN_IS_ORDERED = "is_ordered";
+        public static final String COLUMN_IS_ORDERED = "is_ordered";*/
 
 
     }

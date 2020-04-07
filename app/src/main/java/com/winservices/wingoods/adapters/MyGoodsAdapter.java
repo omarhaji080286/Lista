@@ -4,12 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.appcompat.app.AlertDialog;
+
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableListPosition;
@@ -40,6 +42,7 @@ import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -57,11 +60,13 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     private String amountValue = "";
     private String brandValue = "";
     private OnGoodUpdatedListener mOnGoodUpdatedListener;
+    private EventService eventService;
 
     public MyGoodsAdapter(List<CategoryGroup> groups, Context context) {
         super(groups);
         this.context = context;
         this.groups = groups;
+        eventService = new EventService(context);
     }
 
     @Override
@@ -129,6 +134,12 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 int groupflatPosition = flatPosition - childIndex - 1;
                 notifyItemChanged(flatPosition);
                 notifyItemChanged(groupflatPosition);
+
+                //log event
+                Bundle eventParams = new Bundle();
+                eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, good.getGoodName());
+                eventParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, Good.class.getSimpleName());
+                eventService.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, eventParams);
 
 
             }

@@ -35,19 +35,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COL_IS_ORDERED = "is_ordered";
 
 
-    // Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local//uploads/shopImages/";
+    //TODO Version web
+    private final static String webVersion = "L16_LP8";
 
-    // Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/webservices/";
-    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/uploads/shopImages/";
+    //TODO Lista LOCAL (compte root)
+    private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
-    // Lista LWS_PROD
-    private static final String HOST = "http://lista-courses.com/lista_prod/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/uploads/shopImages/";
+    //TODO Lista LWS_PRE_PROD
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 7;
+    //TODO Lista LWS_PROD
+    //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
+
+    private final static int DATABASE_VERSION = 8;
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -99,6 +102,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
 
+
+    public static final String HOST_URL_STORE_DEVICE_INFOS = HOST + "storeDeviceInfos.php";
+    public static final String HOST_URL_CHECK_CO_USER_REGISTRATION = HOST + "checkCoUserRegistration.php";
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
     public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
@@ -292,7 +298,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "shop_email TEXT, " +
                 "longitude REAL, " +
                 "latitude REAL, " +
-                "shop_type_name TEXT ) ");
+                "shop_type_name TEXT, " +
+                "is_delivering INTEGER) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
                 "server_user_id INTEGER, " +
@@ -319,16 +326,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        /*db.execSQL("DROP TABLE IF EXISTS goods ");
-        db.execSQL("DROP TABLE IF EXISTS categories ");
-        db.execSQL("DROP TABLE IF EXISTS co_users ");
-        db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
-        db.execSQL("DROP TABLE IF EXISTS orders ");
-        db.execSQL("DROP TABLE IF EXISTS shops ");
-        /*db.execSQL("DROP TABLE IF EXISTS users ");
-        db.execSQL("DROP TABLE IF EXISTS groups ");
-        db.execSQL("DROP TABLE IF EXISTS amounts ");
-        db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+        if (oldVersion <= 7){
+            /*db.execSQL("DROP TABLE IF EXISTS goods ");
+            db.execSQL("DROP TABLE IF EXISTS categories ");
+            db.execSQL("DROP TABLE IF EXISTS co_users ");
+            db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
+            db.execSQL("DROP TABLE IF EXISTS orders ");
+            db.execSQL("DROP TABLE IF EXISTS shops ");
+            /*db.execSQL("DROP TABLE IF EXISTS users ");
+            db.execSQL("DROP TABLE IF EXISTS groups ");
+            db.execSQL("DROP TABLE IF EXISTS amounts ");
+            db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+        }
 
         onCreate(db);
     }
@@ -619,6 +628,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return (cnt > 0);
     }
 
+    boolean isInvitationPending() {
+        String countQuery = "select * from " + TABLE_RECEIVED_INVITATIONS
+                + " where "
+                + COL_INVITATION_RESPONSE + " = " + CoUser.PENDING;
+
+        db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(countQuery, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("DB", e.toString());
+        }
+        int cnt = 0;
+        if (cursor != null) {
+            cnt = cursor.getCount();
+            cursor.close();
+        }
+        return (cnt > 0);
+    }
+
 
     ReceivedInvitation getReceivedInvitation(String senderPhone) {
         db = this.getReadableDatabase();
@@ -677,6 +707,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return res;
     }
+
 
     //COUSERS
 
@@ -1306,7 +1337,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     boolean updateReceivedInvitation(ReceivedInvitation invitation) {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_SENDER_PHONE, invitation.getInvitationPhone());
         contentValues.put(COL_INVITATION_RESPONSE, invitation.getResponse());
+        contentValues.put(COL_USERID, getCurrentUser().getUserId());
+        contentValues.put(COL_SERVER_CO_USER_ID, invitation.getServerCoUserId());
+        contentValues.put(COL_SERVER_GROUP_ID, invitation.getServerGroupId());
 
         int affectedRows = 0;
         try {

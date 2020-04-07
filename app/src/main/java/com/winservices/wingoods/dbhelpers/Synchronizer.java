@@ -4,7 +4,6 @@ package com.winservices.wingoods.dbhelpers;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.util.Util;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
@@ -29,6 +27,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.services.RemoteConfigService;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -59,12 +58,17 @@ public class Synchronizer {
     }
 
 
-    public void loadShopImages(){
+    void loadGooglePlayVersion(){
+        RemoteConfigService remoteConfigService = new RemoteConfigService(context);
+        remoteConfigService.loadGooglePlayVersion();
+    }
+
+    void loadShopImages(){
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(context);
         List<Shop> shops = shopsDataManager.getAllShops();
 
-        Bitmap shopImg = null;
+        Bitmap shopImg;
         for (int i = 0; i < shops.size(); i++) {
             String shopImgUrl = DataBaseHelper.SHOPS_IMG_URL + shops.get(i).getServerShopId() + ".jpg";
 
@@ -184,6 +188,9 @@ public class Synchronizer {
             //Sync User (if username modified)
             root.put("userName", user.getUserName());
 
+            //For invitations received
+            root.put("coUserPhone", user.getUserPhone());
+
             return root.toString(1);
         } catch (JSONException e) {
             Log.d("LISTA", "Can't format JSON");
@@ -228,8 +235,6 @@ public class Synchronizer {
                 updateUpdatedGoods(jsonUpdatedGoodsServerIds);
                 Log.d(LOG_TAG, "Sync Updated Goods completed. " + jsonUpdatedGoodsServerIds.length() + " updated.");
 
-                //TODO - updates categories status to sync ok
-
                 //inserts categories relative to the group
                 JSONArray jsonGroupCategoriesToSync = jsonObject.getJSONArray("groupCategoriesToSync");
                 insertCategories(jsonGroupCategoriesToSync);
@@ -265,6 +270,11 @@ public class Synchronizer {
                 insertOrders(jsonOrders);
                 Log.d(LOG_TAG, "Sync orders completed. " + jsonOrders.length() + " inserted or updated.");
 
+                //insert or updates invitations
+                JSONArray jsonInvitations = jsonObject.getJSONArray("invitationsToSync");
+                insertInvitations(jsonInvitations);
+                Log.d(LOG_TAG, "Sync invitations completed. " + jsonInvitations.length() + " inserted or updated.");
+
             }
 
         } catch (JSONException e){
@@ -272,6 +282,29 @@ public class Synchronizer {
             e.printStackTrace();
         }
     }
+
+    private void insertInvitations(JSONArray jsonInvitations) throws JSONException {
+
+        InvitationsDataManager invitationsDataManager = new InvitationsDataManager(context);
+
+        for (int i = 0; i < jsonInvitations.length(); i++) {
+            JSONObject JSONInvitation = jsonInvitations.getJSONObject(i);
+
+            String senderPhone = JSONInvitation.getString("user_phone");
+            int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
+            int serverGroupId = JSONInvitation.getInt("server_group_id");
+            int invitationResponse = JSONInvitation.getInt("invitation_response");
+
+
+            ReceivedInvitation invitation = new ReceivedInvitation(serverCoUserId, serverGroupId, senderPhone);
+            invitation.setResponse(invitationResponse);
+
+            invitationsDataManager.addReceivedInvitation(invitation);
+
+        }
+    }
+
+
 
     private void insertShops(JSONArray jsonShops) throws JSONException {
 
@@ -330,6 +363,8 @@ public class Synchronizer {
             shop.setCountry(country);
             shop.setShopType(shopType);
             shop.setDefaultCategories(defaultCategories);
+
+            Log.d(LOG_TAG, shopName + " is_delivering = " + JSONShop.getInt("is_delivering"));
 
             shopsDataManager.insertShop(shop);
         }
@@ -414,10 +449,11 @@ public class Synchronizer {
         for (int i = 0; i < updateUpdatedGoodsByGroupMembers.length(); i++) {
             JSONObject JSONGood = updateUpdatedGoodsByGroupMembers.getJSONObject(i);
             Good good = goodsDataProvider.getGoodByServerGoodId(JSONGood.getInt("serverGoodId"));
+            good.setGoodDesc(JSONGood.getString("goodDesc"));
             good.setGoodName(JSONGood.getString("goodName"));
             good.setQuantityLevelId(JSONGood.getInt("quantityLevel"));
             good.setToBuy((JSONGood.getInt("isToBuy")==1));
-            good.setSync(JSONGood.getInt("syncStatus"));
+            good.setSync(DataBaseHelper.SYNC_STATUS_OK);
             good.setEmail(JSONGood.getString("email"));
             good.setServerCategoryId(JSONGood.getInt("serverCategoryId"));
             good.setCrudStatus(JSONGood.getInt("crudStatus"));

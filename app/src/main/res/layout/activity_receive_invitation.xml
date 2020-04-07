@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.winservices.wingoods.activities.ReceiveInvitationActivity">
+    tools:context="com.winservices.wingoods.activities.ReceiveInvitationActivity"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/txt_no_invitations"
@@ -17,7 +18,7 @@
         android:gravity="center"
         android:textSize="8pt"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/invitations_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -16,12 +16,26 @@ public class ReceivedInvitation {
     private int userId;
     private int serverCoUserId;
     private int serverGroupId;
-    private String invitationPhone;
+    private String invitationPhone, userName;
+
+    public ReceivedInvitation(int serverCoUserId, int serverGroupId, String invitationPhone) {
+        this.serverCoUserId = serverCoUserId;
+        this.serverGroupId = serverGroupId;
+        this.invitationPhone = invitationPhone;
+    }
+
+    public ReceivedInvitation(String userName, String invitationPhone, String invitationCategories, int response) {
+        this.invitationPhone = invitationPhone;
+        this.invitationCategories = invitationCategories;
+        this.response = response;
+        this.userName = userName;
+    }
 
     public ReceivedInvitation(String invitationPhone, String invitationCategories, int response) {
         this.invitationPhone = invitationPhone;
         this.invitationCategories = invitationCategories;
         this.response = response;
+        this.userName = userName;
     }
 
     public ReceivedInvitation(int receivedInvitationId, String invitationPhone, int response, int userId) {
@@ -29,6 +43,7 @@ public class ReceivedInvitation {
         this.invitationPhone = invitationPhone;
         this.response = response;
         this.userId = userId;
+
     }
 
     public ReceivedInvitation(int receivedInvitationId, String invitationPhone, int response, int userId, int serverCoUserId) {
@@ -37,6 +52,14 @@ public class ReceivedInvitation {
         this.response = response;
         this.userId = userId;
         this.serverCoUserId = serverCoUserId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getInvitationPhone() {
@@ -106,6 +129,7 @@ public class ReceivedInvitation {
             jsonRI.put("userId", this.userId);
             jsonRI.put("serverCoUserId", this.serverCoUserId);
             jsonRI.put("serverGroupId", this.serverGroupId);
+            jsonRI.put("userName", this.userName);
 
             return jsonRI;
 

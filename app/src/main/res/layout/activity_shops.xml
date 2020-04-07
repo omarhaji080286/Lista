@@ -10,22 +10,22 @@
     android:background="@color/white">
 
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_shops"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/softBlueGreen"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs_shops"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/softBlueGreen" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_shops"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

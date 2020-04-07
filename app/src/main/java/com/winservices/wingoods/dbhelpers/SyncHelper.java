@@ -26,6 +26,7 @@ public class SyncHelper {
             if (user != null){
                 synchronizer.sync();
                 synchronizer.loadShopImages();
+                synchronizer.loadGooglePlayVersion();
             }
             return null;
         }

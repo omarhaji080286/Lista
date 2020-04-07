@@ -4,9 +4,9 @@ package com.winservices.wingoods.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +26,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -50,6 +49,8 @@ import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.services.DeviceInfoService;
+import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
@@ -79,7 +80,6 @@ public class SignUpFragment extends Fragment {
     private Button btnContinue, btnSignUp;
     private TextView txtDescription;
     private LinearLayout linlayPhoneCointaner;
-
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
@@ -257,10 +257,10 @@ public class SignUpFragment extends Fragment {
         String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
         //TODO - for release
-        String phone = "+212" + editPhone.getText().toString();
+        //String phone = "+212" + editPhone.getText().toString();
 
         //TODO - For test
-        //String phone = "+16" + editPhone.getText().toString();
+        String phone = "+16" + editPhone.getText().toString();
 
         String userName = editUserName.getText().toString();
 
@@ -301,8 +301,9 @@ public class SignUpFragment extends Fragment {
 
                                 } else {
                                     //Registering OK
-                                    //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
                                     boolean isUserRegistered = jsonObject.getBoolean("is_user_registered");
+
                                     if (isUserRegistered) {
 
                                         JSONObject JsonUser = jsonObject.getJSONObject("user");
@@ -326,6 +327,13 @@ public class SignUpFragment extends Fragment {
                                             if (serverGroupId != 0) addUserGroup(jsonObject);
                                         }
 
+                                        //log event
+                                        Bundle eventParams = new Bundle();
+                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
+                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
+                                        EventService eventService = new EventService(getContext());
+                                        eventService.logEvent(FirebaseAnalytics.Event.SIGN_UP, eventParams);
+
                                     } else {
                                         int serverUserId = jsonObject.getInt("server_user_id");
                                         userToRegister.setServerUserId(serverUserId);
@@ -336,6 +344,13 @@ public class SignUpFragment extends Fragment {
                                             usersDataManager.updateLastLoggedIn(serverUserId);
                                             addDefaultItems(jsonObject);
                                         }
+
+                                        //log event
+                                        Bundle eventParams = new Bundle();
+                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
+                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
+                                        EventService eventService = new EventService(getContext());
+                                        eventService.logEvent(FirebaseAnalytics.Event.LOGIN, eventParams);
                                     }
 
                                     dialog.dismiss();
