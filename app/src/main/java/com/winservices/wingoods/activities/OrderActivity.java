@@ -16,6 +16,8 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,8 +30,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +70,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
@@ -78,22 +81,16 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private GridLayoutManager glm;
     private String[] collectTimes;
     private Location lastLocation;
+    private String location;
     private EditText editLocation;
-    private ImageButton imgBtnRefreshLocation;
+    private ImageButton imgBtnGoogleMaps;
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        new Thread(new Runnable() {
-            public void run() {
-                getLocation();
-            }
-        }).start();
-
-        if (editLocation!=null && imgBtnRefreshLocation!=null){
-            getLocation();
-            refreshLocation(editLocation, imgBtnRefreshLocation);
+        if (editLocation!=null && imgBtnGoogleMaps !=null){
+            refreshLocationUI(editLocation, imgBtnGoogleMaps);
         }
 
     }
@@ -102,6 +99,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
+        updateLastLocation();
 
         setTitle(getString(R.string.order_my_list));
 
@@ -151,15 +150,16 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
-        TextView txtCollectTimeLabel = mView.findViewById(R.id.txtCollectTimeLabel);
-        CheckBox cbAutoCollect = mView.findViewById(R.id.cbAutoCollect);
-        final EditText editUserAddress = mView.findViewById(R.id.editUserAddress);
-        final CheckBox cbLocation = mView.findViewById(R.id.cbLocation);
-        editLocation = mView.findViewById(R.id.editLocation);
-        imgBtnRefreshLocation = mView.findViewById(R.id.imgBtnRefreshLocation);
-        final LinearLayoutCompat llLocation = mView.findViewById(R.id.llLocation);
 
-        Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
+        final CheckBox cbHomeDelivery = mView.findViewById(R.id.cbHomeDelivery);
+        final LinearLayoutCompat llAddress = mView.findViewById(R.id.llAddress);
+        final LinearLayoutCompat llLocation = mView.findViewById(R.id.llLocation);
+        final EditText editUserAddress = mView.findViewById(R.id.editUserAddress);
+        final RadioGroup rgLocation = mView.findViewById(R.id.rgLocation);
+        editLocation = mView.findViewById(R.id.editLocation);
+        imgBtnGoogleMaps = mView.findViewById(R.id.imgBtnGoogleMaps);
+
+        Button btnSubmit = mView.findViewById(R.id.btnSubmit);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(this);
         final Shop shop = shopsDataManager.getShopById(selectedShopId);
@@ -181,18 +181,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         dialogTime.setTitle(R.string.validate_order_form);
         dialogTime.show();
 
-        btnCollectTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogTime.dismiss();
-
-                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-
-                addOrder(OrderActivity.this, startTime, endTime);
-            }
-        });
-
         pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -203,62 +191,98 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             }
         });
 
-        // title : collect or Delivery
-        if (shop.getIsDelivering()==Shop.IS_DELIVERING){
-            txtCollectTimeLabel.setText(R.string.delivery_hour_label);
-        }
-
-        //CheckBox Collect or Delivery
-        cbAutoCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        //CheckBox Home Delivery checkbox
+        cbHomeDelivery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateLastLocation();
                 if (isChecked){
-                    editUserAddress.setVisibility(View.GONE);
-                    cbLocation.setVisibility(View.GONE);
-                    llLocation.setVisibility(View.GONE);
-                } else {
-                    editUserAddress.setVisibility(View.VISIBLE);
-                    cbLocation.setVisibility(View.VISIBLE);
-                    llLocation.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        //L'adresse ne correspond pas à la position
-        cbLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                    llAddress.setVisibility(View.VISIBLE);
                     llLocation.setVisibility(View.VISIBLE);
                 } else {
+                    llAddress.setVisibility(View.GONE);
                     llLocation.setVisibility(View.GONE);
                 }
             }
         });
 
-        //location
-        refreshLocation(editLocation, imgBtnRefreshLocation);
+        //Radio group : get location
+        refreshLocationUI(editLocation, imgBtnGoogleMaps);
+        final KeyListener keyListener = editLocation.getKeyListener();
+        rgLocation.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioGetMyLocation:
+                        refreshLocationUI(editLocation, imgBtnGoogleMaps);
+                        editLocation.setText(location);
+                        editLocation.setKeyListener(null);
+                        editLocation.setError(null);
+                        imgBtnGoogleMaps.setVisibility(View.GONE);
+                        break;
+                    case R.id.radioSetLocationManually:
+                        updateLastLocation();
+                        editLocation.setKeyListener(keyListener);
+                        editLocation.setText("");
+                        imgBtnGoogleMaps.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
 
+        //Submit button
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (formOk(editUserAddress, rgLocation)){
+                    dialogTime.dismiss();
+
+                    String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                    String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+
+                    int isToDeliver = 0;
+                    if (cbHomeDelivery.isChecked()) isToDeliver = 1;
+                    addOrder(OrderActivity.this, startTime, endTime,
+                            isToDeliver, editUserAddress.getText().toString(), editLocation.getText().toString());
+                }
+            }
+        });
     }
 
-
-    private void refreshLocation(final EditText editLocation, ImageButton imgBtnRefreshLocation){
-        double latitude = 00.000000;
-        double longitude = -0.000000;
-        String location = latitude + ", " + longitude;
-        if (lastLocation != null) {
-            latitude = lastLocation.getLatitude();
-            longitude = lastLocation.getLongitude();
-            location = latitude + ", " + longitude;
+    private boolean formOk(EditText editUserAddress, RadioGroup rg){
+        if (editUserAddress.getText().toString().isEmpty()){
+            editUserAddress.setError(getString(R.string.address_required));
+            return false;
         }
-        editLocation.setKeyListener(null);
-        editLocation.setText(location);
+
+        if (rg.getCheckedRadioButtonId()==-1){
+            Toast.makeText(this, R.string.location_required, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (editLocation.getText().toString().isEmpty()){
+            editLocation.setError(getString(R.string.location_required));
+            return false;
+        }
+
+        String regexGps = "^([+-]?\\d+\\.?\\d+)\\s*,\\s*([+-]?\\d+\\.?\\d+)$";
+        if (!editLocation.getText().toString().matches(regexGps)){
+            editLocation.setError(getString(R.string.gps_format));
+            return false;
+        }
+
+        return true;
+    }
+
+    private void refreshLocationUI(final EditText editLocation, ImageButton imgBtnGoogleMaps){
+        getLocation();
 
         //ImgButton check location on google maps
-        imgBtnRefreshLocation.setOnClickListener(new View.OnClickListener() {
+        imgBtnGoogleMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uri = "geo:"+ editLocation.getText().toString();
+                updateLastLocation();
+                String uri = "geo:"+ location;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 getApplicationContext().startActivity(intent);
             }
@@ -292,7 +316,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         return startTime;
     }
-
 
     private String[] getDays(String closingTime) {
         final String[] weekdays = getResources().getStringArray(R.array.days);
@@ -381,6 +404,13 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }, 50);
     }
 
+    private void updateLastLocation() {
+        new Thread(new Runnable() {
+            public void run() {
+                getLocation();
+            }
+        }).start();
+    }
 
     private void loadCategoriesToOrder(Shop shop) {
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
@@ -416,7 +446,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private void addOrder(final Context context, final String startTime, final String endTime) {
+    private void addOrder(final Context context, final String startTime, final String endTime,
+                          final int isToDeliver, final String userAddress, final String userLocation) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
             final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
             dialog.show();
@@ -458,7 +489,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
-                    postData.put("jsonData", "" + getJSONForAddOrder(startTime, endTime));
+                    postData.put("jsonData", "" + getJSONForAddOrder(startTime, endTime, isToDeliver, userAddress, userLocation));
                     postData.put("language", "" + Locale.getDefault().getLanguage());
                     return postData;
                 }
@@ -470,7 +501,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private String getJSONForAddOrder(String startTime, String endTime) {
+    private String getJSONForAddOrder(String startTime, String endTime,
+                                      int isToDeliver, String userAddress, String userLocation) {
         final JSONObject root = new JSONObject();
         try {
 
@@ -482,6 +514,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             root.put("statusId", Order.REGISTERED);
             root.put("startTime", startTime);
             root.put("endTime", endTime);
+            root.put("isToDeliver", String.valueOf(isToDeliver));
+            root.put("userAddress", userAddress);
+            root.put("userLocation", userLocation);
 
             JSONArray jsonGoods = new JSONArray();
             for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
@@ -561,6 +596,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     lastLocation = task.getResult();
+                    location = String.valueOf(lastLocation.getLatitude()).substring(0,9) + ", " + String.valueOf(lastLocation.getLongitude()).substring(0,9);
                     Log.d(TAG, "onComplete:success  " + lastLocation.toString());
                 } else {
                     Log.d(TAG, "onComplete:exception  " + task.getException());

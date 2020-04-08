@@ -35,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="50"/>
+            android:layout_weight="50"
+            android:visibility="visible"/>
 
     </LinearLayout>
 
@@ -45,85 +46,124 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/cbAutoCollect"
+            android:id="@+id/cbHomeDelivery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:checked="false"
+            android:checked="true"
             android:button="@null"
             android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
             android:text="@string/auto_collect"
             style="@style/TextViewLabel"
             android:layout_marginTop="16dp"/>
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/editUserAddress"
-            android:layout_margin="16dp"
-            style="@style/EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLength="150"
-            android:lines="2"
-            android:hint="@string/user_address_text"
-            android:visibility="visible"
-            android:autofillHints="@string/user_address_text" />
-
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/cbLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:checked="true"
-            style="@style/TextViewLabel"
-            android:button="@null"
-            android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-            android:text="@string/localization_question"/>
-
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llLocation"
-            android:layout_marginTop="16dp"
+            android:id="@+id/llAddress"
+            android:layout_margin="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/verify_location"
+                android:text="@string/delivery_address"
                 style="@style/TextViewLabel"/>
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editLocation"
+                android:id="@+id/editUserAddress"
                 style="@style/EditText"
-                android:layout_marginStart="@dimen/fab_margin"
-                android:layout_marginEnd="@dimen/fab_margin"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:maxLength="20"
+                android:maxLength="150"
                 android:lines="2"
-                android:hint="@string/GPS_hint"
-                android:visibility="visible"
-                android:autofillHints="@string/GPS_hint"
-                android:layout_gravity="center"/>
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/imgBtnRefreshLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/refresh"
-                />
-
+                android:hint="@string/delivery_address"
+                android:autofillHints="@string/user_address_text" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llLocation"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gps_location"
+                style="@style/TextViewLabel"/>
+
+            <RadioGroup
+                android:id="@+id/rgLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_above="@+id/view_below" >
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radioGetMyLocation"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:checked="false"
+                    android:text="@string/get_my_location" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radioSetLocationManually"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:layout_height="wrap_content"
+                    android:text="@string/set_location_manually"
+                    android:textSize="12sp"/>
+            </RadioGroup>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/editLocation"
+                    style="@style/EditText"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLength="20"
+                    android:lines="2"
+                    android:hint="@string/GPS_hint"
+                    android:visibility="visible"
+                    android:autofillHints="@string/GPS_hint"
+                    android:layout_gravity="center"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/imgBtnGoogleMaps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/location"
+                    android:visibility="gone"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <Button
-        android:id="@+id/btnCollectTime"
+        android:id="@+id/btnSubmit"
         style="@style/Button"
         android:layout_marginTop="16dp"
         android:layout_width="match_parent"
