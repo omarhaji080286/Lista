@@ -97,6 +97,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
             if (goodItem.getIsOrdered() == 1) {
                 holder.cart.setVisibility(View.VISIBLE);
+                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_is_ordered_color));
             } else {
                 holder.cart.setVisibility(View.GONE);
             }
@@ -210,7 +211,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
     public void removeChildItem(int position, int goodId) {
         DataManager dataManager = new DataManager(context);
-        Boolean res = dataManager.deleteGoodById(goodId);
+        boolean res = dataManager.deleteGoodById(goodId);
         if (res) {
             ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
             CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
@@ -224,13 +225,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     public void restoreItem(Good deletedItem) {
         DataManager dataManager = new DataManager(context);
         int res = dataManager.restoreGood(deletedItem);
-        switch (res) {
-            case Constants.SUCCESS:
-                refreshList();
-                break;
-            default:
-                Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
-                break;
+        if (res == Constants.SUCCESS) {
+            refreshList();
+        } else {
+            Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
         }
     }
 
