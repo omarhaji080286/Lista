@@ -167,6 +167,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_LATITUDE = "latitude";
     static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
     static final String COL_D_CATEGORY_NAME = "d_category_name";
+    static final String COL_IS_DELIVERING = "is_delivering";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -1631,6 +1632,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SHOP_EMAIL, shop.getShopEmail());
         contentValues.put(COL_LONGITUDE, shop.getLongitude());
         contentValues.put(COL_LATITUDE, shop.getLatitude());
+        contentValues.put(COL_IS_DELIVERING, shop.getIsDelivering());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

@@ -120,7 +120,7 @@
     <string name="no_items_to_buy">Il n\'y a pas d\'articles à commander</string>
     <string name="ongoing_orders">Commandes en cours</string>
     <string name="closed_orders">Commandes clôturées</string>
-    <string name="collect_time">Heure de collecte</string>
+    <string name="validate_order_form">Validation de la commande</string>
     <string name="monday">Lundi</string>
     <string name="tuesday">Mardi</string>
     <string name="wednesday">Mercredi</string>
@@ -147,6 +147,14 @@
     <string name="referenced_shops">Magasins référencés</string>
     <string name="sign_in_failed">L\'enregistrement a échoué. Veuillez réessayer.</string>
     <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
+    <string name="user_address_text">Votre adresse</string>
+    <string name="auto_collect">Je vais collecter la commande moi-même</string>
+    <string name="submit">Valider</string>
+    <string name="localization_question">Cette adresse correspond-elle à votre position actuelle ?</string>
+    <string name="GPS_hint">33.975789, -6.916790</string>
+    <string name="collect_time">Heure de Collecte</string>
+    <string name="delivery_hour_label">Heure de livraison</string>
+    <string name="verify_location">Vérifier ma localisation</string>
 
 
 </resources>

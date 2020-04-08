@@ -151,7 +151,7 @@
     <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
     <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
     <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
-    <string name="collect_time">Collect time</string>
+    <string name="validate_order_form">Validation de la commande</string>
     <string name="ok">Ok</string>
     <string name="invite_phone_hint">+2121234567890</string>
     <string name="no_shops_referenced">There is currently no referenced store to process items on your list. We are working hard to improve that! Thank you for your understanding.</string>
@@ -159,6 +159,14 @@
     <string name="referenced_shops">Referenced shops</string>
     <string name="sign_in_failed">Signing in failed. please try again.</string>
     <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
+    <string name="user_address_text">Votre adresse</string>
+    <string name="auto_collect">Je vais collecter la commande moi-même</string>
+    <string name="submit">Valider</string>
+    <string name="localization_question">Cette adresse correspond à ma position actuelle</string>
+    <string name="GPS_hint">33.975789, -6.916790</string>
+    <string name="collect_time">Heure de Collecte</string>
+    <string name="delivery_hour_label">Delivery time</string>
+    <string name="verify_location">Check my location</string>
 
 
 </resources>

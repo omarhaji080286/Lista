@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
@@ -282,19 +283,48 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                             intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);
-                            startActivity(intent);
-                            Objects.requireNonNull(getActivity()).finish();
+
+                            if(UtilsFunctions.isGPSEnabled(getContext())){
+                                startActivity(intent);
+                                Objects.requireNonNull(getActivity()).finish();
+                            } else {
+                                UtilsFunctions.enableGPS(getActivity(), intent);
+                            }
+
                         }
                     });
                 } else {
                     btnOrder.setVisibility(View.GONE);
                 }
 
-
                 return false;
             }
         });
 
+    }
+
+    private void requestLocationPermission(Intent intent) {
+
+        PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
+
+        if (permissionUtil.checkPermission(PermissionUtil.TXT_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                permissionUtil.showPermissionExplanation(PermissionUtil.TXT_FINE_LOCATION, getActivity());
+            } else if (!permissionUtil.checkPermissionPreference(PermissionUtil.TXT_FINE_LOCATION)) {
+                permissionUtil.requestPermission(PermissionUtil.TXT_FINE_LOCATION, getActivity());
+                permissionUtil.updatePermissionPreference(PermissionUtil.TXT_FINE_LOCATION);
+            } else {
+                permissionUtil.goToAppSettings();
+            }
+        } else {
+
+            if(UtilsFunctions.isGPSEnabled(getContext())){
+                startActivity(intent);
+            } else {
+                UtilsFunctions.enableGPS(getActivity(), intent);
+            }
+
+        }
     }
 
     private boolean canGetOrder(Shop shop) {

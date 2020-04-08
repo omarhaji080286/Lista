@@ -120,7 +120,7 @@
     <string name="no_items_to_buy">لا توجد أي عناصر لشراء</string>
     <string name="ongoing_orders">الطلبات الجارية</string>
     <string name="closed_orders">الطلبات المغلقة</string>
-    <string name="collect_time">وقت التسليم</string>
+    <string name="validate_order_form">تفاصيل الطلب</string>
     <string name="monday">الإثنين</string>
     <string name="tuesday">الثلاثاء</string>
     <string name="wednesday">الأربعاء</string>
@@ -147,6 +147,14 @@
     <string name="referenced_shops">المحلات المشار إليها</string>
     <string name="sign_in_failed">فشل تسجيل الدخول. حاول مرة اخرى.</string>
     <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
+    <string name="user_address_text">عنوانك</string>
+    <string name="auto_collect">سوف أقوم بجمع الطلب بنفسي</string>
+    <string name="submit">Valider</string>
+    <string name="localization_question">هل هذا العنوان يتطابق مع موقعك الحالي</string>
+    <string name="GPS_hint">33.975789, -6.916790</string>
+    <string name="collect_time">Heure de Collecte</string>
+    <string name="delivery_hour_label">Heure de livraison</string>
+    <string name="verify_location">Vérifier ma position</string>
 
 
 </resources>

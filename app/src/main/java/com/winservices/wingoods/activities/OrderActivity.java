@@ -3,11 +3,16 @@ package com.winservices.wingoods.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -19,6 +24,11 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +37,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -38,7 +52,6 @@ import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
-import com.winservices.wingoods.models.OrderedGood;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
@@ -64,6 +77,26 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private RecyclerView rvCategoriesToOrder;
     private GridLayoutManager glm;
     private String[] collectTimes;
+    private Location lastLocation;
+    private EditText editLocation;
+    private ImageButton imgBtnRefreshLocation;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
+            public void run() {
+                getLocation();
+            }
+        }).start();
+
+        if (editLocation!=null && imgBtnRefreshLocation!=null){
+            getLocation();
+            refreshLocation(editLocation, imgBtnRefreshLocation);
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +128,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private void sendOrder() {
         if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
             if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
-                selectCollectTime();
+                completeOrderData();
             } else {
                 Toast.makeText(this, R.string.set_descriptions, Toast.LENGTH_SHORT).show();
                 List<Good> goodsToComplete = categoriesToOrderAdapter.getGoodsToComplete();
@@ -110,21 +143,28 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private void selectCollectTime() {
+    private void completeOrderData() {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         View mView = LayoutInflater.from(this)
-                .inflate(R.layout.fragment_collect_time, null, false);
+                .inflate(R.layout.fragment_complete_order_data, null, false);
 
         final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
-        Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
+        TextView txtCollectTimeLabel = mView.findViewById(R.id.txtCollectTimeLabel);
+        CheckBox cbAutoCollect = mView.findViewById(R.id.cbAutoCollect);
+        final EditText editUserAddress = mView.findViewById(R.id.editUserAddress);
+        final CheckBox cbLocation = mView.findViewById(R.id.cbLocation);
+        editLocation = mView.findViewById(R.id.editLocation);
+        imgBtnRefreshLocation = mView.findViewById(R.id.imgBtnRefreshLocation);
+        final LinearLayoutCompat llLocation = mView.findViewById(R.id.llLocation);
 
+        Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(this);
         final Shop shop = shopsDataManager.getShopById(selectedShopId);
 
-
+        //Prepare collect time
         final String[] days = getDays(shop.getClosingTime());
         pickerDay.setMinValue(0);
         pickerDay.setMaxValue(days.length - 1);
@@ -138,7 +178,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         mBuilder.setView(mView);
         final AlertDialog dialogTime = mBuilder.create();
-        dialogTime.setTitle(R.string.collect_time);
+        dialogTime.setTitle(R.string.validate_order_form);
         dialogTime.show();
 
         btnCollectTime.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +200,67 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 pickerTime.setDisplayedValues(null);
                 pickerTime.setMaxValue(collectTimes.length - 1);
                 pickerTime.setDisplayedValues(collectTimes);
+            }
+        });
+
+        // title : collect or Delivery
+        if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+            txtCollectTimeLabel.setText(R.string.delivery_hour_label);
+        }
+
+        //CheckBox Collect or Delivery
+        cbAutoCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    editUserAddress.setVisibility(View.GONE);
+                    cbLocation.setVisibility(View.GONE);
+                    llLocation.setVisibility(View.GONE);
+                } else {
+                    editUserAddress.setVisibility(View.VISIBLE);
+                    cbLocation.setVisibility(View.VISIBLE);
+                    llLocation.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //L'adresse ne correspond pas à la position
+        cbLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    llLocation.setVisibility(View.VISIBLE);
+                } else {
+                    llLocation.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        //location
+        refreshLocation(editLocation, imgBtnRefreshLocation);
+
+    }
+
+
+    private void refreshLocation(final EditText editLocation, ImageButton imgBtnRefreshLocation){
+        double latitude = 00.000000;
+        double longitude = -0.000000;
+        String location = latitude + ", " + longitude;
+        if (lastLocation != null) {
+            latitude = lastLocation.getLatitude();
+            longitude = lastLocation.getLongitude();
+            location = latitude + ", " + longitude;
+        }
+        editLocation.setKeyListener(null);
+        editLocation.setText(location);
+
+        //ImgButton check location on google maps
+        imgBtnRefreshLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "geo:"+ editLocation.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                getApplicationContext().startActivity(intent);
             }
         });
     }
@@ -448,6 +549,25 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void getLocation() {
+
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+
+                if (task.isSuccessful() && task.getResult() != null) {
+                    lastLocation = task.getResult();
+                    Log.d(TAG, "onComplete:success  " + lastLocation.toString());
+                } else {
+                    Log.d(TAG, "onComplete:exception  " + task.getException());
+                }
+            }
+        });
+
     }
 
 

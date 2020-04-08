@@ -363,8 +363,7 @@ public class Synchronizer {
             shop.setCountry(country);
             shop.setShopType(shopType);
             shop.setDefaultCategories(defaultCategories);
-
-            Log.d(LOG_TAG, shopName + " is_delivering = " + JSONShop.getInt("is_delivering"));
+            shop.setIsDelivering(JSONShop.getInt("is_delivering"));
 
             shopsDataManager.insertShop(shop);
         }
