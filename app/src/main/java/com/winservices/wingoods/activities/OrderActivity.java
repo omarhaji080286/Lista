@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -70,7 +71,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class OrderActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
@@ -145,7 +145,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private void completeOrderData() {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        View mView = LayoutInflater.from(this)
+        @SuppressLint("InflateParams") View mView = LayoutInflater.from(this)
                 .inflate(R.layout.fragment_complete_order_data, null, false);
 
         final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
@@ -423,12 +423,10 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                switch (categoriesToOrderAdapter.getItemViewType(position)) {
-                    case 2:
-                        return GRID_COLUMN_NUMBER;
-                    default:
-                        return 1;
+                if (categoriesToOrderAdapter.getItemViewType(position) == 2) {
+                    return GRID_COLUMN_NUMBER;
                 }
+                return 1;
             }
         });
 
