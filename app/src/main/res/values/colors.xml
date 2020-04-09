@@ -19,7 +19,6 @@
     <color name="colorGrrenFluo">#8dfc7c</color>
     <color name="black">#000000</color>
 
-
     <color name="blueGrey">#455a64</color>
     <color name="deepOrange">#E64A19</color>
     <color name="brown">#5D4037</color>
@@ -35,7 +34,7 @@
     <color name="red">#f10101</color>
     <color name="green_lista">#A1E205</color>
     <color name="blue_soft_lista">#007698</color>
-
+    <color name="ordered_good_color">#4EB57E</color>
 
 
 </resources>
