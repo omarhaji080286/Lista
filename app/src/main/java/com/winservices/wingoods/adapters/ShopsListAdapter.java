@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,8 +44,9 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         this.orderInitiated = orderInitiated;
     }
 
+    @NonNull
     @Override
-    public ShopInListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ShopInListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_shop_in_list, parent, false);
         return new ShopInListViewHolder(view);
     }
@@ -81,8 +84,14 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                     intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                     intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                     intent.putExtra(Constants.SHOP, shop);
-                    context.startActivity(intent);
-                    ((Activity) context).finish();
+
+                    if(UtilsFunctions.isGPSEnabled(context)){
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
+                    } else {
+                        UtilsFunctions.enableGPS(((Activity) context), intent);
+                    }
+
                 }
             });
         } else {

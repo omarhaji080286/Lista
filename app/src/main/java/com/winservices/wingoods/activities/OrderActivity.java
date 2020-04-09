@@ -151,6 +151,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
 
+        LinearLayoutCompat llDeliveryModule = mView.findViewById(R.id.llDeliveryModule);
         final CheckBox cbHomeDelivery = mView.findViewById(R.id.cbHomeDelivery);
         final LinearLayoutCompat llAddress = mView.findViewById(R.id.llAddress);
         final LinearLayoutCompat llLocation = mView.findViewById(R.id.llLocation);
@@ -191,60 +192,77 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             }
         });
 
-        //CheckBox Home Delivery checkbox
-        cbHomeDelivery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateLastLocation();
-                if (isChecked){
-                    llAddress.setVisibility(View.VISIBLE);
-                    llLocation.setVisibility(View.VISIBLE);
-                } else {
-                    llAddress.setVisibility(View.GONE);
-                    llLocation.setVisibility(View.GONE);
-                }
-            }
-        });
+        if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+            llDeliveryModule.setVisibility(View.VISIBLE);
 
-        //Radio group : get location
-        refreshLocationUI(editLocation, imgBtnGoogleMaps);
-        final KeyListener keyListener = editLocation.getKeyListener();
-        rgLocation.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
-                    case R.id.radioGetMyLocation:
-                        refreshLocationUI(editLocation, imgBtnGoogleMaps);
-                        editLocation.setText(location);
-                        editLocation.setKeyListener(null);
-                        editLocation.setError(null);
-                        imgBtnGoogleMaps.setVisibility(View.GONE);
-                        break;
-                    case R.id.radioSetLocationManually:
-                        updateLastLocation();
-                        editLocation.setKeyListener(keyListener);
-                        editLocation.setText("");
-                        imgBtnGoogleMaps.setVisibility(View.VISIBLE);
-                        break;
+            //CheckBox Home Delivery checkbox
+            cbHomeDelivery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    updateLastLocation();
+                    if (isChecked){
+                        llAddress.setVisibility(View.VISIBLE);
+                        llLocation.setVisibility(View.VISIBLE);
+                    } else {
+                        llAddress.setVisibility(View.GONE);
+                        llLocation.setVisibility(View.GONE);
+                    }
                 }
-            }
-        });
+            });
+
+            //Radio group : get location
+            refreshLocationUI(editLocation, imgBtnGoogleMaps);
+            final KeyListener keyListener = editLocation.getKeyListener();
+            rgLocation.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId){
+                        case R.id.radioGetMyLocation:
+                            refreshLocationUI(editLocation, imgBtnGoogleMaps);
+                            editLocation.setText(location);
+                            editLocation.setKeyListener(null);
+                            editLocation.setError(null);
+                            imgBtnGoogleMaps.setVisibility(View.GONE);
+                            break;
+                        case R.id.radioSetLocationManually:
+                            updateLastLocation();
+                            editLocation.setKeyListener(keyListener);
+                            editLocation.setText("");
+                            imgBtnGoogleMaps.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }
+            });
+        } else {
+            llDeliveryModule.setVisibility(View.GONE);
+        }
+
+
 
         //Submit button
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (formOk(editUserAddress, rgLocation)){
-                    dialogTime.dismiss();
+                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                int isToDeliver = 0;
+                String userAddress = "";
+                String userLocation = location;
 
-                    String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-                    String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+                    if (formOk(editUserAddress, rgLocation)){
+                        dialogTime.dismiss();
 
-                    int isToDeliver = 0;
-                    if (cbHomeDelivery.isChecked()) isToDeliver = 1;
-                    addOrder(OrderActivity.this, startTime, endTime,
-                            isToDeliver, editUserAddress.getText().toString(), editLocation.getText().toString());
+                        if (cbHomeDelivery.isChecked()) isToDeliver = 1;
+                        userAddress = editUserAddress.getText().toString();
+                        userLocation = editLocation.getText().toString();
+
+                    }
                 }
+
+                addOrder(OrderActivity.this, startTime, endTime,
+                        isToDeliver, userAddress, userLocation);
+
             }
         });
     }
