@@ -43,6 +43,7 @@ import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.models.RemoteConfigParams;
 import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
@@ -66,7 +67,7 @@ public class WelcomeFragment extends Fragment {
 
     private ConstraintLayout consLayMyGoods, consLayMyOrders;
     private LinearLayout linlayShops, linlayProfile;
-    private TextView txtAvailableOrders, txtItemsToBuyNum;
+    private TextView txtAvailableOrders, txtItemsToBuyNum, txtWelcome1, txtWelcome2;
     private SyncReceiverWelcome syncReceiver;
     private ImageView imgInvitation, imgShare, imgGooglePlay;
 
@@ -97,6 +98,8 @@ public class WelcomeFragment extends Fragment {
         imgShare = view.findViewById(R.id.imgShare);
         imgGooglePlay = view.findViewById(R.id.imgGooglePlay);
         txtItemsToBuyNum = view.findViewById(R.id.txtItemsToBuyNum);
+        txtWelcome1 = view.findViewById(R.id.txtWelcome1);
+        txtWelcome2 = view.findViewById(R.id.txtWelcome2);
 
 
         SyncHelper.sync(getContext());
@@ -138,6 +141,16 @@ public class WelcomeFragment extends Fragment {
                 shareAppStoreLink();
             }
         });
+
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
+        try {
+            JSONObject jsonObject = new JSONObject(rcp.getWelcomeMessage());
+            txtWelcome1.setText(jsonObject.getString("welcome1"));
+            txtWelcome2.setText(jsonObject.getString("welcome2"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

@@ -20,6 +20,7 @@ public class SharedPrefManager {
     private static final String SHARED_PREF_NAME = "listaSharedPreferences";
     private static final String KEY_ACCESS_TOKEN = "token";
     public static final String GOOGLE_PLAY_VERSION_CODE = "google_play_version_code";
+    public static final String WELCOME_MESSAGE = "welcome_message";
     private static SharedPrefManager instance;
     private Context context;
 
@@ -39,10 +40,17 @@ public class SharedPrefManager {
         return sharedPreferences.getInt(GOOGLE_PLAY_VERSION_CODE, 0);
     }
 
-    public void storeGooglePlayVersion(int googlePlayVersion) {
+    public String getWelcomeMessage(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        String defaultMessage = "{\"welcome1\":\"Lista Maroc\",\"welcome2\":\"Les courses faciles...\"}";
+        return sharedPreferences.getString(WELCOME_MESSAGE, defaultMessage);
+    }
+
+    public void storeGooglePlayVersion(int googlePlayVersion, String welcomeMessage) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(GOOGLE_PLAY_VERSION_CODE, googlePlayVersion);
+        editor.putString(WELCOME_MESSAGE, welcomeMessage);
         editor.apply();
     }
 

@@ -220,6 +220,7 @@
             <TextView
                 android:id="@+id/txtWelcome1"
                 android:textSize="16sp"
+                android:textStyle="italic"
                 android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -227,11 +228,15 @@
 
             <TextView
                 android:id="@+id/txtWelcome2"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:textSize="16sp"
+                android:textStyle="italic"
                 android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lista_welcome2" />
+                android:text="@string/lista_welcome2"
+                android:gravity="center"/>
 
         </LinearLayout>
 

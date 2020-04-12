@@ -251,17 +251,19 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
                 if (shop.getIsDelivering()==Shop.IS_DELIVERING && cbHomeDelivery.isChecked()){
                     if (formOk(editUserAddress, rgLocation)){
-                        dialogTime.dismiss();
+
 
                         if (cbHomeDelivery.isChecked()) isToDeliver = 1;
                         userAddress = editUserAddress.getText().toString();
                         userLocation = editLocation.getText().toString();
+
 
                         addOrder(OrderActivity.this, startTime, endTime,
                                 isToDeliver, userAddress, userLocation);
 
                     }
                 } else {
+                    dialogTime.dismiss();
                     addOrder(OrderActivity.this, startTime, endTime,
                             isToDeliver, userAddress, userLocation);
                 }
