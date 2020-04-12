@@ -115,10 +115,10 @@ public class ProfileActivity extends AppCompatActivity {
             if (imageBitmap != null) {
                 imgProfile.setImageBitmap(imageBitmap);
             } else {
-                imgProfile.setImageResource(R.drawable.users);
+                imgProfile.setImageResource(R.drawable.profile);
             }
         } else {
-            imgProfile.setImageResource(R.drawable.users);
+            imgProfile.setImageResource(R.drawable.profile);
         }
 
     }
@@ -141,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void captureImage() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(Objects.requireNonNull(this).getPackageManager()) != null) {
+        if (cameraIntent.resolveActivity(this.getPackageManager()) != null) {
             File imageFile = null;
 
             try {
@@ -246,10 +246,8 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (id == android.R.id.home) {
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

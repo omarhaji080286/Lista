@@ -165,6 +165,9 @@
     <string name="livraison_disponible">Livraison disponible</string>
     <string name="shop_type">shop type</string>
     <string name="delivery_status">توصيل</string>
+    <string name="todo">TODO</string>
+    <string name="lista_welcome1">Lista !</string>
+    <string name="lista_welcome2">Les courses faciles…</string>
 
 
 </resources>

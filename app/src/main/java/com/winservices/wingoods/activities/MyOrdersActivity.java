@@ -29,7 +29,6 @@ import java.util.List;
 
 public class MyOrdersActivity extends AppCompatActivity {
 
-
     private static final String ORDERS_TYPE = "orders_type";
     private final String TAG = "MyOrdersActivity";
     private FloatingActionButton fabAddOrder;

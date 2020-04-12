@@ -33,7 +33,8 @@
                 android:src="@drawable/ic_update_selector"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/todo" />
 
 
             <ImageView
@@ -44,7 +45,8 @@
                 android:src="@drawable/ic_invit_selector"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/imgShare"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/todo" />
 
             <ImageView
                 android:id="@+id/imgShare"
@@ -64,7 +66,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/todo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -85,8 +88,8 @@
                 <ImageView
                     android:id="@+id/imgMyGoods"
                     style="@style/WelcomeImgItem"
-                    android:contentDescription="TODO"
-                    android:src="@drawable/list_black"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/mylist"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -128,8 +131,8 @@
                 <ImageView
                     android:id="@+id/imgShops"
                     style="@style/WelcomeImgItem"
-                    android:contentDescription="TODO"
-                    android:src="@drawable/shops" />
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/shop_color" />
 
                 <TextView
                     android:id="@+id/txtShops"
@@ -152,8 +155,8 @@
                 <ImageView
                     android:id="@+id/imgMyOrders"
                     style="@style/WelcomeImgItem"
-                    android:contentDescription="TODO"
-                    android:src="@drawable/ic_cart_empty_black_128"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/cart_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -193,8 +196,8 @@
                 <ImageView
                     android:id="@+id/imgProfil"
                     style="@style/WelcomeImgItem"
-                    android:contentDescription="TODO"
-                    android:src="@drawable/users" />
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/profile" />
 
                 <TextView
                     android:id="@+id/txtProfil"
@@ -204,6 +207,34 @@
             </LinearLayout>
 
         </TableRow>
+
+
+        <LinearLayout
+            android:id="@+id/llWelcomeMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="18dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtWelcome1"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lista_welcome1" />
+
+            <TextView
+                android:id="@+id/txtWelcome2"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lista_welcome2" />
+
+        </LinearLayout>
+
 
     </TableLayout>
 

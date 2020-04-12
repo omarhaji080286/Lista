@@ -118,7 +118,7 @@
     <string name="phone">Phone :</string>
     <string name="user_name_label">User name :</string>
     <string name="user_name_hint"><i>Firstname Lastname</i></string>
-    <string name="account">Account</string>
+    <string name="account">My profile</string>
     <string name="no_items_to_buy">There are no items to order</string>
     <string name="ongoing_orders">Ongoing orders</string>
     <string name="closed_orders">Closed orders</string>
@@ -152,7 +152,7 @@
     <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
     <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
     <string name="validate_order_form">Validation de la commande</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="invite_phone_hint">+2121234567890</string>
     <string name="no_shops_referenced">There is currently no referenced store to process items on your list. We are working hard to improve that! Thank you for your understanding.</string>
     <string name="got_it">Got it</string>
@@ -177,6 +177,9 @@
     <string name="livraison_disponible">Livraison disponible</string>
     <string name="shop_type">shop type</string>
     <string name="delivery_status">Delivery</string>
+    <string name="todo">TODO</string>
+    <string name="lista_welcome1">Lista !</string>
+    <string name="lista_welcome2">Les courses faciles…</string>
 
 
 </resources>

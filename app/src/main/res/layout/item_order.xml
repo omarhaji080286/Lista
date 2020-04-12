@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_order_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,14 +20,15 @@
                 android:layout_height="30dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/others"/>
+                android:src="@drawable/others"
+                android:contentDescription="@string/todo" />
 
             <TextView
                 android:id="@+id/txtShopTypeName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:singleLine="false"
                 android:scrollHorizontally="false"
                 app:layout_constraintTop_toTopOf="@+id/imgShopType"
@@ -82,29 +82,32 @@
                     android:layout_width="@dimen/small_size_icon"
                     android:layout_height="@dimen/small_size_icon"
                     android:src="@drawable/checked_gray"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:contentDescription="@string/todo" />
 
                 <ImageView
                     android:id="@+id/imgRead"
                     android:layout_width="@dimen/small_size_icon"
                     android:layout_height="@dimen/small_size_icon"
                     android:src="@drawable/checked_gray"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:contentDescription="@string/todo" />
 
                 <ImageView
                     android:id="@+id/imgAvailable"
                     android:layout_width="@dimen/small_size_icon"
                     android:layout_height="@dimen/small_size_icon"
                     android:src="@drawable/checked_gray"
-                    android:visibility="visible" />
-
+                    android:visibility="visible"
+                    android:contentDescription="@string/todo" />
 
                 <ImageView
                     android:id="@+id/imgClosedOrNotSuported"
                     android:layout_width="@dimen/small_size_icon"
                     android:layout_height="@dimen/small_size_icon"
                     android:src="@drawable/completed"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    android:contentDescription="@string/todo" />
 
             </LinearLayout>
 
@@ -209,9 +212,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/forTime"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/label_collect_time"
+
+                app:layout_constraintStart_toEndOf="@+id/label_collect_time"
                 app:layout_constraintTop_toBottomOf="@+id/label_items_number" />
+
+            <ImageView
+                android:id="@+id/imgDelivery"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/delivery_bike"
+                android:contentDescription="@string/todo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_ordered_items_number"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="56dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="10dp"
+                android:visibility="visible"/>
 
             <ImageView
                 android:id="@+id/ic_arrow_right_black"

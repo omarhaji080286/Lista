@@ -1,6 +1,5 @@
 package com.winservices.wingoods.adapters;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -62,16 +61,21 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     }
 
 
+    @NonNull
     @Override
-    public OrderVH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OrderVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_order, parent, false);
         return new OrderVH(view);
     }
 
     @Override
-    public void onBindViewHolder( OrderVH holder, int position) {
+    public void onBindViewHolder(@NonNull OrderVH holder, int position) {
 
         final Order order = orders.get(position);
+
+        if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
+            holder.imgDelivery.setVisibility(View.GONE);
+        }
 
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtShopTypeName.setText(order.getShop().getShopType().getShopTypeName());
@@ -156,7 +160,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 } else {
                     holder.txtOrderStatus.setText(R.string.delivery_status);
                 }
-
                 break;
             case Order.COMPLETED :
                 holder.btnCompleteOrder.setVisibility(View.GONE);
@@ -166,7 +169,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setImageResource(R.drawable.completed);
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.completed));
-
                 break;
             case Order.NOT_SUPPORTED:
                 holder.imgRegistered.setVisibility(View.GONE);

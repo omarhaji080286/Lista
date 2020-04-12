@@ -14,7 +14,7 @@ import com.winservices.wingoods.R;
 public class OrderVH extends RecyclerView.ViewHolder {
 
     public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime, txtShopTypeName;
-    public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType;
+    public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType, imgDelivery;
     public CardView clContainer;
     public Button btnCompleteOrder;
 
@@ -37,7 +37,7 @@ public class OrderVH extends RecyclerView.ViewHolder {
         btnCompleteOrder = itemView.findViewById(R.id.btnCompleteOrder);
         txtShopTypeName = itemView.findViewById(R.id.txtShopTypeName);
         imgShopType= itemView.findViewById(R.id.imgShopType);
-
+        imgDelivery = itemView.findViewById(R.id.imgDelivery);
 
     }
 }
