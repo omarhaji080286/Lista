@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,9 +62,16 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopPhone.setText(shop.getShopPhone());
         holder.city.setText(shop.getCity().getCityName());
 
-        String imagePath = SharedPrefManager.getInstance(context).getShopImagePath(shop.getServerShopId());
+        if (shop.getIsDelivering()==Shop.IS_NOT_DELIVERING){
+            holder.llDeliveryService.setVisibility(View.GONE);
+        }
+
+        SharedPrefManager sp = SharedPrefManager.getInstance(context);
+        String imagePath = sp.getShopImagePath(shop.getServerShopId());
         if (imagePath != null) {
-            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+            float width = UtilsFunctions.convertDpToPx(context, 100);
+            float height = UtilsFunctions.convertDpToPx(context, 100);
+            Bitmap bitmap = sp.rotate(-90.0f, BitmapFactory.decodeFile(imagePath), width, height);
             holder.imgShopIcon.setImageBitmap(bitmap);
         } else {
             holder.imgShopIcon.setImageResource(R.drawable.default_shop_image);

@@ -67,7 +67,8 @@
                 android:id="@+id/fab_add_order"
                 style="@style/FAB"
                 android:src="@drawable/ic_cart_empty_white"
-                android:layout_column="1"/>
+                android:layout_column="1"
+                android:visibility="visible"/>
         </TableRow>
 
         <TableRow>
@@ -76,8 +77,8 @@
                 android:id="@+id/fab_plus"
                 style="@style/FAB"
                 android:src="@drawable/ic_action_plus"
-                android:visibility="visible"
-                android:layout_column="1"/>
+                android:visibility="gone"
+                android:layout_column="1" />
 
         </TableRow>
 

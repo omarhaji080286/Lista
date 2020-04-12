@@ -61,7 +61,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         setContentView(R.layout.activity_shops);
         mViewPager = findViewById(R.id.vp_shops);
         tabLayout = findViewById(R.id.tabs_shops);
-        llFooter = findViewById(R.id.ll_footer);
 
         setTitle(R.string.lista_shops);
 
@@ -92,12 +91,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
         Intent intent = getIntent();
         orderInitiated = intent.getBooleanExtra(Constants.ORDER_INITIATED, false);
-
-        if (orderInitiated) {
-            llFooter.setVisibility(View.VISIBLE);
-        } else {
-            llFooter.setVisibility(View.GONE);
-        }
 
         getShops();
 
@@ -135,7 +128,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         mSectionPageAdapter.addFragment(shopsList, "");
         mViewPager.setAdapter(mSectionPageAdapter);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(0);
+        mViewPager.setCurrentItem(1);
         setupTabIcons();
 
     }

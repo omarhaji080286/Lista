@@ -48,25 +48,5 @@
         android:layout_marginBottom="20dp"
         android:layout_weight="97" />
 
-    <LinearLayout
-        android:id="@+id/ll_footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/_1_shop_selection" />
-
-        <TextView
-            style="@style/Footer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/_2_list_confirmation" />
-    </LinearLayout>
 
 </LinearLayout>

@@ -384,7 +384,9 @@ public class Synchronizer {
             int orderedGoodsNumber = JSONOrder.getInt("ordered_goods_number");
             String startTime = JSONOrder.getString("start_time");
             String endTime = JSONOrder.getString("end_time");
-
+            int isToDeliver = JSONOrder.getInt("is_to_deliver");
+            String userAddress = JSONOrder.getString("user_address");
+            String userLocation = JSONOrder.getString("user_location");
 
             Order order = new Order();
             order.setServerOrderId(serverOrderId);
@@ -403,6 +405,9 @@ public class Synchronizer {
             order.setOrderedGoodsNumber(orderedGoodsNumber);
             order.setStartTime(startTime);
             order.setEndTime(endTime);
+            order.setIsToDeliver(isToDeliver);
+            order.setUserAddress(userAddress);
+            order.setUserLocation(userLocation);
 
             ordersDataManager.insertOrder(order);
         }

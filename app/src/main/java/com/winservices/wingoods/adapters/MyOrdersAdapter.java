@@ -73,13 +73,11 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         final Order order = orders.get(position);
 
-        String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "dd/MM/yyyy HH:mm");
-
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtShopTypeName.setText(order.getShop().getShopType().getShopTypeName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
-        holder.txtCollectTime.setText(order.getDisplayedCollectTime(context));
+        holder.txtCollectTime.setText(order.getDisplayedCollectTime(context, order.getStartTime()));
         Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
         holder.imgShop.setImageBitmap(bitmap);
 
@@ -87,8 +85,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         Bitmap bitmapShopType = UtilsFunctions.getPNG(path);
         holder.imgShopType.setImageBitmap(bitmapShopType);
 
+        String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "yyyy-MM-dd HH:mm");
+        holder.txtDate.setText(order.getDisplayedCollectTime(context, dateString));
 
-        holder.txtDate.setText(dateString);
         holder.txtOrderStatus.setText(order.getStatusName());
         holder.clContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +106,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.btnCompleteOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 orders.remove(order);
                 notifyDataSetChanged();
                 AsyncTask.execute(new Runnable() {
@@ -120,8 +118,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
             }
         });
-
-
 
         switch (order.getStatusId()){
             case Order.REGISTERED :
@@ -145,7 +141,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgAvailable.setImageResource(R.drawable.checked_gray);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
                 holder.txtOrderStatus.setText(context.getString(R.string.read));
-
                 break;
             case Order.AVAILABLE :
                 holder.btnCompleteOrder.setVisibility(View.GONE);
@@ -156,7 +151,11 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgRead.setImageResource(R.drawable.checked);
                 holder.imgAvailable.setImageResource(R.drawable.checked);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
-                holder.txtOrderStatus.setText(context.getString(R.string.can_collect));
+                if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
+                    holder.txtOrderStatus.setText(context.getString(R.string.can_collect));
+                } else {
+                    holder.txtOrderStatus.setText(R.string.delivery_status);
+                }
 
                 break;
             case Order.COMPLETED :

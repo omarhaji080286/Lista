@@ -249,7 +249,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 String userAddress = "";
                 String userLocation = location;
 
-                if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+                if (shop.getIsDelivering()==Shop.IS_DELIVERING && cbHomeDelivery.isChecked()){
                     if (formOk(editUserAddress, rgLocation)){
                         dialogTime.dismiss();
 
@@ -257,18 +257,23 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                         userAddress = editUserAddress.getText().toString();
                         userLocation = editLocation.getText().toString();
 
+                        addOrder(OrderActivity.this, startTime, endTime,
+                                isToDeliver, userAddress, userLocation);
+
                     }
+                } else {
+                    addOrder(OrderActivity.this, startTime, endTime,
+                            isToDeliver, userAddress, userLocation);
                 }
 
-                addOrder(OrderActivity.this, startTime, endTime,
-                        isToDeliver, userAddress, userLocation);
+
 
             }
         });
     }
 
     private boolean formOk(EditText editUserAddress, RadioGroup rg){
-        if (editUserAddress.getText().toString().isEmpty()){
+        if (editUserAddress.getText().toString().isEmpty() || editUserAddress.getText().toString().equals("") ){
             editUserAddress.setError(getString(R.string.address_required));
             return false;
         }
@@ -300,9 +305,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             @Override
             public void onClick(View v) {
                 updateLastLocation();
-                String uri = "geo:"+ location;
+                String uri = "geo:"+ location+"?q="+location;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                getApplicationContext().startActivity(intent);
+                startActivity(intent);
             }
         });
     }

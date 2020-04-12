@@ -36,7 +36,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //TODO Version web
-    private final static String webVersion = "L16_LP8";
+    private final static String webVersion = "L17_LP10";
 
     //TODO Lista LOCAL (compte root)
     private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
@@ -168,6 +168,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
     static final String COL_D_CATEGORY_NAME = "d_category_name";
     static final String COL_IS_DELIVERING = "is_delivering";
+    static final String COL_IS_TO_DELIVER = "is_to_deliver";
+    static final String COL_USER_ADDRESS = "user_address";
+    static final String COL_USER_LOCATION = "user_location";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -312,6 +315,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "ordered_goods_number INTEGER," +
                 "start_time TEXT," +
                 "end_time TEXT," +
+                "is_to_deliver INTEGER," +
+                "user_address TEXT," +
+                "user_location TEXT," +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS default_categories ( " +
@@ -1606,6 +1612,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_ORDERED_GOODS_NUMBER, order.getOrderedGoodsNumber());
         contentValues.put(COL_START_TIME, order.getStartTime());
         contentValues.put(COL_END_TIME, order.getEndTime());
+        contentValues.put(COL_IS_TO_DELIVER, order.getIsToDeliver());
+        contentValues.put(COL_USER_ADDRESS, order.getUserAddress());
+        contentValues.put(COL_USER_LOCATION, order.getUserLocation());
 
         long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

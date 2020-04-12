@@ -3,6 +3,8 @@ package com.winservices.wingoods.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
@@ -130,5 +132,22 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(ShopType.PREFIX_SHOP_TYPE + shopTypeId, null);
     }
+
+    public Bitmap rotate(float x, Bitmap bitmapOrg, float newWidth, float newHeight)
+    {
+
+        int width = bitmapOrg.getWidth();
+        int height = bitmapOrg.getHeight();
+
+        float scaleWidth =  newWidth / width;
+        float scaleHeight = newHeight / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.postRotate(x);
+
+        return Bitmap.createBitmap(bitmapOrg, 0, 0,width, height, matrix, true);
+    }
+
 
 }

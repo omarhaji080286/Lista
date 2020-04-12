@@ -487,4 +487,8 @@ public class UtilsFunctions {
         builder.create().show();
     }
 
+    public static float convertDpToPx(Context context, float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
+    }
+
 }

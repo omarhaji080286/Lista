@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="livraison_disponible">Livraison disponible</string>
+    <string name="shop_type">shop type</string>
+    <string name="delivery_status">Livraison</string>
+</resources>

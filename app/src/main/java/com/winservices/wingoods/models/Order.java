@@ -25,6 +25,9 @@ public class Order {
     public static final int COMPLETED = 5;
     public static final int NOT_SUPPORTED = 6;
 
+    public final static int IS_TO_DELIVER = 1;
+    public final static int IS_TO_COLLECT = 0;
+
     public static final int ALL = 100;
     public static final int NOT_CLOSED = 101;
     public static final int CLOSED = 102;
@@ -38,6 +41,9 @@ public class Order {
     private String statusName;
     private String startTime;
     private String endTime;
+    private int isToDeliver;
+    private String userAddress;
+    private String userLocation;
 
     public String getStatusName(){
         switch (statusId){
@@ -58,7 +64,7 @@ public class Order {
         }
     }
 
-    public String getDisplayedCollectTime(Context context){
+    /*public String getDisplayedCollectTime(Context context){
         String day = "empty";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
@@ -95,6 +101,75 @@ public class Order {
         Log.d(TAG, "DisplayedCollectTime: " + day + " " + time);
 
         return day + " " + time;
+    }*/
+
+    public String getDisplayedCollectTime(Context context, String dateTime){
+        String displayedDate = "empty";
+        String day = "empty";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+
+        Date collectDay;
+        Date today;
+        try {
+            collectDay = sdf.parse(dateTime);
+            today = sdf.parse(UtilsFunctions.dateToString(Calendar.getInstance().getTime(),"yyyy-MM-dd"));
+
+            long diffMilli = collectDay.getTime() - today.getTime();
+            String diff = String.valueOf(TimeUnit.DAYS.convert(diffMilli, TimeUnit.MILLISECONDS)).substring(0,1);
+            Calendar cal = Calendar.getInstance();
+            switch (diff){
+                case "0":
+                    day = context.getResources().getString(R.string.today);
+                    displayedDate = day;
+                    break;
+                case "1":
+                    day = context.getResources().getString(R.string.tomorrow);
+                    displayedDate = day;
+                    break;
+                default:
+                    cal.setTime(collectDay);
+                    day = UtilsFunctions.getDayOfWeek(context,cal.get(Calendar.DAY_OF_WEEK)) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+                    String month = UtilsFunctions.dateToString(UtilsFunctions.stringToDate(dateTime),"MM");
+                    displayedDate = day + "/" + month;
+                    break;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String time = this.startTime.substring(11,16) + " - " + this.endTime.substring(11,16);
+
+        Log.d(TAG, "DisplayedCollectTime: " + day + " " + time);
+
+        return displayedDate;// + " " + time*
+    }
+
+
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
+
+    public String getUserLocation() {
+        return userLocation;
+    }
+
+    public void setUserLocation(String userLocation) {
+        this.userLocation = userLocation;
+    }
+
+    public int getIsToDeliver() {
+        return isToDeliver;
+    }
+
+    public void setIsToDeliver(int isToDeliver) {
+        this.isToDeliver = isToDeliver;
     }
 
     public String getStartTime() {

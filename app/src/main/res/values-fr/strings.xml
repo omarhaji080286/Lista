@@ -151,7 +151,7 @@
     <string name="auto_collect">Livraison à domicile</string>
     <string name="submit">Valider</string>
     <string name="localization_question">Cette adresse correspond-elle à votre position actuelle ?</string>
-    <string name="GPS_hint">33.975789, -6.916790</string>
+    <string name="GPS_hint">00.000000, -0.000000</string>
     <string name="collect_time">Date de préparation de la commande</string>
     <string name="delivery_hour_label">Heure de livraison</string>
     <string name="verify_location">Vérifier ma localisation</string>
@@ -162,6 +162,9 @@
     <string name="address_required">Adresse requise</string>
     <string name="location_required">Position GPS requise</string>
     <string name="gps_format">Format 00.000000, -0.000000</string>
+    <string name="livraison_disponible">Livraison disponible</string>
+    <string name="shop_type">shop type</string>
+    <string name="delivery_status">Livraison</string>
 
 
 </resources>
