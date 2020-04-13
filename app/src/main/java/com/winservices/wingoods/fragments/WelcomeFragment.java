@@ -49,6 +49,7 @@ import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -223,6 +224,8 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        UtilsFunctions.hideKeyboard(getContext(), imgShare);
+
         Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
