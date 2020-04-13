@@ -3,6 +3,7 @@ package com.winservices.wingoods.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
@@ -28,8 +29,6 @@ import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.OrderedGood;
-import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -75,6 +74,8 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
             holder.imgDelivery.setVisibility(View.GONE);
+        } else {
+            holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
         }
 
         holder.txtShopName.setText(order.getShop().getShopName());
@@ -82,12 +83,17 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
         holder.txtOrderedItemsNumber.setText(String.valueOf(order.getOrderedGoodsNumber()));
         holder.txtCollectTime.setText(order.getDisplayedCollectTime(context, order.getStartTime()));
-        Bitmap bitmap = Shop.getShopImage(context, order.getShop().getServerShopId());
-        holder.imgShop.setImageBitmap(bitmap);
 
-        String path = SharedPrefManager.getInstance(context).getImagePath(ShopType.PREFIX_SHOP_TYPE+order.getShop().getShopType().getServerShopTypeId());
-        Bitmap bitmapShopType = UtilsFunctions.getPNG(path);
-        holder.imgShopType.setImageBitmap(bitmapShopType);
+        SharedPrefManager sp = SharedPrefManager.getInstance(context);
+        String imagePath = sp.getShopImagePath(order.getShop().getServerShopId());
+        if (imagePath != null) {
+            float width = UtilsFunctions.convertDpToPx(context, 100);
+            float height = UtilsFunctions.convertDpToPx(context, 100);
+            Bitmap bitmap = sp.rotate(-90.0f, BitmapFactory.decodeFile(imagePath), width, height);
+            holder.imgShop.setImageBitmap(bitmap);
+        } else {
+            holder.imgShop.setImageResource(R.drawable.default_shop_image);
+        }
 
         String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "yyyy-MM-dd HH:mm");
         holder.txtDate.setText(order.getDisplayedCollectTime(context, dateString));

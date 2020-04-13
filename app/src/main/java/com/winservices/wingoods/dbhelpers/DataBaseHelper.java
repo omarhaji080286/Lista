@@ -17,9 +17,12 @@ import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
+
+import java.util.Date;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -432,6 +435,65 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return res;
+    }
+
+    Order getOrder(int serverOrderId) {
+        db = this.getReadableDatabase();
+        Cursor res;
+        Order order = new Order();
+        try {
+            res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
+                    + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
+                    + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + " = " + TABLE_SHOPS + "." + COL_SERVER_SHOP_ID
+                    + " AND " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " = " + serverOrderId, null);
+
+            while (res.moveToNext()) {
+                int serverUserId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_USER_ID));
+                int serverShopId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_ID));
+                Date creationDate = UtilsFunctions.stringToDate(res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_CREATION_DATE)));
+                int statusId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_STATUS_ID));
+                String statusName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_STATUS_NAME));
+                int orderedGoodsNumber = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDERED_GOODS_NUMBER));
+                String shopName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_NAME));
+                String startTime = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_START_TIME));
+                String endTime = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_END_TIME));
+                int serverShopTypeId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+                String shopTypeName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+                int isToDeliver = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_DELIVER));
+                String userAddress = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
+                String userLocation = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_LOCATION));
+
+                order.setServerOrderId(serverOrderId);
+
+                User user = new User();
+                user.setServerUserId(serverUserId);
+                order.setUser(user);
+
+                Shop shop = new Shop();
+                shop.setServerShopId(serverShopId);
+                shop.setShopName(shopName);
+                order.setShop(shop);
+
+                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                shop.setShopType(shopType);
+
+                order.setCreationDate(creationDate);
+                order.setStatusId(statusId);
+                order.setStatusName(statusName);
+                order.setOrderedGoodsNumber(orderedGoodsNumber);
+                order.setStartTime(startTime);
+                order.setEndTime(endTime);
+                order.setIsToDeliver(isToDeliver);
+                order.setUserAddress(userAddress);
+                order.setUserLocation(userLocation);
+
+            }
+            res.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return order;
     }
 
     //DESCRIPTIONS
@@ -1601,6 +1663,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //ORDERS
 
     boolean insertOrder(Order order) {
+
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_SERVER_ORDER_ID, order.getServerOrderId());

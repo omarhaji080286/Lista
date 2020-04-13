@@ -28,6 +28,10 @@ public class OrdersDataManager {
         db.insertOrder(order);
     }
 
+    public Order getOrder(int serverOrderId){
+        return db.getOrder(serverOrderId);
+    }
+
     public List<Order> getOrders(int groupedStatus) {
         Cursor cursor = db.getOrders(groupedStatus);
         List<Order> orders = new ArrayList<>();

@@ -8,8 +8,128 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.winservices.wingoods.activities.OrderDetailsActivity"
-    android:background="@color/white">
+    android:background="@color/colorGray">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardOrder"
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorGray"
+        android:elevation="8dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:padding="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_marginEnd="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/r_f"
+                    style="@style/SimpleText"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtOrderId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextViewLabel"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/_123"/>
+
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100"
+                android:gravity="center">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/adresse_livraison"
+                    android:textAlignment="textStart"
+                    style="@style/SimpleText"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtClientAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextViewLabel"
+                    android:textAlignment="textStart"
+                    android:textStyle="bold"
+                    android:lines="2"
+                    android:text="@string/delivery_address_value"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_marginTop="8dp"
+                android:id="@+id/llLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center"
+                android:weightSum="100">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/localisation_gps"
+                    android:textAlignment="textStart"
+                    style="@style/SimpleText"
+                    android:layout_marginEnd="16dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/imgBtnLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/location"/>
+
+                <ImageView
+                    android:id="@+id/imgDelivery"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="63dp"
+                    android:src="@drawable/delivery_bike"
+                    android:contentDescription="@string/todo"
+                    android:visibility="visible"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtToDeliver"
+                    style="@style/TextInOrder"
+                    android:textSize="12sp"
+                    android:text="@string/livrer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_order_goods"

@@ -133,9 +133,9 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="status">status:</string>
     <string name="ref">Ref :</string>
-    <string name="date">Date :</string>
+    <string name="date">Date de création :</string>
     <string name="items">Items :</string>
-    <string name="forTime">For :</string>
+    <string name="forTime">à collerter le :</string>
     <string name="registered">Registered</string>
     <string name="read">Read by the shop</string>
     <string name="can_collect">You can collect your order</string>
@@ -181,6 +181,15 @@
     <string name="lista_welcome1">Lista !</string>
     <string name="lista_welcome2">Les courses faciles…</string>
     <string name="share">Partager</string>
+    <string name="r_f">Réf</string>
+    <string name="_123">123</string>
+    <string name="livraison_le">Livraison le :</string>
+    <string name="vendredi_09">vendredi 09</string>
+    <string name="adresse_livraison">Adresse :</string>
+    <string name="delivery_address_value">Adresse de livraison du client saisie lors de la commande</string>
+    <string name="localisation_gps">Localisation GPS</string>
+    <string name="livrer">à livrer</string>
+    <string name="delivery_time_label">à recevoir le :</string>
 
 
 </resources>
