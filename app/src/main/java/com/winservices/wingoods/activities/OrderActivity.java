@@ -84,6 +84,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private String location;
     private EditText editLocation;
     private ImageButton imgBtnGoogleMaps;
+    private boolean isPickerStartingTomorrow = false;
 
     @Override
     protected void onResume() {
@@ -170,6 +171,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         pickerDay.setMinValue(0);
         pickerDay.setMaxValue(days.length - 1);
         pickerDay.setDisplayedValues(days);
+        pickerDay.setValue(0);
 
         collectTimes = getCollectTimes(days[0], shop.getOpeningTime(), shop.getClosingTime());
 
@@ -237,14 +239,12 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             llDeliveryModule.setVisibility(View.GONE);
         }
 
-
-
         //Submit button
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
+                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
+                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
                 int isToDeliver = 0;
                 String userAddress = "";
                 String userLocation = location;
@@ -314,12 +314,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         });
     }
 
-    private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+    private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, pickerDayValue);
+        if (isPickerStartingWithTomorrow){
+            cal.add(Calendar.DATE, pickerDayValue+1);
+        } else {
+            cal.add(Calendar.DATE, pickerDayValue);
+        }
+
         day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
         startTime = day + " " + pickerTimeDisplayedValue.substring(0, 5);
 
@@ -328,12 +333,16 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return startTime;
     }
 
-    private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+    private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, pickerDayValue);
+        if (isPickerStartingWithTomorrow){
+            cal.add(Calendar.DATE, pickerDayValue+1);
+        } else {
+            cal.add(Calendar.DATE, pickerDayValue);
+        }
         day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
         startTime = day + " " + pickerTimeDisplayedValue.substring(8, 13);
 
@@ -350,17 +359,19 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         if (Integer.parseInt(closingTime.substring(0, 2)) <= hourOfDay + 2) {
             days[0] = getResources().getString(R.string.tomorrow);
+            isPickerStartingTomorrow = true;
 
             for (int i = 1; i < days.length; i++) {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, i);
-                int dayNumber = cal.get(Calendar.DAY_OF_WEEK);
-                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+                int dayNumber = cal.get(Calendar.DAY_OF_WEEK)+1;
+                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH)+1);
             }
 
         } else {
             days[0] = getResources().getString(R.string.today);
             days[1] = getResources().getString(R.string.tomorrow);
+            isPickerStartingTomorrow = false;
 
             for (int i = 2; i < days.length; i++) {
                 Calendar cal = Calendar.getInstance();
