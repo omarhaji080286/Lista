@@ -64,7 +64,7 @@
     <string name="search">Rechercher</string>
     <string name="city">Ville</string>
     <string name="filters">Filtres</string>
-    <string name="my_orders">Mes commandes</string>
+    <string name="my_orders">Commandes en cours</string>
     <string name="invite_friends">Inviter des amis</string>
     <string name="my_invitations">Mes invitations</string>
     <string name="sync_finished">sync finished</string>
@@ -96,7 +96,7 @@
     <string name="send">Envoyer</string>
     <string name="select_amount">Choisir la quantité</string>
     <string name="brand_or_description">Marque, Description…</string>
-    <string name="item_s">article(s)</string>
+    <string name="item_s">élément(s)</string>
     <string name="set_descriptions">Prière de compléter la description des articles</string>
     <string name="input_phone_description">Veuillez prendre un moment pour vérifier votre numéro de téléphone. \n Cela nous aide à confirmer votre identité et à sécuriser votre compte.</string>
     <string name="country_flag">Drapeau du pays</string>
@@ -164,7 +164,7 @@
     <string name="gps_format">Format 00.000000, -0.000000</string>
     <string name="livraison_disponible">Livraison disponible</string>
     <string name="shop_type">shop type</string>
-    <string name="delivery_status">Livraison</string>
+    <string name="delivery_status">Livraison en cours</string>
     <string name="todo">TODO</string>
     <string name="lista_welcome1">Lista !</string>
     <string name="lista_welcome2">Les courses faciles…</string>
@@ -178,6 +178,7 @@
     <string name="localisation_gps">Localisation GPS</string>
     <string name="livrer">à livrer</string>
     <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
 
 
 </resources>

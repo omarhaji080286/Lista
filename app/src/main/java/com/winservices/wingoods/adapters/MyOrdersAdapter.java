@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,8 +76,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
             holder.imgDelivery.setVisibility(View.GONE);
+            holder.txtLabelCollectTime.setText(R.string.forTime);
         } else {
             holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
+            holder.imgDelivery.setVisibility(View.VISIBLE);
         }
 
         holder.txtShopName.setText(order.getShop().getShopName());
@@ -94,6 +98,11 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         } else {
             holder.imgShop.setImageResource(R.drawable.default_shop_image);
         }
+
+        String imgShopTypePath = sp.getShopTypeImagePath(order.getShop().getShopType().getServerShopTypeId());
+        Bitmap ShopTypePng = UtilsFunctions.getPNG(imgShopTypePath);
+
+        holder.imgShopType.setImageBitmap(ShopTypePng);
 
         String dateString = UtilsFunctions.dateToString(order.getCreationDate(), "yyyy-MM-dd HH:mm");
         holder.txtDate.setText(order.getDisplayedCollectTime(context, dateString));
@@ -161,6 +170,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgRead.setImageResource(R.drawable.checked);
                 holder.imgAvailable.setImageResource(R.drawable.checked);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtOrderId.setTextColor(context.getColor(R.color.red));
+                }
                 if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
                     holder.txtOrderStatus.setText(context.getString(R.string.can_collect));
                 } else {

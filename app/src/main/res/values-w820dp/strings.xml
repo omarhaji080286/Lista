@@ -2,7 +2,7 @@
 <resources>
     <string name="livraison_disponible">Livraison disponible</string>
     <string name="shop_type">shop type</string>
-    <string name="delivery_status">Livraison</string>
+    <string name="delivery_status">Livraison en cours</string>
     <string name="todo">TODO</string>
     <string name="lista_welcome1">Lista !</string>
     <string name="lista_welcome2">Les courses faciles…</string>
@@ -16,4 +16,5 @@
     <string name="localisation_gps">Localisation GPS</string>
     <string name="livrer">à livrer</string>
     <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
 </resources>

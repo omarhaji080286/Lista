@@ -126,12 +126,14 @@ public class MyOrdersActivity extends AppCompatActivity {
                 orders.clear();
                 orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                setTitle(getString(R.string.my_orders));
                 updateMessageVisibility();
                 break;
             case R.id.menuClosedOrders:
                 orders.clear();
                 orders.addAll(ordersDataManager.getOrders(Order.CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                setTitle(getString(R.string.closed_orders_title));
                 updateMessageVisibility();
                 break;
         }

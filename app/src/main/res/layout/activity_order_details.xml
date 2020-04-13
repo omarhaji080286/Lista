@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="100"
-                android:gravity="center">
+                android:gravity="start">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"

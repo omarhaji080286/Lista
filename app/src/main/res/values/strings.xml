@@ -66,7 +66,7 @@
     <string name="search">search</string>
     <string name="city">City</string>
     <string name="filters">Filters</string>
-    <string name="my_orders">My Orders</string>
+    <string name="my_orders">Ongoing Orders</string>
     <string name="invite_friends">Invite friends</string>
     <string name="my_invitations">My invitations</string>
     <string name="sync_finished">sync finished</string>
@@ -176,7 +176,7 @@
     <string name="gps_format">Format 00.000000, -0.000000</string>
     <string name="livraison_disponible">Livraison disponible</string>
     <string name="shop_type">shop type</string>
-    <string name="delivery_status">Delivery</string>
+    <string name="delivery_status">Delivery in progress</string>
     <string name="todo">TODO</string>
     <string name="lista_welcome1">Lista !</string>
     <string name="lista_welcome2">Les courses faciles…</string>
@@ -190,6 +190,7 @@
     <string name="localisation_gps">Localisation GPS</string>
     <string name="livrer">à livrer</string>
     <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
 
 
 </resources>

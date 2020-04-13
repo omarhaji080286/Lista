@@ -178,6 +178,7 @@
     <string name="localisation_gps">Localisation GPS</string>
     <string name="livrer">à livrer</string>
     <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
 
 
 </resources>
