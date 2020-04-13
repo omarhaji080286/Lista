@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
 public class ProfileActivity extends AppCompatActivity {
 

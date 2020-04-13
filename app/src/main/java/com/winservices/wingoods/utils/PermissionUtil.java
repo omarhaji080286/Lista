@@ -10,9 +10,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -25,10 +27,13 @@ public class PermissionUtil {
     private final static int REQUEST_ACCESS_FINE_LOCATION = 101;
     private final static int REQUEST_ACCESS_COARSE_LOCATION = 102;
     public final static int REQUEST_ACCESS_CAMERA = 103;
+    public final static int REQUEST_ACCESS_NOTIFICATION= 104;
 
     public final static String TXT_FINE_LOCATION = "access_fine_location";
     public final static String TXT_COARSE_LOCATION = "access_coarse_location";
     public final static String TXT_CAMERA = "access_camera";
+    public final static String TXT_NOTIFICATION = "access_notification";
+
 
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -70,6 +75,7 @@ public class PermissionUtil {
 
     }
 
+
     public int checkPermission(String permission) {
         int status = PackageManager.PERMISSION_DENIED;
         switch (permission) {
@@ -81,6 +87,11 @@ public class PermissionUtil {
                 break;
             case TXT_CAMERA:
                 status = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA);
+                break;
+            case TXT_NOTIFICATION:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    status = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NOTIFICATION_POLICY);
+                }
                 break;
         }
         return status;
@@ -97,6 +108,11 @@ public class PermissionUtil {
                 break;
             case TXT_CAMERA:
                 requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_ACCESS_CAMERA);
+                break;
+            case TXT_NOTIFICATION:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(activity, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, REQUEST_ACCESS_NOTIFICATION);
+                }
                 break;
         }
     }

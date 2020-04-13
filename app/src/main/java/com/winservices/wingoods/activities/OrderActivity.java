@@ -618,9 +618,17 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             public void onComplete(@NonNull Task<Location> task) {
 
                 if (task.isSuccessful() && task.getResult() != null) {
-                    lastLocation = task.getResult();
-                    location = String.valueOf(lastLocation.getLatitude()).substring(0,9) + ", " + String.valueOf(lastLocation.getLongitude()).substring(0,9);
-                    Log.d(TAG, "onComplete:success  " + lastLocation.toString());
+                    try {
+                        lastLocation = task.getResult();
+
+                        int latitudeLength = String.valueOf(lastLocation.getLatitude()).length();
+                        int longitudeLength = String.valueOf(lastLocation.getLongitude()).length();
+
+                        location = String.valueOf(lastLocation.getLatitude()).substring(0,latitudeLength-1) + ", " + String.valueOf(lastLocation.getLongitude()).substring(0,longitudeLength-1);
+                        Log.d(TAG, "onComplete:success  " + lastLocation.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     Log.d(TAG, "onComplete:exception  " + task.getException());
                 }

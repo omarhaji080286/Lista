@@ -80,10 +80,10 @@ public class ListaMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
         sendNotification(title, body, intent);
-        //createNotificationWithImage(title, body, null, intent);
+        //createNotificationWithImage(title, body,  intent);
     }
 
-/*    public void createNotificationWithImage(String title, String message, Bitmap image, Intent intent) {
+/*    public void createNotificationWithImage(String title, String message, Intent intent) {
         int requestID = (int) System.currentTimeMillis();
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -96,17 +96,19 @@ public class ListaMessagingService extends FirebaseMessagingService {
         mBuilder.setSmallIcon(R.mipmap.lista_logo);
 
         mBuilder.setSound(soundUri);
+        mBuilder.setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
 
-        if (image != null) {
+        *//*if (image != null) {
             mBuilder.setContentTitle(title)
                     .setContentText(message)
                     .setAutoCancel(false)
-                    .setLargeIcon(image)
+                    .setSmallIcon(R.mipmap.lista_logo)
                     .setStyle(new NotificationCompat.BigPictureStyle()
                             .bigPicture(image).setSummaryText(message).bigLargeIcon(null))
                     .setColor(Color.GREEN)
                     .setContentIntent(pendingIntent);
-        }
+        }*//*
+
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -153,6 +155,9 @@ public class ListaMessagingService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)
                 .setChannelId(CHANNEL_ID)
                 .setAutoCancel(true)
+                .setSound(alarmSound)
+                .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                .setColor(Color.GREEN)
                 .build();
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -161,9 +166,11 @@ public class ListaMessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             importance = NotificationManager.IMPORTANCE_HIGH;
         }
-        CharSequence name = "Lista Pro FCM channel";// The user-visible name of the channel.
+        CharSequence name = "Lista FCM channel";// The user-visible name of the channel.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             mNotificationManager.createNotificationChannel(mChannel);
         }
 

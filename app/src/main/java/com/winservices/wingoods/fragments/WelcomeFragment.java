@@ -47,6 +47,7 @@ import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 
 import org.json.JSONException;
@@ -56,6 +57,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,6 +106,11 @@ public class WelcomeFragment extends Fragment {
 
 
         SyncHelper.sync(getContext());
+
+        /*PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
+        if (permissionUtil.checkPermission(TXT_NOTIFICATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionUtil.requestPermission(TXT_NOTIFICATION, getActivity());
+        }*/
 
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
