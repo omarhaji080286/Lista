@@ -6,10 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +13,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
@@ -39,6 +40,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     private TextView txtNoOrders;
     private OrdersDataManager ordersDataManager;
     private SyncReceiverMyOrders syncReceiver;
+    private boolean syncTriggeredByUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
 
         syncReceiver = new SyncReceiverMyOrders();
 
@@ -113,6 +116,7 @@ public class MyOrdersActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.sync:
+                syncTriggeredByUser = true;
                 SyncHelper.sync(this);
                 break;
             case android.R.id.home:
@@ -164,6 +168,11 @@ public class MyOrdersActivity extends AppCompatActivity {
                     orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
                     myOrdersAdapter.setOrders(orders);
                     updateMessageVisibility();
+
+                    if (syncTriggeredByUser) {
+                        Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
+                        syncTriggeredByUser = false;
+                    }
 
                     Log.d(TAG, "Sync BroadCast received");
                 }
