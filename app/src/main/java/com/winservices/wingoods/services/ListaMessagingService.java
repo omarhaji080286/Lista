@@ -9,6 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -22,6 +26,7 @@ import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import java.util.List;
 import java.util.Map;
@@ -75,14 +80,67 @@ public class ListaMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
         sendNotification(title, body, intent);
+        //createNotificationWithImage(title, body, null, intent);
     }
 
+/*    public void createNotificationWithImage(String title, String message, Bitmap image, Intent intent) {
+        int requestID = (int) System.currentTimeMillis();
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String CHANNEL_ID = "my_channel_01";// The id of the channel.
+
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        mBuilder.setSmallIcon(R.mipmap.lista_logo);
+
+        mBuilder.setSound(soundUri);
+
+        if (image != null) {
+            mBuilder.setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(false)
+                    .setLargeIcon(image)
+                    .setStyle(new NotificationCompat.BigPictureStyle()
+                            .bigPicture(image).setSummaryText(message).bigLargeIcon(null))
+                    .setColor(Color.GREEN)
+                    .setContentIntent(pendingIntent);
+        }
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+            if (soundUri != null) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+                notificationChannel.setSound(soundUri, audioAttributes);
+            }
+
+            assert mNotificationManager != null;
+            mBuilder.setChannelId(CHANNEL_ID);
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
+        assert mNotificationManager != null;
+        mNotificationManager.notify(requestID, mBuilder.build());
+
+    }*/
 
     private void sendNotification(String title, String body, Intent intent) {
 
         String CHANNEL_ID = "my_channel_01";// The id of the channel.
-
         //Define the intent that will fire when the user taps the notification
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         int requestID = (int) System.currentTimeMillis();
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -99,12 +157,11 @@ public class ListaMessagingService extends FirebaseMessagingService {
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-
         int importance = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             importance = NotificationManager.IMPORTANCE_HIGH;
         }
-        CharSequence name = "Lista FCM channel";// The user-visible name of the channel.
+        CharSequence name = "Lista Pro FCM channel";// The user-visible name of the channel.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
             mNotificationManager.createNotificationChannel(mChannel);

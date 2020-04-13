@@ -7,10 +7,18 @@
         android:orderInCategory="100"
         android:title="@string/ongoing_orders"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/menuClosedOrders"
         android:orderInCategory="100"
         android:title="@string/closed_orders"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/sync"
+        android:orderInCategory="100"
+        android:title="@string/synchronize"
+        android:icon="@drawable/ic_sync_white"
+        app:showAsAction="ifRoom"/>
 
 </menu>

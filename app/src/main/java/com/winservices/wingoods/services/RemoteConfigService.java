@@ -29,7 +29,7 @@ public class RemoteConfigService {
 
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 //TODO For test only
-                //.setMinimumFetchIntervalInSeconds(10)
+                .setMinimumFetchIntervalInSeconds(10)
                 .build();
         firebaseRemoteConfig.setConfigSettingsAsync(configSettings);
 
@@ -39,11 +39,11 @@ public class RemoteConfigService {
                 if (task.isSuccessful()) {
                     SharedPrefManager spm = SharedPrefManager.getInstance(context);
                     String version = firebaseRemoteConfig.getString(SharedPrefManager.GOOGLE_PLAY_VERSION_CODE);
-                    String welcomeMessage = firebaseRemoteConfig.getString(SharedPrefManager.WELCOME_MESSAGE);
+                    String appMessages = firebaseRemoteConfig.getString(SharedPrefManager.APP_MESSAGES);
                     Log.d(TAG, "google_play_version_code = " + version);
-                    Log.d(TAG, "welcome_message = " + welcomeMessage);
+                    Log.d(TAG, "app_messages = " + appMessages);
                     int googlePlayVersionCode = Integer.parseInt(version);
-                    spm.storeGooglePlayVersion(googlePlayVersionCode, welcomeMessage);
+                    spm.storeRemoteConfigParams(googlePlayVersionCode, appMessages);
                 } else {
                     Log.d(TAG, Objects.requireNonNull(task.getException()).getMessage());
                 }

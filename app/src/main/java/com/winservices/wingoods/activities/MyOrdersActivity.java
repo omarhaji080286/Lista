@@ -21,6 +21,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.OrdersDataManager;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.utils.Constants;
 
@@ -111,6 +112,9 @@ public class MyOrdersActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.sync:
+                SyncHelper.sync(this);
+                break;
             case android.R.id.home:
                 this.finish();
                 break;

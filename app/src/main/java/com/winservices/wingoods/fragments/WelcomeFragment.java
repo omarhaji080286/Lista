@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -144,7 +143,7 @@ public class WelcomeFragment extends Fragment {
 
         RemoteConfigParams rcp = new RemoteConfigParams(getContext());
         try {
-            JSONObject jsonObject = new JSONObject(rcp.getWelcomeMessage());
+            JSONObject jsonObject = new JSONObject(rcp.getAppMessages());
             txtWelcome1.setText(jsonObject.getString("welcome1"));
             txtWelcome2.setText(jsonObject.getString("welcome2"));
         } catch (JSONException e) {
@@ -189,8 +188,16 @@ public class WelcomeFragment extends Fragment {
 
     private void shareAppStoreLink() {
 
-        String listaLink = "https://play.google.com/store/apps/details?id=com.winservices.wingoods";
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
         String mainMessage = Objects.requireNonNull(getContext()).getResources().getString(R.string.share_message);
+        try {
+            JSONObject jsonObject = new JSONObject(rcp.getAppMessages());
+            mainMessage = jsonObject.getString("shareMessage");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String listaLink = "https://play.google.com/store/apps/details?id=com.winservices.wingoods";
         String subject = "avec Lista, les courses deviennent fun";
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -308,8 +315,8 @@ public class WelcomeFragment extends Fragment {
 
     private void manageGooglePlayIcon() {
 
-        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
-        int googlePlayVersion = spm.getGooglePlayVersion();
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
+        int googlePlayVersion = rcp.getGooglePlayVersion();
 
         int userVersion = BuildConfig.VERSION_CODE;
         if (googlePlayVersion > userVersion) {

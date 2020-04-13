@@ -24,9 +24,6 @@ public class LauncherActivity extends AppCompatActivity {
     private static final String TAG = LauncherActivity.class.getSimpleName();
     private String currentFragTag = "none";
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
