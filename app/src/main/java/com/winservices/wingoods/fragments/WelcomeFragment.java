@@ -232,7 +232,7 @@ public class WelcomeFragment extends Fragment {
             public void run() {
 
                 manageGooglePlayIcon();
-                manageInvitationIcon();
+                //manageInvitationIcon();
                 getAvailableOrdersNum();
                 getItemsToBuyNum();
 
@@ -347,7 +347,7 @@ public class WelcomeFragment extends Fragment {
 
     }
 
-    private void manageInvitationIcon() {
+    /*private void manageInvitationIcon() {
 
         if (isInvitationPending()) {
 
@@ -366,7 +366,7 @@ public class WelcomeFragment extends Fragment {
         } else {
             imgInvitation.setVisibility(View.GONE);
         }
-    }
+    }*/
 
     public class SyncReceiverWelcome extends BroadcastReceiver {
 

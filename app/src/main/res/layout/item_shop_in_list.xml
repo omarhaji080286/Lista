@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -33,7 +34,9 @@
                     android:layout_height="100dp"
                     android:contentDescription="@string/description"
                     android:src="@drawable/ic_store_black"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:foreground="@drawable/rounded_fg"
+                    tools:ignore="UnusedAttribute" />
 
                 <TextView
                     android:id="@+id/txt_shop_name"

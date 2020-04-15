@@ -82,6 +82,14 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
             holder.imgDelivery.setVisibility(View.VISIBLE);
         }
 
+        String orderPrice = order.getOrderPrice();
+        if (!(orderPrice==null || orderPrice.equals(""))){
+            holder.llOrderPrice.setVisibility(View.VISIBLE);
+            orderPrice = String.format("%s %s", orderPrice, context.getString(R.string.currency));
+            holder.txtOrderPrice.setText(orderPrice);
+            holder.txtOrderPrice.setVisibility(View.VISIBLE);
+        }
+
         holder.txtShopName.setText(order.getShop().getShopName());
         holder.txtShopTypeName.setText(order.getShop().getShopType().getShopTypeName());
         holder.txtOrderId.setText(String.valueOf(order.getServerOrderId()));
@@ -93,7 +101,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         if (imagePath != null) {
             float width = UtilsFunctions.convertDpToPx(context, 100);
             float height = UtilsFunctions.convertDpToPx(context, 100);
-            Bitmap bitmap = sp.rotate(-90.0f, BitmapFactory.decodeFile(imagePath), width, height);
+            Bitmap bitmap = sp.rotate(00.0f, BitmapFactory.decodeFile(imagePath), width, height);
             holder.imgShop.setImageBitmap(bitmap);
         } else {
             holder.imgShop.setImageResource(R.drawable.default_shop_image);

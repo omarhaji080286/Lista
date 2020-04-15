@@ -1,5 +1,6 @@
 package com.winservices.wingoods.viewholders;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,10 +14,13 @@ import com.winservices.wingoods.R;
 
 public class OrderVH extends RecyclerView.ViewHolder {
 
-    public TextView txtLabelCollectTime, txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime, txtShopTypeName;
+    public TextView txtLabelCollectTime, txtOrderId, txtShopName,
+                    txtOrderedItemsNumber, txtDate, txtOrderStatus,
+                    txtCollectTime, txtShopTypeName, txtOrderPrice;
     public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType, imgDelivery;
     public CardView clContainer;
     public Button btnCompleteOrder;
+    public LinearLayoutCompat llOrderPrice;
 
     public OrderVH(View itemView) {
         super(itemView);
@@ -39,6 +43,8 @@ public class OrderVH extends RecyclerView.ViewHolder {
         imgShopType= itemView.findViewById(R.id.imgShopType);
         imgDelivery = itemView.findViewById(R.id.imgDelivery);
         txtLabelCollectTime = itemView.findViewById(R.id.label_collect_time);
+        llOrderPrice = itemView.findViewById(R.id.llOrderPrice);
+        txtOrderPrice = itemView.findViewById(R.id.txtOrderPrice);
 
     }
 }

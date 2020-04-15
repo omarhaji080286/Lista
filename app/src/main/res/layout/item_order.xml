@@ -6,7 +6,8 @@
     android:id="@+id/cl_order_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_margin="5dp"
+    android:padding="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -215,9 +216,43 @@
                 android:layout_height="wrap_content"
                 android:text="@string/forTime"
                 android:textStyle="bold"
-
                 app:layout_constraintStart_toEndOf="@+id/label_collect_time"
                 app:layout_constraintTop_toBottomOf="@+id/label_items_number" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llOrderPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toEndOf="@+id/img_shop"
+                app:layout_constraintTop_toBottomOf="@+id/txt_collect_time"
+                android:gravity="start|center"
+                android:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtOrderPriceLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prix_dhs"
+                    style="@style/TextInOrder" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtOrderPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_00000_00"
+                    android:gravity="start"
+                    style="@style/TextInOrder"
+                    android:textStyle="bold"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgOrderPrice"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/payment"
+                    android:layout_marginStart="10dp"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <ImageView
                 android:id="@+id/imgDelivery"

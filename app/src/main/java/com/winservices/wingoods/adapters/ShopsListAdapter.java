@@ -71,7 +71,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         if (imagePath != null) {
             float width = UtilsFunctions.convertDpToPx(context, 100);
             float height = UtilsFunctions.convertDpToPx(context, 100);
-            Bitmap bitmap = sp.rotate(-90.0f, BitmapFactory.decodeFile(imagePath), width, height);
+            Bitmap bitmap = sp.rotate(00.0f, BitmapFactory.decodeFile(imagePath), width, height);
             holder.imgShopIcon.setImageBitmap(bitmap);
         } else {
             holder.imgShopIcon.setImageResource(R.drawable.default_shop_image);

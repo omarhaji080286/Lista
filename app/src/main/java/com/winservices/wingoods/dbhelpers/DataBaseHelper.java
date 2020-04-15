@@ -174,6 +174,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_IS_TO_DELIVER = "is_to_deliver";
     static final String COL_USER_ADDRESS = "user_address";
     static final String COL_USER_LOCATION = "user_location";
+    static final String COL_ORDER_PRICE = "order_price";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -321,6 +322,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "is_to_deliver INTEGER," +
                 "user_address TEXT," +
                 "user_location TEXT," +
+                "order_price TEXT," +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS default_categories ( " +
@@ -462,6 +464,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int isToDeliver = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_DELIVER));
                 String userAddress = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
                 String userLocation = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_LOCATION));
+                String orderPrice = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_PRICE));
 
                 order.setServerOrderId(serverOrderId);
 
@@ -486,6 +489,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 order.setIsToDeliver(isToDeliver);
                 order.setUserAddress(userAddress);
                 order.setUserLocation(userLocation);
+                order.setOrderPrice(orderPrice);
 
             }
             res.close();
@@ -1678,6 +1682,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_IS_TO_DELIVER, order.getIsToDeliver());
         contentValues.put(COL_USER_ADDRESS, order.getUserAddress());
         contentValues.put(COL_USER_LOCATION, order.getUserLocation());
+        contentValues.put(COL_ORDER_PRICE, order.getOrderPrice());
 
         long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

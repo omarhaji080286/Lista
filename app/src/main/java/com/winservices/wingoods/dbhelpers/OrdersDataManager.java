@@ -53,6 +53,7 @@ public class OrdersDataManager {
                 int isToDeliver = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_DELIVER));
                 String userAddress = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
                 String userLocation = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_LOCATION));
+                String orderPrice = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_PRICE));
 
                 Order order = new Order();
                 order.setServerOrderId(serverOrderId);
@@ -78,6 +79,7 @@ public class OrdersDataManager {
                 order.setIsToDeliver(isToDeliver);
                 order.setUserAddress(userAddress);
                 order.setUserLocation(userLocation);
+                order.setOrderPrice(orderPrice);
 
                 orders.add(order);
             }

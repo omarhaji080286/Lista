@@ -11,17 +11,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.cardview.widget.CardView;
-import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -49,7 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class OrderDetailsActivity extends AppCompatActivity {
 
@@ -58,11 +56,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private List<OrderedGood> orderedGoods;
     private int serverOrderId;
     private int orderStatus;
-    private TextView txtOrderId, txtClientAddress;
+    private TextView txtOrderId, txtClientAddress, txtOrderPrice;
     private AppCompatImageButton imgBtnLocation;
-    private ImageView imgDelivery;
-    private TextView txtToDeliver;
-    private CardView cardOrder;
+    private CardView cardOrder,cardOrderPrice;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +78,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
         txtClientAddress = findViewById(R.id.txtClientAddress);
         imgBtnLocation = findViewById(R.id.imgBtnLocation);
         cardOrder = findViewById(R.id.cardOrder);
+        cardOrderPrice = findViewById(R.id.cardOrderPrice);
+        txtOrderPrice = findViewById(R.id.txtOrderPrice);
 
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
         orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
@@ -106,10 +105,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
             cardOrder.setVisibility(View.GONE);
         }
 
+        if (!(order.getOrderPrice() == null || order.getOrderPrice().equals(""))){
+            cardOrderPrice.setVisibility(View.VISIBLE);
+            txtOrderPrice.setText(order.getOrderPrice());
+        }
+
     }
-
-
-
 
     @Override
     protected void onResume() {
@@ -274,7 +275,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         isYourOrderComplete();
     }
-
 
     private void isYourOrderComplete() {
         if (orderStatus == Order.AVAILABLE) {

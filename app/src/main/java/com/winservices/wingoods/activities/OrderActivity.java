@@ -252,23 +252,18 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 if (shop.getIsDelivering()==Shop.IS_DELIVERING && cbHomeDelivery.isChecked()){
                     if (formOk(editUserAddress, rgLocation)){
 
-
                         if (cbHomeDelivery.isChecked()) isToDeliver = 1;
                         userAddress = editUserAddress.getText().toString();
                         userLocation = editLocation.getText().toString();
 
-
                         addOrder(OrderActivity.this, startTime, endTime,
                                 isToDeliver, userAddress, userLocation);
-
                     }
                 } else {
                     dialogTime.dismiss();
                     addOrder(OrderActivity.this, startTime, endTime,
                             isToDeliver, userAddress, userLocation);
                 }
-
-
 
             }
         });
@@ -364,8 +359,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             for (int i = 1; i < days.length; i++) {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, i);
-                int dayNumber = cal.get(Calendar.DAY_OF_WEEK)+1;
-                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH)+1);
+                int dayNumber = cal.get(Calendar.DAY_OF_WEEK);
+                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber+1 ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH)+1);
             }
 
         } else {
@@ -423,7 +418,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         return times;
     }
-
 
     private void animateItem(final int position) {
         new Handler().postDelayed(new Runnable() {

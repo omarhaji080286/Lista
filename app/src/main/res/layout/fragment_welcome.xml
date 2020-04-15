@@ -178,7 +178,7 @@
                 <TextView
                     android:id="@+id/txtMyOrders"
                     style="@style/WelcomeTextItem"
-                    android:text="@string/my_orders"
+                    android:text="@string/my_orders_welcome"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
