@@ -25,6 +25,7 @@ import com.winservices.wingoods.dbhelpers.OrdersDataManager;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.NetworkMonitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,8 +117,12 @@ public class MyOrdersActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.sync:
-                syncTriggeredByUser = true;
-                SyncHelper.sync(this);
+                if (NetworkMonitor.checkNetworkConnection(this)) {
+                    syncTriggeredByUser = true;
+                    SyncHelper.sync(this);
+                } else {
+                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
                 break;
             case android.R.id.home:
                 this.finish();

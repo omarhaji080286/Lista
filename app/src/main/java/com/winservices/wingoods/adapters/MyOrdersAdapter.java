@@ -88,6 +88,8 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
             orderPrice = String.format("%s %s", orderPrice, context.getString(R.string.currency));
             holder.txtOrderPrice.setText(orderPrice);
             holder.txtOrderPrice.setVisibility(View.VISIBLE);
+        } else {
+            holder.llOrderPrice.setVisibility(View.GONE);
         }
 
         holder.txtShopName.setText(order.getShop().getShopName());
@@ -157,6 +159,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgAvailable.setImageResource(R.drawable.checked_gray);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
                 holder.txtOrderStatus.setText(context.getString(R.string.registered));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
+                }
                 break;
             case Order.READ :
                 holder.btnCompleteOrder.setVisibility(View.GONE);
@@ -168,6 +173,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgAvailable.setImageResource(R.drawable.checked_gray);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
                 holder.txtOrderStatus.setText(context.getString(R.string.read));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
+                }
                 break;
             case Order.AVAILABLE :
                 holder.btnCompleteOrder.setVisibility(View.GONE);
@@ -179,7 +187,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgAvailable.setImageResource(R.drawable.checked);
                 holder.imgClosedOrNotSuported.setVisibility(View.GONE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.txtOrderId.setTextColor(context.getColor(R.color.red));
+                    holder.txtOrderStatus.setTextColor(context.getColor(R.color.red));
                 }
                 if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
                     holder.txtOrderStatus.setText(context.getString(R.string.can_collect));
@@ -195,6 +203,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setImageResource(R.drawable.completed);
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.completed));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
+                }
                 break;
             case Order.NOT_SUPPORTED:
                 holder.imgRegistered.setVisibility(View.GONE);
@@ -204,6 +215,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.not_supported));
                 holder.btnCompleteOrder.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
+                }
                 break;
         }
     }
