@@ -17,9 +17,12 @@ import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
+import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
+
+import java.util.Date;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
@@ -36,21 +39,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //TODO Version web
-    private final static String webVersion = "L16_LP8";
+    private final static String webVersion = "L17_LP10";
 
     //TODO Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 8;
+    private final static int DATABASE_VERSION = 8; //updated on 08-04-2020
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -167,6 +170,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_LATITUDE = "latitude";
     static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
     static final String COL_D_CATEGORY_NAME = "d_category_name";
+    static final String COL_IS_DELIVERING = "is_delivering";
+    static final String COL_IS_TO_DELIVER = "is_to_deliver";
+    static final String COL_USER_ADDRESS = "user_address";
+    static final String COL_USER_LOCATION = "user_location";
+    static final String COL_ORDER_PRICE = "order_price";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -311,6 +319,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "ordered_goods_number INTEGER," +
                 "start_time TEXT," +
                 "end_time TEXT," +
+                "is_to_deliver INTEGER," +
+                "user_address TEXT," +
+                "user_location TEXT," +
+                "order_price TEXT," +
                 "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS default_categories ( " +
@@ -425,6 +437,67 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return res;
+    }
+
+    Order getOrder(int serverOrderId) {
+        db = this.getReadableDatabase();
+        Cursor res;
+        Order order = new Order();
+        try {
+            res = db.rawQuery("select " + COL_SERVER_ORDER_ID + " AS " + _ID + " , " + TABLE_ORDERS + ".* ," + TABLE_SHOPS + ".*"
+                    + " FROM " + TABLE_ORDERS + ", " + TABLE_SHOPS
+                    + " WHERE " + TABLE_ORDERS + "." + COL_SERVER_SHOP_ID + " = " + TABLE_SHOPS + "." + COL_SERVER_SHOP_ID
+                    + " AND " + TABLE_ORDERS + "." + COL_SERVER_ORDER_ID + " = " + serverOrderId, null);
+
+            while (res.moveToNext()) {
+                int serverUserId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_USER_ID));
+                int serverShopId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_ID));
+                Date creationDate = UtilsFunctions.stringToDate(res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_CREATION_DATE)));
+                int statusId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_STATUS_ID));
+                String statusName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_STATUS_NAME));
+                int orderedGoodsNumber = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDERED_GOODS_NUMBER));
+                String shopName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_NAME));
+                String startTime = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_START_TIME));
+                String endTime = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_END_TIME));
+                int serverShopTypeId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+                String shopTypeName = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+                int isToDeliver = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_DELIVER));
+                String userAddress = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
+                String userLocation = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_LOCATION));
+                String orderPrice = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_PRICE));
+
+                order.setServerOrderId(serverOrderId);
+
+                User user = new User();
+                user.setServerUserId(serverUserId);
+                order.setUser(user);
+
+                Shop shop = new Shop();
+                shop.setServerShopId(serverShopId);
+                shop.setShopName(shopName);
+                order.setShop(shop);
+
+                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                shop.setShopType(shopType);
+
+                order.setCreationDate(creationDate);
+                order.setStatusId(statusId);
+                order.setStatusName(statusName);
+                order.setOrderedGoodsNumber(orderedGoodsNumber);
+                order.setStartTime(startTime);
+                order.setEndTime(endTime);
+                order.setIsToDeliver(isToDeliver);
+                order.setUserAddress(userAddress);
+                order.setUserLocation(userLocation);
+                order.setOrderPrice(orderPrice);
+
+            }
+            res.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return order;
     }
 
     //DESCRIPTIONS
@@ -1594,6 +1667,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //ORDERS
 
     boolean insertOrder(Order order) {
+
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_SERVER_ORDER_ID, order.getServerOrderId());
@@ -1605,6 +1679,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_ORDERED_GOODS_NUMBER, order.getOrderedGoodsNumber());
         contentValues.put(COL_START_TIME, order.getStartTime());
         contentValues.put(COL_END_TIME, order.getEndTime());
+        contentValues.put(COL_IS_TO_DELIVER, order.getIsToDeliver());
+        contentValues.put(COL_USER_ADDRESS, order.getUserAddress());
+        contentValues.put(COL_USER_LOCATION, order.getUserLocation());
+        contentValues.put(COL_ORDER_PRICE, order.getOrderPrice());
 
         long result = db.insertWithOnConflict(TABLE_ORDERS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);
@@ -1631,6 +1709,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SHOP_EMAIL, shop.getShopEmail());
         contentValues.put(COL_LONGITUDE, shop.getLongitude());
         contentValues.put(COL_LATITUDE, shop.getLatitude());
+        contentValues.put(COL_IS_DELIVERING, shop.getIsDelivering());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

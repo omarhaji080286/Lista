@@ -1,11 +1,17 @@
 package com.winservices.wingoods.adapters;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +23,16 @@ import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
+import static java.security.AccessController.getContext;
 
 public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder> {
 
@@ -35,8 +46,9 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         this.orderInitiated = orderInitiated;
     }
 
+    @NonNull
     @Override
-    public ShopInListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ShopInListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_shop_in_list, parent, false);
         return new ShopInListViewHolder(view);
     }
@@ -50,9 +62,16 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopPhone.setText(shop.getShopPhone());
         holder.city.setText(shop.getCity().getCityName());
 
-        String imagePath = SharedPrefManager.getInstance(context).getShopImagePath(shop.getServerShopId());
+        if (shop.getIsDelivering()==Shop.IS_NOT_DELIVERING){
+            holder.llDeliveryService.setVisibility(View.GONE);
+        }
+
+        SharedPrefManager sp = SharedPrefManager.getInstance(context);
+        String imagePath = sp.getShopImagePath(shop.getServerShopId());
         if (imagePath != null) {
-            Bitmap bitmap = UtilsFunctions.getOrientedBitmap(imagePath);
+            float width = UtilsFunctions.convertDpToPx(context, 100);
+            float height = UtilsFunctions.convertDpToPx(context, 100);
+            Bitmap bitmap = sp.rotate(00.0f, BitmapFactory.decodeFile(imagePath), width, height);
             holder.imgShopIcon.setImageBitmap(bitmap);
         } else {
             holder.imgShopIcon.setImageResource(R.drawable.default_shop_image);
@@ -74,8 +93,14 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                     intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                     intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                     intent.putExtra(Constants.SHOP, shop);
-                    context.startActivity(intent);
-                    ((Activity) context).finish();
+
+                    if(UtilsFunctions.isGPSEnabled(context)){
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
+                    } else {
+                        UtilsFunctions.enableGPS(((Activity) context), intent);
+                    }
+
                 }
             });
         } else {

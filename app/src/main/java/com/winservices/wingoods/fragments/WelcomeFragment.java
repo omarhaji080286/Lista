@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -43,11 +42,14 @@ import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.models.RemoteConfigParams;
 import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
+import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +58,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,7 +71,7 @@ public class WelcomeFragment extends Fragment {
 
     private ConstraintLayout consLayMyGoods, consLayMyOrders;
     private LinearLayout linlayShops, linlayProfile;
-    private TextView txtAvailableOrders, txtItemsToBuyNum;
+    private TextView txtAvailableOrders, txtItemsToBuyNum, txtWelcome1, txtWelcome2;
     private SyncReceiverWelcome syncReceiver;
     private ImageView imgInvitation, imgShare, imgGooglePlay;
 
@@ -97,9 +102,16 @@ public class WelcomeFragment extends Fragment {
         imgShare = view.findViewById(R.id.imgShare);
         imgGooglePlay = view.findViewById(R.id.imgGooglePlay);
         txtItemsToBuyNum = view.findViewById(R.id.txtItemsToBuyNum);
+        txtWelcome1 = view.findViewById(R.id.txtWelcome1);
+        txtWelcome2 = view.findViewById(R.id.txtWelcome2);
 
 
         SyncHelper.sync(getContext());
+
+        /*PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
+        if (permissionUtil.checkPermission(TXT_NOTIFICATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionUtil.requestPermission(TXT_NOTIFICATION, getActivity());
+        }*/
 
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
@@ -139,6 +151,16 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
+        try {
+            JSONObject jsonObject = new JSONObject(rcp.getAppMessages());
+            txtWelcome1.setText(jsonObject.getString("welcome1"));
+            txtWelcome2.setText(jsonObject.getString("welcome2"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
@@ -176,8 +198,16 @@ public class WelcomeFragment extends Fragment {
 
     private void shareAppStoreLink() {
 
-        String listaLink = "https://play.google.com/store/apps/details?id=com.winservices.wingoods";
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
         String mainMessage = Objects.requireNonNull(getContext()).getResources().getString(R.string.share_message);
+        try {
+            JSONObject jsonObject = new JSONObject(rcp.getAppMessages());
+            mainMessage = jsonObject.getString("shareMessage");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String listaLink = "https://play.google.com/store/apps/details?id=com.winservices.wingoods";
         String subject = "avec Lista, les courses deviennent fun";
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -194,13 +224,15 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        UtilsFunctions.hideKeyboard(getContext(), imgShare);
+
         Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
             public void run() {
 
                 manageGooglePlayIcon();
-                manageInvitationIcon();
+                //manageInvitationIcon();
                 getAvailableOrdersNum();
                 getItemsToBuyNum();
 
@@ -295,8 +327,8 @@ public class WelcomeFragment extends Fragment {
 
     private void manageGooglePlayIcon() {
 
-        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
-        int googlePlayVersion = spm.getGooglePlayVersion();
+        RemoteConfigParams rcp = new RemoteConfigParams(getContext());
+        int googlePlayVersion = rcp.getGooglePlayVersion();
 
         int userVersion = BuildConfig.VERSION_CODE;
         if (googlePlayVersion > userVersion) {
@@ -315,7 +347,7 @@ public class WelcomeFragment extends Fragment {
 
     }
 
-    private void manageInvitationIcon() {
+    /*private void manageInvitationIcon() {
 
         if (isInvitationPending()) {
 
@@ -334,7 +366,7 @@ public class WelcomeFragment extends Fragment {
         } else {
             imgInvitation.setVisibility(View.GONE);
         }
-    }
+    }*/
 
     public class SyncReceiverWelcome extends BroadcastReceiver {
 

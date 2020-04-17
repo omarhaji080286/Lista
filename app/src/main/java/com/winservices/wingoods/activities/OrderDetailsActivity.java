@@ -4,16 +4,23 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,6 +31,7 @@ import com.winservices.wingoods.adapters.OrderDetailsAdapter;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
+import com.winservices.wingoods.dbhelpers.OrdersDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Good;
@@ -40,7 +48,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class OrderDetailsActivity extends AppCompatActivity {
 
@@ -49,6 +56,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private List<OrderedGood> orderedGoods;
     private int serverOrderId;
     private int orderStatus;
+    private TextView txtOrderId, txtClientAddress, txtOrderPrice;
+    private AppCompatImageButton imgBtnLocation;
+    private CardView cardOrder,cardOrderPrice;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +74,41 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
 
         rvOrderDetails = findViewById(R.id.rv_order_goods);
+        txtOrderId = findViewById(R.id.txtOrderId);
+        txtClientAddress = findViewById(R.id.txtClientAddress);
+        imgBtnLocation = findViewById(R.id.imgBtnLocation);
+        cardOrder = findViewById(R.id.cardOrder);
+        cardOrderPrice = findViewById(R.id.cardOrderPrice);
+        txtOrderPrice = findViewById(R.id.txtOrderPrice);
 
         serverOrderId = getIntent().getIntExtra(Constants.ORDER_ID, 0);
         orderStatus = getIntent().getIntExtra(Constants.ORDER_STATUS, 0);
+
+        setOrderCard();
+
+    }
+
+    void setOrderCard(){
+        OrdersDataManager ordersDataManager = new OrdersDataManager(this);
+        final Order order = ordersDataManager.getOrder(serverOrderId);
+
+        txtOrderId.setText(String.valueOf(serverOrderId));
+        txtClientAddress.setText(order.getUserAddress());
+        imgBtnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGoogleMaps(order.getUserLocation());
+            }
+        });
+
+        if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
+            cardOrder.setVisibility(View.GONE);
+        }
+
+        if (!(order.getOrderPrice() == null || order.getOrderPrice().equals(""))){
+            cardOrderPrice.setVisibility(View.VISIBLE);
+            txtOrderPrice.setText(order.getOrderPrice());
+        }
 
     }
 
@@ -233,7 +276,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
         isYourOrderComplete();
     }
 
-
     private void isYourOrderComplete() {
         if (orderStatus == Order.AVAILABLE) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -288,5 +330,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     }
 
+    private void startGoogleMaps(String location) {
+        String uri = "geo:" + location + "?q=" + location;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(intent);
+    }
 
 }

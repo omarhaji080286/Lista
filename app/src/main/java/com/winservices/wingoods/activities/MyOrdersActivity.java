@@ -6,10 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,18 +13,24 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.OrdersDataManager;
+import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
 import com.winservices.wingoods.utils.Constants;
+import com.winservices.wingoods.utils.NetworkMonitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyOrdersActivity extends AppCompatActivity {
-
 
     private static final String ORDERS_TYPE = "orders_type";
     private final String TAG = "MyOrdersActivity";
@@ -39,6 +41,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     private TextView txtNoOrders;
     private OrdersDataManager ordersDataManager;
     private SyncReceiverMyOrders syncReceiver;
+    private boolean syncTriggeredByUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
 
         syncReceiver = new SyncReceiverMyOrders();
 
@@ -112,6 +116,14 @@ public class MyOrdersActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.sync:
+                if (NetworkMonitor.checkNetworkConnection(this)) {
+                    syncTriggeredByUser = true;
+                    SyncHelper.sync(this);
+                } else {
+                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
+                break;
             case android.R.id.home:
                 this.finish();
                 break;
@@ -119,12 +131,14 @@ public class MyOrdersActivity extends AppCompatActivity {
                 orders.clear();
                 orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                setTitle(getString(R.string.my_orders));
                 updateMessageVisibility();
                 break;
             case R.id.menuClosedOrders:
                 orders.clear();
                 orders.addAll(ordersDataManager.getOrders(Order.CLOSED));
                 myOrdersAdapter.setOrders(orders);
+                setTitle(getString(R.string.closed_orders_title));
                 updateMessageVisibility();
                 break;
         }
@@ -161,6 +175,11 @@ public class MyOrdersActivity extends AppCompatActivity {
                     orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
                     myOrdersAdapter.setOrders(orders);
                     updateMessageVisibility();
+
+                    if (syncTriggeredByUser) {
+                        Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
+                        syncTriggeredByUser = false;
+                    }
 
                     Log.d(TAG, "Sync BroadCast received");
                 }

@@ -462,7 +462,8 @@ public class CategoriesToOrderAdapter
         ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
         CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
         cg.remove(listPos.childPos);
-        notifyItemRemoved(position);
+        //notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     public int getGoodsToOrderNumber() {

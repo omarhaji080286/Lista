@@ -4,10 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import androidx.core.content.ContextCompat;
-import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import androidx.appcompat.app.AlertDialog;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +20,11 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
@@ -49,8 +50,11 @@ import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.CategoryGroupViewHolder;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupViewHolder, GoodItemViewHolder> {
 
@@ -97,6 +101,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
             if (goodItem.getIsOrdered() == 1) {
                 holder.cart.setVisibility(View.VISIBLE);
+                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_is_ordered_color));
             } else {
                 holder.cart.setVisibility(View.GONE);
             }
@@ -210,7 +215,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
     public void removeChildItem(int position, int goodId) {
         DataManager dataManager = new DataManager(context);
-        Boolean res = dataManager.deleteGoodById(goodId);
+        boolean res = dataManager.deleteGoodById(goodId);
         if (res) {
             ExpandableListPosition listPos = expandableList.getUnflattenedPosition(position);
             CategoryGroup cg = (CategoryGroup) expandableList.getExpandableGroup(listPos);
@@ -224,13 +229,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     public void restoreItem(Good deletedItem) {
         DataManager dataManager = new DataManager(context);
         int res = dataManager.restoreGood(deletedItem);
-        switch (res) {
-            case Constants.SUCCESS:
-                refreshList();
-                break;
-            default:
-                Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
-                break;
+        if (res == Constants.SUCCESS) {
+            refreshList();
+        } else {
+            Toast.makeText(context, context.getResources().getText(R.string.error), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -544,7 +546,8 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     private void changeContent(final View view, LinearLayout llQuantity,
-                               final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand, final NumberPicker pickerAmounts) {
+                               final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand,
+                               final NumberPicker pickerAmounts) {
         switch (view.getId()) {
             case R.id.btnQuantity:
                 llQuantity.setVisibility(View.VISIBLE);
@@ -562,11 +565,25 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         }
     }
 
-    private void setPickerValues(int viewId, final NumberPicker pickerAmounts, final TextView txtGoodDesc, final MultiAutoCompleteTextView editBrand) {
+    private void setPickerValues(int viewId, final NumberPicker pickerAmounts, final TextView txtGoodDesc,
+                                 final MultiAutoCompleteTextView editBrand) {
         List<Amount> amounts = getUnitsValues(viewId);
         final String[] amountsStr = amountsToString(amounts);
+        //pickerAmounts.setFormatter(new myFormatter());
         pickerAmounts.setDisplayedValues(null);
+        pickerAmounts.setMinValue(0);
         pickerAmounts.setMaxValue(amountsStr.length - 1);
+
+        /*
+        pickerAmounts.setValue(-1);
+        try {
+            Method method = pickerAmounts.getClass().getDeclaredMethod("changeValueByOne", boolean.class);
+            method.setAccessible(true);
+            method.invoke(pickerAmounts, true);
+        } catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }*/
+
         pickerAmounts.setDisplayedValues(amountsStr);
 
         pickerAmounts.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -576,6 +593,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             }
         });
     }
+
 
     private void changeButtonsBackGround(View view, Button btn1, Button btn2, Button btn3) {
         view.setBackground(context.getDrawable(R.drawable.btn_amount_selected));
@@ -615,3 +633,10 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
 }
+
+/*class myFormatter implements NumberPicker.Formatter {
+    @Override
+    public String format(int value) {
+        return String.format(Locale.FRANCE, "%.1f", (float) value / 10);
+    }
+}*/

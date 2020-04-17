@@ -66,7 +66,7 @@
     <string name="search">search</string>
     <string name="city">City</string>
     <string name="filters">Filters</string>
-    <string name="my_orders">My Orders</string>
+    <string name="my_orders">Ongoing Orders</string>
     <string name="invite_friends">Invite friends</string>
     <string name="my_invitations">My invitations</string>
     <string name="sync_finished">sync finished</string>
@@ -118,7 +118,7 @@
     <string name="phone">Phone :</string>
     <string name="user_name_label">User name :</string>
     <string name="user_name_hint"><i>Firstname Lastname</i></string>
-    <string name="account">Account</string>
+    <string name="account">My profile</string>
     <string name="no_items_to_buy">There are no items to order</string>
     <string name="ongoing_orders">Ongoing orders</string>
     <string name="closed_orders">Closed orders</string>
@@ -133,9 +133,9 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="status">status:</string>
     <string name="ref">Ref :</string>
-    <string name="date">Date :</string>
+    <string name="date">Date de création :</string>
     <string name="items">Items :</string>
-    <string name="forTime">For :</string>
+    <string name="forTime">à collerter le :</string>
     <string name="registered">Registered</string>
     <string name="read">Read by the shop</string>
     <string name="can_collect">You can collect your order</string>
@@ -151,14 +151,51 @@
     <string name="permission_preference" translatable="false">PERMISSION_PREFERENCE</string>
     <string name="permission_access_fine_location" translatable="false">PERMISSION_ACCESS_FINE_LOCATION</string>
     <string name="permission_access_coarse_location" translatable="false">PERMISSION_ACCESS_COARSE_LOCATION</string>
-    <string name="collect_time">Collect time</string>
-    <string name="ok">Ok</string>
+    <string name="validate_order_form">Validation de la commande</string>
+    <string name="ok">OK</string>
     <string name="invite_phone_hint">+2121234567890</string>
     <string name="no_shops_referenced">There is currently no referenced store to process items on your list. We are working hard to improve that! Thank you for your understanding.</string>
     <string name="got_it">Got it</string>
     <string name="referenced_shops">Referenced shops</string>
     <string name="sign_in_failed">Signing in failed. please try again.</string>
     <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
+    <string name="user_address_text">Votre adresse</string>
+    <string name="auto_collect">Livraison à domicile</string>
+    <string name="submit">Valider</string>
+    <string name="localization_question">Cette adresse correspond à ma position actuelle</string>
+    <string name="GPS_hint">00.000000, -0.000000</string>
+    <string name="collect_time">Date de préparation de la commande</string>
+    <string name="delivery_hour_label">Delivery time</string>
+    <string name="verify_location">Check my location</string>
+    <string name="delivery_address">Adresse de livraison</string>
+    <string name="get_my_location">Récupérer ma position</string>
+    <string name="set_location_manually">Saisir manuellement</string>
+    <string name="gps_location">Position de livraison (GPS)</string>
+    <string name="address_required">Adresse requise</string>
+    <string name="location_required">Position GPS requise</string>
+    <string name="gps_format">Format 00.000000, -0.000000</string>
+    <string name="livraison_disponible">Livraison disponible</string>
+    <string name="shop_type">shop type</string>
+    <string name="delivery_status">Delivery in progress</string>
+    <string name="todo">TODO</string>
+    <string name="lista_welcome1">Lista !</string>
+    <string name="lista_welcome2">Les courses faciles…</string>
+    <string name="share">Partager</string>
+    <string name="r_f">Réf</string>
+    <string name="_123">123</string>
+    <string name="livraison_le">Livraison le :</string>
+    <string name="vendredi_09">vendredi 09</string>
+    <string name="adresse_livraison">Adresse :</string>
+    <string name="delivery_address_value">Adresse de livraison du client saisie lors de la commande</string>
+    <string name="localisation_gps">Localisation GPS</string>
+    <string name="livrer">à livrer</string>
+    <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
+    <string name="my_orders_welcome">Mes commandes</string>
+    <string name="total_commande_label">Total commande (Dhs) :</string>
+    <string name="_00000_00">00000.00</string>
+    <string name="prix_dhs">Total :</string>
+    <string name="currency"> Dhs</string>
 
 
 </resources>

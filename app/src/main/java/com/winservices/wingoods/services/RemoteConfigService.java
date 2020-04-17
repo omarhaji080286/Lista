@@ -39,9 +39,11 @@ public class RemoteConfigService {
                 if (task.isSuccessful()) {
                     SharedPrefManager spm = SharedPrefManager.getInstance(context);
                     String version = firebaseRemoteConfig.getString(SharedPrefManager.GOOGLE_PLAY_VERSION_CODE);
+                    String appMessages = firebaseRemoteConfig.getString(SharedPrefManager.APP_MESSAGES);
                     Log.d(TAG, "google_play_version_code = " + version);
+                    Log.d(TAG, "app_messages = " + appMessages);
                     int googlePlayVersionCode = Integer.parseInt(version);
-                    spm.storeGooglePlayVersion(googlePlayVersionCode);
+                    spm.storeRemoteConfigParams(googlePlayVersionCode, appMessages);
                 } else {
                     Log.d(TAG, Objects.requireNonNull(task.getException()).getMessage());
                 }

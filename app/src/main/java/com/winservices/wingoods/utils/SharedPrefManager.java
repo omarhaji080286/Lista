@@ -3,6 +3,7 @@ package com.winservices.wingoods.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
@@ -18,6 +19,7 @@ public class SharedPrefManager {
     private static final String SHARED_PREF_NAME = "listaSharedPreferences";
     private static final String KEY_ACCESS_TOKEN = "token";
     public static final String GOOGLE_PLAY_VERSION_CODE = "google_play_version_code";
+    public static final String APP_MESSAGES = "app_messages";
     private static SharedPrefManager instance;
     private Context context;
 
@@ -37,10 +39,17 @@ public class SharedPrefManager {
         return sharedPreferences.getInt(GOOGLE_PLAY_VERSION_CODE, 0);
     }
 
-    public void storeGooglePlayVersion(int googlePlayVersion) {
+    public String getAppMessages(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        String appMessages = "{\"welcome1\":\"Lista Maroc\",\"welcome2\":\"Les courses faciles...\",\"shareMessage\":\"Lista ...تقدية ساهلة ماهلة\"}";
+        return sharedPreferences.getString(APP_MESSAGES, appMessages);
+    }
+
+    public void storeRemoteConfigParams(int googlePlayVersion, String appMessages) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(GOOGLE_PLAY_VERSION_CODE, googlePlayVersion);
+        editor.putString(APP_MESSAGES, appMessages);
         editor.apply();
     }
 
@@ -130,5 +139,23 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(ShopType.PREFIX_SHOP_TYPE + shopTypeId, null);
     }
+
+    public Bitmap rotate(float x, Bitmap bitmapOrg, float newWidth, float newHeight)
+    {
+
+        int width = bitmapOrg.getWidth();
+        int height = bitmapOrg.getHeight();
+
+        float scaleWidth =  newWidth / width;
+        float scaleHeight = newHeight / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.postRotate(x);
+
+        return Bitmap.createBitmap(bitmapOrg, 0, 0,width, height, matrix, true);
+    }
+
+
 
 }

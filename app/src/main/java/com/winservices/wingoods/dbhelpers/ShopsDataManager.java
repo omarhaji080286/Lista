@@ -55,6 +55,7 @@ public class ShopsDataManager {
         double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
         int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
         String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+        int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
 
         Shop shop = new Shop();
         shop.setServerShopId(serverShopId);
@@ -67,6 +68,7 @@ public class ShopsDataManager {
         shop.setShopEmail(shopEmail);
         shop.setLongitude(longitude);
         shop.setLatitude(latitude);
+        shop.setIsDelivering(isDelivering);
 
         shop.setDefaultCategories(getDCategories(serverShopId));
 
@@ -127,6 +129,7 @@ public class ShopsDataManager {
                 double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
                 int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
                 String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+                int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
 
                 Shop shop = new Shop();
                 shop.setServerShopId(serverShopId);
@@ -139,6 +142,7 @@ public class ShopsDataManager {
                 shop.setShopEmail(shopEmail);
                 shop.setLongitude(longitude);
                 shop.setLatitude(latitude);
+                shop.setIsDelivering(isDelivering);
 
                 Country country = new Country(serverCountryId, countryName);
                 shop.setCountry(country);

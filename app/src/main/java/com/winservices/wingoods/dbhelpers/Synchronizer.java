@@ -363,8 +363,7 @@ public class Synchronizer {
             shop.setCountry(country);
             shop.setShopType(shopType);
             shop.setDefaultCategories(defaultCategories);
-
-            Log.d(LOG_TAG, shopName + " is_delivering = " + JSONShop.getInt("is_delivering"));
+            shop.setIsDelivering(JSONShop.getInt("is_delivering"));
 
             shopsDataManager.insertShop(shop);
         }
@@ -385,7 +384,11 @@ public class Synchronizer {
             int orderedGoodsNumber = JSONOrder.getInt("ordered_goods_number");
             String startTime = JSONOrder.getString("start_time");
             String endTime = JSONOrder.getString("end_time");
-
+            int isToDeliver = JSONOrder.getInt("is_to_deliver");
+            String userAddress = JSONOrder.getString("user_address");
+            String userLocation = JSONOrder.getString("user_location");
+            String orderPrice = "";
+            if (!JSONOrder.isNull("order_price")) orderPrice = JSONOrder.getString("order_price");
 
             Order order = new Order();
             order.setServerOrderId(serverOrderId);
@@ -404,6 +407,10 @@ public class Synchronizer {
             order.setOrderedGoodsNumber(orderedGoodsNumber);
             order.setStartTime(startTime);
             order.setEndTime(endTime);
+            order.setIsToDeliver(isToDeliver);
+            order.setUserAddress(userAddress);
+            order.setUserLocation(userLocation);
+            order.setOrderPrice(orderPrice);
 
             ordersDataManager.insertOrder(order);
         }

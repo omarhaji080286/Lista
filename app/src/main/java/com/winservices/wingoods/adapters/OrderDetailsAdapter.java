@@ -38,7 +38,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsVH> {
         if (orderedGood.getGoodDesc().equals("")) {
             goodText = orderedGood.getGoodName();
         } else {
-            goodText = orderedGood.getGoodName() + orderedGood.getGoodDesc();
+            goodText = orderedGood.getGoodName() + " - " + orderedGood.getGoodDesc() + " -";
         }
 
         holder.txtGoodName.setText(goodText);
