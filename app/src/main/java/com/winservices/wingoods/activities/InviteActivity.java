@@ -5,14 +5,18 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -44,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,9 +57,10 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     static final int PICK_CONTACT = 111;
     private static final String TAG = "InviteActivity";
     ImageView imgContact;
-    ImageButton btnSendIntivation;
+    ImageButton btnSendIntivation, btnShareApp;
     EditText editPhoneInvitation, editGroupName;
     TextView txtMembersList, txtMembers;
+    ConstraintLayout clShareApp;
     User user;
     Dialog dialog;
 
@@ -74,6 +80,9 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         editPhoneInvitation = findViewById(R.id.editPhoneInvitation);
         txtMembersList = findViewById(R.id.txtMembersList);
         txtMembers = findViewById(R.id.txtMembers);
+        clShareApp = findViewById(R.id.clShareApp);
+        btnShareApp = findViewById(R.id.btnShareApp);
+
 
         imgContact.setOnClickListener(this);
         btnSendIntivation.setOnClickListener(this);
@@ -134,11 +143,19 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                 coUserPhone = UtilsFunctions.formatPhone(coUserPhone);
 
+                //TODO PROD
                 if ((coUserPhone.length() != 13) || (!coUserPhone.substring(0, 4).equals("+212"))) {
                     editPhoneInvitation.setError(getString(R.string.not_valid_phone));
                     editPhoneInvitation.requestFocus();
                     return;
                 }
+
+                //TODO TEST
+                /*if ((coUserPhone.length() != 12) || (!coUserPhone.substring(0, 3).equals("+16"))) {
+                    editPhoneInvitation.setError(getString(R.string.not_valid_phone));
+                    editPhoneInvitation.requestFocus();
+                    return;
+                }*/
 
                 if (coUserPhone.equals(user.getUserPhone())) {
                     editPhoneInvitation.setError(getString(R.string.cant_invite_your_self));
@@ -160,6 +177,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                 } else {
                     addCoUserInvitation(coUserPhone);
+
                 }
 
                 UtilsFunctions.hideKeyboard(this, view);
@@ -171,6 +189,60 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_CONTACT);
                 break;
+        }
+
+    }
+
+    private void checkCoUserRegistration(final String coUserPhone) {
+        if (NetworkMonitor.checkNetworkConnection(getApplicationContext())) {
+
+            dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), this, R.string.loading).create();
+            dialog.show();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                    DataBaseHelper.HOST_URL_CHECK_CO_USER_REGISTRATION,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean error = jsonObject.getBoolean("error");
+                                String message = jsonObject.getString("message");
+                                if (error) {
+                                    //error in server
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                } else {
+
+                                    int isUserRegistered = jsonObject.getInt("isUserRegistered");
+                                    prepareShareButton(isUserRegistered);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } finally {
+                                dialog.dismiss();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            dialog.dismiss();
+                        }
+                    }
+            ) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> postData = new HashMap<>();
+                    postData.put("coUserPhone", coUserPhone);
+                    postData.put("serverSenderId", String.valueOf(user.getServerUserId()));
+                    return postData;
+                }
+            };
+
+            RequestHandler.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        } else {
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -220,7 +292,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         switch (res1) {
             case Constants.SUCCESS:
                 SyncHelper.sync(this);
-                Toast.makeText(this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
+                checkCoUserRegistration(coUserPhone);
                 break;
             case Constants.DATAEXISTS:
                 editPhoneInvitation.setError(getString(R.string.invitation_already_sent));
@@ -277,7 +349,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                                             coUsersDataManager.addCoUser(coUserToAdd);
 
-                                            Toast.makeText(InviteActivity.this, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
+                                            int isUserRegistered = jsonObject.getInt("isUserRegistered");
+                                            prepareShareButton(isUserRegistered);
 
                                             break;
                                         case Constants.DATAEXISTS:
@@ -321,6 +394,46 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    private void prepareShareButton(int isUserRegistered){
+
+        if (isUserRegistered==User.IS_NOT_REGISTERED){
+            clShareApp.setVisibility(View.VISIBLE);
+            btnShareApp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String shareMessage = getApplicationContext().getResources().getString(R.string.share_message);
+                    String phone = editPhoneInvitation.getText().toString();
+                    openWhatsApp(phone, shareMessage);
+
+                }
+            });
+        } else {
+            clShareApp.setVisibility(View.GONE);
+            Toast.makeText(this, "A notification has been sent to your friend", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void openWhatsApp(String phone,String message){
+
+        try{
+            PackageManager packageManager = this.getPackageManager();
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            String url = "https://api.whatsapp.com/send?phone="+ phone +"&text=" + URLEncoder.encode(message, "UTF-8");
+            i.setPackage("com.whatsapp");
+            i.setData(Uri.parse(url));
+            if (i.resolveActivity(packageManager) != null) {
+                startActivity(i);
+            }else {
+                Toast.makeText(this, "Whats up not installed", Toast.LENGTH_SHORT).show();
+            }
+        } catch(Exception e) {
+            Log.e("ERROR WHATSAPP",e.toString());
+            Toast.makeText(this, "Whats up not installed", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private String getJsonForCreateGroupAndSendInvitation(Group groupToAdd, CoUser coUser) {
         final JSONObject root = new JSONObject();
         try {
@@ -330,6 +443,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
             JSONObject jsonCoUserToAdd = coUser.toJSONObject();
             root.put("coUserToAdd", jsonCoUserToAdd);
+
 
             return root.toString(1);
 

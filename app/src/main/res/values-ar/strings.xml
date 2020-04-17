@@ -120,7 +120,7 @@
     <string name="no_items_to_buy">لا توجد أي عناصر لشراء</string>
     <string name="ongoing_orders">الطلبات الجارية</string>
     <string name="closed_orders">الطلبات المغلقة</string>
-    <string name="collect_time">وقت التسليم</string>
+    <string name="validate_order_form">تفاصيل الطلب</string>
     <string name="monday">الإثنين</string>
     <string name="tuesday">الثلاثاء</string>
     <string name="wednesday">الأربعاء</string>
@@ -146,6 +146,44 @@
     <string name="got_it">Got it</string>
     <string name="referenced_shops">المحلات المشار إليها</string>
     <string name="sign_in_failed">فشل تسجيل الدخول. حاول مرة اخرى.</string>
+    <string name="share_message">Gagnez du temps avec Lista, l\'application qui facilite la corvée des courses ;-)</string>
+    <string name="user_address_text">عنوانك</string>
+    <string name="auto_collect">التوصيل للمنزل</string>
+    <string name="submit">Valider</string>
+    <string name="localization_question">هل هذا العنوان يتطابق مع موقعك الحالي</string>
+    <string name="GPS_hint">00.000000, -0.000000</string>
+    <string name="collect_time">تاريخ إعداد الأمر</string>
+    <string name="delivery_hour_label">Heure de livraison</string>
+    <string name="verify_location">Vérifier ma position</string>
+    <string name="delivery_address">عنوان التسليم</string>
+    <string name="get_my_location">Récupérer ma position</string>
+    <string name="set_location_manually">Saisir manuellement</string>
+    <string name="gps_location">Position de livraison (GPS)</string>
+    <string name="address_required">Adresse requise</string>
+    <string name="location_required">Position GPS requise</string>
+    <string name="gps_format">Format 00.000000, -0.000000</string>
+    <string name="livraison_disponible">Livraison disponible</string>
+    <string name="shop_type">shop type</string>
+    <string name="delivery_status">توصيل</string>
+    <string name="todo">TODO</string>
+    <string name="lista_welcome1">Lista !</string>
+    <string name="lista_welcome2">Les courses faciles…</string>
+    <string name="share">Partager</string>
+    <string name="r_f">Réf</string>
+    <string name="_123">123</string>
+    <string name="livraison_le">Livraison le :</string>
+    <string name="vendredi_09">vendredi 09</string>
+    <string name="adresse_livraison">Adresse :</string>
+    <string name="delivery_address_value">Adresse de livraison du client saisie lors de la commande</string>
+    <string name="localisation_gps">Localisation GPS</string>
+    <string name="livrer">à livrer</string>
+    <string name="delivery_time_label">à recevoir le :</string>
+    <string name="closed_orders_title">Commandes clôturées</string>
+    <string name="my_orders_welcome">Mes commandes</string>
+    <string name="total_commande_label">Total commande (Dhs) :</string>
+    <string name="_00000_00">00000.00</string>
+    <string name="prix_dhs">Total :</string>
+    <string name="currency"> Dhs</string>
 
 
 </resources>

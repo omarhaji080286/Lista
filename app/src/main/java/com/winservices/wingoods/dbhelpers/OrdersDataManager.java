@@ -28,6 +28,10 @@ public class OrdersDataManager {
         db.insertOrder(order);
     }
 
+    public Order getOrder(int serverOrderId){
+        return db.getOrder(serverOrderId);
+    }
+
     public List<Order> getOrders(int groupedStatus) {
         Cursor cursor = db.getOrders(groupedStatus);
         List<Order> orders = new ArrayList<>();
@@ -46,6 +50,10 @@ public class OrdersDataManager {
                 String endTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_END_TIME));
                 int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
                 String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+                int isToDeliver = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_TO_DELIVER));
+                String userAddress = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
+                String userLocation = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_LOCATION));
+                String orderPrice = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_ORDER_PRICE));
 
                 Order order = new Order();
                 order.setServerOrderId(serverOrderId);
@@ -68,6 +76,10 @@ public class OrdersDataManager {
                 order.setOrderedGoodsNumber(orderedGoodsNumber);
                 order.setStartTime(startTime);
                 order.setEndTime(endTime);
+                order.setIsToDeliver(isToDeliver);
+                order.setUserAddress(userAddress);
+                order.setUserLocation(userLocation);
+                order.setOrderPrice(orderPrice);
 
                 orders.add(order);
             }

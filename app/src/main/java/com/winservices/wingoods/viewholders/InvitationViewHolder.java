@@ -10,14 +10,14 @@ import com.winservices.wingoods.R;
 
 public class InvitationViewHolder extends GroupViewHolder {
 
-    public TextView senderEmail;
+    public TextView senderPhoneAndName;
     public TextView categories;
     public Button decline, accept;
 
     public InvitationViewHolder(View itemView) {
         super(itemView);
 
-        senderEmail = itemView.findViewById(R.id.txt_invit_email);
+        senderPhoneAndName = itemView.findViewById(R.id.txt_phone_and_name);
         categories = itemView.findViewById(R.id.txt_invit_categories);
         decline = itemView.findViewById(R.id.btn_decline);
         accept = itemView.findViewById(R.id.btn_accept);

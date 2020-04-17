@@ -2,18 +2,15 @@ package com.winservices.wingoods.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,40 +20,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.SectionPageAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
-import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.ShopsDataManager;
 import com.winservices.wingoods.fragments.ShopsList;
 import com.winservices.wingoods.fragments.ShopsMap;
-import com.winservices.wingoods.models.City;
-import com.winservices.wingoods.models.Country;
-import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
-import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ShopsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -84,7 +61,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         setContentView(R.layout.activity_shops);
         mViewPager = findViewById(R.id.vp_shops);
         tabLayout = findViewById(R.id.tabs_shops);
-        llFooter = findViewById(R.id.ll_footer);
 
         setTitle(R.string.lista_shops);
 
@@ -115,12 +91,6 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
         Intent intent = getIntent();
         orderInitiated = intent.getBooleanExtra(Constants.ORDER_INITIATED, false);
-
-        if (orderInitiated) {
-            llFooter.setVisibility(View.VISIBLE);
-        } else {
-            llFooter.setVisibility(View.GONE);
-        }
 
         getShops();
 
@@ -158,7 +128,7 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         mSectionPageAdapter.addFragment(shopsList, "");
         mViewPager.setAdapter(mSectionPageAdapter);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(0);
+        mViewPager.setCurrentItem(1);
         setupTabIcons();
 
     }

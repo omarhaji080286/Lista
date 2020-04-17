@@ -3,21 +3,21 @@ package com.winservices.wingoods.fragments;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +27,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -49,27 +44,15 @@ import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
-import com.winservices.wingoods.dbhelpers.DataBaseHelper;
-import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.models.City;
-import com.winservices.wingoods.models.Country;
-import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
-import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -135,7 +118,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public boolean GoogleServicesAvailable() {
+    private boolean GoogleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(getContext());
         if (isAvailable == ConnectionResult.SUCCESS) {
@@ -300,19 +283,48 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                             intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);
-                            startActivity(intent);
-                            Objects.requireNonNull(getActivity()).finish();
+
+                            if(UtilsFunctions.isGPSEnabled(getContext())){
+                                startActivity(intent);
+                                Objects.requireNonNull(getActivity()).finish();
+                            } else {
+                                UtilsFunctions.enableGPS(getActivity(), intent);
+                            }
+
                         }
                     });
                 } else {
                     btnOrder.setVisibility(View.GONE);
                 }
 
-
                 return false;
             }
         });
 
+    }
+
+    private void requestLocationPermission(Intent intent) {
+
+        PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
+
+        if (permissionUtil.checkPermission(PermissionUtil.TXT_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                permissionUtil.showPermissionExplanation(PermissionUtil.TXT_FINE_LOCATION, getActivity());
+            } else if (!permissionUtil.checkPermissionPreference(PermissionUtil.TXT_FINE_LOCATION)) {
+                permissionUtil.requestPermission(PermissionUtil.TXT_FINE_LOCATION, getActivity());
+                permissionUtil.updatePermissionPreference(PermissionUtil.TXT_FINE_LOCATION);
+            } else {
+                permissionUtil.goToAppSettings();
+            }
+        } else {
+
+            if(UtilsFunctions.isGPSEnabled(getContext())){
+                startActivity(intent);
+            } else {
+                UtilsFunctions.enableGPS(getActivity(), intent);
+            }
+
+        }
     }
 
     private boolean canGetOrder(Shop shop) {

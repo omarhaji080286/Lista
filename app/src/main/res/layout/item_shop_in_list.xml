@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/cardview_shop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,72 +17,120 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center|start"
             android:weightSum="100">
 
-            <ImageView
-                android:id="@+id/img_shop_icon"
-                android:layout_width="130dp"
-                android:layout_height="110dp"
-                android:contentDescription="@string/description"
-                android:src="@drawable/ic_store_black"
-                android:layout_weight="15"
-                android:layout_gravity="start|center"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llShopImage"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_weight="10">
 
+                <ImageView
+                    android:id="@+id/img_shop_icon"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="@string/description"
+                    android:src="@drawable/ic_store_black"
+                    android:layout_gravity="center"
+                    android:foreground="@drawable/rounded_fg"
+                    tools:ignore="UnusedAttribute" />
 
-            <android.support.constraint.ConstraintLayout
+                <TextView
+                    android:id="@+id/txt_shop_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shop_name"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:gravity="center"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginStart="4dp"
                 android:id="@+id/cl_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="85">
+                android:layout_weight="90">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_d_categories"
                     android:layout_width="match_parent"
-                    android:layout_height="24dp"
+                    android:layout_height="32dp"
                     android:orientation="horizontal"
-                    android:layout_weight="10"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
                 <LinearLayout
                     android:id="@+id/linLayShopData"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_order"
                     app:layout_constraintTop_toBottomOf="@id/rv_d_categories">
-
-                    <TextView
-                        android:id="@+id/txt_shop_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="shop name"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txt_shop_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="shop type" />
+                        android:text="@string/shop_type" />
 
                     <TextView
                         android:id="@+id/txt_shop_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="phone" />
+                        android:text="@string/phone" />
 
                     <TextView
                         android:id="@+id/txt_shop_city"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="City" />
+                        android:text="@string/city" />
 
                 </LinearLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llDeliveryService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_d_categories"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_order"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/imgDelivery"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/delivery_bike"
+                        android:contentDescription="@string/today"
+                        android:visibility="visible"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtToDeliver"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:text="@string/livraison_disponible"
+                        android:layout_width="64dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <Button
                     android:id="@+id/btn_order"
@@ -92,13 +141,15 @@
                     android:visibility="visible"
                     android:background="@color/colorPrimaryDark"
                     android:textColor="@color/white"
-                    app:layout_constraintTop_toBottomOf="@+id/linLayShopData"/>
+                    app:layout_constraintTop_toBottomOf="@+id/linLayShopData"
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

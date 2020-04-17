@@ -10,50 +10,27 @@
     android:background="@color/white">
 
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_shops"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/softBlueGreen"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs_shops"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/softBlueGreen" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_shops"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="90"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-
-    <LinearLayout
-        android:id="@+id/ll_footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                style="@style/Footer"
-                android:text="@string/shop_selection"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="15dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/_2_list_confirmation"
-                android:gravity="center"/>
-    </LinearLayout>
 
 </LinearLayout>
 

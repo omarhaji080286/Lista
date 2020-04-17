@@ -1,12 +1,13 @@
 package com.winservices.wingoods.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesInMyGoodsAdapter;
 import com.winservices.wingoods.adapters.MyGoodsAdapter;
@@ -25,13 +27,14 @@ import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CategoryGroup;
 import com.winservices.wingoods.models.Good;
+import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyGoods extends android.support.v4.app.Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class MyGoods extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     public static final String TAG = MyGoods.class.getSimpleName();
 
@@ -166,6 +169,13 @@ public class MyGoods extends android.support.v4.app.Fragment implements Recycler
 
             @Override
             public void afterTextChanged(Editable s) {
+
+                //log event
+                Bundle eventParams = new Bundle();
+                eventParams.putString(FirebaseAnalytics.Param.SEARCH_TERM, s.toString());
+                EventService eventService = new EventService(getContext());
+                eventService.logEvent(FirebaseAnalytics.Event.SEARCH, eventParams);
+
             }
         });
 

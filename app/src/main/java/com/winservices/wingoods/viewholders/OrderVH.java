@@ -1,7 +1,9 @@
 package com.winservices.wingoods.viewholders;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,10 +14,13 @@ import com.winservices.wingoods.R;
 
 public class OrderVH extends RecyclerView.ViewHolder {
 
-    public TextView txtOrderId, txtShopName, txtOrderedItemsNumber, txtDate, txtOrderStatus, txtCollectTime, txtShopTypeName;
-    public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType;
-    public ConstraintLayout clContainer;
+    public TextView txtLabelCollectTime, txtOrderId, txtShopName,
+                    txtOrderedItemsNumber, txtDate, txtOrderStatus,
+                    txtCollectTime, txtShopTypeName, txtOrderPrice;
+    public ImageView imgShop, arrowRight, imgRegistered, imgRead, imgAvailable, imgClosedOrNotSuported, imgShopType, imgDelivery;
+    public CardView clContainer;
     public Button btnCompleteOrder;
+    public LinearLayoutCompat llOrderPrice;
 
     public OrderVH(View itemView) {
         super(itemView);
@@ -36,7 +41,10 @@ public class OrderVH extends RecyclerView.ViewHolder {
         btnCompleteOrder = itemView.findViewById(R.id.btnCompleteOrder);
         txtShopTypeName = itemView.findViewById(R.id.txtShopTypeName);
         imgShopType= itemView.findViewById(R.id.imgShopType);
-
+        imgDelivery = itemView.findViewById(R.id.imgDelivery);
+        txtLabelCollectTime = itemView.findViewById(R.id.label_collect_time);
+        llOrderPrice = itemView.findViewById(R.id.llOrderPrice);
+        txtOrderPrice = itemView.findViewById(R.id.txtOrderPrice);
 
     }
 }

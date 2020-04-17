@@ -1,11 +1,11 @@
 package com.winservices.wingoods.viewholders;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.winservices.wingoods.R;
@@ -18,6 +18,7 @@ public class ShopInListViewHolder extends RecyclerView.ViewHolder {
     public Button btnOrder;
     public ImageView imgShopIcon;
     public RecyclerView rvDCategories;
+    public LinearLayoutCompat llDeliveryService;
 
     public ShopInListViewHolder(View itemView) {
         super(itemView);
@@ -30,6 +31,7 @@ public class ShopInListViewHolder extends RecyclerView.ViewHolder {
         shopPhone = itemView.findViewById(R.id.txt_shop_phone);
         city = itemView.findViewById(R.id.txt_shop_city);
         btnOrder = itemView.findViewById(R.id.btn_order);
+        llDeliveryService = itemView.findViewById(R.id.llDeliveryService);
 
     }
 }

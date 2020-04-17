@@ -6,18 +6,14 @@
         android:id="@+id/sync"
         android:orderInCategory="100"
         android:title="@string/synchronize"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_sync_white"/>
     <item
         android:id="@+id/action_invite"
         android:orderInCategory="100"
         android:title="@string/send_invite"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_invite"/>
-    <item
-        android:id="@+id/action_receive_invitation"
-        android:orderInCategory="100"
-        android:title="@string/received_invites"
-        app:showAsAction="never" />
+
 
 </menu>

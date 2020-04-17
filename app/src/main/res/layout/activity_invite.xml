@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
@@ -14,7 +15,6 @@
         android:id="@+id/txtInvitation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
         android:text="@string/invitation"
         android:layout_margin="10dp"/>
 
@@ -22,7 +22,6 @@
         android:id="@+id/txtTeam"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
         android:text="@string/team"
         android:layout_margin="5dp"/>
 
@@ -30,7 +29,6 @@
         android:id="@+id/editGroupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="30"
         android:ems="10"
         android:textSize="15sp"
         android:hint="@string/team_s_name"
@@ -42,7 +40,6 @@
         android:id="@+id/txtMembers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
         android:textSize="15sp"
         android:text="@string/members"
         android:layout_margin="5dp"
@@ -64,7 +61,6 @@
         android:id="@+id/txtInvite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
         android:textSize="15sp"
         android:text="@string/invite_a_friend"
         android:layout_margin="5dp"
@@ -108,5 +104,44 @@
             android:contentDescription="@string/description" />
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clShareApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/txtShareApp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="It seems that your friend hasn't installed Lista yet. Share ?"
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnShareApp"
+            android:layout_margin="10dp"
+            android:singleLine="false"
+            android:scrollHorizontally="false"/>
+
+        <ImageButton
+            android:id="@+id/btnShareApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/whatsapp"
+            android:contentDescription="@string/description"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/txtShareApp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </LinearLayout>

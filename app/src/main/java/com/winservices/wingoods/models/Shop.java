@@ -17,6 +17,8 @@ import java.util.List;
 
 public class Shop implements Parcelable {
 
+    public static final int IS_DELIVERING = 1;
+    public static final int IS_NOT_DELIVERING = 0;
     public static final String DEFAULT_IMAGE = "defaultImage";
     public static final String PREFIX_SHOP = "shop_";
     public static final Parcelable.Creator<Shop> CREATOR = new Parcelable.Creator<Shop>() {
@@ -43,6 +45,7 @@ public class Shop implements Parcelable {
     private String openingTime;
     private String closingTime;
     private int visibility;
+    private int isDelivering;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -56,6 +59,7 @@ public class Shop implements Parcelable {
         this.city = (City) input.readSerializable();
         this.country = (Country) input.readSerializable();
         this.visibility = input.readInt();
+        this.isDelivering = input.readInt();
         this.defaultCategories = new ArrayList<>();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
 
@@ -78,6 +82,14 @@ public class Shop implements Parcelable {
 
     public void setDefaultCategories(List<DefaultCategory> defaultCategories) {
         this.defaultCategories = defaultCategories;
+    }
+
+    public int getIsDelivering() {
+        return isDelivering;
+    }
+
+    public void setIsDelivering(int isDelivering) {
+        this.isDelivering = isDelivering;
     }
 
     public String getOpeningTime() {
@@ -210,10 +222,9 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(city);
         parcel.writeSerializable(country);
         parcel.writeInt(visibility);
+        parcel.writeInt(isDelivering);
         parcel.writeTypedList(defaultCategories);
 
-
     }
-
 
 }

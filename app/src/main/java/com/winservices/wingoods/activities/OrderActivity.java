@@ -1,16 +1,24 @@
 package com.winservices.wingoods.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +27,12 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +40,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -63,11 +80,28 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private RecyclerView rvCategoriesToOrder;
     private GridLayoutManager glm;
     private String[] collectTimes;
+    private Location lastLocation;
+    private String location;
+    private EditText editLocation;
+    private ImageButton imgBtnGoogleMaps;
+    private boolean isPickerStartingTomorrow = false;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (editLocation!=null && imgBtnGoogleMaps !=null){
+            refreshLocationUI(editLocation, imgBtnGoogleMaps);
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
+        updateLastLocation();
 
         setTitle(getString(R.string.order_my_list));
 
@@ -94,7 +128,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private void sendOrder() {
         if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
             if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
-                selectCollectTime();
+                completeOrderData();
             } else {
                 Toast.makeText(this, R.string.set_descriptions, Toast.LENGTH_SHORT).show();
                 List<Good> goodsToComplete = categoriesToOrderAdapter.getGoodsToComplete();
@@ -109,25 +143,35 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private void selectCollectTime() {
+    private void completeOrderData() {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        View mView = LayoutInflater.from(this)
-                .inflate(R.layout.fragment_collect_time, null, false);
+        @SuppressLint("InflateParams") View mView = LayoutInflater.from(this)
+                .inflate(R.layout.fragment_complete_order_data, null, false);
 
         final NumberPicker pickerDay = mView.findViewById(R.id.pickerDay);
         final NumberPicker pickerTime = mView.findViewById(R.id.pickerTime);
-        Button btnCollectTime = mView.findViewById(R.id.btnCollectTime);
 
+        LinearLayoutCompat llDeliveryModule = mView.findViewById(R.id.llDeliveryModule);
+        final CheckBox cbHomeDelivery = mView.findViewById(R.id.cbHomeDelivery);
+        final LinearLayoutCompat llAddress = mView.findViewById(R.id.llAddress);
+        final LinearLayoutCompat llLocation = mView.findViewById(R.id.llLocation);
+        final EditText editUserAddress = mView.findViewById(R.id.editUserAddress);
+        final RadioGroup rgLocation = mView.findViewById(R.id.rgLocation);
+        editLocation = mView.findViewById(R.id.editLocation);
+        imgBtnGoogleMaps = mView.findViewById(R.id.imgBtnGoogleMaps);
+
+        Button btnSubmit = mView.findViewById(R.id.btnSubmit);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(this);
         final Shop shop = shopsDataManager.getShopById(selectedShopId);
 
-
+        //Prepare collect time
         final String[] days = getDays(shop.getClosingTime());
         pickerDay.setMinValue(0);
         pickerDay.setMaxValue(days.length - 1);
         pickerDay.setDisplayedValues(days);
+        pickerDay.setValue(0);
 
         collectTimes = getCollectTimes(days[0], shop.getOpeningTime(), shop.getClosingTime());
 
@@ -137,20 +181,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         mBuilder.setView(mView);
         final AlertDialog dialogTime = mBuilder.create();
-        dialogTime.setTitle(R.string.collect_time);
+        dialogTime.setTitle(R.string.validate_order_form);
         dialogTime.show();
-
-        btnCollectTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogTime.dismiss();
-
-                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()]);
-
-                addOrder(OrderActivity.this, startTime, endTime);
-            }
-        });
 
         pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -161,14 +193,133 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 pickerTime.setDisplayedValues(collectTimes);
             }
         });
+
+        if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+            llDeliveryModule.setVisibility(View.VISIBLE);
+
+            //CheckBox Home Delivery checkbox
+            cbHomeDelivery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    updateLastLocation();
+                    if (isChecked){
+                        llAddress.setVisibility(View.VISIBLE);
+                        llLocation.setVisibility(View.VISIBLE);
+                    } else {
+                        llAddress.setVisibility(View.GONE);
+                        llLocation.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            //Radio group : get location
+            refreshLocationUI(editLocation, imgBtnGoogleMaps);
+            final KeyListener keyListener = editLocation.getKeyListener();
+            rgLocation.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId){
+                        case R.id.radioGetMyLocation:
+                            refreshLocationUI(editLocation, imgBtnGoogleMaps);
+                            editLocation.setText(location);
+                            editLocation.setKeyListener(null);
+                            editLocation.setError(null);
+                            imgBtnGoogleMaps.setVisibility(View.GONE);
+                            break;
+                        case R.id.radioSetLocationManually:
+                            updateLastLocation();
+                            editLocation.setKeyListener(keyListener);
+                            editLocation.setText("");
+                            imgBtnGoogleMaps.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                }
+            });
+        } else {
+            llDeliveryModule.setVisibility(View.GONE);
+        }
+
+        //Submit button
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
+                String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
+                int isToDeliver = 0;
+                String userAddress = "";
+                String userLocation = location;
+
+                if (shop.getIsDelivering()==Shop.IS_DELIVERING && cbHomeDelivery.isChecked()){
+                    if (formOk(editUserAddress, rgLocation)){
+
+                        if (cbHomeDelivery.isChecked()) isToDeliver = 1;
+                        userAddress = editUserAddress.getText().toString();
+                        userLocation = editLocation.getText().toString();
+
+                        addOrder(OrderActivity.this, startTime, endTime,
+                                isToDeliver, userAddress, userLocation);
+                    }
+                } else {
+                    dialogTime.dismiss();
+                    addOrder(OrderActivity.this, startTime, endTime,
+                            isToDeliver, userAddress, userLocation);
+                }
+
+            }
+        });
     }
 
-    private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+    private boolean formOk(EditText editUserAddress, RadioGroup rg){
+        if (editUserAddress.getText().toString().isEmpty() || editUserAddress.getText().toString().equals("") ){
+            editUserAddress.setError(getString(R.string.address_required));
+            return false;
+        }
+
+        if (rg.getCheckedRadioButtonId()==-1){
+            Toast.makeText(this, R.string.location_required, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (editLocation.getText().toString().isEmpty()){
+            editLocation.setError(getString(R.string.location_required));
+            return false;
+        }
+
+        String regexGps = "^([+-]?\\d+\\.?\\d+)\\s*,\\s*([+-]?\\d+\\.?\\d+)$";
+        if (!editLocation.getText().toString().matches(regexGps)){
+            editLocation.setError(getString(R.string.gps_format));
+            return false;
+        }
+
+        return true;
+    }
+
+    private void refreshLocationUI(final EditText editLocation, ImageButton imgBtnGoogleMaps){
+        getLocation();
+
+        //ImgButton check location on google maps
+        imgBtnGoogleMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateLastLocation();
+                String uri = "geo:"+ location+"?q="+location;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
+    }
+
+    private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, pickerDayValue);
+        if (isPickerStartingWithTomorrow){
+            cal.add(Calendar.DATE, pickerDayValue+1);
+        } else {
+            cal.add(Calendar.DATE, pickerDayValue);
+        }
+
         day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
         startTime = day + " " + pickerTimeDisplayedValue.substring(0, 5);
 
@@ -177,12 +328,16 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return startTime;
     }
 
-    private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue) {
+    private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, pickerDayValue);
+        if (isPickerStartingWithTomorrow){
+            cal.add(Calendar.DATE, pickerDayValue+1);
+        } else {
+            cal.add(Calendar.DATE, pickerDayValue);
+        }
         day = UtilsFunctions.dateToString(cal.getTime(), "yyyy-MM-dd");
         startTime = day + " " + pickerTimeDisplayedValue.substring(8, 13);
 
@@ -190,7 +345,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         return startTime;
     }
-
 
     private String[] getDays(String closingTime) {
         final String[] weekdays = getResources().getStringArray(R.array.days);
@@ -200,17 +354,19 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
         if (Integer.parseInt(closingTime.substring(0, 2)) <= hourOfDay + 2) {
             days[0] = getResources().getString(R.string.tomorrow);
+            isPickerStartingTomorrow = true;
 
             for (int i = 1; i < days.length; i++) {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, i);
                 int dayNumber = cal.get(Calendar.DAY_OF_WEEK);
-                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+                days[i] = UtilsFunctions.getDayOfWeek(this, dayNumber+1 ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH)+1);
             }
 
         } else {
             days[0] = getResources().getString(R.string.today);
             days[1] = getResources().getString(R.string.tomorrow);
+            isPickerStartingTomorrow = false;
 
             for (int i = 2; i < days.length; i++) {
                 Calendar cal = Calendar.getInstance();
@@ -263,7 +419,6 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return times;
     }
 
-
     private void animateItem(final int position) {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -279,6 +434,13 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }, 50);
     }
 
+    private void updateLastLocation() {
+        new Thread(new Runnable() {
+            public void run() {
+                getLocation();
+            }
+        }).start();
+    }
 
     private void loadCategoriesToOrder(Shop shop) {
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
@@ -291,12 +453,10 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                switch (categoriesToOrderAdapter.getItemViewType(position)) {
-                    case 2:
-                        return GRID_COLUMN_NUMBER;
-                    default:
-                        return 1;
+                if (categoriesToOrderAdapter.getItemViewType(position) == 2) {
+                    return GRID_COLUMN_NUMBER;
                 }
+                return 1;
             }
         });
 
@@ -314,7 +474,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private void addOrder(final Context context, final String startTime, final String endTime) {
+    private void addOrder(final Context context, final String startTime, final String endTime,
+                          final int isToDeliver, final String userAddress, final String userLocation) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
             final Dialog dialog = UtilsFunctions.getDialogBuilder(getLayoutInflater(), context, R.string.Registering_order).create();
             dialog.show();
@@ -356,7 +517,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
-                    postData.put("jsonData", "" + getJSONForAddOrder(startTime, endTime));
+                    postData.put("jsonData", "" + getJSONForAddOrder(startTime, endTime, isToDeliver, userAddress, userLocation));
                     postData.put("language", "" + Locale.getDefault().getLanguage());
                     return postData;
                 }
@@ -368,7 +529,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
-    private String getJSONForAddOrder(String startTime, String endTime) {
+    private String getJSONForAddOrder(String startTime, String endTime,
+                                      int isToDeliver, String userAddress, String userLocation) {
         final JSONObject root = new JSONObject();
         try {
 
@@ -380,6 +542,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
             root.put("statusId", Order.REGISTERED);
             root.put("startTime", startTime);
             root.put("endTime", endTime);
+            root.put("isToDeliver", String.valueOf(isToDeliver));
+            root.put("userAddress", userAddress);
+            root.put("userLocation", userLocation);
 
             JSONArray jsonGoods = new JSONArray();
             for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
@@ -403,7 +568,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         DataManager dataManager = new DataManager(this);
         for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
             Good good = categoriesToOrderAdapter.getGoodsToOrder().get(i);
-            good.setIsOrdered(1);
+            good.setIsOrdered(Good.IS_ORDERED);
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
             dataManager.updateGood(good);
         }
     }
@@ -446,6 +612,34 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void getLocation() {
+
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+
+                if (task.isSuccessful() && task.getResult() != null) {
+                    try {
+                        lastLocation = task.getResult();
+
+                        int latitudeLength = String.valueOf(lastLocation.getLatitude()).length();
+                        int longitudeLength = String.valueOf(lastLocation.getLongitude()).length();
+
+                        location = String.valueOf(lastLocation.getLatitude()).substring(0,latitudeLength-1) + ", " + String.valueOf(lastLocation.getLongitude()).substring(0,longitudeLength-1);
+                        Log.d(TAG, "onComplete:success  " + lastLocation.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d(TAG, "onComplete:exception  " + task.getException());
+                }
+            }
+        });
+
     }
 
 

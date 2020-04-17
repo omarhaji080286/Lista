@@ -1,6 +1,7 @@
 package com.winservices.wingoods.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
@@ -10,12 +11,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -126,78 +127,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ShopsActivity.class);
                     intent.putExtra(Constants.ORDER_INITIATED, true);
                     startActivity(intent);
-                    collapseFab();
+                    //collapseFab();
                 } else {
                     Toast.makeText(context, R.string.no_items_to_buy, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        fabAddCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-                View mView = LayoutInflater.from(context)
-                        .inflate(R.layout.fragment_add_category, mInterceptorFrame, false);
-
-                Button btnAddCategory = mView.findViewById(R.id.btn_add_category);
-                Button btnCancel = mView.findViewById(R.id.btn_cancel);
-                final EditText editCategoryName = mView.findViewById(R.id.edit_category);
-
-                //prepare widget
-
-                //Show the dialog
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
-                editCategoryName.requestFocus();
-
-                //Action Button "Cancel"
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        collapseFab();
-                    }
-                });
-
-                //Action Button "Add"
-                btnAddCategory.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String categoryName = editCategoryName.getText().toString();
-                        if (Controlers.inputOk(categoryName)) {
-                            UsersDataManager usersDataManager = new UsersDataManager(context);
-                            User currentUser = usersDataManager.getCurrentUser();
-
-                            Category category = new Category(categoryName.trim(), Color.getRandomColor(context), R.drawable.others,
-                                    DataBaseHelper.SYNC_STATUS_FAILED, currentUser.getUserId(), currentUser.getEmail());
-                            category.setDCategoryID(Constants.USER_D_CATEGORY_ID);
-
-                            DataManager dataManager = new DataManager(context);
-                            int result = dataManager.addCategory(context, category);
-
-                            switch (result) {
-                                case Constants.SUCCESS:
-                                    Toast.makeText(context, context.getResources().getString(R.string.category_add_success), Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                    collapseFab();
-                                    SyncHelper.sync(getApplicationContext());
-                                    break;
-                                case Constants.DATAEXISTS:
-                                    Toast.makeText(context, context.getResources().getString(R.string.category_exists), Toast.LENGTH_SHORT).show();
-                                    break;
-                                case Constants.ERROR:
-                                    Toast.makeText(context, context.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                        } else {
-                            Toast.makeText(context, context.getResources().getString(R.string.input_txt_not_valid), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
             }
         });
 
@@ -256,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_invite).setVisible(false);
         return true;
     }
 
@@ -273,13 +207,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_invite:
                 startActivity(new Intent(this, InviteActivity.class));
-                break;
-            case R.id.action_receive_invitation:
-                if (NetworkMonitor.checkNetworkConnection(this)) {
-                    startActivity(new Intent(this, ReceiveInvitationActivity.class));
-                } else {
-                    Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
-                }
                 break;
             case R.id.sync:
                 if (NetworkMonitor.checkNetworkConnection(this)) {
@@ -323,14 +250,6 @@ public class MainActivity extends AppCompatActivity {
         fabAddCategory.setClickable(false);
         isOpen = false;
     }
-
-    @Override
-    protected void onDestroy() {
-        //clear the job
-        super.onDestroy();
-        DataBaseHelper.closeDB();
-    }
-
 
     @Override
     protected void onPause() {

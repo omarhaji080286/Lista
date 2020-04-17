@@ -1,7 +1,7 @@
 package com.winservices.wingoods.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +42,9 @@ public class ReceivedInvitationsAdapter extends RecyclerView.Adapter<InvitationV
 
         final ReceivedInvitation receivedInvitation = receivedInvitations.get(position);
 
-        holder.senderEmail.setText(receivedInvitation.getInvitationPhone());
-        holder.categories.setText(receivedInvitation.getInvitationCategories());
+        String phoneAndName =  receivedInvitation.getUserName() + " (" + receivedInvitation.getInvitationPhone() + ")";
+        holder.senderPhoneAndName.setText(phoneAndName);
+        //holder.categories.setText(receivedInvitation.getInvitationCategories());
 
 
         holder.accept.setOnClickListener(new View.OnClickListener() {

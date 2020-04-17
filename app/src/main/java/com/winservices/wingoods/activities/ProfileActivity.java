@@ -7,10 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -47,6 +45,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
+import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -117,10 +116,10 @@ public class ProfileActivity extends AppCompatActivity {
             if (imageBitmap != null) {
                 imgProfile.setImageBitmap(imageBitmap);
             } else {
-                imgProfile.setImageResource(R.drawable.users);
+                imgProfile.setImageResource(R.drawable.profile);
             }
         } else {
-            imgProfile.setImageResource(R.drawable.users);
+            imgProfile.setImageResource(R.drawable.profile);
         }
 
     }
@@ -143,7 +142,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void captureImage() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(Objects.requireNonNull(this).getPackageManager()) != null) {
+        if (cameraIntent.resolveActivity(this.getPackageManager()) != null) {
             File imageFile = null;
 
             try {
@@ -248,10 +247,8 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (id == android.R.id.home) {
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
