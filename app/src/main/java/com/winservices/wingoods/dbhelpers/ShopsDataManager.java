@@ -5,9 +5,11 @@ import android.database.Cursor;
 
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DateOff;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
+import com.winservices.wingoods.models.WeekDayOff;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +117,52 @@ public class ShopsDataManager {
         return dCategories;
     }
 
+    private List<WeekDayOff> getWeekDaysOff(int serverShopId){
+        Cursor cursor = db.getWeekDaysOff(serverShopId);
+        List<WeekDayOff> daysOff = new ArrayList<>();
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                int dayOffId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                int dayOffValue = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DAY_OFF));
+
+                WeekDayOff dayOff = new WeekDayOff();
+                dayOff.setDayOffId(dayOffId);
+                dayOff.setDayOff(dayOffValue);
+                dayOff.setServerShopId(serverShopId);
+
+                daysOff.add(dayOff);
+
+            }
+            cursor.close();
+        }
+        return daysOff;
+    }
+
+    private List<DateOff> getDatesOff(int serverShopId){
+        Cursor cursor = db.getDatesOff(serverShopId);
+        List<DateOff> datesOff = new ArrayList<>();
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                int dateOffId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String dateOffValue = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DATE_OFF));
+                String dateOffDesc = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DATE_OFF_DESC));
+
+                DateOff dateOff = new DateOff();
+                dateOff.setDateOffId(dateOffId);
+                dateOff.setDateOff(dateOffValue);
+                dateOff.setDateOffDesc(dateOffDesc);
+                dateOff.setServerShopId(serverShopId);
+
+                datesOff.add(dateOff);
+
+            }
+            cursor.close();
+        }
+        return datesOff;
+    }
+
     public List<Shop> getAllShops(){
         Cursor cursor = db.getAllShops();
         List<Shop> shops = new ArrayList<>();
@@ -164,6 +212,8 @@ public class ShopsDataManager {
                 shop.setShopType(shopType);
 
                 shop.setDefaultCategories(getDCategories(serverShopId));
+                shop.setWeekDaysOff(getWeekDaysOff(serverShopId));
+                shop.setDatesOff(getDatesOff(serverShopId));
 
                 shops.add(shop);
             }

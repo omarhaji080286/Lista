@@ -395,6 +395,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    //WEEKDAYSOFF
+    Cursor getWeekDaysOff(int serverShopId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DAY_OFF_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_WEEK_DAYS_OFF
+                    + " WHERE " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //DATESOFF
+    Cursor getDatesOff(int serverShopId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DATE_OFF_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_DATES_OFF
+                    + " WHERE " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     //SHOPS
     Cursor getShopById(int serverShopId) {
