@@ -137,7 +137,7 @@
     <string name="items">Items :</string>
     <string name="forTime">à collerter le :</string>
     <string name="registered">Registered</string>
-    <string name="read">Read by the shop</string>
+    <string name="read">processing in progress</string>
     <string name="can_collect">You can collect your order</string>
     <string name="completed">Completed</string>
     <string name="not_supported">Items not available</string>

@@ -28,6 +28,12 @@ public class ShopsDataManager {
         for (int i = 0; i < shop.getDefaultCategories().size(); i++) {
             db.insertDefaultCategory(shop.getDefaultCategories().get(i));
         }
+        for (int i = 0; i < shop.getWeekDaysOff().size(); i++) {
+            db.insertWeekDayOff(shop.getWeekDaysOff().get(i));
+        }
+        for (int i = 0; i < shop.getDatesOff().size(); i++) {
+            db.insertDateOff(shop.getDatesOff().get(i));
+        }
 
     }
 
@@ -56,6 +62,7 @@ public class ShopsDataManager {
         int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
         String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
         int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
+        int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
 
         Shop shop = new Shop();
         shop.setServerShopId(serverShopId);
@@ -69,6 +76,7 @@ public class ShopsDataManager {
         shop.setLongitude(longitude);
         shop.setLatitude(latitude);
         shop.setIsDelivering(isDelivering);
+        shop.setDeliveryDelay(deliveryDelay);
 
         shop.setDefaultCategories(getDCategories(serverShopId));
 
@@ -130,6 +138,7 @@ public class ShopsDataManager {
                 int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
                 String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
                 int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
+                int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
 
                 Shop shop = new Shop();
                 shop.setServerShopId(serverShopId);
@@ -143,6 +152,7 @@ public class ShopsDataManager {
                 shop.setLongitude(longitude);
                 shop.setLatitude(latitude);
                 shop.setIsDelivering(isDelivering);
+                shop.setDeliveryDelay(deliveryDelay);
 
                 Country country = new Country(serverCountryId, countryName);
                 shop.setCountry(country);

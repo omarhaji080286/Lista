@@ -257,10 +257,10 @@ public class SignUpFragment extends Fragment {
         String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
         //TODO - for release
-        String phone = "+212" + editPhone.getText().toString();
+        //String phone = "+212" + editPhone.getText().toString();
 
         //TODO - For test
-        //String phone = "+16" + editPhone.getText().toString();
+        String phone = "+16" + editPhone.getText().toString();
 
         String userName = editUserName.getText().toString();
 

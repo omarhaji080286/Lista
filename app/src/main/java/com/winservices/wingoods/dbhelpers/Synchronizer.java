@@ -18,6 +18,7 @@ import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DateOff;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
@@ -27,6 +28,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.services.RemoteConfigService;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -102,7 +104,7 @@ public class Synchronizer {
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
 
             response = future.get(10, TimeUnit.SECONDS);
-            Log.d(LOG_TAG, "json response : " + response);
+            //Log.d(LOG_TAG, "json sync response : " + response);
             processSyncResponse(response);
             sendSyncBroadCast(context);
 
@@ -347,6 +349,38 @@ public class Synchronizer {
                 defaultCategories.add(dCategory);
             }
 
+            JSONArray JSONWeekDaysOff = JSONShop.getJSONArray("week_days_off");
+            List<WeekDayOff> weekDaysOff = new ArrayList<>();
+            for (int j = 0; j < JSONWeekDaysOff.length(); j++) {
+                JSONObject JSONDWeekDayOff= JSONWeekDaysOff.getJSONObject(j);
+                int dayOffId = JSONDWeekDayOff.getInt("day_off_id");
+                int dayOff = JSONDWeekDayOff.getInt("day_off");
+
+                WeekDayOff weekDayOff = new WeekDayOff();
+                weekDayOff.setDayOffId(dayOffId);
+                weekDayOff.setDayOff(dayOff);
+                weekDayOff.setServerShopId(serverShopId);
+
+                weekDaysOff.add(weekDayOff);
+            }
+
+            JSONArray JSONDatesOff = JSONShop.getJSONArray("dates_off");
+            List<DateOff> datesOff = new ArrayList<>();
+            for (int j = 0; j < JSONDatesOff.length(); j++) {
+                JSONObject JSONDDateOff= JSONDatesOff.getJSONObject(j);
+                int dateOffId = JSONDDateOff.getInt("date_off_id");
+                String dateOffValue = JSONDDateOff.getString("date_off_value");
+                String dateOffDesc = JSONDDateOff.getString("date_off_desc");
+
+                DateOff dateOff = new DateOff();
+                dateOff.setDateOffId(dateOffId);
+                dateOff.setDateOff(dateOffValue);
+                dateOff.setDateOffDesc(dateOffDesc);
+                dateOff.setServerShopId(serverShopId);
+
+                datesOff.add(dateOff);
+            }
+
             Shop shop = new Shop();
 
             shop.setServerShopId(serverShopId);
@@ -364,6 +398,9 @@ public class Synchronizer {
             shop.setShopType(shopType);
             shop.setDefaultCategories(defaultCategories);
             shop.setIsDelivering(JSONShop.getInt("is_delivering"));
+            shop.setDeliveryDelay(JSONShop.getInt("delivery_delay"));
+            shop.setWeekDaysOff(weekDaysOff);
+            shop.setDatesOff(datesOff);
 
             shopsDataManager.insertShop(shop);
         }

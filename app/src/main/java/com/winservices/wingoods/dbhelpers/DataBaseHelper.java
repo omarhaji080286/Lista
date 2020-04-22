@@ -10,6 +10,7 @@ import android.util.Log;
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.DateOff;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
@@ -19,6 +20,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -39,21 +41,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     //TODO Version web
-    private final static String webVersion = "L17_LP10";
+    private final static String webVersion = "lista_19";
 
     //TODO Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
     //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
 
-    private final static int DATABASE_VERSION = 8; //updated on 08-04-2020
+    private final static int DATABASE_VERSION = 9; //updated on 22-04-2020
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -168,13 +170,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_EMAIL = "shop_email";
     static final String COL_LONGITUDE = "longitude";
     static final String COL_LATITUDE = "latitude";
-    static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
+    private static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
     static final String COL_D_CATEGORY_NAME = "d_category_name";
     static final String COL_IS_DELIVERING = "is_delivering";
     static final String COL_IS_TO_DELIVER = "is_to_deliver";
     static final String COL_USER_ADDRESS = "user_address";
     static final String COL_USER_LOCATION = "user_location";
     static final String COL_ORDER_PRICE = "order_price";
+    static final String COL_DELIVERY_DELAY = "delivery_delay";
+    static final String TABLE_WEEK_DAYS_OFF = "week_days_off";
+    static final String COL_DAY_OFF_ID = "day_off_id";
+    static final String COL_DAY_OFF = "day_off";
+    static final String TABLE_DATES_OFF = "dates_off";
+    static final String COL_DATE_OFF_ID = "date_off_id";
+    static final String COL_DATE_OFF_DESC = "date_off_desc";
+    static final String COL_DATE_OFF = "date_off";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -307,7 +317,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "longitude REAL, " +
                 "latitude REAL, " +
                 "shop_type_name TEXT, " +
-                "is_delivering INTEGER) ");
+                "is_delivering INTEGER, " +
+                "delivery_delay INTEGER) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS week_days_off ( " +
+                "day_off_id INTEGER PRIMARY KEY, " +
+                "day_off INTEGER, " +
+                "server_shop_id INTEGER, " +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS dates_off ( " +
+                "date_off_id INTEGER PRIMARY KEY, " +
+                "date_off TEXT, " +
+                "server_shop_id INTEGER, " +
+                "date_off_desc TEXT, " +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
                 "server_user_id INTEGER, " +
@@ -1710,8 +1734,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_LONGITUDE, shop.getLongitude());
         contentValues.put(COL_LATITUDE, shop.getLatitude());
         contentValues.put(COL_IS_DELIVERING, shop.getIsDelivering());
+        contentValues.put(COL_DELIVERY_DELAY, shop.getDeliveryDelay());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //WEEKDAYSOFF
+    boolean insertWeekDayOff(WeekDayOff weekDayOff) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DAY_OFF_ID, weekDayOff.getDayOffId());
+        contentValues.put(COL_DAY_OFF, weekDayOff.getDayOff());
+        contentValues.put(COL_SERVER_SHOP_ID, weekDayOff.getServerShopId());
+
+        long result = db.insertWithOnConflict(TABLE_WEEK_DAYS_OFF, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //DATEOFF
+    boolean insertDateOff(DateOff dateOff) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DATE_OFF_ID, dateOff.getDateOffId());
+        contentValues.put(COL_DATE_OFF, dateOff.getDateOff());
+        contentValues.put(COL_DATE_OFF_DESC, dateOff.getDateOffDesc());
+        contentValues.put(COL_SERVER_SHOP_ID, dateOff.getServerShopId());
+
+        long result = db.insertWithOnConflict(TABLE_DATES_OFF, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);
     }
 

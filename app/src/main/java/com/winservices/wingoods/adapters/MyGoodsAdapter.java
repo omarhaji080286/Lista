@@ -384,13 +384,17 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
                 btnDh.setVisibility(View.VISIBLE);
                 break;
             case DefaultCategory.MEATS:
-                btnQuantity.setVisibility(View.VISIBLE);
+                changeContent(btnGrammage, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+                changeButtonsBackGround(btnGrammage, btnQuantity, btnLitrage, btnDh);
+                btnQuantity.setVisibility(View.GONE);
                 btnGrammage.setVisibility(View.VISIBLE);
                 btnLitrage.setVisibility(View.GONE);
                 btnDh.setVisibility(View.GONE);
                 break;
             case DefaultCategory.FISH:
-                btnQuantity.setVisibility(View.VISIBLE);
+                changeContent(btnGrammage, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+                changeButtonsBackGround(btnGrammage, btnQuantity, btnLitrage, btnDh);
+                btnQuantity.setVisibility(View.GONE);
                 btnGrammage.setVisibility(View.VISIBLE);
                 btnLitrage.setVisibility(View.GONE);
                 btnDh.setVisibility(View.GONE);

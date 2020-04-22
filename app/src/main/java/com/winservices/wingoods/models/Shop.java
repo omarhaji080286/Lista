@@ -46,6 +46,9 @@ public class Shop implements Parcelable {
     private String closingTime;
     private int visibility;
     private int isDelivering;
+    private int deliveryDelay;
+    private List<WeekDayOff> weekDaysOff;
+    private List<DateOff> datesOff;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -62,6 +65,8 @@ public class Shop implements Parcelable {
         this.isDelivering = input.readInt();
         this.defaultCategories = new ArrayList<>();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
+        this.weekDaysOff = new ArrayList<>();
+        input.readTypedList(weekDaysOff, WeekDayOff.CREATOR);
 
     }
 
@@ -76,12 +81,36 @@ public class Shop implements Parcelable {
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_shop_image);
     }
 
+    public List<WeekDayOff> getWeekDaysOff() {
+        return weekDaysOff;
+    }
+
+    public void setWeekDaysOff(List<WeekDayOff> weekDaysOff) {
+        this.weekDaysOff = weekDaysOff;
+    }
+
+    public List<DateOff> getDatesOff() {
+        return datesOff;
+    }
+
+    public void setDatesOff(List<DateOff> datesOff) {
+        this.datesOff = datesOff;
+    }
+
     public List<DefaultCategory> getDefaultCategories() {
         return defaultCategories;
     }
 
     public void setDefaultCategories(List<DefaultCategory> defaultCategories) {
         this.defaultCategories = defaultCategories;
+    }
+
+    public int getDeliveryDelay() {
+        return deliveryDelay;
+    }
+
+    public void setDeliveryDelay(int deliveryDelay) {
+        this.deliveryDelay = deliveryDelay;
     }
 
     public int getIsDelivering() {
