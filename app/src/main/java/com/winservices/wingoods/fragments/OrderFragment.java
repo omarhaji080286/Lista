@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.Order2Activity;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 
@@ -59,7 +59,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
         switch (item.getItemId()) {
             case R.id.completeOrderData:
                 orderActivity.setTitle(getString(R.string.validate_order_form));

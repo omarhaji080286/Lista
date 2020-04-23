@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.Order2Activity;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
@@ -81,7 +81,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
             holder.btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, Order2Activity.class);
+                    Intent intent = new Intent(context, OrderActivity.class);
                     //Intent intent = new Intent(context, OrderActivity.class);
                     intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                     intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());

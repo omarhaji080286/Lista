@@ -32,7 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
-import com.winservices.wingoods.activities.Order2Activity;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.DataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
@@ -87,7 +87,7 @@ public class CompleteOrderFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
         switch (item.getItemId()) {
             case R.id.validateOrder:
                 validateOrder();
@@ -103,7 +103,7 @@ public class CompleteOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
         pickerDay = view.findViewById(R.id.pickerDay);
         pickerTime = view.findViewById(R.id.pickerTime);
@@ -306,7 +306,7 @@ public class CompleteOrderFragment extends Fragment {
     }
 
     private void refreshLocationUI(ImageButton imgBtnGoogleMaps){
-        final Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
         orderActivity.getLocation();
 
@@ -369,7 +369,7 @@ public class CompleteOrderFragment extends Fragment {
                                     dialog.dismiss();
                                     Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                                     updateOrderedGoods();
-                                    Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+                                    OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
                                     Intent intent = new Intent(orderActivity, MainActivity.class);
                                     startActivity(intent);
                                     orderActivity.finish();
@@ -420,7 +420,7 @@ public class CompleteOrderFragment extends Fragment {
             root.put("userAddress", userAddress);
             root.put("userLocation", userLocation);
 
-            Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+            OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
 
             JSONArray jsonGoods = new JSONArray();
@@ -441,7 +441,7 @@ public class CompleteOrderFragment extends Fragment {
     }
 
     private void updateOrderedGoods() {
-        final Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
         DataManager dataManager = new DataManager(getContext());
         for (int i = 0; i < orderActivity.categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
@@ -462,7 +462,7 @@ public class CompleteOrderFragment extends Fragment {
 
 
     private void validateOrder(){
-        final Order2Activity orderActivity = (Order2Activity) Objects.requireNonNull(getActivity());
+        final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
         String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
         String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);

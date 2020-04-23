@@ -40,7 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.Order2Activity;
+import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -279,7 +279,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     btnOrder.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), Order2Activity.class);
+                            Intent intent = new Intent(getActivity(), OrderActivity.class);
                             intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);
