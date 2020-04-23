@@ -85,8 +85,9 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
     private EditText editLocation;
     private ImageButton imgBtnGoogleMaps;
     private boolean isPickerStartingTomorrow = false;
+    private Shop shop;
 
-    @Override
+    @Override//ok
     protected void onResume() {
         super.onResume();
 
@@ -117,7 +118,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvCategoriesToOrder);
 
         selectedShopId = getIntent().getIntExtra(Constants.SELECTED_SHOP_ID, 0);
-        Shop shop = getIntent().getParcelableExtra(Constants.SHOP);
+        shop = getIntent().getParcelableExtra(Constants.SHOP);
 
         txtShopName.setText(shop.getShopName());
 
@@ -143,6 +144,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
+    //ok
     private void completeOrderData() {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
@@ -161,7 +163,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         editLocation = mView.findViewById(R.id.editLocation);
         imgBtnGoogleMaps = mView.findViewById(R.id.imgBtnGoogleMaps);
 
-        Button btnSubmit = mView.findViewById(R.id.btnSubmit);
+        //Button btnSubmit = mView.findViewById(R.id.btn_accept);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(this);
         final Shop shop = shopsDataManager.getShopById(selectedShopId);
@@ -240,7 +242,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
 
         //Submit button
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        /*btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
@@ -258,6 +260,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
 
                         addOrder(OrderActivity.this, startTime, endTime,
                                 isToDeliver, userAddress, userLocation);
+
                     }
                 } else {
                     dialogTime.dismiss();
@@ -266,9 +269,10 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 }
 
             }
-        });
+        });*/
     }
 
+    //ok
     private boolean formOk(EditText editUserAddress, RadioGroup rg){
         if (editUserAddress.getText().toString().isEmpty() || editUserAddress.getText().toString().equals("") ){
             editUserAddress.setError(getString(R.string.address_required));
@@ -294,6 +298,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return true;
     }
 
+    //ok
     private void refreshLocationUI(final EditText editLocation, ImageButton imgBtnGoogleMaps){
         getLocation();
 
@@ -309,6 +314,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         });
     }
 
+    //ok
     private String getStartTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
@@ -328,6 +334,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return startTime;
     }
 
+    //ok
     private String getEndTime(int pickerDayValue, String pickerTimeDisplayedValue, boolean isPickerStartingWithTomorrow) {
         String day;
         String startTime;
@@ -346,6 +353,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return startTime;
     }
 
+    // ok
     private String[] getDays(String closingTime) {
         final String[] weekdays = getResources().getStringArray(R.array.days);
         Calendar calendar = Calendar.getInstance();
@@ -379,6 +387,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return days;
     }
 
+    //ok
     private String[] getCollectTimes(String pickerDayDisplayedValue, String openingTime, String closingTime) {
 
         String[] times;
@@ -434,6 +443,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }, 50);
     }
 
+    //ok
     private void updateLastLocation() {
         new Thread(new Runnable() {
             public void run() {
@@ -442,6 +452,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }).start();
     }
 
+    //ok
     private void loadCategoriesToOrder(Shop shop) {
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(this);
         List<CategoryGroup> categoriesToOrder = categoriesDataProvider.getCategoriesForOrder(shop);
@@ -465,6 +476,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         expandRecyclerView();
     }
 
+    //ok
     private void expandRecyclerView() {
         for (int i = categoriesToOrderAdapter.getGroups().size() - 1; i >= 0; i--) {
             if (categoriesToOrderAdapter.isGroupExpanded(i)) {
@@ -474,6 +486,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
+    //ok
     private void addOrder(final Context context, final String startTime, final String endTime,
                           final int isToDeliver, final String userAddress, final String userLocation) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
@@ -529,6 +542,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         }
     }
 
+    //ok
     private String getJSONForAddOrder(String startTime, String endTime,
                                       int isToDeliver, String userAddress, String userLocation) {
         final JSONObject root = new JSONObject();
@@ -564,6 +578,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         return null;
     }
 
+    //ok
     private void updateOrderedGoods() {
         DataManager dataManager = new DataManager(this);
         for (int i = 0; i < categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
@@ -589,7 +604,8 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
                 goToShopsActivity();
                 break;
             case R.id.sendOrder:
-                sendOrder();
+                //sendOrder();
+                startActivity(new Intent(OrderActivity.this, Order2Activity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -602,7 +618,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         finish();
     }
 
-    @Override
+    @Override //ok
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof CategoriesToOrderAdapter.GoodInOrderVH) {
             categoriesToOrderAdapter.removeChildItem(position);
@@ -614,6 +630,7 @@ public class OrderActivity extends AppCompatActivity implements RecyclerItemTouc
         super.onDestroy();
     }
 
+    //ok
     private void getLocation() {
 
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());

@@ -374,7 +374,7 @@ public class Synchronizer {
 
                 DateOff dateOff = new DateOff();
                 dateOff.setDateOffId(dateOffId);
-                dateOff.setDateOff(dateOffValue);
+                dateOff.setDateOffValue(dateOffValue);
                 dateOff.setDateOffDesc(dateOffDesc);
                 dateOff.setServerShopId(serverShopId);
 

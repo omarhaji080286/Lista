@@ -81,6 +81,8 @@ public class ShopsDataManager {
         shop.setDeliveryDelay(deliveryDelay);
 
         shop.setDefaultCategories(getDCategories(serverShopId));
+        shop.setWeekDaysOff(getWeekDaysOff(serverShopId));
+        shop.setDatesOff(getDatesOff(serverShopId));
 
         Country country = new Country(serverCountryId, countryName);
         shop.setCountry(country);
@@ -151,7 +153,7 @@ public class ShopsDataManager {
 
                 DateOff dateOff = new DateOff();
                 dateOff.setDateOffId(dateOffId);
-                dateOff.setDateOff(dateOffValue);
+                dateOff.setDateOffValue(dateOffValue);
                 dateOff.setDateOffDesc(dateOffDesc);
                 dateOff.setServerShopId(serverShopId);
 

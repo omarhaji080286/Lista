@@ -3,7 +3,7 @@ package com.winservices.wingoods.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class WeekDayOff {
+public class WeekDayOff implements Parcelable {
 
     private int dayOffId;
     private int dayOff;
@@ -47,11 +47,22 @@ public class WeekDayOff {
         }
     };
 
-    public WeekDayOff(Parcel input) {
+    private WeekDayOff(Parcel input) {
         this.dayOff = input.readInt();
         this.dayOffId = input.readInt();
-        this.serverShopId = input.readInt();
+        //this.serverShopId = input.readInt();
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(dayOff);
+        dest.writeInt(dayOffId);
+        //dest.writeInt(serverShopId);
+    }
 }

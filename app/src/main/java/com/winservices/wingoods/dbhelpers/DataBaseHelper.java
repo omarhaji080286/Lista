@@ -423,7 +423,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-
     //SHOPS
     Cursor getShopById(int serverShopId) {
         db = this.getReadableDatabase();
@@ -1785,7 +1784,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_DATE_OFF_ID, dateOff.getDateOffId());
-        contentValues.put(COL_DATE_OFF, dateOff.getDateOff());
+        contentValues.put(COL_DATE_OFF, dateOff.getDateOffValue());
         contentValues.put(COL_DATE_OFF_DESC, dateOff.getDateOffDesc());
         contentValues.put(COL_SERVER_SHOP_ID, dateOff.getServerShopId());
 

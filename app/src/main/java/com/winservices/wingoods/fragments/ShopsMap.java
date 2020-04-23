@@ -8,16 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +18,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -40,7 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.OrderActivity;
+import com.winservices.wingoods.activities.Order2Activity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -279,7 +279,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                     btnOrder.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), OrderActivity.class);
+                            Intent intent = new Intent(getActivity(), Order2Activity.class);
                             intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                             intent.putExtra(Constants.SELECTED_SHOP_ID, finalShop.getServerShopId());
                             intent.putExtra(Constants.SHOP, finalShop);

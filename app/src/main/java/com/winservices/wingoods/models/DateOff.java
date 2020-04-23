@@ -3,10 +3,10 @@ package com.winservices.wingoods.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class DateOff {
+public class DateOff implements  Parcelable{
 
     private int dateOffId;
-    private String DateOff;
+    private String dateOffValue;
     private String dateOffDesc;
     private int serverShopId;
 
@@ -21,12 +21,12 @@ public class DateOff {
         this.dateOffId = dateOffId;
     }
 
-    public String getDateOff() {
-        return DateOff;
+    public String getDateOffValue() {
+        return dateOffValue;
     }
 
-    public void setDateOff(String dateOff) {
-        DateOff = dateOff;
+    public void setDateOffValue(String dateOffValue) {
+        this.dateOffValue = dateOffValue;
     }
 
     public String getDateOffDesc() {
@@ -55,10 +55,24 @@ public class DateOff {
         }
     };
 
-    public DateOff(Parcel input) {
+    private DateOff(Parcel input) {
         this.dateOffId = input.readInt();
+        this.dateOffValue = input.readString();
         this.dateOffDesc = input.readString();
-        this.serverShopId = input.readInt();
+        //this.serverShopId = input.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(dateOffId);
+        dest.writeString(dateOffValue);
+        dest.writeString(dateOffDesc);
+        //dest.writeInt(serverShopId);
 
     }
 }

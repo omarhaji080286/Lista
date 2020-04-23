@@ -67,6 +67,8 @@ public class Shop implements Parcelable {
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
         this.weekDaysOff = new ArrayList<>();
         input.readTypedList(weekDaysOff, WeekDayOff.CREATOR);
+        this.datesOff = new ArrayList<>();
+        input.readTypedList(datesOff, DateOff.CREATOR);
 
     }
 
@@ -253,6 +255,8 @@ public class Shop implements Parcelable {
         parcel.writeInt(visibility);
         parcel.writeInt(isDelivering);
         parcel.writeTypedList(defaultCategories);
+        parcel.writeTypedList(weekDaysOff);
+        parcel.writeTypedList(datesOff);
 
     }
 
