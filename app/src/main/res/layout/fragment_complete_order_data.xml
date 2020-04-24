@@ -4,23 +4,54 @@
     android:layout_height="match_parent"
     android:paddingTop="24dp"
     android:background="@color/white"
-    android:gravity="center"
+    android:gravity="start"
     android:orientation="vertical">
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txtCollectTimeLabel"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llDate"
+        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/collect_time"/>
+        android:orientation="horizontal"
+        android:gravity="start|center">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collect_time"
+            style="@style/TextViewLabel"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:id="@+id/editDate"
+            style="@style/EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="150"
+            android:lines="2"
+            android:hint="@string/collect_time"
+            android:autofillHints="@string/collect_time"/>
+
+        <ImageView
+            android:id="@+id/imgCalendar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/calendar"
+            android:contentDescription="@string/todo" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:weightSum="100">
+        android:weightSum="100"
+        android:visibility="gone">
 
         <NumberPicker
             android:id="@+id/pickerDay"
@@ -44,19 +75,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/cbHomeDelivery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="start"
             android:checked="true"
             android:button="@null"
             android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
             android:text="@string/auto_collect"
             style="@style/TextViewLabel"
-            android:layout_marginTop="16dp"/>
+            android:layout_margin="16dp"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/llAddress"

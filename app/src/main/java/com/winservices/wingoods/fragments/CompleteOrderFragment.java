@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
 import com.winservices.wingoods.activities.OrderActivity;
@@ -49,13 +51,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class CompleteOrderFragment extends Fragment {
+public class CompleteOrderFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     public static final String TAG = "CompleteOrderFragment";
     private EditText editLocation;
@@ -68,6 +73,9 @@ public class CompleteOrderFragment extends Fragment {
     private CheckBox cbHomeDelivery;
     private EditText editUserAddress;
     private RadioGroup rgLocation;
+    private EditText editDate;
+    private String preparationDate;
+
 
     CompleteOrderFragment(Shop shop) {
         this.shop = shop;
@@ -92,7 +100,7 @@ public class CompleteOrderFragment extends Fragment {
             case R.id.validateOrder:
                 validateOrder();
                 break;
-            case android.R.id.home :
+            case android.R.id.home:
                 orderActivity.setTitle(getString(R.string.order_my_list));
                 orderActivity.displayFragment(new OrderFragment(orderActivity.categoriesToOrderAdapter, orderActivity.shop), OrderFragment.TAG);
                 break;
@@ -116,9 +124,39 @@ public class CompleteOrderFragment extends Fragment {
         rgLocation = view.findViewById(R.id.rgLocation);
         editLocation = view.findViewById(R.id.editLocation);
         imgBtnGoogleMaps = view.findViewById(R.id.imgBtnGoogleMaps);
+        ImageView imgCalendar = view.findViewById(R.id.imgCalendar);
+        editDate = view.findViewById(R.id.editDate);
+
+        editDate.setKeyListener(null);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(getContext());
         final Shop shop = shopsDataManager.getShopById(orderActivity.selectedShopId);
+
+        imgCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        CompleteOrderFragment.this,
+                        now.get(Calendar.YEAR), // Initial year selection
+                        now.get(Calendar.MONTH), // Initial month selection
+                        now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+                );
+
+                dpd.setMinDate(now);
+
+                Calendar later = (Calendar) now.clone();
+                later.add(Calendar.DAY_OF_MONTH, 20);
+                dpd.setMaxDate(later);
+
+                dpd.setDisabledDays(shop.getNotWorkedDays());
+
+                dpd.setLocale(Locale.FRANCE);
+
+                dpd.show(Objects.requireNonNull(getFragmentManager()), "Datepickerdialog");
+            }
+        });
+
 
         //Prepare collect time
         final String[] days = getDays(shop.getClosingTime());
@@ -133,22 +171,8 @@ public class CompleteOrderFragment extends Fragment {
         pickerTime.setMaxValue(collectTimes.length - 1);
         pickerTime.setDisplayedValues(collectTimes);
 
-        /*mBuilder.setView(view);
-        final AlertDialog dialogTime = mBuilder.create();
-        dialogTime.setTitle(R.string.validate_order_form);
-        dialogTime.show();*/
 
-        pickerDay.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                collectTimes = getCollectTimes(days[newVal], shop.getOpeningTime(), shop.getClosingTime());
-                pickerTime.setDisplayedValues(null);
-                pickerTime.setMaxValue(collectTimes.length - 1);
-                pickerTime.setDisplayedValues(collectTimes);
-            }
-        });
-
-        if (shop.getIsDelivering()==Shop.IS_DELIVERING){
+        if (shop.getIsDelivering() == Shop.IS_DELIVERING) {
             llDeliveryModule.setVisibility(View.VISIBLE);
 
             //CheckBox Home Delivery checkbox
@@ -156,7 +180,7 @@ public class CompleteOrderFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     orderActivity.updateLastLocation();
-                    if (isChecked){
+                    if (isChecked) {
                         llAddress.setVisibility(View.VISIBLE);
                         llLocation.setVisibility(View.VISIBLE);
                     } else {
@@ -172,7 +196,7 @@ public class CompleteOrderFragment extends Fragment {
             rgLocation.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId){
+                    switch (checkedId) {
                         case R.id.radioGetMyLocation:
                             refreshLocationUI(imgBtnGoogleMaps);
                             editLocation.setText(orderActivity.location);
@@ -209,7 +233,7 @@ public class CompleteOrderFragment extends Fragment {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, i);
                 int dayNumber = cal.get(Calendar.DAY_OF_WEEK);
-                days[i] = UtilsFunctions.getDayOfWeek(getContext(), dayNumber+1 ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH)+1);
+                days[i] = UtilsFunctions.getDayOfWeek(getContext(), dayNumber + 1) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH) + 1);
             }
 
         } else {
@@ -221,7 +245,7 @@ public class CompleteOrderFragment extends Fragment {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, i);
                 int dayNumber = cal.get(Calendar.DAY_OF_WEEK);
-                days[i] = UtilsFunctions.getDayOfWeek(getContext(), dayNumber ) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
+                days[i] = UtilsFunctions.getDayOfWeek(getContext(), dayNumber) + " " + UtilsFunctions.to2digits(cal.get(Calendar.DAY_OF_MONTH));
             }
         }
 
@@ -233,8 +257,8 @@ public class CompleteOrderFragment extends Fragment {
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        if (isPickerStartingWithTomorrow){
-            cal.add(Calendar.DATE, pickerDayValue+1);
+        if (isPickerStartingWithTomorrow) {
+            cal.add(Calendar.DATE, pickerDayValue + 1);
         } else {
             cal.add(Calendar.DATE, pickerDayValue);
         }
@@ -252,8 +276,8 @@ public class CompleteOrderFragment extends Fragment {
         String startTime;
 
         Calendar cal = Calendar.getInstance();
-        if (isPickerStartingWithTomorrow){
-            cal.add(Calendar.DATE, pickerDayValue+1);
+        if (isPickerStartingWithTomorrow) {
+            cal.add(Calendar.DATE, pickerDayValue + 1);
         } else {
             cal.add(Calendar.DATE, pickerDayValue);
         }
@@ -305,7 +329,7 @@ public class CompleteOrderFragment extends Fragment {
         return times;
     }
 
-    private void refreshLocationUI(ImageButton imgBtnGoogleMaps){
+    private void refreshLocationUI(ImageButton imgBtnGoogleMaps) {
         final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
         orderActivity.getLocation();
@@ -315,32 +339,37 @@ public class CompleteOrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 orderActivity.updateLastLocation();
-                String uri = "geo:"+ orderActivity.location+"?q="+orderActivity.location;
+                String uri = "geo:" + orderActivity.location + "?q=" + orderActivity.location;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
             }
         });
     }
 
-    private boolean formOk(EditText editUserAddress, RadioGroup rg){
-        if (editUserAddress.getText().toString().isEmpty() || editUserAddress.getText().toString().equals("") ){
+    private boolean formOk(EditText editUserAddress, RadioGroup rg, EditText editDate) {
+        if (editUserAddress.getText().toString().isEmpty() || editUserAddress.getText().toString().equals("")) {
             editUserAddress.setError(getString(R.string.address_required));
             return false;
         }
 
-        if (rg.getCheckedRadioButtonId()==-1){
+        if (rg.getCheckedRadioButtonId() == -1) {
             Toast.makeText(getContext(), R.string.location_required, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (editLocation.getText().toString().isEmpty()){
+        if (editLocation.getText().toString().isEmpty()) {
             editLocation.setError(getString(R.string.location_required));
             return false;
         }
 
         String regexGps = "^([+-]?\\d+\\.?\\d+)\\s*,\\s*([+-]?\\d+\\.?\\d+)$";
-        if (!editLocation.getText().toString().matches(regexGps)){
+        if (!editLocation.getText().toString().matches(regexGps)) {
             editLocation.setError(getString(R.string.gps_format));
+            return false;
+        }
+
+        if (editDate.getText().toString().isEmpty()) {
+            editDate.setError(getString(R.string.required_date));
             return false;
         }
 
@@ -455,35 +484,70 @@ public class CompleteOrderFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (editLocation!=null && imgBtnGoogleMaps !=null){
+        if (editLocation != null && imgBtnGoogleMaps != null) {
             refreshLocationUI(imgBtnGoogleMaps);
         }
     }
 
 
-    private void validateOrder(){
+    private void validateOrder() {
         final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
+        if (editDate.getText().toString().isEmpty()) {
+            editDate.setError(getString(R.string.required_date));
+            return;
+        }
 
-        String startTime = getStartTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
-        String endTime = getEndTime(pickerDay.getValue(), collectTimes[pickerTime.getValue()], isPickerStartingTomorrow);
         int isToDeliver = 0;
         String userAddress = "";
         String userLocation = orderActivity.location;
 
-        if (shop.getIsDelivering()==Shop.IS_DELIVERING && cbHomeDelivery.isChecked()){
-            if (formOk(editUserAddress, rgLocation)){
+        if (shop.getIsDelivering() == Shop.IS_DELIVERING && cbHomeDelivery.isChecked()) {
+            if (formOk(editUserAddress, rgLocation, editDate)) {
 
                 if (cbHomeDelivery.isChecked()) isToDeliver = 1;
                 userAddress = editUserAddress.getText().toString();
                 userLocation = editLocation.getText().toString();
 
-                addOrder(getContext(), startTime, endTime,
+                addOrder(getContext(), preparationDate, preparationDate,
                         isToDeliver, userAddress, userLocation);
 
             }
         } else {
-            addOrder(getContext(), startTime, endTime,
+            addOrder(getContext(), preparationDate, preparationDate,
                     isToDeliver, userAddress, userLocation);
         }
     }
+
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int month, int day) {
+
+        String strMonth = String.valueOf(month+1);
+        String strDay = String.valueOf(day);
+
+        if (day < 10) strDay = "0" + strDay;
+        if (month < 10) strMonth = "0" + strMonth;
+
+        String selectedDate = strDay + "/" + strMonth + "/" + year;
+
+        editDate.setText(selectedDate);
+
+        preparationDate = formatDate(year, month+1 , day);
+
+    }
+
+    private String formatDate(int year, int month, int day) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+
+        String dateInString = year + "-" + month + "-" + day;
+        Date date = new Date();
+        try {
+            date = formatter.parse(dateInString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return UtilsFunctions.dateToString(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
+
 }

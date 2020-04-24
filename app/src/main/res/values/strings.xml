@@ -164,7 +164,7 @@
     <string name="submit">Valider</string>
     <string name="localization_question">Cette adresse correspond à ma position actuelle</string>
     <string name="GPS_hint">00.000000, -0.000000</string>
-    <string name="collect_time">Date de préparation de la commande</string>
+    <string name="collect_time">Date souhaitée</string>
     <string name="delivery_hour_label">Delivery time</string>
     <string name="verify_location">Check my location</string>
     <string name="delivery_address">Adresse de livraison</string>
@@ -196,7 +196,7 @@
     <string name="_00000_00">00000.00</string>
     <string name="prix_dhs">Total :</string>
     <string name="currency"> Dhs</string>
-
+    <string name="required_date">Date requise</string>
 
 
 </resources>

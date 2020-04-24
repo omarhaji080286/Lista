@@ -152,7 +152,7 @@
     <string name="submit">Valider</string>
     <string name="localization_question">هل هذا العنوان يتطابق مع موقعك الحالي</string>
     <string name="GPS_hint">00.000000, -0.000000</string>
-    <string name="collect_time">تاريخ إعداد الأمر</string>
+    <string name="collect_time">Date souhaitée</string>
     <string name="delivery_hour_label">Heure de livraison</string>
     <string name="verify_location">Vérifier ma position</string>
     <string name="delivery_address">عنوان التسليم</string>
@@ -184,6 +184,7 @@
     <string name="_00000_00">00000.00</string>
     <string name="prix_dhs">Total :</string>
     <string name="currency"> Dhs</string>
+    <string name="required_date">Date requise</string>
 
 
 </resources>

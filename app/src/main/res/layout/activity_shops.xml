@@ -9,7 +9,6 @@
     android:layout_weight="100"
     android:background="@color/white">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_shops"
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_shops"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="90"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 

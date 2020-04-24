@@ -111,9 +111,14 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
         MapView mapView = mView.findViewById(R.id.mapview_shops);
         if (mapView != null) {
-            mapView.onCreate(null);
-            mapView.onResume();
-            mapView.getMapAsync(this);
+            try {
+                mapView.onCreate(null);
+                mapView.onResume();
+                mapView.getMapAsync(this);
+            } catch (Exception e) {
+                Log.e(TAG, "error onCreate MapView : " + e.toString());
+                e.printStackTrace();
+            }
         }
     }
 
