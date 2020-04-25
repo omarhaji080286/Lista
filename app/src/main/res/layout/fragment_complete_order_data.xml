@@ -7,8 +7,6 @@
     android:gravity="start"
     android:orientation="vertical">
 
-
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llDate"
         android:layout_margin="16dp"
@@ -33,7 +31,7 @@
             android:inputType="text"
             android:maxLength="150"
             android:lines="2"
-            android:hint="@string/collect_time"
+            android:hint="@string/jj_mm_aaaa"
             android:autofillHints="@string/collect_time"/>
 
         <ImageView
@@ -44,31 +42,6 @@
             android:contentDescription="@string/todo" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:weightSum="100"
-        android:visibility="gone">
-
-        <NumberPicker
-            android:id="@+id/pickerDay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="50" />
-
-        <NumberPicker
-            android:id="@+id/pickerTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="50"
-            android:visibility="gone"/>
-
-    </LinearLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llDeliveryModule"
@@ -103,14 +76,16 @@
                 android:text="@string/delivery_address"
                 style="@style/TextViewLabel"/>
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                 android:id="@+id/editUserAddress"
                 style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:ems="10"
+                android:imeOptions="actionSearch"
+                android:inputType="textAutoComplete|textAutoCorrect"
                 android:maxLength="150"
-                android:lines="2"
+                android:lines="1"
                 android:hint="@string/delivery_address"
                 android:autofillHints="@string/user_address_text" />
 
@@ -184,13 +159,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/location"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

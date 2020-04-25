@@ -28,6 +28,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.UserLocation;
 import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.services.RemoteConfigService;
 import com.winservices.wingoods.utils.Constants;
@@ -257,10 +258,15 @@ public class Synchronizer {
                 insertAmounts(jsonAmountsToSync);
                 Log.d(LOG_TAG, "Sync amounts completed. " + jsonAmountsToSync.length() + " inserted or updated.");
 
-                //updates amounts
+                //updates descriptions
                 JSONArray jsonDescriptionsToSync = jsonObject.getJSONArray("descriptionsToSync");
                 insertDescriptions(jsonDescriptionsToSync);
                 Log.d(LOG_TAG, "Sync descriptions completed. " + jsonDescriptionsToSync.length() + " inserted or updated.");
+
+                //updates user locations
+                JSONArray jsonLocationsToSync = jsonObject.getJSONArray("locationsToSync");
+                insertLocations(jsonLocationsToSync);
+                Log.d(LOG_TAG, "Sync locations completed. " + jsonLocationsToSync.length() + " inserted or updated.");
 
                 //updates shops
                 JSONArray jsonShops = jsonObject.getJSONArray("shopsToSync");
@@ -470,6 +476,27 @@ public class Synchronizer {
         }
     }
 
+    private void insertLocations(JSONArray jsonLocationsToSync) throws JSONException {
+
+        UsersDataManager usersDataManager = new UsersDataManager(context);
+
+        for (int i = 0; i < jsonLocationsToSync.length(); i++) {
+            JSONObject JSONLocation = jsonLocationsToSync.getJSONObject(i);
+            int userLocationId = JSONLocation.getInt("user_location_id");
+            String userAddress = JSONLocation.getString("user_address");
+            String userGpsLocation = JSONLocation.getString("user_gps_location");
+            String serverUserId = JSONLocation.getString("server_user_id");
+
+            UserLocation userLocation = new UserLocation();
+            userLocation.setUserLocationId(userLocationId);
+            userLocation.setUserAddress(userAddress);
+            userLocation.setUserGpsLocation(userGpsLocation);
+            userLocation.setServerUserId(serverUserId);
+
+            usersDataManager.insertUserLocation(userLocation);
+        }
+    }
+
     private void insertAmounts(JSONArray jsonAmountsToSync) throws JSONException {
 
         AmountsDataManager amountsDataManager = new AmountsDataManager(context);
@@ -640,55 +667,49 @@ public class Synchronizer {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_DELETE_USER_CATEGORIES_AND_GOODS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //adding coUser succeded
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                            } else {
-                                //insert group data
-                                JSONObject JSONGroup = jsonObject.getJSONObject("group");
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error) {
+                            //adding coUser succeded
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            //insert group data
+                            JSONObject JSONGroup = jsonObject.getJSONObject("group");
 
-                                String groupName = JSONGroup.getString("group_name");
-                                String ownerEmail = JSONGroup.getString("owner_email");
-                                int serverOwnerId = JSONGroup.getInt("server_owner_id");
-                                int serverGroupId = JSONGroup.getInt("server_group_id");
-                                int syncStatus = DataBaseHelper.SYNC_STATUS_OK;
+                            String groupName = JSONGroup.getString("group_name");
+                            String ownerEmail = JSONGroup.getString("owner_email");
+                            int serverOwnerId = JSONGroup.getInt("server_owner_id");
+                            int serverGroupId = JSONGroup.getInt("server_group_id");
+                            int syncStatus = DataBaseHelper.SYNC_STATUS_OK;
 
-                                GroupsDataManager groupsDataManager = new GroupsDataManager(context);
-                                Group ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
-                                if (ownerGroup==null){
-                                    Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
+                            GroupsDataManager groupsDataManager = new GroupsDataManager(context);
+                            Group ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
+                            if (ownerGroup==null){
+                                Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
 
-                                    groupsDataManager.addGroup( group);
+                                groupsDataManager.addGroup( group);
 
-                                    ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
-                                }
-
-                                UsersDataManager usersDataManager = new UsersDataManager(context);
-                                User currentUser = usersDataManager.getCurrentUser();
-                                currentUser.setGroupId(ownerGroup.getGroupId());
-                                usersDataManager.updateUser(currentUser);
-                                Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
-
+                                ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
                             }
-                            Log.d(LOG_TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup ends");
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            UsersDataManager usersDataManager = new UsersDataManager(context);
+                            User currentUser = usersDataManager.getCurrentUser();
+                            currentUser.setGroupId(ownerGroup.getGroupId());
+                            usersDataManager.updateUser(currentUser);
+                            Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
+
                         }
+                        Log.d(LOG_TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup ends");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                    }
+                error -> {
+                    //Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
                 }
         ) {
             @Override

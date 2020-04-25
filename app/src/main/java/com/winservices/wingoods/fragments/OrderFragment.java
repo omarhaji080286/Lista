@@ -10,23 +10,29 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.CategoriesToOrderAdapter;
 
+import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.RecyclerItemTouchHelper;
 
+import java.util.List;
 import java.util.Objects;
 
 public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
@@ -36,6 +42,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     private RecyclerView rvCategoriesToOrder;
     private CategoriesToOrderAdapter categoriesToOrderAdapter;
     private Shop shop;
+    private GridLayoutManager glm;
 
     public OrderFragment(CategoriesToOrderAdapter categoriesToOrderAdapter, Shop shop) {
         this.categoriesToOrderAdapter = categoriesToOrderAdapter;
@@ -62,8 +69,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
         switch (item.getItemId()) {
             case R.id.completeOrderData:
-                orderActivity.setTitle(getString(R.string.validate_order_form));
-                orderActivity.displayFragment(new CompleteOrderFragment(shop), CompleteOrderFragment.TAG);
+                sendOrder(orderActivity);
                 break;
             case android.R.id.home :
                 Intent intent = new Intent(orderActivity, ShopsActivity.class);
@@ -94,7 +100,7 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
     private void loadCategoriesToOrder() {
 
         final int GRID_COLUMN_NUMBER = 3;
-        GridLayoutManager glm = new GridLayoutManager(getContext(), GRID_COLUMN_NUMBER);
+        glm = new GridLayoutManager(getContext(), GRID_COLUMN_NUMBER);
         glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -126,7 +132,35 @@ public class OrderFragment extends Fragment implements RecyclerItemTouchHelper.R
         }
     }
 
+    private void sendOrder(OrderActivity orderActivity) {
+        if (categoriesToOrderAdapter.getGoodsToOrderNumber() > 0) {
+            if (categoriesToOrderAdapter.getGoodsToComplete().size() == 0) {
+                orderActivity.setTitle(getString(R.string.validate_order_form));
+                orderActivity.displayFragment(new CompleteOrderFragment(shop), CompleteOrderFragment.TAG);
+            } else {
+                Toast.makeText(getContext(), R.string.set_descriptions, Toast.LENGTH_SHORT).show();
+                List<Good> goodsToComplete = categoriesToOrderAdapter.getGoodsToComplete();
+                for (int i = 0; i < goodsToComplete.size(); i++) {
+                    Good good = goodsToComplete.get(i);
+                    int position = categoriesToOrderAdapter.getGoodPosition(good.getGoodId());
+                    animateItem(position);
+                }
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.empty_order, Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private void animateItem(final int position) {
+        new Handler().postDelayed(() -> {
 
+            View v = glm.findViewByPosition(position);
+            Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
+            if (v != null) {
+                v.startAnimation(anim);
+            }
+
+        }, 50);
+    }
 
 }

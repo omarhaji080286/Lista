@@ -20,6 +20,7 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.UserLocation;
 import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -33,11 +34,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int SYNC_STATUS_OK = 1;
     public static final int SYNC_STATUS_FAILED = 0;
     public static final int IS_LOGGED_IN = 1;
-    public static final int IS_NOT_LOGGED_IN = 0;
+    private static final int IS_NOT_LOGGED_IN = 0;
     //sign up type
     public static final String LISTA = "lista";
-    public static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
-    public static final String COL_IS_ORDERED = "is_ordered";
+    private static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
+    static final String COL_IS_ORDERED = "is_ordered";
 
 
     //TODO Version web
@@ -174,7 +175,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_D_CATEGORY_NAME = "d_category_name";
     static final String COL_IS_DELIVERING = "is_delivering";
     static final String COL_IS_TO_DELIVER = "is_to_deliver";
-    static final String COL_USER_ADDRESS = "user_address";
     static final String COL_USER_LOCATION = "user_location";
     static final String COL_ORDER_PRICE = "order_price";
     static final String COL_DELIVERY_DELAY = "delivery_delay";
@@ -185,6 +185,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_DATE_OFF_ID = "date_off_id";
     static final String COL_DATE_OFF_DESC = "date_off_desc";
     static final String COL_DATE_OFF = "date_off";
+    static final String TABLE_USER_LOCATIONS = "user_locations";
+    static final String COL_USER_LOCATION_ID = "user_location_id";
+    static final String COL_USER_ADDRESS = "user_address";
+    static final String COL_USER_GPS_LOCATION = "user_gps_location";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -300,6 +304,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "desc_value TEXT, " +
                 "d_category_id INTEGER ) ");
 
+        db.execSQL("CREATE TABLE IF NOT EXISTS user_locations ( " +
+                "user_location_id INTEGER PRIMARY KEY, " +
+                "user_address INTEGER, " +
+                "user_gps_location TEXT, " +
+                "server_user_id INTEGER ) ");
+
         db.execSQL("CREATE TABLE IF NOT EXISTS shops ( " +
                 "server_shop_id INTEGER PRIMARY KEY, " +
                 "shop_name TEXT, " +
@@ -362,17 +372,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        if (oldVersion <= 7){
-            /*db.execSQL("DROP TABLE IF EXISTS goods ");
+        if (oldVersion < DATABASE_VERSION){
+            /*
+            db.execSQL("DROP TABLE IF EXISTS goods ");
             db.execSQL("DROP TABLE IF EXISTS categories ");
             db.execSQL("DROP TABLE IF EXISTS co_users ");
-            db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
+            db.execSQL("DROP TABLE IF EXISTS received_invitations ");
+            db.execSQL("DROP TABLE IF EXISTS dates_off ");
+            db.execSQL("DROP TABLE IF EXISTS week_days_off ");
+            */
             db.execSQL("DROP TABLE IF EXISTS orders ");
             db.execSQL("DROP TABLE IF EXISTS shops ");
-            /*db.execSQL("DROP TABLE IF EXISTS users ");
+            /*
+            db.execSQL("DROP TABLE IF EXISTS users ");
             db.execSQL("DROP TABLE IF EXISTS groups ");
             db.execSQL("DROP TABLE IF EXISTS amounts ");
-            db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+            db.execSQL("DROP TABLE IF EXISTS descriptions ");
+            db.execSQL("DROP TABLE IF EXISTS user_locations ");
+            */
         }
 
         onCreate(db);
@@ -453,7 +470,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //ORDERS
 
-    public Cursor getOrders(int groupedStatus) {
+    Cursor getOrders(int groupedStatus) {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
@@ -552,7 +569,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     //DESCRIPTIONS
-
     Cursor getDescriptions(int dCategoryId) {
         db = this.getReadableDatabase();
         Cursor res = null;
@@ -1023,7 +1039,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //CATEGORIES
 
 
-    public int getGoodsToBuyNumber(int categoryId) {
+    int getGoodsToBuyNumber(int categoryId) {
         String countQuery = "SELECT " + TABLE_GOODS + ".* FROM " + TABLE_GOODS
                 + " WHERE " + TABLE_GOODS + "." + COL_CATEGORY_ID + " = " + categoryId
                 + " AND " + TABLE_GOODS + "." + COL_IS_TO_BUY + " = 1 "
@@ -1802,6 +1818,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_DESCRIPTIONS, null, contentValues);
         return (result != -1);
+    }
+
+    //USER LOCATIONS
+    boolean insertUserLocation(UserLocation userLocation) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_USER_LOCATION_ID, userLocation.getUserLocationId());
+        contentValues.put(COL_USER_ADDRESS, userLocation.getUserAddress());
+        contentValues.put(COL_USER_GPS_LOCATION, userLocation.getUserGpsLocation());
+        contentValues.put(COL_SERVER_USER_ID, userLocation.getServerUserId());
+
+        long result =db.insertWithOnConflict(TABLE_USER_LOCATIONS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //DESCRIPTIONS
+    Cursor getUserLocations(int serverUserId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_USER_LOCATION_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_USER_LOCATIONS
+                    + " where " + COL_SERVER_USER_ID + " = " + serverUserId, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     //AMOUNTS
