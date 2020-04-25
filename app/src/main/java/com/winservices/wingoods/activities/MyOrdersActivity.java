@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.MyOrdersAdapter;
-import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
 import com.winservices.wingoods.dbhelpers.OrdersDataManager;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.models.Order;
@@ -32,16 +31,15 @@ import java.util.List;
 
 public class MyOrdersActivity extends AppCompatActivity {
 
-    private static final String ORDERS_TYPE = "orders_type";
     private final String TAG = "MyOrdersActivity";
     private FloatingActionButton fabAddOrder;
-    private RecyclerView rvOrders;
     private MyOrdersAdapter myOrdersAdapter;
     private List<Order> orders;
     private TextView txtNoOrders;
     private OrdersDataManager ordersDataManager;
     private SyncReceiverMyOrders syncReceiver;
     private boolean syncTriggeredByUser = false;
+    private int orderStatus = Order.NOT_CLOSED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +51,15 @@ public class MyOrdersActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-
         syncReceiver = new SyncReceiverMyOrders();
 
-        rvOrders = findViewById(R.id.rv_orders);
+        RecyclerView rvOrders = findViewById(R.id.rv_orders);
         txtNoOrders = findViewById(R.id.txt_no_orders);
         fabAddOrder = findViewById(R.id.fab_add_order);
 
         orders = new ArrayList<>();
         ordersDataManager = new OrdersDataManager(this);
-        orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
+        orders.addAll(ordersDataManager.getOrders(orderStatus));
 
         myOrdersAdapter = new MyOrdersAdapter(this);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -85,24 +82,11 @@ public class MyOrdersActivity extends AppCompatActivity {
     }
 
     private void initFabAddOrder() {
-        fabAddOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isThereGoodToBuy()) {
-                    Intent intent = new Intent(MyOrdersActivity.this, ShopsActivity.class);
-                    intent.putExtra(Constants.ORDER_INITIATED, true);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.no_items_to_buy, Toast.LENGTH_SHORT).show();
-                }
-            }
+        fabAddOrder.setOnClickListener(view -> {
+            Intent intent = new Intent(MyOrdersActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         });
-    }
-
-    private boolean isThereGoodToBuy() {
-        GoodsDataProvider goodsDataProvider = new GoodsDataProvider(this);
-        int goodsToBuyNb = goodsDataProvider.getGoodsToBuyNb();
-        return (goodsToBuyNb > 0);
     }
 
     @Override
@@ -129,14 +113,17 @@ public class MyOrdersActivity extends AppCompatActivity {
                 break;
             case R.id.menuOngoingOrders:
                 orders.clear();
-                orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
+                orderStatus = Order.NOT_CLOSED;
+                orders.addAll(ordersDataManager.getOrders(orderStatus));
                 myOrdersAdapter.setOrders(orders);
                 setTitle(getString(R.string.my_orders));
                 updateMessageVisibility();
+
                 break;
             case R.id.menuClosedOrders:
                 orders.clear();
-                orders.addAll(ordersDataManager.getOrders(Order.CLOSED));
+                orderStatus = (Order.CLOSED);
+                orders.addAll(ordersDataManager.getOrders(orderStatus));
                 myOrdersAdapter.setOrders(orders);
                 setTitle(getString(R.string.closed_orders_title));
                 updateMessageVisibility();
@@ -160,29 +147,23 @@ public class MyOrdersActivity extends AppCompatActivity {
 
     public class SyncReceiverMyOrders extends BroadcastReceiver {
 
-        private Handler handler; // Handler used to execute code on the UI thread
-
         @Override
         public void onReceive(final Context context, Intent intent) {
-            // Post the UI updating code to our Handler
+            // Handler used to execute code on the UI thread
+            Handler handler = new Handler();
+            handler.post(() -> {
 
-            this.handler = new Handler();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
+                orders.clear();
+                orders.addAll(ordersDataManager.getOrders(orderStatus));
+                myOrdersAdapter.setOrders(orders);
+                updateMessageVisibility();
 
-                    orders.clear();
-                    orders.addAll(ordersDataManager.getOrders(Order.NOT_CLOSED));
-                    myOrdersAdapter.setOrders(orders);
-                    updateMessageVisibility();
-
-                    if (syncTriggeredByUser) {
-                        Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
-                        syncTriggeredByUser = false;
-                    }
-
-                    Log.d(TAG, "Sync BroadCast received");
+                if (syncTriggeredByUser) {
+                    Toast.makeText(context, R.string.sync_finished, Toast.LENGTH_SHORT).show();
+                    syncTriggeredByUser = false;
                 }
+
+                Log.d(TAG, "Sync BroadCast received");
             });
         }
     }
