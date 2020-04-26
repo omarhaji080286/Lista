@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +59,11 @@ import java.util.Locale;
 
 public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupViewHolder, GoodItemViewHolder> {
 
-    private final static String TAG = MyGoodsAdapter.class.getSimpleName();
+    //private final static String TAG = MyGoodsAdapter.class.getSimpleName();
     private Context context;
     private List<CategoryGroup> groups;
     private String amountValue = "";
     private String brandValue = "";
-    private OnGoodUpdatedListener mOnGoodUpdatedListener;
     private EventService eventService;
 
     public MyGoodsAdapter(List<CategoryGroup> groups, Context context) {
@@ -113,53 +113,47 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         GoodsDataProvider goodsDataProvider = new GoodsDataProvider(context);
         final Good good = goodsDataProvider.getGoodById(goodItem.getGoodId());
 
-        holder.viewForeground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.viewForeground.setOnClickListener(view -> {
 
-                if (!good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
+            if (!good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
 
-                good.setToBuy(!goodItem.isToBuy());
-                goodItem.setToBuy(!goodItem.isToBuy());
-                good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
+            good.setToBuy(!goodItem.isToBuy());
+            goodItem.setToBuy(!goodItem.isToBuy());
+            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
 
-                DataManager dataManager = new DataManager(context);
-                dataManager.updateGood(good);
+            DataManager dataManager = new DataManager(context);
+            dataManager.updateGood(good);
 
-                int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
+            int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
 
-                if (good.isToBuy()) {
-                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
-                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber + 1);
-                } else {
-                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
-                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber - 1);
-                }
-
-                int groupflatPosition = flatPosition - childIndex - 1;
-                notifyItemChanged(flatPosition);
-                notifyItemChanged(groupflatPosition);
-
-                //log event
-                Bundle eventParams = new Bundle();
-                eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, good.getGoodName());
-                eventParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, Good.class.getSimpleName());
-                eventService.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, eventParams);
-
-
+            if (good.isToBuy()) {
+                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
+                ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber + 1);
+            } else {
+                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
+                ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber - 1);
             }
+
+            int groupflatPosition = flatPosition - childIndex - 1;
+            notifyItemChanged(flatPosition);
+            notifyItemChanged(groupflatPosition);
+
+            //log event
+            Bundle eventParams = new Bundle();
+            eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, good.getGoodName());
+            eventParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, Good.class.getSimpleName());
+            eventService.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, eventParams);
+
+
         });
 
-        holder.viewForeground.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
+        holder.viewForeground.setOnLongClickListener(view -> {
 
-                amountValue = "";
-                brandValue = "";
-                showCompleteGoodDescDialog(holder.viewForeground, good, flatPosition, childIndex, group);
+            amountValue = "";
+            brandValue = "";
+            showCompleteGoodDescDialog(holder.viewForeground, good, flatPosition, childIndex, group);
 
-                return false;
-            }
+            return false;
         });
     }
 
@@ -237,7 +231,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
     public void setOnGoodUpdatedListener(OnGoodUpdatedListener onGoodUpdatedListener) {
-        this.mOnGoodUpdatedListener = onGoodUpdatedListener;
     }
 
     private void showCompleteGoodDescDialog(ViewGroup viewGroup, final Good good, final int flatPosition, final int childIndex, final ExpandableGroup group) {
@@ -303,6 +296,11 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         editBrand.setAdapter(macBrandAdapter);
         editBrand.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
+        int maxLength = 35;
+        InputFilter[] fArray = new InputFilter[1];
+        fArray[0] = new InputFilter.LengthFilter(maxLength);
+        editBrand.setFilters(fArray);
+
         editBrand.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -340,33 +338,27 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         });
 
         //prepare Images + and -
-        imgMinus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (editAmount.getText().toString().isEmpty()) {
-                    editAmount.setText(String.valueOf(0));
-                    return;
-                }
-                Integer amount = Integer.valueOf(editAmount.getText().toString());
-                if (amount == 0) return;
-                if (amount == 1) {
-                    editAmount.setText(String.valueOf(0));
-                    amountValue = "";
-                    String goodDesc = "( " + brandValue + " " + amountValue + ")";
-                    txtGoodDesc.setText(goodDesc);
-                    return;
-                }
-                editAmount.setText(String.valueOf(Math.max(amount - 1, 1)));
+        imgMinus.setOnClickListener(view -> {
+            if (editAmount.getText().toString().isEmpty()) {
+                editAmount.setText(String.valueOf(0));
+                return;
             }
+            Integer amount = Integer.valueOf(editAmount.getText().toString());
+            if (amount == 0) return;
+            if (amount == 1) {
+                editAmount.setText(String.valueOf(0));
+                amountValue = "";
+                String goodDesc = "( " + brandValue + " " + amountValue + ")";
+                txtGoodDesc.setText(goodDesc);
+                return;
+            }
+            editAmount.setText(String.valueOf(Math.max(amount - 1, 1)));
         });
-        imgPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (editAmount.getText().toString().isEmpty())
-                    editAmount.setText(String.valueOf(0));
-                Integer amount = Integer.valueOf(editAmount.getText().toString());
-                editAmount.setText(String.valueOf(amount + 1));
-            }
+        imgPlus.setOnClickListener(view -> {
+            if (editAmount.getText().toString().isEmpty())
+                editAmount.setText(String.valueOf(0));
+            Integer amount = Integer.valueOf(editAmount.getText().toString());
+            editAmount.setText(String.valueOf(amount + 1));
         });
 
         //Hide or show buttons depending on the category
@@ -443,77 +435,51 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         }
 
         //prepare Buttons
-        btnQuantity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
-                changeButtonsBackGround(view, btnGrammage, btnLitrage, btnDh);
-            }
+        btnQuantity.setOnClickListener(view -> {
+            changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+            changeButtonsBackGround(view, btnGrammage, btnLitrage, btnDh);
         });
 
-        btnGrammage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
-                changeButtonsBackGround(view, btnQuantity, btnLitrage, btnDh);
-            }
+        btnGrammage.setOnClickListener(view -> {
+            changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+            changeButtonsBackGround(view, btnQuantity, btnLitrage, btnDh);
         });
-        btnLitrage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
-                changeButtonsBackGround(view, btnQuantity, btnGrammage, btnDh);
-            }
+        btnLitrage.setOnClickListener(view -> {
+            changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+            changeButtonsBackGround(view, btnQuantity, btnGrammage, btnDh);
         });
-        btnDh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
-                changeButtonsBackGround(view, btnQuantity, btnGrammage, btnLitrage);
-            }
+        btnDh.setOnClickListener(view -> {
+            changeContent(view, llQuantity, txtGoodDesc, editBrand, pickerAmounts);
+            changeButtonsBackGround(view, btnQuantity, btnGrammage, btnLitrage);
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btnCancel.setOnClickListener(view -> dialog.dismiss());
+
+        btnUpdateGood.setOnClickListener(view -> {
+            final String finalGoodDesc = brandValue + " " + amountValue;
+            if (inputsOk()) {
+                int categoryId = (int) spinner.getSelectedItemId();
+                updateGood(good.getGoodId(), finalGoodDesc, categoryId, flatPosition);
+                refreshList();
                 dialog.dismiss();
-            }
-        });
-
-        btnUpdateGood.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String finalGoodDesc = brandValue + " " + amountValue;
-                if (inputsOk(editBrand)) {
-                    int categoryId = (int) spinner.getSelectedItemId();
-                    updateGood(good.getGoodId(), finalGoodDesc, categoryId, flatPosition);
-                    refreshList();
-                    dialog.dismiss();
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            storeDescription(editBrand.getText().toString(), category.getDCategoryId());
-                        }
-                    });
-                }
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        storeDescription(editBrand.getText().toString(), category.getDCategoryId());
+                    }
+                });
             }
         });
 
     }
 
-    private boolean inputsOk(MultiAutoCompleteTextView editBrand) {
+    private boolean inputsOk() {
 
         if (amountValue.isEmpty()) {
             Toast.makeText(context, R.string.select_amount, Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        /*if (editBrand.getVisibility() == View.VISIBLE) {
-            if (editBrand.getText().toString().isEmpty()) {
-                editBrand.setError("Description required");
-                return false;
-            }
-        }*/
         return true;
     }
 
@@ -560,12 +526,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
             default:
                 llQuantity.setVisibility(View.GONE);
                 pickerAmounts.setVisibility(View.VISIBLE);
-                pickerAmounts.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setPickerValues(view.getId(), pickerAmounts, txtGoodDesc, editBrand);
-                    }
-                });
+                pickerAmounts.post(() -> setPickerValues(view.getId(), pickerAmounts, txtGoodDesc, editBrand));
         }
     }
 
@@ -590,12 +551,7 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         pickerAmounts.setDisplayedValues(amountsStr);
 
-        pickerAmounts.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                refreshGoodDesc(amountsStr[newVal], editBrand, txtGoodDesc);
-            }
-        });
+        pickerAmounts.setOnValueChangedListener((numberPicker, oldVal, newVal) -> refreshGoodDesc(amountsStr[newVal], editBrand, txtGoodDesc));
     }
 
 
@@ -637,10 +593,3 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
     }
 
 }
-
-/*class myFormatter implements NumberPicker.Formatter {
-    @Override
-    public String format(int value) {
-        return String.format(Locale.FRANCE, "%.1f", (float) value / 10);
-    }
-}*/

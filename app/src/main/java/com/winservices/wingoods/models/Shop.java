@@ -4,6 +4,8 @@ package com.winservices.wingoods.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.winservices.wingoods.utils.UtilsFunctions;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -265,7 +267,7 @@ public class Shop implements Parcelable {
 
         Calendar[] dayOffCalendar = getDayOffCalendar();
         totalSize = calendarSize + dayOffCalendar.length;
-        Calendar[] daysOff = new Calendar[totalSize];
+        Calendar[] daysOff = new Calendar[totalSize+1];
 
         int i;
         for (i = 0; i < calendarSize; i++) {
@@ -283,14 +285,14 @@ public class Shop implements Parcelable {
 
         System.arraycopy(dayOffCalendar, 0, daysOff, i, dayOffCalendar.length);
 
+        //check if today must be excluded (2 hours left to shop closing)
+        if (isTodayExcluded()){
+            daysOff[totalSize] = Calendar.getInstance();
+        }
+
+
+
         return daysOff;
-    }
-
-
-    private Calendar dateToCalendar(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
     }
 
     private Calendar[] getDayOffCalendar() {
@@ -317,6 +319,17 @@ public class Shop implements Parcelable {
         }
 
         return daysOffArray;
+    }
+
+    private Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
+    private boolean isTodayExcluded(){
+        Date closingTime = UtilsFunctions.stringToDate(this.closingTime);
+        return System.currentTimeMillis() > (closingTime.getTime() - 2 * 60 * 60 * 1000);
     }
 
 

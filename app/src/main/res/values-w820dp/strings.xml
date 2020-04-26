@@ -24,4 +24,5 @@
     <string name="currency"> Dhs</string>
     <string name="required_date">Date requise</string>
     <string name="jj_mm_aaaa">JJ/MM/AAAA</string>
+    <string name="close_order">Clôturer</string>
 </resources>

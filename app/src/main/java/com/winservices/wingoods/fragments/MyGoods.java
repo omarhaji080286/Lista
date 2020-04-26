@@ -1,6 +1,8 @@
 package com.winservices.wingoods.fragments;
 
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
@@ -33,6 +35,7 @@ import com.winservices.wingoods.viewholders.GoodItemViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MyGoods extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
@@ -41,7 +44,7 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
     private EditText searchView;
     private RecyclerView mRecyclerView;
     public MyGoodsAdapter mAdapter;
-    private List<CategoryGroup> categories, initialMainList;
+    private List<CategoryGroup> initialMainList;
     private LinearLayout fragMyGoods;
     private ImageView imgHighlightOff;
     private RecyclerView categoriesToChooseRecyclerView;
@@ -55,10 +58,10 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getActivity().setTitle(getResources().getString(R.string.my_goods));
+        Objects.requireNonNull(getActivity()).setTitle(getResources().getString(R.string.my_goods));
 
         searchView = view.findViewById(R.id.search_good);
         mRecyclerView = view.findViewById(R.id.my_goods_recyclerview);
@@ -82,7 +85,7 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
         searchView.setSelected(false);
 
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
-        categories = categoriesDataProvider.getMainGoodsList("");
+        List<CategoryGroup> categories = categoriesDataProvider.getMainGoodsList("");
         initialMainList = new ArrayList<>();
         initialMainList.addAll(categories);
 
@@ -94,24 +97,17 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
         glm1.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                switch (mAdapter.getItemViewType(position)) {
-                    case 2:
-                        return GRID_COLUMN_NUMBER;
-                    default:
-                        return 1;
+                if (mAdapter.getItemViewType(position) == 2) {
+                    return GRID_COLUMN_NUMBER;
                 }
+                return 1;
             }
         });
 
         mRecyclerView.setLayoutManager(glm1);
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnGoodUpdatedListener(new MyGoodsAdapter.OnGoodUpdatedListener() {
-            @Override
-            public void onGoodUpdated() {
-                reloadMainList();
-            }
-        });
+        mAdapter.setOnGoodUpdatedListener(this::reloadMainList);
 
         //Adapter for categories to choose
         CategoriesDataProvider categoriesDataProvider2 = new CategoriesDataProvider(getContext());
@@ -124,16 +120,13 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
         categoriesToChooseRecyclerView.setAdapter(categoriesToChooseAdapter);
         categoriesToChooseRecyclerView.setHasFixedSize(true);
 
-        categoriesToChooseAdapter.setOnGoodAddedListener(new CategoriesInMyGoodsAdapter.OnGoodAddedListener() {
-            @Override
-            public void onGoodAdded() {
-                searchView.setText("");
-                searchView.setFocusable(true);
-                imgHighlightOff.setVisibility(View.INVISIBLE);
-                reloadMainList();
-                categoriesToChooseRecyclerView.setVisibility(View.GONE);
-                txtChooseCategory.setVisibility(View.GONE);
-            }
+        categoriesToChooseAdapter.setOnGoodAddedListener(() -> {
+            searchView.setText("");
+            searchView.setFocusable(true);
+            imgHighlightOff.setVisibility(View.INVISIBLE);
+            reloadMainList();
+            categoriesToChooseRecyclerView.setVisibility(View.GONE);
+            txtChooseCategory.setVisibility(View.GONE);
         });
 
         searchView.addTextChangedListener(new TextWatcher() {
@@ -179,13 +172,10 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
             }
         });
 
-        imgHighlightOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchView.setText("");
-                searchView.setFocusable(true);
-                imgHighlightOff.setVisibility(View.INVISIBLE);
-            }
+        imgHighlightOff.setOnClickListener(view -> {
+            searchView.setText("");
+            searchView.setFocusable(true);
+            imgHighlightOff.setVisibility(View.INVISIBLE);
         });
 
         // adding item touch helper
@@ -208,14 +198,14 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
         }
     }
 
-    public void collapseGroup (int gPos){
+    private void collapseGroup(int gPos){
         if(!mAdapter.isGroupExpanded(gPos)){
             return;
         }
         mAdapter.toggleGroup(gPos);
     }
 
-    public void expandGroup (int gPos){
+    private void expandGroup(int gPos){
         if(mAdapter.isGroupExpanded(gPos)){
             return;
         }
@@ -228,8 +218,7 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
         CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
         initialMainList = categoriesDataProvider.getMainGoodsList("");
 
-        List<CategoryGroup> increasedMainList = new ArrayList<>();
-        increasedMainList.addAll(getFilteredMainList(searchView.getText().toString()));
+        List<CategoryGroup> increasedMainList = new ArrayList<>(getFilteredMainList(searchView.getText().toString()));
 
         mAdapter.setNewList(increasedMainList);
     }
@@ -280,7 +269,7 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
 
             deletedItem.setGoodDesc(item.goodDescription.getText().toString());
 
-            final int deletedIndex = viewHolder.getAdapterPosition();
+            //final int deletedIndex = viewHolder.getAdapterPosition();
 
             //remove item
             mAdapter.removeChildItem(position, item.getGoodId());
@@ -289,15 +278,12 @@ public class MyGoods extends Fragment implements RecyclerItemTouchHelper.Recycle
             // showing snack bar with Undo option
             Snackbar snackbar = Snackbar
                     .make(fragMyGoods, "'" + name + "' " + getResources().getString(R.string.deleted), Snackbar.LENGTH_LONG);
-            snackbar.setAction(getResources().getString(R.string.undo), new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // undo is selected, restore the deleted item
-                    mAdapter.restoreItem(deletedItem/*, deletedIndex - 1*/);
-                }
+            snackbar.setAction(getResources().getString(R.string.undo), view -> {
+                // undo is selected, restore the deleted item
+                mAdapter.restoreItem(deletedItem/*, deletedIndex - 1*/);
             });
             View sbView = snackbar.getView();
-            sbView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+            sbView.setBackgroundColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.colorPrimaryDark));
             snackbar.setActionTextColor(ContextCompat.getColor(getContext(), R.color.colorGrrenFluo));
             snackbar.show();
         }

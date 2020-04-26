@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -129,6 +130,11 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
         ArrayAdapter<String> macBrandAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
                 android.R.layout.simple_expandable_list_item_1, addresses);
         editUserAddress.setAdapter(macBrandAdapter);
+
+        int maxLength = 70;
+        InputFilter[] fArray = new InputFilter[1];
+        fArray[0] = new InputFilter.LengthFilter(maxLength);
+        editUserAddress.setFilters(fArray);
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(getContext());
         final Shop shop = shopsDataManager.getShopById(orderActivity.selectedShopId);
