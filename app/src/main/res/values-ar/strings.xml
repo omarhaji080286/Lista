@@ -187,6 +187,8 @@
     <string name="required_date">Date requise</string>
     <string name="jj_mm_aaaa">JJ/MM/AAAA</string>
     <string name="close_order">Clôturer</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="confirmation_msg">La commande sera envoyée au magasin : </string>
 
 
 </resources>

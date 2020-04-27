@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 
@@ -107,9 +108,6 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
-
-        //NumberPicker pickerDay = view.findViewById(R.id.pickerDay);
-        //NumberPicker pickerTime = view.findViewById(R.id.pickerTime);
 
         LinearLayoutCompat llDeliveryModule = view.findViewById(R.id.llDeliveryModule);
         cbHomeDelivery = view.findViewById(R.id.cbHomeDelivery);
@@ -313,7 +311,6 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
 
             OrderActivity orderActivity = (OrderActivity) Objects.requireNonNull(getActivity());
 
-
             JSONArray jsonGoods = new JSONArray();
             for (int i = 0; i < orderActivity.categoriesToOrderAdapter.getGoodsToOrder().size(); i++) {
                 Good good = orderActivity.categoriesToOrderAdapter.getGoodsToOrder().get(i);
@@ -370,13 +367,29 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
                 userAddress = editUserAddress.getText().toString();
                 userLocation = editLocation.getText().toString();
 
-                addOrder(getContext(), preparationDate, preparationDate,
-                        isToDeliver, userAddress, userLocation);
+                AlertDialog.Builder builder = buildConfirmationDialog();
+                int finalIsToDeliver = isToDeliver;
+                String finalUserAddress = userAddress;
+                String finalUserLocation = userLocation;
+
+                builder.setPositiveButton("ok", (dialog, id) -> addOrder(getContext(), preparationDate, preparationDate,
+                        finalIsToDeliver, finalUserAddress, finalUserLocation));
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
             }
         } else {
-            addOrder(getContext(), preparationDate, preparationDate,
-                    isToDeliver, userAddress, userLocation);
+            AlertDialog.Builder builder = buildConfirmationDialog();
+            int finalIsToDeliver = isToDeliver;
+            String finalUserAddress = userAddress;
+            String finalUserLocation = userLocation;
+
+            builder.setPositiveButton("ok", (dialog, id) -> addOrder(getContext(), preparationDate, preparationDate,
+                    finalIsToDeliver, finalUserAddress, finalUserLocation));
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 
@@ -409,6 +422,14 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
             e.printStackTrace();
         }
         return UtilsFunctions.dateToString(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    private AlertDialog.Builder buildConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+        builder.setMessage(getString(R.string.confirmation_msg) + " " + shop.getShopName());
+        builder.setTitle(R.string.confirmation);
+        builder.setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());
+        return builder;
     }
 
 

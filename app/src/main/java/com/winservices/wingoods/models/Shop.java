@@ -266,7 +266,8 @@ public class Shop implements Parcelable {
         int calendarSize = datesOff.size();
 
         Calendar[] dayOffCalendar = getDayOffCalendar();
-        totalSize = calendarSize + dayOffCalendar.length;
+
+        totalSize = calendarSize + dayOffCalendar.length + this.getDeliveryDelay();
         Calendar[] daysOff = new Calendar[totalSize+1];
 
         int i;
@@ -285,12 +286,20 @@ public class Shop implements Parcelable {
 
         System.arraycopy(dayOffCalendar, 0, daysOff, i, dayOffCalendar.length);
 
+        //exclude delay days
+        int k = datesOff.size() + dayOffCalendar.length;
+        Calendar c = Calendar.getInstance();
+        int delay = this.getDeliveryDelay();
+        for (int j = 0; j < delay; j++) {
+            daysOff[k] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 1);
+            k++;
+        }
+
         //check if today must be excluded (2 hours left to shop closing)
         if (isTodayExcluded()){
             daysOff[totalSize] = Calendar.getInstance();
         }
-
-
 
         return daysOff;
     }
@@ -328,9 +337,11 @@ public class Shop implements Parcelable {
     }
 
     private boolean isTodayExcluded(){
-        Date closingTime = UtilsFunctions.stringToDate(this.closingTime);
-        return System.currentTimeMillis() > (closingTime.getTime() - 2 * 60 * 60 * 1000);
-    }
+        int closingHour = Integer.parseInt(this.closingTime.substring(0,2));
+        Calendar rightNow = Calendar.getInstance();
+        int currentHourIn24Format = rightNow.get(Calendar.HOUR_OF_DAY);
 
+        return currentHourIn24Format > closingHour - 2;
+    }
 
 }
