@@ -119,6 +119,7 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
         imgBtnGoogleMaps = view.findViewById(R.id.imgBtnGoogleMaps);
         ImageView imgCalendar = view.findViewById(R.id.imgCalendar);
         editDate = view.findViewById(R.id.editDate);
+        LinearLayoutCompat llOption = view.findViewById(R.id.llOption);
 
         editDate.setKeyListener(null);
 
@@ -136,6 +137,12 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
 
         ShopsDataManager shopsDataManager = new ShopsDataManager(getContext());
         final Shop shop = shopsDataManager.getShopById(orderActivity.selectedShopId);
+
+        if (shop.getIsDelivering()==Shop.IS_DELIVERING_ONLY) {
+            llOption.setVisibility(View.GONE);
+        } else {
+            llOption.setVisibility(View.VISIBLE);
+        }
 
         imgCalendar.setOnClickListener(v -> {
             Calendar now = Calendar.getInstance();
@@ -159,7 +166,7 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
             dpd.show(Objects.requireNonNull(getFragmentManager()), "Datepickerdialog");
         });
 
-        if (shop.getIsDelivering() == Shop.IS_DELIVERING) {
+        if (shop.getIsDelivering() == Shop.IS_DELIVERING  || shop.getIsDelivering() == Shop.IS_DELIVERING_ONLY) {
             llDeliveryModule.setVisibility(View.VISIBLE);
 
             //CheckBox Home Delivery checkbox

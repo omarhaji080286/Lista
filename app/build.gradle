@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.winservices.wingoods"
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 18
-        versionName "2.0.1"
+        minSdkVersion 22
+        targetSdkVersion 29
+        versionCode 19
+        versionName "2.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

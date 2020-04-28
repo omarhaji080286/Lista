@@ -14,6 +14,7 @@ import java.util.Locale;
 
 public class Shop implements Parcelable {
 
+    public static final int IS_DELIVERING_ONLY = 2;
     public static final int IS_DELIVERING = 1;
     public static final int IS_NOT_DELIVERING = 0;
     //public static final String DEFAULT_IMAGE = "defaultImage";
