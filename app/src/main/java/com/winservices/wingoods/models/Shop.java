@@ -4,8 +4,6 @@ package com.winservices.wingoods.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.winservices.wingoods.utils.UtilsFunctions;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -268,7 +266,13 @@ public class Shop implements Parcelable {
         Calendar[] dayOffCalendar = getDayOffCalendar();
 
         totalSize = calendarSize + dayOffCalendar.length + this.getDeliveryDelay();
-        Calendar[] daysOff = new Calendar[totalSize+1];
+        Calendar[] daysOff;
+        if (isTodayExcluded()){
+            daysOff = new Calendar[totalSize+1];
+        } else {
+            daysOff = new Calendar[totalSize];
+        }
+
 
         int i;
         for (i = 0; i < calendarSize; i++) {
