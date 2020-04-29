@@ -202,7 +202,7 @@
     <string name="confirmation">Confirmation</string>
     <string name="confirmation_msg">La commande sera envoyée à :</string>
     <string name="date_souhait_e">Date souhaitée :</string>
-    <string name="good_ordered_msg">Une commande non clôturée contient cet article. Vous pouvez créer un autre article via la barre de recherche</string>
+    <string name="good_ordered_msg">Une commande non clôturée contient cet article. Vous pouvez créer un autre article via la barre de recherche.</string>
     <string name="title_good_ordered">Article commandé</string>
 
 
