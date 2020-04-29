@@ -200,7 +200,7 @@
     <string name="jj_mm_aaaa">DD/MM/YYYY</string>
     <string name="close_order">Clôturer</string>
     <string name="confirmation">Confirmation</string>
-    <string name="confirmation_msg">La commande sera envoyée au magasin :</string>
+    <string name="confirmation_msg">La commande sera envoyée à :</string>
 
 
 </resources>

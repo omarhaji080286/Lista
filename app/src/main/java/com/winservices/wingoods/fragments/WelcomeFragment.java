@@ -59,9 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
-import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -108,20 +105,10 @@ public class WelcomeFragment extends Fragment {
 
         SyncHelper.sync(getContext());
 
-        /*PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
-        if (permissionUtil.checkPermission(TXT_NOTIFICATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionUtil.requestPermission(TXT_NOTIFICATION, getActivity());
-        }*/
-
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
 
-        consLayMyGoods.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), MainActivity.class));
-            }
-        });
+        consLayMyGoods.setOnClickListener(view1 -> goToActivity(new Intent(getActivity(), MainActivity.class)));
 
         consLayMyOrders.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,26 +117,11 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
-        linlayShops.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), ShopsActivity.class));
-            }
-        });
+        linlayShops.setOnClickListener(view12 -> goToActivity(new Intent(getActivity(), ShopsActivity.class)));
 
-        linlayProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), ProfileActivity.class));
-            }
-        });
+        linlayProfile.setOnClickListener(view13 -> goToActivity(new Intent(getActivity(), ProfileActivity.class)));
 
-        imgShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareAppStoreLink();
-            }
-        });
+        imgShare.setOnClickListener(v -> shareAppStoreLink());
 
         RemoteConfigParams rcp = new RemoteConfigParams(getContext());
         try {
@@ -190,11 +162,11 @@ public class WelcomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    private boolean isInvitationPending() {
+    /*private boolean isInvitationPending() {
         InvitationsDataManager invitationsDataManager = new InvitationsDataManager(getContext());
         return invitationsDataManager.isInvitationPending();
 
-    }
+    }*/
 
     private void shareAppStoreLink() {
 
@@ -227,17 +199,14 @@ public class WelcomeFragment extends Fragment {
         UtilsFunctions.hideKeyboard(getContext(), imgShare);
 
         Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
+        handler.post(() -> {
 
-                manageGooglePlayIcon();
-                //manageInvitationIcon();
-                getAvailableOrdersNum();
-                getItemsToBuyNum();
+            manageGooglePlayIcon();
+            //manageInvitationIcon();
+            getAvailableOrdersNum();
+            getItemsToBuyNum();
 
-                Log.d(TAG, "Icons handled");
-            }
+            Log.d(TAG, "Icons handled");
         });
 
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));

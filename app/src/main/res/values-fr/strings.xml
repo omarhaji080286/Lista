@@ -116,7 +116,7 @@
     <string name="user_name_label">Nom d\'utilisateur :</string>
     <string name="user_name_hint">Prénom Nom</string>
     <string name="my_list">Ma liste</string>
-    <string name="account">Mon profile</string>
+    <string name="account">Mon profil</string>
     <string name="no_items_to_buy">Il n\'y a pas d\'articles à commander</string>
     <string name="ongoing_orders">Commandes en cours</string>
     <string name="closed_orders">Commandes clôturées</string>
@@ -188,6 +188,6 @@
     <string name="jj_mm_aaaa">JJ/MM/AAAA</string>
     <string name="close_order">Clôturer</string>
     <string name="confirmation">Confirmation</string>
-    <string name="confirmation_msg">La commande sera envoyée au magasin :</string>
+    <string name="confirmation_msg">La commande sera envoyée à :</string>
 
 </resources>

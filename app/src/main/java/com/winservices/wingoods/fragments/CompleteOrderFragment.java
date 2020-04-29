@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -71,6 +72,7 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
     private EditText editDate;
     private String preparationDate;
     private AutoCompleteTextView editUserAddress;
+    private TextView txtDateWarning;
 
 
     CompleteOrderFragment(Shop shop) {
@@ -120,6 +122,9 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
         ImageView imgCalendar = view.findViewById(R.id.imgCalendar);
         editDate = view.findViewById(R.id.editDate);
         LinearLayoutCompat llOption = view.findViewById(R.id.llOption);
+        txtDateWarning = view.findViewById(R.id.txtDateWarning);
+
+        txtDateWarning.setVisibility(View.GONE);
 
         editDate.setKeyListener(null);
 
@@ -413,6 +418,12 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
         String selectedDate = strDay + "/" + strMonth + "/" + year;
 
         editDate.setText(selectedDate);
+
+        String msgDateWarning = shop.getShopName() + " "
+                + "fera tout pour répondre à votre requête. La date de livraison dépendra du flux de commandes de la journée.";
+
+        txtDateWarning.setText(msgDateWarning);
+        txtDateWarning.setVisibility(View.VISIBLE);
 
         preparationDate = formatDate(year, month+1 , day);
 

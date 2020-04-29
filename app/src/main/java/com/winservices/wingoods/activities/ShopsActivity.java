@@ -152,13 +152,19 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         }
     }
 
-
     private void returnToMainActivity() {
-        int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, 101);
-        Intent intent = new Intent();
-        intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
-        setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);
+
+        if (orderInitiated){
+            Intent intent = new Intent();
+            int fragmentId = getIntent().getIntExtra(Constants.SELECTED_FRAGMENT, 101);
+            intent.putExtra(Constants.SELECTED_FRAGMENT, fragmentId);
+            setResult(MainActivity.FRAGMENT_REQUEST_CODE, intent);
+        } else {
+            Intent intent = new Intent(ShopsActivity.this, LauncherActivity.class);
+            startActivity(intent);
+        }
         this.finish();
+
     }
 
     private void getShops(){

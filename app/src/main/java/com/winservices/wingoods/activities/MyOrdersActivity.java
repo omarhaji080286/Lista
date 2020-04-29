@@ -109,6 +109,8 @@ public class MyOrdersActivity extends AppCompatActivity {
                 }
                 break;
             case android.R.id.home:
+                Intent intent = new Intent(MyOrdersActivity.this, LauncherActivity.class);
+                startActivity(intent);
                 this.finish();
                 break;
             case R.id.menuOngoingOrders:

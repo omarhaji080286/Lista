@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -137,9 +138,15 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         });
 
+        if (isOrderToClose(order)){
+            holder.btnCompleteOrder.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnCompleteOrder.setVisibility(View.GONE);
+        }
+
         switch (order.getStatusId()){
             case Order.REGISTERED :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -153,7 +160,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.READ :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -167,11 +174,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.AVAILABLE :
-                if (isOrderToClose(order)){
-                    holder.btnCompleteOrder.setVisibility(View.VISIBLE);
-                } else {
-                    holder.btnCompleteOrder.setVisibility(View.GONE);
-                }
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -189,7 +191,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.COMPLETED :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.GONE);
                 holder.imgRead.setVisibility(View.GONE);
                 holder.imgAvailable.setVisibility(View.GONE);
@@ -207,7 +209,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setImageResource(R.drawable.not_supported);
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.not_supported));
-                holder.btnCompleteOrder.setVisibility(View.VISIBLE);
+                //holder.btnCompleteOrder.setVisibility(View.VISIBLE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
                 }
@@ -218,19 +220,27 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     private boolean isOrderToClose(Order order){
         int orderStatus = order.getStatusId();
 
+        if ( orderStatus==Order.COMPLETED ){
+            return false;
+        }
+
         if ( orderStatus==Order.NOT_SUPPORTED ){
             return true;
         }
 
-        if (orderStatus==Order.AVAILABLE ){
-            Date preparationDate = UtilsFunctions.stringToDate(order.getStartTime());
-            Date now = new Date();
-            if (now.compareTo(preparationDate) > 0 ){
-                return true;
-            }
+        int delay = 0; // Afficher le bouton clôturer le jour même
+        if (orderStatus==Order.REGISTERED || orderStatus==Order.READ){
+            delay = 2; // afficher le bouton clôturer après 2 jours
         }
 
-        return false;
+        Date preparationDate = UtilsFunctions.stringToDate(order.getStartTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(preparationDate);
+        calendar.add(Calendar.DAY_OF_YEAR, delay);
+
+        Date now = new Date();
+        int result = now.compareTo(calendar.getTime());
+        return result > 0;
     }
 
     @Override
