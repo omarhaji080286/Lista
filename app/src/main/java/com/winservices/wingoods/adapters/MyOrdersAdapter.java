@@ -75,9 +75,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
             holder.imgDelivery.setVisibility(View.GONE);
-            holder.txtLabelCollectTime.setText(R.string.forTime);
+            //holder.txtLabelCollectTime.setText(R.string.forTime);
         } else {
-            holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
+            //holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
             holder.imgDelivery.setVisibility(View.VISIBLE);
         }
 
@@ -231,6 +231,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         int delay = 0; // Afficher le bouton clôturer le jour même
         if (orderStatus==Order.REGISTERED || orderStatus==Order.READ){
             delay = 2; // afficher le bouton clôturer après 2 jours
+        }
+
+        if (orderStatus==Order.AVAILABLE){
+            delay = 1; // afficher le bouton clôturer après 2 jours
         }
 
         Date preparationDate = UtilsFunctions.stringToDate(order.getStartTime());

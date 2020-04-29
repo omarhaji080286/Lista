@@ -372,7 +372,7 @@ public class CompleteOrderFragment extends Fragment implements DatePickerDialog.
         String userAddress = "";
         String userLocation = orderActivity.location;
 
-        if (shop.getIsDelivering() == Shop.IS_DELIVERING && cbHomeDelivery.isChecked()) {
+        if ((shop.getIsDelivering() == Shop.IS_DELIVERING || shop.getIsDelivering() == Shop.IS_DELIVERING_ONLY ) && cbHomeDelivery.isChecked()) {
             if (formOk(editUserAddress, rgLocation, editDate)) {
 
                 if (cbHomeDelivery.isChecked()) isToDeliver = 1;

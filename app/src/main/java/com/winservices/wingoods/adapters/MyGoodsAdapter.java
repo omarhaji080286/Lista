@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
@@ -56,6 +55,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupViewHolder, GoodItemViewHolder> {
 
@@ -115,35 +115,42 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
         holder.viewForeground.setOnClickListener(view -> {
 
-            if (!good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
-
-            good.setToBuy(!goodItem.isToBuy());
-            goodItem.setToBuy(!goodItem.isToBuy());
-            good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
-
-            DataManager dataManager = new DataManager(context);
-            dataManager.updateGood(good);
-
-            int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
-
-            if (good.isToBuy()) {
-                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
-                ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber + 1);
+            if (goodItem.getIsOrdered()==1){
+                AlertDialog.Builder builder = buildDialog();
+                AlertDialog dialog = builder.create();
+                dialog.show();
             } else {
-                holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
-                ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber - 1);
+
+                if (!good.isToBuy()) good.setUsesNumber(good.getUsesNumber() + 1);
+
+                good.setToBuy(!goodItem.isToBuy());
+                goodItem.setToBuy(!goodItem.isToBuy());
+                good.setSync(DataBaseHelper.SYNC_STATUS_FAILED);
+
+                DataManager dataManager = new DataManager(context);
+                dataManager.updateGood(good);
+
+                int goodsToBuyNumber = ((CategoryGroup) group).getCategory().getGoodsToBuyNumber();
+
+                if (good.isToBuy()) {
+                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_to_buy_color));
+                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber + 1);
+                } else {
+                    holder.viewForeground.setBackground(ContextCompat.getDrawable(context, R.drawable.good_default_color));
+                    ((CategoryGroup) group).getCategory().setGoodsToBuyNumber(goodsToBuyNumber - 1);
+                }
+
+                int groupflatPosition = flatPosition - childIndex - 1;
+                notifyItemChanged(flatPosition);
+                notifyItemChanged(groupflatPosition);
+
+                //log event
+                Bundle eventParams = new Bundle();
+                eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, good.getGoodName());
+                eventParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, Good.class.getSimpleName());
+                eventService.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, eventParams);
+
             }
-
-            int groupflatPosition = flatPosition - childIndex - 1;
-            notifyItemChanged(flatPosition);
-            notifyItemChanged(groupflatPosition);
-
-            //log event
-            Bundle eventParams = new Bundle();
-            eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, good.getGoodName());
-            eventParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, Good.class.getSimpleName());
-            eventService.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, eventParams);
-
 
         });
 
@@ -189,7 +196,6 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
         } else {
             holder.cartContainer.setVisibility(View.GONE);
         }
-
 
     }
 
@@ -590,6 +596,14 @@ public class MyGoodsAdapter extends ExpandableRecyclerViewAdapter<CategoryGroupV
 
     public interface OnGoodUpdatedListener {
         void onGoodUpdated();
+    }
+
+    private AlertDialog.Builder buildDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(R.string.good_ordered_msg);
+        builder.setTitle(R.string.title_good_ordered);
+        builder.setPositiveButton("Ok", (dialog, id) -> dialog.cancel());
+        return builder;
     }
 
 }
