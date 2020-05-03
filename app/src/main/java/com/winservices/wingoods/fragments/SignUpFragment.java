@@ -237,10 +237,10 @@ public class SignUpFragment extends Fragment {
         String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
         //TODO - for release
-        String phone = "+212" + editPhone.getText().toString();
+        //String phone = "+212" + editPhone.getText().toString();
 
         //TODO - For test
-        //String phone = "+16" + editPhone.getText().toString();
+        String phone = "+16" + editPhone.getText().toString();
 
         String userName = editUserName.getText().toString();
 
@@ -281,7 +281,7 @@ public class SignUpFragment extends Fragment {
                                 //Registering OK
 
                                 boolean isUserRegistered = jsonObject.getBoolean("is_user_registered");
-
+                                UsersDataManager usersDataManager = new UsersDataManager(context);
                                 if (isUserRegistered) {
 
                                     JSONObject JsonUser = jsonObject.getJSONObject("user");
@@ -290,6 +290,7 @@ public class SignUpFragment extends Fragment {
                                     String email = JsonUser.getString("email");
                                     String userName = JsonUser.getString("user_name");
                                     int serverGroupId = JsonUser.getInt("server_group_id");
+                                    int serverCityId = JsonUser.getInt("server_city_id");
 
                                     userToRegister.setServerUserId(serverUserId);
                                     userToRegister.setEmail(email);
@@ -297,8 +298,9 @@ public class SignUpFragment extends Fragment {
                                     if (serverGroupId != 0)
                                         userToRegister.setServerGroupId(serverGroupId);
                                     userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
+                                    userToRegister.setServerCityId(serverCityId);
 
-                                    UsersDataManager usersDataManager = new UsersDataManager(context);
+
                                     if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
                                         usersDataManager.updateLastLoggedIn(serverUserId);
                                         addUserItems(jsonObject);
@@ -317,7 +319,6 @@ public class SignUpFragment extends Fragment {
                                     userToRegister.setServerUserId(serverUserId);
                                     userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
 
-                                    UsersDataManager usersDataManager = new UsersDataManager(context);
                                     if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
                                         usersDataManager.updateLastLoggedIn(serverUserId);
                                         addDefaultItems(jsonObject);
@@ -333,9 +334,14 @@ public class SignUpFragment extends Fragment {
 
                                 dialog.dismiss();
 
-                                Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
+
                                 LauncherActivity launcherActivity = (LauncherActivity) getActivity();
-                                Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                                if (usersDataManager.getCurrentUser().getServerCityId()!=0){
+                                    Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                                } else {
+                                    Objects.requireNonNull(launcherActivity).displayFragment(new SelectCityFragment(), SelectCityFragment.TAG);
+                                }
 
                             }
 

@@ -13,6 +13,7 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.fragments.SelectCityFragment;
 import com.winservices.wingoods.fragments.SignUpFragment;
 import com.winservices.wingoods.fragments.WelcomeFragment;
 import com.winservices.wingoods.models.User;
@@ -78,7 +79,12 @@ public class LauncherActivity extends AppCompatActivity {
             displayFragment(new SignUpFragment(), SignUpFragment.TAG);
 
         } else {
-            displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+
+            if (currentUser.getServerCityId()!=0){
+                displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+            } else {
+                displayFragment(new SelectCityFragment(), SelectCityFragment.TAG);
+            }
 
             //log event
             eventParams = new Bundle();

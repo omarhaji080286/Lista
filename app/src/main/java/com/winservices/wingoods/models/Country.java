@@ -13,6 +13,9 @@ public class Country implements Serializable{
         this.countryName = countryName;
     }
 
+    public Country() {
+    }
+
     public int getServerCountryId() {
         return serverCountryId;
     }

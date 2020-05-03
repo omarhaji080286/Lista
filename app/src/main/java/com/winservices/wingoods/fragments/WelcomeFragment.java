@@ -34,21 +34,18 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
 import com.winservices.wingoods.activities.MyOrdersActivity;
 import com.winservices.wingoods.activities.ProfileActivity;
-import com.winservices.wingoods.activities.ReceiveInvitationActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
-import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.RemoteConfigParams;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
-import com.winservices.wingoods.utils.PermissionUtil;
-import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONException;
@@ -59,9 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class WelcomeFragment extends Fragment {
 
     public final static String TAG = WelcomeFragment.class.getSimpleName();
@@ -102,7 +97,6 @@ public class WelcomeFragment extends Fragment {
         txtWelcome1 = view.findViewById(R.id.txtWelcome1);
         txtWelcome2 = view.findViewById(R.id.txtWelcome2);
 
-
         SyncHelper.sync(getContext());
 
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
@@ -110,12 +104,7 @@ public class WelcomeFragment extends Fragment {
 
         consLayMyGoods.setOnClickListener(view1 -> goToActivity(new Intent(getActivity(), MainActivity.class)));
 
-        consLayMyOrders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), MyOrdersActivity.class));
-            }
-        });
+        consLayMyOrders.setOnClickListener(view14 -> goToActivity(new Intent(getActivity(), MyOrdersActivity.class)));
 
         linlayShops.setOnClickListener(view12 -> goToActivity(new Intent(getActivity(), ShopsActivity.class)));
 
@@ -131,7 +120,6 @@ public class WelcomeFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -230,38 +218,30 @@ public class WelcomeFragment extends Fragment {
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_GET_AVAILABLE_ORDERS_NUM,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
+                    response -> {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
 
-                                if (error) {
-                                    //error in server
-                                    Log.e(TAG, "onResponse: " + R.string.error);
+                            if (error) {
+                                //error in server
+                                Log.e(TAG, "onResponse: " + R.string.error);
+                            } else {
+
+                                int availableOrdersNum = jsonObject.getInt("available_orders_num");
+                                if (availableOrdersNum > 0) {
+                                    txtAvailableOrders.setText(String.valueOf(availableOrdersNum));
+                                    txtAvailableOrders.setVisibility(View.VISIBLE);
                                 } else {
-
-                                    int availableOrdersNum = jsonObject.getInt("available_orders_num");
-                                    if (availableOrdersNum > 0) {
-                                        txtAvailableOrders.setText(String.valueOf(availableOrdersNum));
-                                        txtAvailableOrders.setVisibility(View.VISIBLE);
-                                    } else {
-                                        txtAvailableOrders.setVisibility(View.GONE);
-                                    }
+                                    txtAvailableOrders.setVisibility(View.GONE);
                                 }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "onResponse: " + error.getMessage());
-                        }
-                    }
+                    error -> Log.e(TAG, "onResponse: " + error.getMessage())
             ) {
                 @Override
                 protected Map<String, String> getParams() {
@@ -304,12 +284,7 @@ public class WelcomeFragment extends Fragment {
             imgGooglePlay.setVisibility(View.VISIBLE);
             AnimationManager am = new AnimationManager(getContext());
             am.animateItem(imgGooglePlay, R.anim.blink, 1000);
-            imgGooglePlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goToMarket();
-                }
-            });
+            imgGooglePlay.setOnClickListener(v -> goToMarket());
         } else {
             imgGooglePlay.setVisibility(View.GONE);
         }
@@ -339,22 +314,17 @@ public class WelcomeFragment extends Fragment {
 
     public class SyncReceiverWelcome extends BroadcastReceiver {
 
-        private Handler handler; // Handler used to execute code on the UI thread
-
         @Override
         public void onReceive(final Context context, Intent intent) {
-            // Post the UI updating code to our Handler
 
-            this.handler = new Handler();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
+            // Handler used to execute code on the UI thread
+            Handler handler = new Handler();
+            handler.post(() -> {
 
-                    getAvailableOrdersNum();
-                    getItemsToBuyNum();
+                getAvailableOrdersNum();
+                getItemsToBuyNum();
 
-                    Log.d(TAG, "Sync BroadCast received");
-                }
+                Log.d(TAG, "Sync BroadCast received");
             });
         }
     }

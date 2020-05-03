@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llCity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|center"
+        android:orientation="horizontal"
+        android:background="@drawable/category_bckgrd_in_my_goods">
+
+        <ImageView
+            android:id="@+id/imgCity"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/delivery_bike"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/cityName"
+            style="@style/TextViewLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/city"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textColor="@color/black"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.cardview.widget.CardView>

@@ -263,6 +263,11 @@ public class Synchronizer {
                 insertDescriptions(jsonDescriptionsToSync);
                 Log.d(LOG_TAG, "Sync descriptions completed. " + jsonDescriptionsToSync.length() + " inserted or updated.");
 
+                //updates cities
+                JSONArray jsonCitiesToSync = jsonObject.getJSONArray("citiesToSync");
+                insertCities(jsonCitiesToSync);
+                Log.d(LOG_TAG, "Sync cities completed. " + jsonCitiesToSync.length() + " inserted or updated.");
+
                 //updates user locations
                 JSONArray jsonLocationsToSync = jsonObject.getJSONArray("locationsToSync");
                 insertLocations(jsonLocationsToSync);
@@ -473,6 +478,32 @@ public class Synchronizer {
 
             Description desc = new Description(descId, descValue, dCategoryId);
             descriptionsDataManager.insertDesc(desc);
+        }
+    }
+
+    private void insertCities(JSONArray jsonCitiesToSync) throws JSONException {
+
+        CitiesDataManager citiesDataManager = new CitiesDataManager(context);
+
+        for (int i = 0; i < jsonCitiesToSync.length(); i++) {
+            JSONObject JSONCity = jsonCitiesToSync.getJSONObject(i);
+            int serverCityId = JSONCity.getInt("server_city_id");
+            String cityName = JSONCity.getString("city_name");
+            int serverCountryId = JSONCity.getInt("server_country_id");
+            String longitude = JSONCity.getString("longitude");
+            String latitude = JSONCity.getString("latitude");
+
+            City city = new City();
+            Country country = new Country();
+
+            country.setServerCountryId(serverCountryId);
+            city.setCountry(country);
+            city.setServerCityId(serverCityId);
+            city.setCityName(cityName);
+            city.setLatitude(latitude);
+            city.setLongitude(longitude);
+
+            citiesDataManager.insertCity(city);
         }
     }
 
