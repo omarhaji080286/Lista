@@ -194,5 +194,6 @@
     <string name="title_good_ordered">Article commandé</string>
     <string name="select_city_msg">Prière de sélectionner votre ville. Cela nous aide à vous proposer des commerces à proximité.</string>
     <string name="t_l_mobile">Tél Mobile</string>
+    <string name="ville">Ville</string>
 
 </resources>

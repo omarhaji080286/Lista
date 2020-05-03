@@ -7,8 +7,6 @@
     android:orientation="vertical"
     tools:context=".activities.ProfileActivity">
 
-
-
     <ImageView
         android:id="@+id/imgProfile"
         android:layout_width="150dp"
@@ -59,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Ville" />
+        android:text="@string/ville" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
@@ -81,7 +79,8 @@
             android:id="@+id/imgEditCity"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/edit"/>
+            android:src="@drawable/edit"
+            android:contentDescription="@string/todo"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
