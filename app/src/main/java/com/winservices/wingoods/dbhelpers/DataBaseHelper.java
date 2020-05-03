@@ -481,6 +481,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    Cursor getShopsByServerCityId(int serverCityId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_SHOPS
+                    + " WHERE " + COL_VISIBILITY + " = 1"
+                    + " AND " + COL_SERVER_CITY_ID + " = " + serverCityId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     //ORDERS
 

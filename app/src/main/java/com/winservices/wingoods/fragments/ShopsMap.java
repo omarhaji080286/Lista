@@ -45,6 +45,7 @@ import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.CitiesDataManager;
+import com.winservices.wingoods.dbhelpers.ShopsDataManager;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
@@ -149,7 +150,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
         User user = usersDataManager.getCurrentUser();
         City city = user.getCity(getContext());
 
-        //goToLocationZoom(34.016517, -6.835741, 10);
         goToLocationZoom(Double.parseDouble(city.getLatitude()), Double.parseDouble(city.getLongitude()), 10);
 
         buildMapsData();
@@ -242,6 +242,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                 Bundle bundle = getArguments();
                 if (bundle != null) {
+
                     shops = (ArrayList<Shop>) bundle.getSerializable(ShopsActivity.SHOPS_TAG);
                     orderInitiated = bundle.getBoolean(Constants.ORDER_INITIATED);
                 }

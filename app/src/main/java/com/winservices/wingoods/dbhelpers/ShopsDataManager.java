@@ -224,5 +224,64 @@ public class ShopsDataManager {
         return shops;
     }
 
+    public ArrayList<Shop> getShopsByServerCityId(int serverCityId){
+        Cursor cursor = db.getShopsByServerCityId(serverCityId);
+        ArrayList<Shop> shops = new ArrayList<>();
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                int serverShopId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String shopName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_NAME));
+                String shopPhone = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_PHONE));
+                String openingTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_OPENING_TIME));
+                String closingTime = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CLOSING_TIME));
+                int visibility = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_VISIBILITY));
+                int serverCountryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_COUNTRY_ID));
+                String countryName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_COUNTRY_NAME));
+                //int serverCityId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CITY_ID));
+                String cityName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CITY_NAME));
+                String shopAdress = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_ADRESS));
+                String shopEmail = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_EMAIL));
+                double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LONGITUDE));
+                double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
+                int serverShopTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_SHOP_TYPE_ID));
+                String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
+                int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
+                int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
+
+                Shop shop = new Shop();
+                shop.setServerShopId(serverShopId);
+                shop.setShopName(shopName);
+                shop.setShopPhone(shopPhone);
+                shop.setOpeningTime(openingTime);
+                shop.setClosingTime(closingTime);
+                shop.setVisibility(visibility);
+                shop.setShopAdress(shopAdress);
+                shop.setShopEmail(shopEmail);
+                shop.setLongitude(longitude);
+                shop.setLatitude(latitude);
+                shop.setIsDelivering(isDelivering);
+                shop.setDeliveryDelay(deliveryDelay);
+
+                Country country = new Country(serverCountryId, countryName);
+                shop.setCountry(country);
+
+                City city = new City(serverCityId, cityName, country);
+                shop.setCity(city);
+
+                ShopType shopType = new ShopType(serverShopTypeId, shopTypeName);
+                shop.setShopType(shopType);
+
+                shop.setDefaultCategories(getDCategories(serverShopId));
+                shop.setWeekDaysOff(getWeekDaysOff(serverShopId));
+                shop.setDatesOff(getDatesOff(serverShopId));
+
+                shops.add(shop);
+            }
+            cursor.close();
+        }
+        return shops;
+    }
+
 
 }

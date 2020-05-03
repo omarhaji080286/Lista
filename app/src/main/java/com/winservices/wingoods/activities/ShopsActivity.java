@@ -24,10 +24,12 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.adapters.SectionPageAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
 import com.winservices.wingoods.dbhelpers.ShopsDataManager;
+import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.fragments.ShopsList;
 import com.winservices.wingoods.fragments.ShopsMap;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.UtilsFunctions;
@@ -169,8 +171,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
 
     private void getShops(){
 
+        UsersDataManager usersDataManager = new UsersDataManager(this);
+        User user = usersDataManager.getCurrentUser();
         ShopsDataManager shopsDataManager = new ShopsDataManager(this);
-        List<Shop> shopsFromDB = shopsDataManager.getAllShops();
+        //List<Shop> shopsFromDB = shopsDataManager.getAllShops();
+        List<Shop> shopsFromDB = shopsDataManager.getShopsByServerCityId(user.getServerCityId());
 
         for (int i = 0; i < shopsFromDB.size(); i++) {
             Shop shop = shopsFromDB.get(i);
@@ -219,6 +224,11 @@ public class ShopsActivity extends AppCompatActivity implements SearchView.OnQue
         MenuItem searchMenuItem = menu.findItem(R.id.item_search);
         SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setOnQueryTextListener(this);
+
+        //TODO
+        MenuItem filter = menu.findItem(R.id.item_filter_shops);
+        filter.setVisible(false);
+
         return true;
 
     }
