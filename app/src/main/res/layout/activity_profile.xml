@@ -1,57 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ProfileActivity"
     android:background="@color/white"
-    android:orientation="vertical">
-    
+    android:orientation="vertical"
+    tools:context=".activities.ProfileActivity">
+
+
+
     <ImageView
         android:id="@+id/imgProfile"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/profile"
         android:layout_gravity="center"
-        android:foreground="@drawable/rounded_fg"
         android:contentDescription="@string/todo"
+        android:foreground="@drawable/rounded_fg"
+        android:src="@drawable/profile"
         tools:ignore="UnusedAttribute" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
-        android:text="@string/phone"/>
+        android:layout_marginBottom="5dp"
+        android:text="@string/t_l_mobile" />
 
     <TextView
         android:id="@+id/txtPhone"
+        style="@style/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_marginStart="20dp"
-        style="@style/Title"
-        android:text="@string/hint_phone_number"/>
+        android:layout_marginBottom="10dp"
+        android:text="@string/hint_phone_number" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
-        android:text="@string/user_name_label"/>
+        android:layout_marginBottom="5dp"
+        android:text="@string/user_name_label" />
 
     <EditText
         android:id="@+id/editUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:layout_marginStart="20dp"
-        android:text="@string/user_name"
-        android:maxLength="20"
-        android:inputType="text"
+        android:layout_marginBottom="20dp"
         android:hint="@string/user_name"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLength="20"
+        android:text="@string/user_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Ville" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start|center"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/txtCityName"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/city"
+            android:layout_marginEnd="16dp"/>
+
+        <ImageView
+            android:id="@+id/imgEditCity"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/edit"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 </LinearLayout>

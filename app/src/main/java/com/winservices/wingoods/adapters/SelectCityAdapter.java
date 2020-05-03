@@ -1,8 +1,6 @@
 package com.winservices.wingoods.adapters;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.LauncherActivity;
-import com.winservices.wingoods.activities.MainActivity;
-import com.winservices.wingoods.activities.OrderActivity;
+import com.winservices.wingoods.activities.ProfileActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
@@ -28,7 +25,6 @@ import com.winservices.wingoods.fragments.WelcomeFragment;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.NetworkMonitor;
-import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,17 +33,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.CityVH> {
 
     public final static String TAG = SelectCityAdapter.class.getSimpleName();
     private Context context;
     private ArrayList<City> cities;
+    private boolean isForUpdate;
 
-    public SelectCityAdapter(Context context, ArrayList<City> cities) {
+    public SelectCityAdapter(Context context, boolean isForUpdate) {
         this.context = context;
-        this.cities = cities;
+        this.cities = new ArrayList<>();
+        this.isForUpdate = isForUpdate;
     }
 
     @NonNull
@@ -66,7 +63,7 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
         holder.llCity.setOnClickListener(view -> {
             UsersDataManager usersDataManager = new UsersDataManager(context);
             User user = usersDataManager.getCurrentUser();
-            updateUserCity(user, city.getServerCityId());
+            updateUserCity(user, city.getServerCityId(), city.getCityName());
         });
 
     }
@@ -76,7 +73,7 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
         return cities.size();
     }
 
-    private void updateUserCity(User user, int serverCityId) {
+    private void updateUserCity(User user, int serverCityId, String cityName) {
         if (NetworkMonitor.checkNetworkConnection(context)) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_UPDATE_CITY,
@@ -88,13 +85,20 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
                         if (error) {
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(context, R.string.welcome_msg, Toast.LENGTH_LONG).show();
+
                             user.setServerCityId(serverCityId);
                             UsersDataManager usersDataManager = new UsersDataManager(context);
                             usersDataManager.updateUser(user);
 
-                            LauncherActivity launcherActivity = (LauncherActivity) context;
-                            launcherActivity.displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                            if (isForUpdate){
+                                ProfileActivity profileActivity = (ProfileActivity) context;
+                                profileActivity.dialog.dismiss();
+                                profileActivity.txtCityName.setText(cityName);
+                            } else {
+                                Toast.makeText(context, R.string.welcome_msg, Toast.LENGTH_LONG).show();
+                                LauncherActivity launcherActivity = (LauncherActivity) context;
+                                launcherActivity.displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                            }
 
                         }
                     } catch (JSONException e) {
@@ -133,6 +137,12 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
         }
 
         return null;
+    }
+
+    public void setCities(ArrayList<City> cities){
+        this.cities.clear();
+        this.cities.addAll(cities);
+        notifyDataSetChanged();
     }
 
 

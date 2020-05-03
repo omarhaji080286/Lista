@@ -196,8 +196,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_USER_GPS_LOCATION = "user_gps_location";
     static final String TABLE_CITIES = "cities";
 
-
-
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
 
@@ -1066,6 +1064,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return currentUser;
     }
 
+
+
     //CATEGORIES
 
 
@@ -1361,6 +1361,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             res = db.rawQuery("SELECT " + COL_GOOD_ID + " as " + _ID + " , * "
                     + " FROM " + TABLE_GOODS
                     + " where " + COL_GOOD_ID + " = " + goodId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Cursor getCityById(int serverCityId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_SERVER_CITY_ID + " as " + _ID + " , * "
+                    + " FROM " + TABLE_CITIES
+                    + " where " + COL_SERVER_CITY_ID + " = " + serverCityId, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -65,7 +65,6 @@ public class SelectCityFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-
         getCitiesFromServer();
 
     }
@@ -100,7 +99,8 @@ public class SelectCityFragment extends Fragment {
 
                                 }
 
-                                SelectCityAdapter adapter = new SelectCityAdapter(getContext(), cities);
+                                SelectCityAdapter adapter = new SelectCityAdapter(getContext(), false);
+                                adapter.setCities(cities);
 
                                 LinearLayoutManager llm = new LinearLayoutManager(getContext());
                                 rvCities.setLayoutManager(llm);

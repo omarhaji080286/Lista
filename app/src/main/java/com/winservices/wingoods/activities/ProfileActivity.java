@@ -1,5 +1,6 @@
 package com.winservices.wingoods.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,55 +9,68 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
+import com.winservices.wingoods.adapters.SelectCityAdapter;
+import com.winservices.wingoods.dbhelpers.CitiesDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
+import com.winservices.wingoods.models.City;
+import com.winservices.wingoods.models.Country;
 import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.NetworkMonitor;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
-import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
 public class ProfileActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = ProfileActivity.class.getSimpleName();
 
-    private TextView txtPhone;
-    private EditText editUserName;
     private ImageView imgProfile;
     private String currentImagePath;
     private int serverUserId;
+    private ArrayList<City> cities = new ArrayList<>();
+    private RecyclerView rvCities;
+    private ProgressBar progressBar;
+    public AlertDialog dialog;
+    public TextView txtCityName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +82,37 @@ public class ProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        txtPhone = findViewById(R.id.txtPhone);
-        editUserName = findViewById(R.id.editUserName);
+        TextView txtPhone = findViewById(R.id.txtPhone);
+        EditText editUserName = findViewById(R.id.editUserName);
+        txtCityName = findViewById(R.id.txtCityName);
+        ImageView imgEditCity =  findViewById(R.id.imgEditCity);
         imgProfile = findViewById(R.id.imgProfile);
+
+        imgEditCity.setOnClickListener(view -> {
+            @SuppressLint("InflateParams") View mView = LayoutInflater.from(ProfileActivity.this)
+                    .inflate(R.layout.fragment_select_city, null, false);
+
+            rvCities = mView.findViewById(R.id.rvCities);
+            progressBar = mView.findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+
+            getCitiesFromServer();
+
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(ProfileActivity.this);
+            mBuilder.setView(mView);
+            dialog = mBuilder.create();
+            dialog.show();
+
+        });
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         final User currentUser = usersDataManager.getCurrentUser();
+        CitiesDataManager citiesDataManager = new CitiesDataManager(this);
+        City city = citiesDataManager.getCityById(currentUser.getServerCityId());
+
         serverUserId = currentUser.getServerUserId();
+
+        txtCityName.setText(city.getCityName());
 
         txtPhone.setText(currentUser.getUserPhone());
         if (currentUser.getUserName().equals("null")) currentUser.setUserName("");
@@ -126,16 +164,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initBtnChangePic() {
 
-        imgProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PermissionUtil permissionUtil = new PermissionUtil(getApplicationContext());
-                if (permissionUtil.checkPermission(TXT_CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    captureImage();
-                    return;
-                }
-                permissionUtil.requestPermission(TXT_CAMERA, ProfileActivity.this);
+        imgProfile.setOnClickListener(view -> {
+            PermissionUtil permissionUtil = new PermissionUtil(getApplicationContext());
+            if (permissionUtil.checkPermission(TXT_CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                captureImage();
+                return;
             }
+            permissionUtil.requestPermission(TXT_CAMERA, ProfileActivity.this);
         });
     }
 
@@ -174,7 +209,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //Bitmap imageBitmap = BitmapFactory.decodeFile(currentImagePath);
             Bitmap imageBitmap = UtilsFunctions.getOrientedBitmap(currentImagePath);
             imgProfile.setImageBitmap(imageBitmap);
             storeAndUploadImage();
@@ -188,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
                 uploadUserImage(serverUserId, getApplicationContext());
             }
         };
-        thread.run();
+        thread.start();
     }
 
     private void uploadUserImage(final int serverUserId, final Context context) {
@@ -202,7 +236,7 @@ public class ProfileActivity extends AppCompatActivity {
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
                                 boolean error = jsonObject.getBoolean("error");
-                                String message = jsonObject.getString("message");
+                                //String message = jsonObject.getString("message");
                                 if (error) {
                                     //error in server
                                     Log.d(TAG, "Error on upload user image");
@@ -254,5 +288,69 @@ public class ProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void getCitiesFromServer(){
+        if (NetworkMonitor.checkNetworkConnection(this)) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                    DataBaseHelper.HOST_URL_GET_CITIES,
+                    response -> {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                Toast.makeText(ProfileActivity.this, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                JSONArray JSONCities = jsonObject.getJSONArray("cities");
+
+                                cities.clear();
+                                for (int i = 0; i < JSONCities.length(); i++) {
+                                    JSONObject JSONCity = JSONCities.getJSONObject(i);
+
+                                    int serverCountryId = JSONCity.getInt("server_country_id");
+                                    String countryName = JSONCity.getString("country_name");
+                                    Country country = new Country(serverCountryId, countryName);
+
+                                    int serverCityId = JSONCity.getInt("server_city_id");
+                                    String cityName = JSONCity.getString("city_name");
+                                    City city = new City(serverCityId, cityName, country);
+
+                                    cities.add(city);
+                                }
+
+                                SelectCityAdapter adapter = new SelectCityAdapter(ProfileActivity.this, true);
+                                adapter.setCities(cities);
+
+                                LinearLayoutManager llm = new LinearLayoutManager(ProfileActivity.this);
+                                rvCities.setLayoutManager(llm);
+                                rvCities.setAdapter(adapter);
+                                progressBar.setVisibility(View.GONE);
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(ProfileActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    },
+                    error -> progressBar.setVisibility(View.GONE)
+            ) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> postData = new HashMap<>();
+                    postData.put("jsonData", "" + "nothing");
+                    postData.put("language", "" + Locale.getDefault().getLanguage());
+                    return postData;
+                }
+            };
+
+            RequestHandler.getInstance(ProfileActivity.this).addToRequestQueue(stringRequest);
+        } else {
+            Toast.makeText(ProfileActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 }

@@ -16,9 +16,33 @@ public class CitiesDataManager {
     private DataBaseHelper db;
     private Context context;
 
-    CitiesDataManager(Context context) {
+    public CitiesDataManager(Context context) {
         this.db = DataBaseHelper.getInstance(context);
         this.context = context;
+    }
+
+    public City getCityById(int serverCityId){
+        Cursor cursor = db.getCityById(serverCityId);
+
+        cursor.moveToNext();
+
+        //int serverCityId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+        String cityName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_CITY_NAME));
+        int serverCountryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_COUNTRY_ID));
+        String longitude = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LONGITUDE));
+        String latitude = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_LATITUDE));
+
+        City city = new City();
+        Country country = new Country();
+        country.setServerCountryId(serverCountryId);
+
+        city.setServerCityId(serverCityId);
+        city.setCityName(cityName);
+        city.setCountry(country);
+        city.setLongitude(longitude);
+        city.setLatitude(latitude);
+
+        return city;
     }
 
     void insertCity(City city) {
