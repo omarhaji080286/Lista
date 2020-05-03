@@ -213,6 +213,14 @@ public class Synchronizer {
                 Log.e(LOG_TAG, "Error : " + message);
             } else {
 
+                //update user city
+                JSONObject JsonUser = jsonObject.getJSONObject("user");
+                UsersDataManager usersDataManager = new UsersDataManager(context);
+                User user = usersDataManager.getCurrentUser();
+                user.setServerCityId(JsonUser.getInt("server_city_id"));
+                usersDataManager.updateUser(user);
+                Log.d(LOG_TAG, "User city updated.");
+
                 //updates categories with their server ids
                 JSONArray jsonCategoriesIds = jsonObject.getJSONArray("categoriesIds");
                 updateCategories(jsonCategoriesIds);
@@ -307,7 +315,6 @@ public class Synchronizer {
             int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
             int serverGroupId = JSONInvitation.getInt("server_group_id");
             int invitationResponse = JSONInvitation.getInt("invitation_response");
-
 
             ReceivedInvitation invitation = new ReceivedInvitation(serverCoUserId, serverGroupId, senderPhone);
             invitation.setResponse(invitationResponse);

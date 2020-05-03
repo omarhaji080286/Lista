@@ -1,6 +1,9 @@
 package com.winservices.wingoods.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,8 @@ import com.winservices.wingoods.utils.NetworkMonitor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -40,6 +45,7 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
     private Context context;
     private ArrayList<City> cities;
     private boolean isForUpdate;
+    private Bitmap icon;
 
     public SelectCityAdapter(Context context, boolean isForUpdate) {
         this.context = context;
@@ -51,6 +57,7 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
     @Override
     public CityVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_city_to_select, parent, false);
+
         return new CityVH(view);
     }
 
@@ -60,6 +67,7 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
         City city = this.cities.get(position);
 
         holder.cityName.setText(city.getCityName());
+
         holder.llCity.setOnClickListener(view -> {
             UsersDataManager usersDataManager = new UsersDataManager(context);
             User user = usersDataManager.getCurrentUser();

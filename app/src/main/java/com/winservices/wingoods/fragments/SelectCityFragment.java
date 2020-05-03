@@ -1,6 +1,11 @@
 package com.winservices.wingoods.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,23 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
-import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.adapters.SelectCityAdapter;
-import com.winservices.wingoods.adapters.ShopsListAdapter;
-import com.winservices.wingoods.dbhelpers.CitiesDataManager;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
-import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Country;
 import com.winservices.wingoods.utils.NetworkMonitor;
@@ -35,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -63,6 +56,7 @@ public class SelectCityFragment extends Fragment {
 
         rvCities = view.findViewById(R.id.rvCities);
         progressBar = view.findViewById(R.id.progressBar);
+
         progressBar.setVisibility(View.VISIBLE);
 
         getCitiesFromServer();

@@ -107,8 +107,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         UsersDataManager usersDataManager = new UsersDataManager(this);
         final User currentUser = usersDataManager.getCurrentUser();
-        CitiesDataManager citiesDataManager = new CitiesDataManager(this);
-        City city = citiesDataManager.getCityById(currentUser.getServerCityId());
+
+        City city = currentUser.getCity(this);
 
         serverUserId = currentUser.getServerUserId();
 

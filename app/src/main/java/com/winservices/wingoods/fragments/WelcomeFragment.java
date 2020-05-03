@@ -108,6 +108,7 @@ public class WelcomeFragment extends Fragment {
 
         linlayShops.setOnClickListener(view12 -> goToActivity(new Intent(getActivity(), ShopsActivity.class)));
 
+        linlayProfile.setEnabled(false);
         linlayProfile.setOnClickListener(view13 -> goToActivity(new Intent(getActivity(), ProfileActivity.class)));
 
         imgShare.setOnClickListener(v -> shareAppStoreLink());
@@ -323,6 +324,7 @@ public class WelcomeFragment extends Fragment {
 
                 getAvailableOrdersNum();
                 getItemsToBuyNum();
+                linlayProfile.setEnabled(true);
 
                 Log.d(TAG, "Sync BroadCast received");
             });
