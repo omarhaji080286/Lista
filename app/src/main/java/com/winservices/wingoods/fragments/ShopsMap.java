@@ -44,9 +44,12 @@ import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.CitiesDataManager;
+import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -141,8 +144,14 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        //Location : Rabat Ville Gare train
-        goToLocationZoom(34.016517, -6.835741, 10);
+
+        UsersDataManager usersDataManager = new UsersDataManager(getContext());
+        User user = usersDataManager.getCurrentUser();
+        City city = user.getCity(getContext());
+
+        //goToLocationZoom(34.016517, -6.835741, 10);
+        goToLocationZoom(Double.parseDouble(city.getLatitude()), Double.parseDouble(city.getLongitude()), 10);
+
         buildMapsData();
     }
 
@@ -199,7 +208,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                         SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(getContext());
                         String iconPath;
-
 
                         switch (marker.getSnippet()) {
                             case Constants.SHOP_TYPE_1:

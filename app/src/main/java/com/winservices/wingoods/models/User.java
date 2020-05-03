@@ -2,6 +2,7 @@ package com.winservices.wingoods.models;
 
 import android.content.Context;
 
+import com.winservices.wingoods.dbhelpers.CitiesDataManager;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 
 public class User {
@@ -158,5 +159,10 @@ public class User {
         GroupsDataManager groupsDataManager = new GroupsDataManager(context);
 
         return groupsDataManager.getGroupByUserId(this.getServerUserId());
+    }
+
+    public City getCity(Context context){
+        CitiesDataManager citiesDataManager = new CitiesDataManager(context);
+        return citiesDataManager.getCityById(this.serverCityId);
     }
 }
