@@ -46,12 +46,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private final static String webVersion = "lista_20"; //updated on 03/05/2020
 
     //TODO Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/"+webVersion+"/webservices/";
@@ -108,6 +108,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
+    static final String COL_PRICE_ID = "price_id";
 
 
     public static final String HOST_URL_STORE_DEVICE_INFOS = HOST + "storeDeviceInfos.php";
@@ -288,6 +289,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_good_id INTEGER, " +
                 "is_ordered INTEGER, " +
                 "uses_number INTEGER, " +
+                "price_id INTEGER, " +
                 "FOREIGN KEY (category_id) REFERENCES categories (category_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS received_invitations ( " +
@@ -2118,6 +2120,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
         contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
         contentValues.put(COL_USES_NUMBER, good.getUsesNumber());
+        contentValues.put(COL_PRICE_ID, good.getPriceId());
 
         long result = db.insert(TABLE_GOODS, null, contentValues);
         return (result != -1);

@@ -46,6 +46,7 @@ import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
+import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
 import org.json.JSONException;
@@ -108,7 +109,8 @@ public class WelcomeFragment extends Fragment {
 
         linlayShops.setOnClickListener(view12 -> goToActivity(new Intent(getActivity(), ShopsActivity.class)));
 
-        linlayProfile.setEnabled(false);
+        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
+        if (spm.isFirstSync()) linlayProfile.setEnabled(false);
         linlayProfile.setOnClickListener(view13 -> goToActivity(new Intent(getActivity(), ProfileActivity.class)));
 
         imgShare.setOnClickListener(v -> shareAppStoreLink());
@@ -324,6 +326,9 @@ public class WelcomeFragment extends Fragment {
 
                 getAvailableOrdersNum();
                 getItemsToBuyNum();
+
+                SharedPrefManager spm = SharedPrefManager.getInstance(context);
+                spm.storeFirstSync(false);
                 linlayProfile.setEnabled(true);
 
                 Log.d(TAG, "Sync BroadCast received");

@@ -28,6 +28,7 @@ public class Good {
     private int serverCategoryId;
     private int isOrdered;
     private int usesNumber;
+    private int priceId;
 
     public final static int IS_ORDERED = 1;
     public final static int IS_NOT_ORDERED = 0;
@@ -95,6 +96,14 @@ public class Good {
         this.quantityLevelId = quantityLevelId;
         this.isToBuy = isToBuy;
         this.sync = sync;
+    }
+
+    public int getPriceId() {
+        return priceId;
+    }
+
+    public void setPriceId(int priceId) {
+        this.priceId = priceId;
     }
 
     public int getUsesNumber() {
@@ -213,6 +222,7 @@ public class Good {
             JSONGood.put("serverCategoryId", this.serverCategoryId);
             JSONGood.put("isOrdered", this.isOrdered);
             JSONGood.put("uses_number", this.usesNumber);
+            JSONGood.put("price_id", this.priceId);
 
             return JSONGood;
 

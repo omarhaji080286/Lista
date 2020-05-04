@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class SharedPrefManager {
 
+    private static final String IS_FIRST_SYNC = "isFirstSync";
     private static final String SHARED_PREF_NAME = "listaSharedPreferences";
     private static final String KEY_ACCESS_TOKEN = "token";
     public static final String GOOGLE_PLAY_VERSION_CODE = "google_play_version_code";
@@ -62,6 +63,18 @@ public class SharedPrefManager {
     public String getToken() {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_ACCESS_TOKEN, null);
+    }
+
+    public void storeFirstSync(boolean isFirstSync) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(IS_FIRST_SYNC, isFirstSync);
+        editor.apply();
+    }
+
+    public boolean isFirstSync() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(IS_FIRST_SYNC, true);
     }
 
 

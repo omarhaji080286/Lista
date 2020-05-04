@@ -478,6 +478,7 @@ public class SignUpFragment extends Fragment {
                 int isOrdered = jsonGood.getInt("is_ordered");
                 int usesNumber = jsonGood.getInt("uses_number");
                 int crudStatus = 0;
+                int priceId = jsonGood.getInt("price_id");
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
                 Category category = categoriesDataProvider.getCategoryByServerCategoryId(serverCategoryId);
@@ -489,6 +490,7 @@ public class SignUpFragment extends Fragment {
                 good.setGoodDesc(goodDesc);
                 good.setIsOrdered(isOrdered);
                 good.setUsesNumber(usesNumber);
+                good.setPriceId(priceId);
 
                 DataManager dataManager = new DataManager(getContext());
                 dataManager.addGood(good);
@@ -550,6 +552,7 @@ public class SignUpFragment extends Fragment {
                 int serverGoodId = 0;
                 int serverCategoryId = 0;
                 int isOrdered = 0;
+                int priceId = jsonGood.getInt("price_id");
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
                 Category category = categoriesDataProvider.getCategoryByCrud(crudStatus);
@@ -560,6 +563,7 @@ public class SignUpFragment extends Fragment {
                 good.setCrudStatus(0);
                 good.setGoodDesc(goodDesc);
                 good.setIsOrdered(isOrdered);
+                good.setPriceId(priceId);
 
                 DataManager dataManager = new DataManager(getContext());
                 dataManager.addGood(good);
