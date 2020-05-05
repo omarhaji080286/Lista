@@ -46,12 +46,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private final static String webVersion = "lista_20"; //updated on 03/05/2020
 
     //TODO Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
-    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    //private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
+    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PRE_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
 
     //TODO Lista LWS_PROD
     //private static final String HOST = "http://lista-courses.com/lista_prod/"+webVersion+"/webservices/";
@@ -388,27 +388,25 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        if (oldVersion < DATABASE_VERSION){
-            /*
-            db.execSQL("DROP TABLE IF EXISTS goods ");
-            db.execSQL("DROP TABLE IF EXISTS categories ");
-            db.execSQL("DROP TABLE IF EXISTS co_users ");
-            db.execSQL("DROP TABLE IF EXISTS received_invitations ");
-            db.execSQL("DROP TABLE IF EXISTS dates_off ");
-            db.execSQL("DROP TABLE IF EXISTS week_days_off ");
-            */
-            db.execSQL("DROP TABLE IF EXISTS orders ");
-            db.execSQL("DROP TABLE IF EXISTS shops ");
-            /*
-            db.execSQL("DROP TABLE IF EXISTS users ");
-            db.execSQL("DROP TABLE IF EXISTS groups ");
-            db.execSQL("DROP TABLE IF EXISTS amounts ");
-            db.execSQL("DROP TABLE IF EXISTS descriptions ");
-            db.execSQL("DROP TABLE IF EXISTS user_locations ");
-            */
+        switch (oldVersion){
+            case 8 :
+            case 9 :
+                db.execSQL("CREATE TABLE IF NOT EXISTS cities ( " +
+                        "server_city_id INTEGER PRIMARY KEY, " +
+                        "city_name TEXT, " +
+                        "server_country_id INTEGER, " +
+                        "longitude TEXT, " +
+                        "latitude TEXT ) ");
+                db.execSQL("ALTER TABLE users ADD COLUMN server_city_id INTEGER");
+                db.execSQL("ALTER TABLE goods ADD COLUMN  price_id INTEGER");
+                break;
+            default:
+                db.execSQL("DROP TABLE IF EXISTS shops ");
+                db.execSQL("DROP TABLE IF EXISTS users ");
+                onCreate(db);
         }
 
-        onCreate(db);
+
     }
 
 

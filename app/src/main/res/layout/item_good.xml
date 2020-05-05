@@ -63,8 +63,8 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="12sp"
                 android:textColor="@color/white"
-                android:maxLines="1"
-                android:maxLength="15"
+                android:maxLines="2"
+                android:maxLength="35"
                 android:ellipsize="end"/>
 
             <ImageView
