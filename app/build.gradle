@@ -68,6 +68,9 @@ dependencies {
     //Custom DatePicker
     implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
 
+    //handle images
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

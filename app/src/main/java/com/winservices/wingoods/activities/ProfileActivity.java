@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -321,8 +322,10 @@ public class ProfileActivity extends AppCompatActivity {
                                 SelectCityAdapter adapter = new SelectCityAdapter(ProfileActivity.this, true);
                                 adapter.setCities(cities);
 
-                                LinearLayoutManager llm = new LinearLayoutManager(ProfileActivity.this);
-                                rvCities.setLayoutManager(llm);
+                                final int GRID_COLUMN_NUMBER = 3;
+                                GridLayoutManager glm = new GridLayoutManager(ProfileActivity.this, GRID_COLUMN_NUMBER);
+
+                                rvCities.setLayoutManager(glm);
                                 rvCities.setAdapter(adapter);
                                 progressBar.setVisibility(View.GONE);
 

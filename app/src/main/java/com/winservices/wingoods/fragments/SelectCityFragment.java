@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,9 +97,13 @@ public class SelectCityFragment extends Fragment {
                                 SelectCityAdapter adapter = new SelectCityAdapter(getContext(), false);
                                 adapter.setCities(cities);
 
-                                LinearLayoutManager llm = new LinearLayoutManager(getContext());
-                                rvCities.setLayoutManager(llm);
+                                final int GRID_COLUMN_NUMBER = 3;
+                                GridLayoutManager glm = new GridLayoutManager(getActivity(), GRID_COLUMN_NUMBER);
+
+                                rvCities.setLayoutManager(glm);
                                 rvCities.setAdapter(adapter);
+                                rvCities.setHasFixedSize(true);
+
                                 progressBar.setVisibility(View.GONE);
 
                             }

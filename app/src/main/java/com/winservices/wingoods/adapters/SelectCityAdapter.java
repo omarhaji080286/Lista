@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.activities.ProfileActivity;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import static com.winservices.wingoods.dbhelpers.DataBaseHelper.APP_IMG_URL;
 
 public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.CityVH> {
 
@@ -67,6 +70,9 @@ public class SelectCityAdapter extends RecyclerView.Adapter<SelectCityAdapter.Ci
         City city = this.cities.get(position);
 
         holder.cityName.setText(city.getCityName());
+
+        String imgUrl = APP_IMG_URL + city.getServerCityId()+".jpg";
+        Picasso.get().load(imgUrl).into(holder.imgCity);
 
         holder.llCity.setOnClickListener(view -> {
             UsersDataManager usersDataManager = new UsersDataManager(context);
