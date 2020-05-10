@@ -57,7 +57,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopPhone.setText(shop.getShopPhone());
         holder.city.setText(shop.getCity().getCityName());
 
-        if (shop.getFacebookUrl()!=null && !shop.getFacebookUrl().equals("null")){
+        if (shop.getFacebookUrl()!=null && !shop.getFacebookUrl().equals("null") && !orderInitiated){
             String imgUrl = APP_IMG_URL + "facebook.png";
             Picasso.get().load(imgUrl).into(holder.imgFaceBook);
             holder.imgFaceBook.setVisibility(View.VISIBLE);
@@ -65,6 +65,8 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                 Intent fbIntent = UtilsFunctions.newFacebookIntent(context, shop.getFacebookUrl());
                 context.startActivity(fbIntent);
             });
+        } else {
+            holder.imgFaceBook.setVisibility(View.GONE);
         }
 
 
