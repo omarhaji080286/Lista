@@ -203,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
         //go to activity
         switch (id) {
             case android.R.id.home:
+                Intent intent = new Intent(MainActivity.this, LauncherActivity.class);
+                startActivity(intent);
                 finish();
                 break;
             case R.id.action_invite:

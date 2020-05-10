@@ -1,7 +1,6 @@
 package com.winservices.wingoods.models;
 
 import com.winservices.wingoods.BuildConfig;
-import com.winservices.wingoods.dbhelpers.UsersDataManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

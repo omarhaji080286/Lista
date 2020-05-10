@@ -2,11 +2,8 @@ package com.winservices.wingoods.services;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
@@ -20,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DeviceInfoService implements Runnable {
 
@@ -40,30 +38,22 @@ public class DeviceInfoService implements Runnable {
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_STORE_DEVICE_INFOS,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
-                                String message = jsonObject.getString("message");
-                                if (error) {
-                                    //error in server
-                                    Log.d(TAG, message);
-                                } else {
-                                    Log.d(TAG, message);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                    response -> {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
+                            if (error) {
+                                //error in server
+                                Log.d(TAG, message);
+                            } else {
+                                Log.d(TAG, message);
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d(TAG, error.getMessage());
-                        }
-                    }
+                    error -> Log.d(TAG, Objects.requireNonNull(error.getMessage()))
             ) {
                 @Override
                 protected Map<String, String> getParams() {

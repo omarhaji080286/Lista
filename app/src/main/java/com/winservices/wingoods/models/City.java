@@ -7,11 +7,32 @@ public class City implements Serializable{
     private int serverCityId;
     private String cityName;
     private Country country;
+    private String longitude;
+    private String latitude;
 
     public City(int serverCityId, String cityName, Country country) {
         this.serverCityId = serverCityId;
         this.cityName = cityName;
         this.country = country;
+    }
+
+    public City() {
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
     public int getServerCityId() {

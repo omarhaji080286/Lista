@@ -2,6 +2,7 @@ package com.winservices.wingoods.models;
 
 import android.content.Context;
 
+import com.winservices.wingoods.dbhelpers.CitiesDataManager;
 import com.winservices.wingoods.dbhelpers.GroupsDataManager;
 
 public class User {
@@ -21,6 +22,7 @@ public class User {
     private int groupId;
     private String fcmToken;
     private String userPhone;
+    private int serverCityId;
 
     public User(String userPhone) {
         this.userPhone = userPhone;
@@ -54,6 +56,14 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public int getServerCityId() {
+        return serverCityId;
+    }
+
+    public void setServerCityId(int serverCityId) {
+        this.serverCityId = serverCityId;
     }
 
     public String getUserPhone() {
@@ -147,8 +157,12 @@ public class User {
     public Group getGroup(Context context) {
 
         GroupsDataManager groupsDataManager = new GroupsDataManager(context);
-        Group group = groupsDataManager.getGroupByUserId(this.getServerUserId());
 
-        return group;
+        return groupsDataManager.getGroupByUserId(this.getServerUserId());
+    }
+
+    public City getCity(Context context){
+        CitiesDataManager citiesDataManager = new CitiesDataManager(context);
+        return citiesDataManager.getCityById(this.serverCityId);
     }
 }

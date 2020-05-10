@@ -8,16 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +18,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -44,9 +44,13 @@ import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.adapters.DefaultCategoriesAdapter;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
+import com.winservices.wingoods.dbhelpers.CitiesDataManager;
+import com.winservices.wingoods.dbhelpers.ShopsDataManager;
+import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -111,9 +115,14 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
         MapView mapView = mView.findViewById(R.id.mapview_shops);
         if (mapView != null) {
-            mapView.onCreate(null);
-            mapView.onResume();
-            mapView.getMapAsync(this);
+            try {
+                mapView.onCreate(null);
+                mapView.onResume();
+                mapView.getMapAsync(this);
+            } catch (Exception e) {
+                Log.e(TAG, "error onCreate MapView : " + e.toString());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -136,8 +145,13 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        //Location : Rabat Ville Gare train
-        goToLocationZoom(34.016517, -6.835741, 10);
+
+        UsersDataManager usersDataManager = new UsersDataManager(getContext());
+        User user = usersDataManager.getCurrentUser();
+        City city = user.getCity(getContext());
+
+        goToLocationZoom(Double.parseDouble(city.getLatitude()), Double.parseDouble(city.getLongitude()), 10);
+
         buildMapsData();
     }
 
@@ -195,7 +209,6 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
                         SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(getContext());
                         String iconPath;
 
-
                         switch (marker.getSnippet()) {
                             case Constants.SHOP_TYPE_1:
                                 iconPath = sharedPrefManager.getShopTypeImagePath(1);
@@ -229,6 +242,7 @@ public class ShopsMap extends Fragment implements OnMapReadyCallback {
 
                 Bundle bundle = getArguments();
                 if (bundle != null) {
+
                     shops = (ArrayList<Shop>) bundle.getSerializable(ShopsActivity.SHOPS_TAG);
                     orderInitiated = bundle.getBoolean(Constants.ORDER_INITIATED);
                 }

@@ -1,25 +1,23 @@
 package com.winservices.wingoods.models;
 
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.DrawFilter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.winservices.wingoods.R;
-import com.winservices.wingoods.utils.SharedPrefManager;
-import com.winservices.wingoods.utils.UtilsFunctions;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Shop implements Parcelable {
 
+    public static final int IS_DELIVERING_ONLY = 2;
     public static final int IS_DELIVERING = 1;
     public static final int IS_NOT_DELIVERING = 0;
-    public static final String DEFAULT_IMAGE = "defaultImage";
+    //public static final String DEFAULT_IMAGE = "defaultImage";
     public static final String PREFIX_SHOP = "shop_";
     public static final Parcelable.Creator<Shop> CREATOR = new Parcelable.Creator<Shop>() {
         public Shop createFromParcel(Parcel in) {
@@ -46,6 +44,9 @@ public class Shop implements Parcelable {
     private String closingTime;
     private int visibility;
     private int isDelivering;
+    private int deliveryDelay;
+    private List<WeekDayOff> weekDaysOff;
+    private List<DateOff> datesOff;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -62,18 +63,38 @@ public class Shop implements Parcelable {
         this.isDelivering = input.readInt();
         this.defaultCategories = new ArrayList<>();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
+        this.weekDaysOff = new ArrayList<>();
+        input.readTypedList(weekDaysOff, WeekDayOff.CREATOR);
+        this.datesOff = new ArrayList<>();
+        input.readTypedList(datesOff, DateOff.CREATOR);
 
     }
 
     public Shop() {
     }
 
-    public static Bitmap getShopImage(Context context, int serverShopId) {
+    /*public static Bitmap getShopImage(Context context, int serverShopId) {
         String imagePath = SharedPrefManager.getInstance(context).getImagePath(Shop.PREFIX_SHOP + serverShopId);
-        if (imagePath!=null) {
+        if (imagePath != null) {
             return UtilsFunctions.getOrientedBitmap(imagePath);
         }
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_shop_image);
+    }*/
+
+    public List<WeekDayOff> getWeekDaysOff() {
+        return weekDaysOff;
+    }
+
+    public void setWeekDaysOff(List<WeekDayOff> weekDaysOff) {
+        this.weekDaysOff = weekDaysOff;
+    }
+
+    public List<DateOff> getDatesOff() {
+        return datesOff;
+    }
+
+    public void setDatesOff(List<DateOff> datesOff) {
+        this.datesOff = datesOff;
     }
 
     public List<DefaultCategory> getDefaultCategories() {
@@ -82,6 +103,14 @@ public class Shop implements Parcelable {
 
     public void setDefaultCategories(List<DefaultCategory> defaultCategories) {
         this.defaultCategories = defaultCategories;
+    }
+
+    public int getDeliveryDelay() {
+        return deliveryDelay;
+    }
+
+    public void setDeliveryDelay(int deliveryDelay) {
+        this.deliveryDelay = deliveryDelay;
     }
 
     public int getIsDelivering() {
@@ -224,7 +253,100 @@ public class Shop implements Parcelable {
         parcel.writeInt(visibility);
         parcel.writeInt(isDelivering);
         parcel.writeTypedList(defaultCategories);
+        parcel.writeTypedList(weekDaysOff);
+        parcel.writeTypedList(datesOff);
 
+    }
+
+    public Calendar[] getNotWorkedDays() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+
+        int totalSize;
+        int calendarSize = datesOff.size();
+
+        Calendar[] dayOffCalendar = getDayOffCalendar();
+
+        totalSize = calendarSize + dayOffCalendar.length + this.getDeliveryDelay();
+        Calendar[] daysOff;
+        if (isTodayExcluded()){
+            daysOff = new Calendar[totalSize+1];
+        } else {
+            daysOff = new Calendar[totalSize];
+        }
+
+
+        int i;
+        for (i = 0; i < calendarSize; i++) {
+            Calendar notWorkedDate;
+            Date date;
+            try {
+                date = sdf.parse(datesOff.get(i).getDateOffValue());
+                notWorkedDate = dateToCalendar(date);
+                daysOff[i] = notWorkedDate;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        System.arraycopy(dayOffCalendar, 0, daysOff, i, dayOffCalendar.length);
+
+        //exclude delay days
+        int k = datesOff.size() + dayOffCalendar.length;
+        Calendar c = Calendar.getInstance();
+        int delay = this.getDeliveryDelay();
+        for (int j = 0; j < delay; j++) {
+            daysOff[k] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 1);
+            k++;
+        }
+
+        //check if today must be excluded (2 hours left to shop closing)
+        if (isTodayExcluded()){
+            daysOff[totalSize] = Calendar.getInstance();
+        }
+
+        return daysOff;
+    }
+
+    private Calendar[] getDayOffCalendar() {
+
+        List<WeekDayOff> daysOff = this.getWeekDaysOff();
+
+        int totalDaysOff = daysOff.size() * 5;
+        Calendar[] daysOffArray = new Calendar[totalDaysOff];
+
+        int j = 0;
+        for (int i = 0; i < daysOff.size(); i++) {
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.DAY_OF_WEEK, daysOff.get(i).getDayOff());
+            daysOffArray[j] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 7);
+            daysOffArray[j + 1] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 7);
+            daysOffArray[j + 2] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 7);
+            daysOffArray[j + 3] = dateToCalendar(c.getTime());
+            c.add(Calendar.DATE, 7);
+            daysOffArray[j + 4] = dateToCalendar(c.getTime());
+            j = j + 5;
+        }
+
+        return daysOffArray;
+    }
+
+    private Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
+    private boolean isTodayExcluded(){
+        int closingHour = Integer.parseInt(this.closingTime.substring(0,2));
+        Calendar rightNow = Calendar.getInstance();
+        int currentHourIn24Format = rightNow.get(Calendar.HOUR_OF_DAY);
+
+        return currentHourIn24Format > closingHour - 2;
     }
 
 }

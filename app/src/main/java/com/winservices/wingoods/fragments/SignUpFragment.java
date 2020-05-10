@@ -4,9 +4,6 @@ package com.winservices.wingoods.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,23 +14,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.LauncherActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -49,7 +42,6 @@ import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Good;
 import com.winservices.wingoods.models.Group;
 import com.winservices.wingoods.models.User;
-import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.services.EventService;
 import com.winservices.wingoods.utils.Color;
 import com.winservices.wingoods.utils.Constants;
@@ -132,62 +124,53 @@ public class SignUpFragment extends Fragment {
         editVerifCode.setEnabled(false);
         btnSignUp.setEnabled(false);
 
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (NetworkMonitor.checkNetworkConnection(Objects.requireNonNull(getContext()))) {
+        btnContinue.setOnClickListener(view1 -> {
+            if (NetworkMonitor.checkNetworkConnection(Objects.requireNonNull(getContext()))) {
 
-                    final String phone = editPhone.getText().toString();
-                    String userName = editUserName.getText().toString();
+                final String phone = editPhone.getText().toString();
+                String userName = editUserName.getText().toString();
 
-                    String completePhone = "+212" + phone;
-                    if (UtilsFunctions.isEmulator()) {
-                        completePhone = "+16" + phone; //whitelist number on Firebase, 123456 is the corresponding verification number
-                    }
-
-                    if (isInputsOk(phone, userName)) {
-
-                        sendVerifCode(completePhone);
-
-                        btnContinue.setVisibility(View.GONE);
-                        linlayPhoneCointaner.setVisibility(View.GONE);
-                        editUserName.setVisibility(View.GONE);
-                        btnSignUp.setVisibility(View.VISIBLE);
-                        editVerifCode.setVisibility(View.VISIBLE);
-
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(getString(R.string.sms_sent_to));
-                        sb.append(completePhone);
-                        sb.append(getString(R.string.with_code));
-
-                        txtDescription.setText(sb);
-
-                    }
-
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                String completePhone = "+212" + phone;
+                if (UtilsFunctions.isEmulator()) {
+                    completePhone = "+16" + phone; //whitelist number on Firebase, 123456 is the corresponding verification number
                 }
+
+                if (isInputsOk(phone, userName)) {
+
+                    sendVerifCode(completePhone);
+
+                    btnContinue.setVisibility(View.GONE);
+                    linlayPhoneCointaner.setVisibility(View.GONE);
+                    editUserName.setVisibility(View.GONE);
+                    btnSignUp.setVisibility(View.VISIBLE);
+                    editVerifCode.setVisibility(View.VISIBLE);
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(getString(R.string.sms_sent_to));
+                    sb.append(completePhone);
+                    sb.append(getString(R.string.with_code));
+
+                    txtDescription.setText(sb);
+
+                }
+
+            } else {
+                Toast.makeText(getContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
             }
         });
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (NetworkMonitor.checkNetworkConnection(Objects.requireNonNull(getContext()))) {
-                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(Objects.requireNonNull(getActivity()), new OnSuccessListener<InstanceIdResult>() {
-                        @Override
-                        public void onSuccess(InstanceIdResult instanceIdResult) {
-                            String newToken = instanceIdResult.getToken();
-                            SharedPrefManager.getInstance(getContext()).storeToken(newToken);
-                            Log.d(TAG, "Token: " + newToken);
-                        }
-                    });
-                    verifySignUpCode();
-                } else {
-                    Toast.makeText(getContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
-                }
-
+        btnSignUp.setOnClickListener(view12 -> {
+            if (NetworkMonitor.checkNetworkConnection(Objects.requireNonNull(getContext()))) {
+                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(Objects.requireNonNull(getActivity()), instanceIdResult -> {
+                    String newToken = instanceIdResult.getToken();
+                    SharedPrefManager.getInstance(getContext()).storeToken(newToken);
+                    Log.d(TAG, "Token: " + newToken);
+                });
+                verifySignUpCode();
+            } else {
+                Toast.makeText(getContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
             }
+
         });
 
     }
@@ -229,31 +212,28 @@ public class SignUpFragment extends Fragment {
 
     private void signInWithPhoneAuthCredential(final PhoneAuthCredential credential) {
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser user = task.getResult().getUser();
+                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = Objects.requireNonNull(task.getResult()).getUser();
 
-                                    Log.d(TAG, "signIn success - phone number : " + user.getPhoneNumber());
-                                    Log.d(TAG, "signIn success - display name : " + user.getDisplayName());
+                        Log.d(TAG, "signIn success - phone number : " + user.getPhoneNumber());
+                        Log.d(TAG, "signIn success - display name : " + user.getDisplayName());
 
-                                    registerUserToAppServer(getContext(), getUserToRegister());
+                        registerUserToAppServer(getContext(), getUserToRegister());
 
-                                } else {
-                                    Log.d(TAG, "signIn : failure = " + task.getException());
-                                    Toast.makeText(getContext(), R.string.sign_in_failed, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "signIn : failure = " + task.getException());
+                        Toast.makeText(getContext(), R.string.sign_in_failed, Toast.LENGTH_SHORT).show();
 
-                                    /*if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                        Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                    }*/
-                                }
-                            }
-                        }
+                        /*if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        }*/
+                    }
+                }
                 );
     }
 
-    private User getUserToRegister(){
+    private User getUserToRegister() {
         String fcmToken = SharedPrefManager.getInstance(getContext()).getToken();
 
         //TODO - for release
@@ -276,7 +256,7 @@ public class SignUpFragment extends Fragment {
         return userToRegister;
     }
 
-    public void registerUserToAppServer(final Context context, final User userToRegister) {
+    private void registerUserToAppServer(final Context context, final User userToRegister) {
 
         if (NetworkMonitor.checkNetworkConnection(context)) {
 
@@ -285,100 +265,100 @@ public class SignUpFragment extends Fragment {
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_REGISTER_USER,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
-                                String message = jsonObject.getString("message");
+                    response -> {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
+                            String message = jsonObject.getString("message");
 
-                                if (error) {
-                                    //Registering FAILED
-                                    dialog.dismiss();
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                                    Log.d(TAG, "onResponse: Registering failed, " + message);
+                            if (error) {
+                                //Registering FAILED
+                                dialog.dismiss();
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "onResponse: Registering failed, " + message);
 
-                                } else {
-                                    //Registering OK
+                            } else {
+                                //Registering OK
 
-                                    boolean isUserRegistered = jsonObject.getBoolean("is_user_registered");
+                                boolean isUserRegistered = jsonObject.getBoolean("is_user_registered");
+                                UsersDataManager usersDataManager = new UsersDataManager(context);
+                                if (isUserRegistered) {
 
-                                    if (isUserRegistered) {
+                                    JSONObject JsonUser = jsonObject.getJSONObject("user");
 
-                                        JSONObject JsonUser = jsonObject.getJSONObject("user");
+                                    int serverUserId = JsonUser.getInt("server_user_id");
+                                    String email = JsonUser.getString("email");
+                                    String userName = JsonUser.getString("user_name");
+                                    int serverGroupId = JsonUser.getInt("server_group_id");
+                                    int serverCityId = JsonUser.getInt("server_city_id");
 
-                                        int serverUserId = JsonUser.getInt("server_user_id");
-                                        String email = JsonUser.getString("email");
-                                        String userName = JsonUser.getString("user_name");
-                                        int serverGroupId = JsonUser.getInt("server_group_id");
+                                    userToRegister.setServerUserId(serverUserId);
+                                    userToRegister.setEmail(email);
+                                    userToRegister.setUserName(userName);
+                                    if (serverGroupId != 0)
+                                        userToRegister.setServerGroupId(serverGroupId);
+                                    userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
+                                    userToRegister.setServerCityId(serverCityId);
 
-                                        userToRegister.setServerUserId(serverUserId);
-                                        userToRegister.setEmail(email);
-                                        userToRegister.setUserName(userName);
-                                        if (serverGroupId != 0)
-                                            userToRegister.setServerGroupId(serverGroupId);
-                                        userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
 
-                                        UsersDataManager usersDataManager = new UsersDataManager(context);
-                                        if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
-                                            usersDataManager.updateLastLoggedIn(serverUserId);
-                                            addUserItems(jsonObject);
-                                            if (serverGroupId != 0) addUserGroup(jsonObject);
-                                        }
-
-                                        //log event
-                                        Bundle eventParams = new Bundle();
-                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
-                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
-                                        EventService eventService = new EventService(getContext());
-                                        eventService.logEvent(FirebaseAnalytics.Event.SIGN_UP, eventParams);
-
-                                    } else {
-                                        int serverUserId = jsonObject.getInt("server_user_id");
-                                        userToRegister.setServerUserId(serverUserId);
-                                        userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
-
-                                        UsersDataManager usersDataManager = new UsersDataManager(context);
-                                        if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
-                                            usersDataManager.updateLastLoggedIn(serverUserId);
-                                            addDefaultItems(jsonObject);
-                                        }
-
-                                        //log event
-                                        Bundle eventParams = new Bundle();
-                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
-                                        eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
-                                        EventService eventService = new EventService(getContext());
-                                        eventService.logEvent(FirebaseAnalytics.Event.LOGIN, eventParams);
+                                    if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
+                                        usersDataManager.updateLastLoggedIn(serverUserId);
+                                        addUserItems(jsonObject);
+                                        if (serverGroupId != 0) addUserGroup(jsonObject);
                                     }
 
-                                    dialog.dismiss();
+                                    //log event
+                                    Bundle eventParams = new Bundle();
+                                    eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
+                                    eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
+                                    EventService eventService = new EventService(getContext());
+                                    eventService.logEvent(FirebaseAnalytics.Event.SIGN_UP, eventParams);
 
-                                    Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
-                                    LauncherActivity launcherActivity = (LauncherActivity) getActivity();
-                                    Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                                } else {
+                                    int serverUserId = jsonObject.getInt("server_user_id");
+                                    userToRegister.setServerUserId(serverUserId);
+                                    userToRegister.setLastLoggedIn(DataBaseHelper.IS_LOGGED_IN);
 
+                                    if (usersDataManager.addUser(userToRegister) == Constants.SUCCESS) {
+                                        usersDataManager.updateLastLoggedIn(serverUserId);
+                                        addDefaultItems(jsonObject);
+                                    }
+
+                                    //log event
+                                    Bundle eventParams = new Bundle();
+                                    eventParams.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(userToRegister.getUserPhone()));
+                                    eventParams.putString(FirebaseAnalytics.Param.ITEM_NAME, userToRegister.getUserName());
+                                    EventService eventService = new EventService(getContext());
+                                    eventService.logEvent(FirebaseAnalytics.Event.LOGIN, eventParams);
                                 }
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                dialog.dismiss();
+
+                                //Toast.makeText(getContext(), R.string.welcome_msg, Toast.LENGTH_SHORT).show();
+
+                                LauncherActivity launcherActivity = (LauncherActivity) getActivity();
+                                if (usersDataManager.getCurrentUser().getServerCityId()!=0){
+                                    Objects.requireNonNull(launcherActivity).displayFragment(new WelcomeFragment(), WelcomeFragment.TAG);
+                                } else {
+                                    Objects.requireNonNull(launcherActivity).displayFragment(new SelectCityFragment(), SelectCityFragment.TAG);
+                                }
+
                             }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //Registering FAILED
-                            dialog.dismiss();
-                            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
-                            error.printStackTrace();
-                            Log.d(TAG, "onErrorResponse: " + error.toString());
-                        }
+                    error -> {
+                        //Registering FAILED
+                        dialog.dismiss();
+                        Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                        Log.d(TAG, "onErrorResponse: " + error.toString());
                     }
             ) {
                 @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
+                protected Map<String, String> getParams() {
                     Map<String, String> postData = new HashMap<>();
                     postData.put("email", "" + userToRegister.getEmail());
                     postData.put("password", "" + userToRegister.getPassword());
@@ -498,6 +478,7 @@ public class SignUpFragment extends Fragment {
                 int isOrdered = jsonGood.getInt("is_ordered");
                 int usesNumber = jsonGood.getInt("uses_number");
                 int crudStatus = 0;
+                int priceId = jsonGood.getInt("price_id");
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
                 Category category = categoriesDataProvider.getCategoryByServerCategoryId(serverCategoryId);
@@ -509,6 +490,7 @@ public class SignUpFragment extends Fragment {
                 good.setGoodDesc(goodDesc);
                 good.setIsOrdered(isOrdered);
                 good.setUsesNumber(usesNumber);
+                good.setPriceId(priceId);
 
                 DataManager dataManager = new DataManager(getContext());
                 dataManager.addGood(good);
@@ -539,7 +521,7 @@ public class SignUpFragment extends Fragment {
                 String email = currentUser.getEmail();
                 int userId = currentUser.getUserId();
                 int serverCategoryId = 0;
-                int color = Color.getRandomColor(getContext());
+                int color = Color.getRandomColor(Objects.requireNonNull(getContext()));
 
                 String dCategoryImage = JSONCategory.getString("d_category_image");
                 SharedPrefManager.getInstance(getContext()).storeImageToFile(dCategoryImage, "png", DefaultCategory.PREFIX_D_CATEGORY, dCategoryId);
@@ -570,6 +552,7 @@ public class SignUpFragment extends Fragment {
                 int serverGoodId = 0;
                 int serverCategoryId = 0;
                 int isOrdered = 0;
+                int priceId = jsonGood.getInt("price_id");
 
                 CategoriesDataProvider categoriesDataProvider = new CategoriesDataProvider(getContext());
                 Category category = categoriesDataProvider.getCategoryByCrud(crudStatus);
@@ -580,6 +563,7 @@ public class SignUpFragment extends Fragment {
                 good.setCrudStatus(0);
                 good.setGoodDesc(goodDesc);
                 good.setIsOrdered(isOrdered);
+                good.setPriceId(priceId);
 
                 DataManager dataManager = new DataManager(getContext());
                 dataManager.addGood(good);

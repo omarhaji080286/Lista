@@ -3,10 +3,13 @@ package com.winservices.wingoods.dbhelpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.UserLocation;
 import com.winservices.wingoods.utils.Constants;
 
 public class UsersDataManager {
@@ -73,6 +76,10 @@ public class UsersDataManager {
         return result;
     }
 
+    void insertUserLocation(UserLocation userLocation) {
+        db.insertUserLocation(userLocation);
+    }
+
     public static class UpdateUser implements Runnable{
 
         private User user;
@@ -85,9 +92,28 @@ public class UsersDataManager {
 
         @Override
         public void run() {
-            UsersDataManager descriptionsDataManager = new UsersDataManager(context);
-            descriptionsDataManager.updateUser(user);
+            UsersDataManager usersDataManager = new UsersDataManager(context);
+            usersDataManager.updateUser(user);
         }
+    }
+
+    public String[] getUserLocations() {
+        User currentUser = getCurrentUser();
+        Cursor cursor = db.getUserLocations(currentUser.getServerUserId());
+        String[] Addresses = new String[cursor.getCount()];
+        int i = 0;
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                //int userLocationId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper._ID));
+                String userAddress = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_ADDRESS));
+                //String userGpsLocation = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USER_GPS_LOCATION));
+
+                Addresses[i] = userAddress;
+                i = i + 1;
+            }
+            cursor.close();
+        }
+        return Addresses;
     }
 
 

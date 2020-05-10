@@ -4,126 +4,201 @@
     android:layout_height="match_parent"
     android:paddingTop="24dp"
     android:background="@color/white"
-    android:gravity="center"
+    android:gravity="start"
     android:orientation="vertical">
 
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txtCollectTimeLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/collect_time"/>
-
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llDate"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:weightSum="100">
+        android:gravity="start|center">
 
-        <NumberPicker
-            android:id="@+id/pickerDay"
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="50" />
+            android:text="@string/collect_time"
+            style="@style/TextViewLabel"/>
 
-        <NumberPicker
-            android:id="@+id/pickerTime"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:id="@+id/editDate"
+            style="@style/EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="50"
-            android:visibility="gone"/>
+            android:inputType="text"
+            android:maxLength="150"
+            android:lines="2"
+            android:hint="@string/jj_mm_aaaa"
+            android:autofillHints="@string/collect_time"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/imgCalendar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/calendar"
+            android:contentDescription="@string/todo" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/txtDateWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/todo"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/llDeliveryModule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
-
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/cbHomeDelivery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:checked="true"
-            android:button="@null"
-            android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-            android:text="@string/auto_collect"
-            style="@style/TextViewLabel"
-            android:layout_marginTop="16dp"/>
+        android:visibility="visible">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llAddress"
-            android:layout_margin="16dp"
+            android:id="@+id/llOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_margin="16dp"
+            android:gravity="start|center"
+            android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <ImageView
+                android:id="@+id/imgOption"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/delivery_bike" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/cbHomeDelivery"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/delivery_address"
-                style="@style/TextViewLabel"/>
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editUserAddress"
-                style="@style/EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLength="150"
-                android:lines="2"
-                android:hint="@string/delivery_address"
-                android:autofillHints="@string/user_address_text" />
+                android:button="@null"
+                android:checked="true"
+                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/auto_collect" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llLocation"
-            android:layout_margin="16dp"
+            android:id="@+id/llAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_margin="16dp"
+            android:gravity="start|center"
+            android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/gps_location"
-                style="@style/TextViewLabel"/>
+            <ImageView
+                android:id="@+id/imgAddress"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/home" />
 
-            <RadioGroup
-                android:id="@+id/rgLocation"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_above="@+id/view_below" >
+                android:layout_marginStart="6dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/radioGetMyLocation"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextViewLabel"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:checked="false"
-                    android:text="@string/get_my_location" />
+                    android:text="@string/delivery_address" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/radioSetLocationManually"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:checked="false"
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/editUserAddress"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/set_location_manually"
-                    android:textSize="12sp"/>
-            </RadioGroup>
+                    android:autofillHints="@string/user_address_text"
+                    android:completionThreshold="1"
+                    android:ems="10"
+                    android:hint="@string/delivery_address"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textAutoComplete|textAutoCorrect"
+                    android:lines="1"
+                    android:maxLength="150" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgLocation"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/gps" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextViewLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gps_location" />
+
+                    <RadioGroup
+                        android:id="@+id/rgLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatRadioButton
+                            android:id="@+id/radioGetMyLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="@string/get_my_location"
+                            android:textSize="12sp" />
+
+                        <androidx.appcompat.widget.AppCompatRadioButton
+                            android:id="@+id/radioSetLocationManually"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="@string/set_location_manually"
+                            android:textSize="12sp" />
+                    </RadioGroup>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -135,17 +210,15 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/editLocation"
                     style="@style/EditText"
-                    android:layout_marginStart="@dimen/fab_margin"
-                    android:layout_marginEnd="@dimen/fab_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLength="20"
-                    android:lines="2"
-                    android:hint="@string/GPS_hint"
-                    android:visibility="visible"
+                    android:layout_gravity="center"
                     android:autofillHints="@string/GPS_hint"
-                    android:layout_gravity="center"/>
+                    android:hint="@string/GPS_hint"
+                    android:inputType="text"
+                    android:lines="2"
+                    android:maxLength="20"
+                    android:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/imgBtnGoogleMaps"
@@ -153,22 +226,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/location"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <Button
-        android:id="@+id/btnSubmit"
-        style="@style/Button"
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/submit" />
 
 </LinearLayout>

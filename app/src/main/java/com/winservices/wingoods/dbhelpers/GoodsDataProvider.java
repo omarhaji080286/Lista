@@ -37,6 +37,7 @@ public class GoodsDataProvider {
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
             int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+            int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
@@ -44,6 +45,7 @@ public class GoodsDataProvider {
             good.setServerCategoryId(serverCategoryId);
             good.setIsOrdered(isOrdered);
             good.setUsesNumber(usesNumber);
+            good.setPriceId(priceId);
 
             list.add(good);
         }
@@ -70,12 +72,14 @@ public class GoodsDataProvider {
             int serverGoodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GOOD_ID));
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
             int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+            int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
             good.setGoodDesc(goodDesc);
             good.setIsOrdered(isOrdered);
             good.setUsesNumber(usesNumber);
+            good.setPriceId(priceId);
 
             list.add(good);
         }
@@ -103,12 +107,14 @@ public class GoodsDataProvider {
         int serverGoodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GOOD_ID));
         int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
         int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+        int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
         Good good = new Good( goodId,  goodName,  categoryId,  quantityLevelId,
                 isToBuy,  sync, email, crud,  serverGoodId);
         good.setGoodDesc(goodDesc);
         good.setIsOrdered(isOrdered);
         good.setUsesNumber(usesNumber);
+        good.setPriceId(priceId);
 
         Log.d(TAG, Constants.TAG_LISTA+"getGoodById called");
 
@@ -134,12 +140,14 @@ public class GoodsDataProvider {
         //int serverGoodId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_GOOD_ID));
         int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
         int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+        int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
         Good good = new Good( goodId,  goodName,  categoryId,  quantityLevelId,
                 isToBuy,  sync, email, crud,  serverGoodId);
         good.setGoodDesc(goodDesc);
         good.setIsOrdered(isOrdered);
         good.setUsesNumber(usesNumber);
+        good.setPriceId(priceId);
 
         Log.d(TAG, Constants.TAG_LISTA+"getGoodByServerGoodId called");
 
@@ -166,6 +174,7 @@ public class GoodsDataProvider {
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
             int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+            int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
@@ -173,6 +182,7 @@ public class GoodsDataProvider {
             good.setGoodDesc(goodDesc);
             good.setIsOrdered(isOrdered);
             good.setUsesNumber(usesNumber);
+            good.setPriceId(priceId);
 
             list.add(good);
         }
@@ -200,6 +210,7 @@ public class GoodsDataProvider {
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
             int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+            int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
@@ -207,6 +218,7 @@ public class GoodsDataProvider {
             good.setGoodDesc(goodDesc);
             good.setIsOrdered(isOrdered);
             good.setUsesNumber(usesNumber);
+            good.setPriceId(priceId);
 
             list.add(good);
         }
@@ -234,6 +246,7 @@ public class GoodsDataProvider {
             int isOrdered = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_ORDERED));
             int serverCategoryId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CATEGORY_ID));
             int usesNumber = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_USES_NUMBER));
+            int priceId = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_PRICE_ID));
 
             Good good = new Good(goodId, goodName, categoryId, quantityLevel, isToBuy, sync, crud, email);
             good.setServerGoodId(serverGoodId);
@@ -241,6 +254,7 @@ public class GoodsDataProvider {
             good.setServerCategoryId(serverCategoryId);
             good.setIsOrdered(isOrdered);
             good.setUsesNumber(usesNumber);
+            good.setPriceId(priceId);
 
             list.add(good);
         }

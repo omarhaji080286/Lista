@@ -47,7 +47,7 @@
 
     <LinearLayout
         android:id="@+id/llBrand"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:weightSum="100"
@@ -59,6 +59,9 @@
             android:id="@+id/macBrand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="40"
+            android:maxLines="1"
+            android:maxEms="40"
             android:completionThreshold="1"
             android:hint="@string/brand_or_description" />
 

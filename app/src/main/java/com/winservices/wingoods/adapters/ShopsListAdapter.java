@@ -1,20 +1,17 @@
 package com.winservices.wingoods.adapters;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
@@ -23,16 +20,11 @@ import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopsFilter;
 import com.winservices.wingoods.utils.Constants;
-import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
-import java.util.Objects;
-
-import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
-import static java.security.AccessController.getContext;
 
 public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder> {
 
@@ -90,6 +82,7 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, OrderActivity.class);
+                    //Intent intent = new Intent(context, OrderActivity.class);
                     intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
                     intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
                     intent.putExtra(Constants.SHOP, shop);

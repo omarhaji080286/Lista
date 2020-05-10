@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,9 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MyOrdersActivity;
@@ -42,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,9 +75,9 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         if (order.getIsToDeliver()==Order.IS_TO_COLLECT){
             holder.imgDelivery.setVisibility(View.GONE);
-            holder.txtLabelCollectTime.setText(R.string.forTime);
+            //holder.txtLabelCollectTime.setText(R.string.forTime);
         } else {
-            holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
+            //holder.txtLabelCollectTime.setText(R.string.delivery_time_label);
             holder.imgDelivery.setVisibility(View.VISIBLE);
         }
 
@@ -118,39 +117,36 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
         holder.txtDate.setText(order.getDisplayedCollectTime(context, dateString));
 
         holder.txtOrderStatus.setText(order.getStatusName());
-        holder.clContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (NetworkMonitor.checkNetworkConnection(context)) {
-                    Intent intent = new Intent(context, OrderDetailsActivity.class);
-                    intent.putExtra(Constants.ORDER_ID, order.getServerOrderId());
-                    intent.putExtra(Constants.ORDER_STATUS, order.getStatusId());
-                    context.startActivity(intent);
-                } else {
-                    Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
-                }
+        holder.clContainer.setOnClickListener(view -> {
+            if (NetworkMonitor.checkNetworkConnection(context)) {
+                Intent intent = new Intent(context, OrderDetailsActivity.class);
+                intent.putExtra(Constants.ORDER_ID, order.getServerOrderId());
+                intent.putExtra(Constants.ORDER_STATUS, order.getStatusId());
+                context.startActivity(intent);
+            } else {
+                Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
             }
         });
 
-        holder.btnCompleteOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                orders.remove(order);
-                notifyDataSetChanged();
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getOrderedGoods(context, order.getServerOrderId());
-                        completeOrder(order.getServerOrderId());
-                    }
-                });
+        holder.btnCompleteOrder.setOnClickListener(view -> {
+            orders.remove(order);
+            notifyDataSetChanged();
+            AsyncTask.execute(() -> {
+                getOrderedGoods(context, order.getServerOrderId());
+                completeOrder(order.getServerOrderId());
+            });
 
-            }
         });
+
+        if (isOrderToClose(order)){
+            holder.btnCompleteOrder.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnCompleteOrder.setVisibility(View.GONE);
+        }
 
         switch (order.getStatusId()){
             case Order.REGISTERED :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -164,7 +160,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.READ :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -178,7 +174,6 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.AVAILABLE :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.VISIBLE);
                 holder.imgRead.setVisibility(View.VISIBLE);
                 holder.imgAvailable.setVisibility(View.VISIBLE);
@@ -196,7 +191,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 }
                 break;
             case Order.COMPLETED :
-                holder.btnCompleteOrder.setVisibility(View.GONE);
+                //holder.btnCompleteOrder.setVisibility(View.GONE);
                 holder.imgRegistered.setVisibility(View.GONE);
                 holder.imgRead.setVisibility(View.GONE);
                 holder.imgAvailable.setVisibility(View.GONE);
@@ -214,12 +209,42 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
                 holder.imgClosedOrNotSuported.setImageResource(R.drawable.not_supported);
                 holder.imgClosedOrNotSuported.setVisibility(View.VISIBLE);
                 holder.txtOrderStatus.setText(context.getString(R.string.not_supported));
-                holder.btnCompleteOrder.setVisibility(View.VISIBLE);
+                //holder.btnCompleteOrder.setVisibility(View.VISIBLE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.txtOrderStatus.setTextColor(context.getColor(R.color.black));
                 }
                 break;
         }
+    }
+
+    private boolean isOrderToClose(Order order){
+        int orderStatus = order.getStatusId();
+
+        if ( orderStatus==Order.COMPLETED ){
+            return false;
+        }
+
+        if ( orderStatus==Order.NOT_SUPPORTED ){
+            return true;
+        }
+
+        int delay = 0; // Afficher le bouton clôturer le jour même
+        if (orderStatus==Order.REGISTERED || orderStatus==Order.READ){
+            delay = 2; // afficher le bouton clôturer après 2 jours
+        }
+
+        if (orderStatus==Order.AVAILABLE){
+            delay = 1; // afficher le bouton clôturer après 2 jours
+        }
+
+        Date preparationDate = UtilsFunctions.stringToDate(order.getStartTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(preparationDate);
+        calendar.add(Calendar.DAY_OF_YEAR, delay);
+
+        Date now = new Date();
+        int result = now.compareTo(calendar.getTime());
+        return result > 0;
     }
 
     @Override
@@ -230,30 +255,24 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
     private void completeOrder(final int serverOrderId) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_COMPLETE_ORDER,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //error in server
-                                Log.d(TAG, "onResponse error: " + message);
-                            } else {
-                                Log.d(TAG, "order completed: ");
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error) {
+                            //error in server
+                            Log.d(TAG, "onResponse error: " + message);
+                        } else {
+                            Log.d(TAG, "order completed: ");
                         }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //dialog.dismiss();
-                    }
+                error -> {
+                    //dialog.dismiss();
                 }
         ) {
             @Override
@@ -314,50 +333,44 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<OrderVH> {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_GET_ORDERED_GOODS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //error in server
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                            } else {
-                                JSONArray JSONOrderedGoods = jsonObject.getJSONArray("orderedGoods");
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error) {
+                            //error in server
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            JSONArray JSONOrderedGoods = jsonObject.getJSONArray("orderedGoods");
 
-                                for (int i = 0; i < JSONOrderedGoods.length(); i++) {
-                                    JSONObject JSONOrderedGood = JSONOrderedGoods.getJSONObject(i);
+                            for (int i = 0; i < JSONOrderedGoods.length(); i++) {
+                                JSONObject JSONOrderedGood = JSONOrderedGoods.getJSONObject(i);
 
-                                    OrderedGood orderedGood = new OrderedGood();
-                                    orderedGood.setServerOrderId(JSONOrderedGood.getInt("server_ordered_good_id"));
-                                    orderedGood.setGoodDesc(JSONOrderedGood.getString("good_desc"));
-                                    orderedGood.setGoodName(JSONOrderedGood.getString("good_name"));
-                                    orderedGood.setServerCategoryId(JSONOrderedGood.getInt("server_category_id"));
-                                    orderedGood.setServerGoodId(JSONOrderedGood.getInt("server_good_id"));
-                                    orderedGood.setServerShopId(JSONOrderedGood.getInt("server_shop_id"));
-                                    orderedGood.setServerUserId(JSONOrderedGood.getInt("server_user_id"));
-                                    orderedGood.setStatus(JSONOrderedGood.getInt("status"));
+                                OrderedGood orderedGood = new OrderedGood();
+                                orderedGood.setServerOrderId(JSONOrderedGood.getInt("server_ordered_good_id"));
+                                orderedGood.setGoodDesc(JSONOrderedGood.getString("good_desc"));
+                                orderedGood.setGoodName(JSONOrderedGood.getString("good_name"));
+                                orderedGood.setServerCategoryId(JSONOrderedGood.getInt("server_category_id"));
+                                orderedGood.setServerGoodId(JSONOrderedGood.getInt("server_good_id"));
+                                orderedGood.setServerShopId(JSONOrderedGood.getInt("server_shop_id"));
+                                orderedGood.setServerUserId(JSONOrderedGood.getInt("server_user_id"));
+                                orderedGood.setStatus(JSONOrderedGood.getInt("status"));
 
-                                    orderedGoods.add(orderedGood);
-
-                                }
-
-                                updateGoods(orderedGoods);
+                                orderedGoods.add(orderedGood);
 
                             }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            updateGoods(orderedGoods);
+
                         }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                    }
+                error -> {
+
                 }
         ) {
             @Override

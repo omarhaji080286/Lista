@@ -128,19 +128,24 @@
                 app:layout_constraintTop_toTopOf="@+id/linlayStatusImg"
                 app:layout_constraintBottom_toBottomOf="@+id/linlayStatusImg"
                 app:layout_constraintEnd_toStartOf="@+id/btnCompleteOrder"
-                android:gravity="start"/>
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginEnd="1dp"
+                />
 
             <Button
                 android:id="@+id/btnCompleteOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="32dp"
                 style="@style/Button"
-                android:text="@string/ok"
-                android:textSize="12sp"
+                android:text="@string/close_order"
+                android:textSize="10sp"
                 app:layout_constraintStart_toEndOf="@+id/txt_order_status"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:visibility="gone"/>
+                app:layout_constraintBottom_toBottomOf="@+id/linlayStatusImg"
+                android:visibility="visible"/>
 
             <TextView
                 android:id="@+id/label_order_id"
@@ -204,7 +209,7 @@
                 style="@style/TextInOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/forTime"
+                android:text="@string/date_souhait_e"
                 app:layout_constraintLeft_toRightOf="@+id/img_shop"
                 app:layout_constraintTop_toBottomOf="@+id/label_items_number" />
 

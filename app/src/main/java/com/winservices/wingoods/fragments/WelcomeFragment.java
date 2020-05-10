@@ -34,20 +34,18 @@ import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.MainActivity;
 import com.winservices.wingoods.activities.MyOrdersActivity;
 import com.winservices.wingoods.activities.ProfileActivity;
-import com.winservices.wingoods.activities.ReceiveInvitationActivity;
 import com.winservices.wingoods.activities.ShopsActivity;
 import com.winservices.wingoods.dbhelpers.DataBaseHelper;
 import com.winservices.wingoods.dbhelpers.GoodsDataProvider;
-import com.winservices.wingoods.dbhelpers.InvitationsDataManager;
 import com.winservices.wingoods.dbhelpers.RequestHandler;
 import com.winservices.wingoods.dbhelpers.SyncHelper;
 import com.winservices.wingoods.dbhelpers.UsersDataManager;
 import com.winservices.wingoods.models.RemoteConfigParams;
+import com.winservices.wingoods.models.User;
 import com.winservices.wingoods.services.DeviceInfoService;
 import com.winservices.wingoods.utils.AnimationManager;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.NetworkMonitor;
-import com.winservices.wingoods.utils.PermissionUtil;
 import com.winservices.wingoods.utils.SharedPrefManager;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -59,12 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.winservices.wingoods.utils.PermissionUtil.TXT_CAMERA;
-import static com.winservices.wingoods.utils.PermissionUtil.TXT_NOTIFICATION;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WelcomeFragment extends Fragment {
 
     public final static String TAG = WelcomeFragment.class.getSimpleName();
@@ -105,51 +98,22 @@ public class WelcomeFragment extends Fragment {
         txtWelcome1 = view.findViewById(R.id.txtWelcome1);
         txtWelcome2 = view.findViewById(R.id.txtWelcome2);
 
-
         SyncHelper.sync(getContext());
-
-        /*PermissionUtil permissionUtil = new PermissionUtil(Objects.requireNonNull(getContext()));
-        if (permissionUtil.checkPermission(TXT_NOTIFICATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionUtil.requestPermission(TXT_NOTIFICATION, getActivity());
-        }*/
 
         DeviceInfoService deviceInfoService = new DeviceInfoService(getContext());
         deviceInfoService.run();
 
-        consLayMyGoods.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), MainActivity.class));
-            }
-        });
+        consLayMyGoods.setOnClickListener(view1 -> goToActivity(new Intent(getActivity(), MainActivity.class)));
 
-        consLayMyOrders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), MyOrdersActivity.class));
-            }
-        });
+        consLayMyOrders.setOnClickListener(view14 -> goToActivity(new Intent(getActivity(), MyOrdersActivity.class)));
 
-        linlayShops.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), ShopsActivity.class));
-            }
-        });
+        linlayShops.setOnClickListener(view12 -> goToActivity(new Intent(getActivity(), ShopsActivity.class)));
 
-        linlayProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivity(new Intent(getActivity(), ProfileActivity.class));
-            }
-        });
+        SharedPrefManager spm = SharedPrefManager.getInstance(getContext());
+        if (spm.isFirstSync()) linlayProfile.setEnabled(false);
+        linlayProfile.setOnClickListener(view13 -> goToActivity(new Intent(getActivity(), ProfileActivity.class)));
 
-        imgShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareAppStoreLink();
-            }
-        });
+        imgShare.setOnClickListener(v -> shareAppStoreLink());
 
         RemoteConfigParams rcp = new RemoteConfigParams(getContext());
         try {
@@ -159,7 +123,6 @@ public class WelcomeFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -190,11 +153,11 @@ public class WelcomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    private boolean isInvitationPending() {
+    /*private boolean isInvitationPending() {
         InvitationsDataManager invitationsDataManager = new InvitationsDataManager(getContext());
         return invitationsDataManager.isInvitationPending();
 
-    }
+    }*/
 
     private void shareAppStoreLink() {
 
@@ -227,17 +190,14 @@ public class WelcomeFragment extends Fragment {
         UtilsFunctions.hideKeyboard(getContext(), imgShare);
 
         Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
+        handler.post(() -> {
 
-                manageGooglePlayIcon();
-                //manageInvitationIcon();
-                getAvailableOrdersNum();
-                getItemsToBuyNum();
+            manageGooglePlayIcon();
+            //manageInvitationIcon();
+            getAvailableOrdersNum();
+            getItemsToBuyNum();
 
-                Log.d(TAG, "Icons handled");
-            }
+            Log.d(TAG, "Icons handled");
         });
 
         Objects.requireNonNull(getActivity()).registerReceiver(syncReceiver, new IntentFilter(Constants.ACTION_REFRESH_AFTER_SYNC));
@@ -261,38 +221,30 @@ public class WelcomeFragment extends Fragment {
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     DataBaseHelper.HOST_URL_GET_AVAILABLE_ORDERS_NUM,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean error = jsonObject.getBoolean("error");
+                    response -> {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean error = jsonObject.getBoolean("error");
 
-                                if (error) {
-                                    //error in server
-                                    Log.e(TAG, "onResponse: " + R.string.error);
+                            if (error) {
+                                //error in server
+                                Log.e(TAG, "onResponse: " + R.string.error);
+                            } else {
+
+                                int availableOrdersNum = jsonObject.getInt("available_orders_num");
+                                if (availableOrdersNum > 0) {
+                                    txtAvailableOrders.setText(String.valueOf(availableOrdersNum));
+                                    txtAvailableOrders.setVisibility(View.VISIBLE);
                                 } else {
-
-                                    int availableOrdersNum = jsonObject.getInt("available_orders_num");
-                                    if (availableOrdersNum > 0) {
-                                        txtAvailableOrders.setText(String.valueOf(availableOrdersNum));
-                                        txtAvailableOrders.setVisibility(View.VISIBLE);
-                                    } else {
-                                        txtAvailableOrders.setVisibility(View.GONE);
-                                    }
+                                    txtAvailableOrders.setVisibility(View.GONE);
                                 }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "onResponse: " + error.getMessage());
-                        }
-                    }
+                    error -> Log.e(TAG, "onResponse: " + error.getMessage())
             ) {
                 @Override
                 protected Map<String, String> getParams() {
@@ -335,12 +287,7 @@ public class WelcomeFragment extends Fragment {
             imgGooglePlay.setVisibility(View.VISIBLE);
             AnimationManager am = new AnimationManager(getContext());
             am.animateItem(imgGooglePlay, R.anim.blink, 1000);
-            imgGooglePlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goToMarket();
-                }
-            });
+            imgGooglePlay.setOnClickListener(v -> goToMarket());
         } else {
             imgGooglePlay.setVisibility(View.GONE);
         }
@@ -370,22 +317,21 @@ public class WelcomeFragment extends Fragment {
 
     public class SyncReceiverWelcome extends BroadcastReceiver {
 
-        private Handler handler; // Handler used to execute code on the UI thread
-
         @Override
         public void onReceive(final Context context, Intent intent) {
-            // Post the UI updating code to our Handler
 
-            this.handler = new Handler();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
+            // Handler used to execute code on the UI thread
+            Handler handler = new Handler();
+            handler.post(() -> {
 
-                    getAvailableOrdersNum();
-                    getItemsToBuyNum();
+                getAvailableOrdersNum();
+                getItemsToBuyNum();
 
-                    Log.d(TAG, "Sync BroadCast received");
-                }
+                SharedPrefManager spm = SharedPrefManager.getInstance(context);
+                spm.storeFirstSync(false);
+                linlayProfile.setEnabled(true);
+
+                Log.d(TAG, "Sync BroadCast received");
             });
         }
     }

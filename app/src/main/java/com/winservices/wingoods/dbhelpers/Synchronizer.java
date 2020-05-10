@@ -18,6 +18,7 @@ import com.winservices.wingoods.models.Category;
 import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.CoUser;
 import com.winservices.wingoods.models.Country;
+import com.winservices.wingoods.models.DateOff;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
@@ -27,6 +28,8 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.UserLocation;
+import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.services.RemoteConfigService;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.SharedPrefManager;
@@ -102,7 +105,7 @@ public class Synchronizer {
             RequestHandler.getInstance(context).addToRequestQueue(stringRequest);
 
             response = future.get(10, TimeUnit.SECONDS);
-            Log.d(LOG_TAG, "json response : " + response);
+            //Log.d(LOG_TAG, "json sync response : " + response);
             processSyncResponse(response);
             sendSyncBroadCast(context);
 
@@ -210,6 +213,14 @@ public class Synchronizer {
                 Log.e(LOG_TAG, "Error : " + message);
             } else {
 
+                //update user city
+                JSONObject JsonUser = jsonObject.getJSONObject("user");
+                UsersDataManager usersDataManager = new UsersDataManager(context);
+                User user = usersDataManager.getCurrentUser();
+                user.setServerCityId(JsonUser.getInt("server_city_id"));
+                usersDataManager.updateUser(user);
+                Log.d(LOG_TAG, "User city updated.");
+
                 //updates categories with their server ids
                 JSONArray jsonCategoriesIds = jsonObject.getJSONArray("categoriesIds");
                 updateCategories(jsonCategoriesIds);
@@ -255,10 +266,20 @@ public class Synchronizer {
                 insertAmounts(jsonAmountsToSync);
                 Log.d(LOG_TAG, "Sync amounts completed. " + jsonAmountsToSync.length() + " inserted or updated.");
 
-                //updates amounts
+                //updates descriptions
                 JSONArray jsonDescriptionsToSync = jsonObject.getJSONArray("descriptionsToSync");
                 insertDescriptions(jsonDescriptionsToSync);
                 Log.d(LOG_TAG, "Sync descriptions completed. " + jsonDescriptionsToSync.length() + " inserted or updated.");
+
+                //updates cities
+                JSONArray jsonCitiesToSync = jsonObject.getJSONArray("citiesToSync");
+                insertCities(jsonCitiesToSync);
+                Log.d(LOG_TAG, "Sync cities completed. " + jsonCitiesToSync.length() + " inserted or updated.");
+
+                //updates user locations
+                JSONArray jsonLocationsToSync = jsonObject.getJSONArray("locationsToSync");
+                insertLocations(jsonLocationsToSync);
+                Log.d(LOG_TAG, "Sync locations completed. " + jsonLocationsToSync.length() + " inserted or updated.");
 
                 //updates shops
                 JSONArray jsonShops = jsonObject.getJSONArray("shopsToSync");
@@ -294,7 +315,6 @@ public class Synchronizer {
             int serverCoUserId = JSONInvitation.getInt("server_co_user_id");
             int serverGroupId = JSONInvitation.getInt("server_group_id");
             int invitationResponse = JSONInvitation.getInt("invitation_response");
-
 
             ReceivedInvitation invitation = new ReceivedInvitation(serverCoUserId, serverGroupId, senderPhone);
             invitation.setResponse(invitationResponse);
@@ -347,6 +367,38 @@ public class Synchronizer {
                 defaultCategories.add(dCategory);
             }
 
+            JSONArray JSONWeekDaysOff = JSONShop.getJSONArray("week_days_off");
+            List<WeekDayOff> weekDaysOff = new ArrayList<>();
+            for (int j = 0; j < JSONWeekDaysOff.length(); j++) {
+                JSONObject JSONDWeekDayOff= JSONWeekDaysOff.getJSONObject(j);
+                int dayOffId = JSONDWeekDayOff.getInt("day_off_id");
+                int dayOff = JSONDWeekDayOff.getInt("day_off");
+
+                WeekDayOff weekDayOff = new WeekDayOff();
+                weekDayOff.setDayOffId(dayOffId);
+                weekDayOff.setDayOff(dayOff);
+                weekDayOff.setServerShopId(serverShopId);
+
+                weekDaysOff.add(weekDayOff);
+            }
+
+            JSONArray JSONDatesOff = JSONShop.getJSONArray("dates_off");
+            List<DateOff> datesOff = new ArrayList<>();
+            for (int j = 0; j < JSONDatesOff.length(); j++) {
+                JSONObject JSONDDateOff= JSONDatesOff.getJSONObject(j);
+                int dateOffId = JSONDDateOff.getInt("date_off_id");
+                String dateOffValue = JSONDDateOff.getString("date_off_value");
+                String dateOffDesc = JSONDDateOff.getString("date_off_desc");
+
+                DateOff dateOff = new DateOff();
+                dateOff.setDateOffId(dateOffId);
+                dateOff.setDateOffValue(dateOffValue);
+                dateOff.setDateOffDesc(dateOffDesc);
+                dateOff.setServerShopId(serverShopId);
+
+                datesOff.add(dateOff);
+            }
+
             Shop shop = new Shop();
 
             shop.setServerShopId(serverShopId);
@@ -364,6 +416,9 @@ public class Synchronizer {
             shop.setShopType(shopType);
             shop.setDefaultCategories(defaultCategories);
             shop.setIsDelivering(JSONShop.getInt("is_delivering"));
+            shop.setDeliveryDelay(JSONShop.getInt("delivery_delay"));
+            shop.setWeekDaysOff(weekDaysOff);
+            shop.setDatesOff(datesOff);
 
             shopsDataManager.insertShop(shop);
         }
@@ -430,6 +485,53 @@ public class Synchronizer {
 
             Description desc = new Description(descId, descValue, dCategoryId);
             descriptionsDataManager.insertDesc(desc);
+        }
+    }
+
+    private void insertCities(JSONArray jsonCitiesToSync) throws JSONException {
+
+        CitiesDataManager citiesDataManager = new CitiesDataManager(context);
+
+        for (int i = 0; i < jsonCitiesToSync.length(); i++) {
+            JSONObject JSONCity = jsonCitiesToSync.getJSONObject(i);
+            int serverCityId = JSONCity.getInt("server_city_id");
+            String cityName = JSONCity.getString("city_name");
+            int serverCountryId = JSONCity.getInt("server_country_id");
+            String longitude = JSONCity.getString("longitude");
+            String latitude = JSONCity.getString("latitude");
+
+            City city = new City();
+            Country country = new Country();
+
+            country.setServerCountryId(serverCountryId);
+            city.setCountry(country);
+            city.setServerCityId(serverCityId);
+            city.setCityName(cityName);
+            city.setLatitude(latitude);
+            city.setLongitude(longitude);
+
+            citiesDataManager.insertCity(city);
+        }
+    }
+
+    private void insertLocations(JSONArray jsonLocationsToSync) throws JSONException {
+
+        UsersDataManager usersDataManager = new UsersDataManager(context);
+
+        for (int i = 0; i < jsonLocationsToSync.length(); i++) {
+            JSONObject JSONLocation = jsonLocationsToSync.getJSONObject(i);
+            int userLocationId = JSONLocation.getInt("user_location_id");
+            String userAddress = JSONLocation.getString("user_address");
+            String userGpsLocation = JSONLocation.getString("user_gps_location");
+            String serverUserId = JSONLocation.getString("server_user_id");
+
+            UserLocation userLocation = new UserLocation();
+            userLocation.setUserLocationId(userLocationId);
+            userLocation.setUserAddress(userAddress);
+            userLocation.setUserGpsLocation(userGpsLocation);
+            userLocation.setServerUserId(serverUserId);
+
+            usersDataManager.insertUserLocation(userLocation);
         }
     }
 
@@ -603,55 +705,49 @@ public class Synchronizer {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 DataBaseHelper.HOST_URL_DELETE_USER_CATEGORIES_AND_GOODS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean error = jsonObject.getBoolean("error");
-                            String message = jsonObject.getString("message");
-                            if (error) {
-                                //adding coUser succeded
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                            } else {
-                                //insert group data
-                                JSONObject JSONGroup = jsonObject.getJSONObject("group");
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean error = jsonObject.getBoolean("error");
+                        String message = jsonObject.getString("message");
+                        if (error) {
+                            //adding coUser succeded
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            //insert group data
+                            JSONObject JSONGroup = jsonObject.getJSONObject("group");
 
-                                String groupName = JSONGroup.getString("group_name");
-                                String ownerEmail = JSONGroup.getString("owner_email");
-                                int serverOwnerId = JSONGroup.getInt("server_owner_id");
-                                int serverGroupId = JSONGroup.getInt("server_group_id");
-                                int syncStatus = DataBaseHelper.SYNC_STATUS_OK;
+                            String groupName = JSONGroup.getString("group_name");
+                            String ownerEmail = JSONGroup.getString("owner_email");
+                            int serverOwnerId = JSONGroup.getInt("server_owner_id");
+                            int serverGroupId = JSONGroup.getInt("server_group_id");
+                            int syncStatus = DataBaseHelper.SYNC_STATUS_OK;
 
-                                GroupsDataManager groupsDataManager = new GroupsDataManager(context);
-                                Group ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
-                                if (ownerGroup==null){
-                                    Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
+                            GroupsDataManager groupsDataManager = new GroupsDataManager(context);
+                            Group ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
+                            if (ownerGroup==null){
+                                Group group = new Group(groupName, ownerEmail, serverOwnerId, serverGroupId, syncStatus);
 
-                                    groupsDataManager.addGroup( group);
+                                groupsDataManager.addGroup( group);
 
-                                    ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
-                                }
-
-                                UsersDataManager usersDataManager = new UsersDataManager(context);
-                                User currentUser = usersDataManager.getCurrentUser();
-                                currentUser.setGroupId(ownerGroup.getGroupId());
-                                usersDataManager.updateUser(currentUser);
-                                Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
-
+                                ownerGroup = groupsDataManager.getGroupByOwnerId(serverOwnerId);
                             }
-                            Log.d(LOG_TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup ends");
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            UsersDataManager usersDataManager = new UsersDataManager(context);
+                            User currentUser = usersDataManager.getCurrentUser();
+                            currentUser.setGroupId(ownerGroup.getGroupId());
+                            usersDataManager.updateUser(currentUser);
+                            Toast.makeText(context, R.string.member_of_the_team_now, Toast.LENGTH_SHORT).show();
+
                         }
+                        Log.d(LOG_TAG, Constants.TAG_LISTA+"deleteAllUserDataOnServerAndSyncGroup ends");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //adding coUser failed
-                    }
+                error -> {
+                    //Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
                 }
         ) {
             @Override

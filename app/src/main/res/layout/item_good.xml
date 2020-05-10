@@ -62,7 +62,10 @@
                 android:text="@string/good_description"
                 android:layout_centerHorizontal="true"
                 android:textSize="12sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:maxLines="2"
+                android:maxLength="35"
+                android:ellipsize="end"/>
 
             <ImageView
                 android:id="@+id/img_cart_in_good"

@@ -9,7 +9,9 @@ import android.util.Log;
 
 import com.winservices.wingoods.models.Amount;
 import com.winservices.wingoods.models.Category;
+import com.winservices.wingoods.models.City;
 import com.winservices.wingoods.models.CoUser;
+import com.winservices.wingoods.models.DateOff;
 import com.winservices.wingoods.models.DefaultCategory;
 import com.winservices.wingoods.models.Description;
 import com.winservices.wingoods.models.Good;
@@ -19,6 +21,8 @@ import com.winservices.wingoods.models.ReceivedInvitation;
 import com.winservices.wingoods.models.Shop;
 import com.winservices.wingoods.models.ShopType;
 import com.winservices.wingoods.models.User;
+import com.winservices.wingoods.models.UserLocation;
+import com.winservices.wingoods.models.WeekDayOff;
 import com.winservices.wingoods.utils.Constants;
 import com.winservices.wingoods.utils.UtilsFunctions;
 
@@ -31,29 +35,33 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int SYNC_STATUS_OK = 1;
     public static final int SYNC_STATUS_FAILED = 0;
     public static final int IS_LOGGED_IN = 1;
-    public static final int IS_NOT_LOGGED_IN = 0;
+    private static final int IS_NOT_LOGGED_IN = 0;
     //sign up type
     public static final String LISTA = "lista";
-    public static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
-    public static final String COL_IS_ORDERED = "is_ordered";
+    private static final String COL_RECEIVED_INVITATION_ID = "received_invitation_id";
+    static final String COL_IS_ORDERED = "is_ordered";
 
 
     //TODO Version web
-    private final static String webVersion = "L17_LP10";
+    private final static String webVersion = "lista_21"; //updated on 03/05/2020
 
     //TODO Lista LOCAL (compte root)
-    //private static final String HOST = "http://192.168.43.211/lista_local/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
+    public static final String APP_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/appImgs/";
 
     //TODO Lista LWS_PRE_PROD
-    private static final String HOST = "http://lista-courses.com/lista_pre_prod/lista_"+webVersion+"/webservices/";
+    /*private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
     static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
+    public static final String APP_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/appImgs/";*/
+
 
     //TODO Lista LWS_PROD
-    //private static final String HOST = "http://lista-courses.com/lista_prod/lista_"+webVersion+"/webservices/";
-    //static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
+    /*private static final String HOST = "http://lista-courses.com/lista_prod/"+webVersion+"/webservices/";
+    static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
+    public static final String APP_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/appImgs/";*/
 
-    private final static int DATABASE_VERSION = 8; //updated on 08-04-2020
+    private final static int DATABASE_VERSION = 10; //updated on 03-05-2020
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -104,33 +112,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_ORDERED_GOODS_NUMBER = "ordered_goods_number";
     static final String COL_OPENING_TIME = "opening_time";
     static final String COL_CLOSING_TIME = "closing_time";
+    static final String COL_PRICE_ID = "price_id";
 
 
     public static final String HOST_URL_STORE_DEVICE_INFOS = HOST + "storeDeviceInfos.php";
     public static final String HOST_URL_CHECK_CO_USER_REGISTRATION = HOST + "checkCoUserRegistration.php";
     public static final String HOST_URL_GET_AVAILABLE_ORDERS_NUM = HOST + "getAvailableOrdersNum.php";
     public static final String HOST_URL_REGISTER_USER = HOST + "registerUser.php";
-    public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
-    static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
+    //public static final String HOST_URL_LOGIN_USER = HOST + "loginUser.php";
+    //static final String HOST_URL_ADD_CO_USER = HOST + "addCoUser.php";
     public static final String HOST_URL_GET_INVITATIONS = HOST + "getInvitations.php";
-    static final String HOST_URL_UPDATE_CO_USER_RESPONSE = HOST + "updateCoUserResponse.php";
+    //static final String HOST_URL_UPDATE_CO_USER_RESPONSE = HOST + "updateCoUserResponse.php";
     public static final String HOST_URL_ADD_GROUP_AND_CO_USER = HOST + "addGroupAndCoUser.php";
-    static final String HOST_URL_GET_GROUP_DATA = HOST + "getGroupData.php";
+    //static final String HOST_URL_GET_GROUP_DATA = HOST + "getGroupData.php";
     static final String HOST_URL_DELETE_USER_CATEGORIES_AND_GOODS = HOST + "deleteAllUserCategoriesAndGoods.php";
-    static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS = HOST + "updateCategoriesAndGoods.php";
-    static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS_FROM_SERVER = HOST + "updateCategoriesAndGoodsFromServer.php";
+    //static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS = HOST + "updateCategoriesAndGoods.php";
+    //static final String HOST_URL_UPDATE_CATEGORIES_AND_GOODS_FROM_SERVER = HOST + "updateCategoriesAndGoodsFromServer.php";
     public static final String HOST_URL_GET_TEAM_MEMBERS = HOST + "getTeamMembers.php";
-    static final String HOST_URL_ADD_CATEGORIES = HOST + "addCategories.php";
-    public static final String HOST_URL_ADD_GOODS = HOST + "addGoods.php";
-    public static final String HOST_URL_GET_SHOPS = HOST + "getShops.php";
+    //static final String HOST_URL_ADD_CATEGORIES = HOST + "addCategories.php";
+    //public static final String HOST_URL_ADD_GOODS = HOST + "addGoods.php";
+    //public static final String HOST_URL_GET_SHOPS = HOST + "getShops.php";
     public static final String HOST_URL_GET_CITIES = HOST + "getCities.php";
     public static final String HOST_URL_ADD_ORDER = HOST + "addOrder.php";
-    public static final String HOST_URL_GET_ORDERS = HOST + "getOrders.php";
+    //public static final String HOST_URL_GET_ORDERS = HOST + "getOrders.php";
     public static final String HOST_URL_GET_ORDERED_GOODS = HOST + "getOrderedGoods.php";
     static final String HOST_URL_SYNC = HOST + "sync.php";
     public static final String HOST_URL_COMPLETE_ORDER = HOST + "completeOrder.php";
     public static final String HOST_URL_UPLOAD_USER_IMAGE = HOST + "uploadUserImage.php";
-    public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
+    public static final String HOST_URL_UPDATE_CITY = HOST + "updateUserCity.php";
+    //public static final String HOST_URL_GET_SHOP_DETAILS = HOST + "getShopDetails.php";
+
+
+
     private static final int DELETED = -1;
     private static final int RESTORED = 1;
     private static final String TABLE_CO_USERS = "co_users";
@@ -168,13 +181,25 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_SHOP_EMAIL = "shop_email";
     static final String COL_LONGITUDE = "longitude";
     static final String COL_LATITUDE = "latitude";
-    static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
+    private static final String TABLE_DEFAULT_CATEGORIES = "default_categories";
     static final String COL_D_CATEGORY_NAME = "d_category_name";
     static final String COL_IS_DELIVERING = "is_delivering";
     static final String COL_IS_TO_DELIVER = "is_to_deliver";
-    static final String COL_USER_ADDRESS = "user_address";
     static final String COL_USER_LOCATION = "user_location";
     static final String COL_ORDER_PRICE = "order_price";
+    static final String COL_DELIVERY_DELAY = "delivery_delay";
+    static final String TABLE_WEEK_DAYS_OFF = "week_days_off";
+    static final String COL_DAY_OFF_ID = "day_off_id";
+    static final String COL_DAY_OFF = "day_off";
+    static final String TABLE_DATES_OFF = "dates_off";
+    static final String COL_DATE_OFF_ID = "date_off_id";
+    static final String COL_DATE_OFF_DESC = "date_off_desc";
+    static final String COL_DATE_OFF = "date_off";
+    static final String TABLE_USER_LOCATIONS = "user_locations";
+    static final String COL_USER_LOCATION_ID = "user_location_id";
+    static final String COL_USER_ADDRESS = "user_address";
+    static final String COL_USER_GPS_LOCATION = "user_gps_location";
+    static final String TABLE_CITIES = "cities";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -216,7 +241,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "sign_up_type TEXT," +
                 "last_logged_in INTEGER," +
                 "group_id INTEGER, " +
-                "user_phone TEXT " +
+                "user_phone TEXT, " +
+                "server_city_id INTEGER " +
                 ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS groups ( " +
@@ -267,6 +293,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "server_good_id INTEGER, " +
                 "is_ordered INTEGER, " +
                 "uses_number INTEGER, " +
+                "price_id INTEGER, " +
                 "FOREIGN KEY (category_id) REFERENCES categories (category_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS received_invitations ( " +
@@ -290,6 +317,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "desc_value TEXT, " +
                 "d_category_id INTEGER ) ");
 
+        db.execSQL("CREATE TABLE IF NOT EXISTS cities ( " +
+                "server_city_id INTEGER PRIMARY KEY, " +
+                "city_name TEXT, " +
+                "server_country_id INTEGER, " +
+                "longitude TEXT, " +
+                "latitude TEXT ) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS user_locations ( " +
+                "user_location_id INTEGER PRIMARY KEY, " +
+                "user_address INTEGER, " +
+                "user_gps_location TEXT, " +
+                "server_user_id INTEGER ) ");
+
         db.execSQL("CREATE TABLE IF NOT EXISTS shops ( " +
                 "server_shop_id INTEGER PRIMARY KEY, " +
                 "shop_name TEXT, " +
@@ -307,7 +347,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "longitude REAL, " +
                 "latitude REAL, " +
                 "shop_type_name TEXT, " +
-                "is_delivering INTEGER) ");
+                "is_delivering INTEGER, " +
+                "delivery_delay INTEGER) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS week_days_off ( " +
+                "day_off_id INTEGER PRIMARY KEY, " +
+                "day_off INTEGER, " +
+                "server_shop_id INTEGER, " +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS dates_off ( " +
+                "date_off_id INTEGER PRIMARY KEY, " +
+                "date_off TEXT, " +
+                "server_shop_id INTEGER, " +
+                "date_off_desc TEXT, " +
+                "FOREIGN KEY (server_shop_id) REFERENCES shops (server_shop_id)) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS orders ( " +
                 "server_user_id INTEGER, " +
@@ -338,20 +392,25 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
-        if (oldVersion <= 7){
-            /*db.execSQL("DROP TABLE IF EXISTS goods ");
-            db.execSQL("DROP TABLE IF EXISTS categories ");
-            db.execSQL("DROP TABLE IF EXISTS co_users ");
-            db.execSQL("DROP TABLE IF EXISTS received_invitations ");*/
-            db.execSQL("DROP TABLE IF EXISTS orders ");
-            db.execSQL("DROP TABLE IF EXISTS shops ");
-            /*db.execSQL("DROP TABLE IF EXISTS users ");
-            db.execSQL("DROP TABLE IF EXISTS groups ");
-            db.execSQL("DROP TABLE IF EXISTS amounts ");
-            db.execSQL("DROP TABLE IF EXISTS descriptions ");*/
+        switch (oldVersion){
+            case 8 :
+            case 9 :
+                db.execSQL("CREATE TABLE IF NOT EXISTS cities ( " +
+                        "server_city_id INTEGER PRIMARY KEY, " +
+                        "city_name TEXT, " +
+                        "server_country_id INTEGER, " +
+                        "longitude TEXT, " +
+                        "latitude TEXT ) ");
+                db.execSQL("ALTER TABLE users ADD COLUMN server_city_id INTEGER");
+                db.execSQL("ALTER TABLE goods ADD COLUMN  price_id INTEGER");
+                break;
+            default:
+                db.execSQL("DROP TABLE IF EXISTS shops ");
+                db.execSQL("DROP TABLE IF EXISTS users ");
+                onCreate(db);
         }
 
-        onCreate(db);
+
     }
 
 
@@ -371,6 +430,33 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    //WEEKDAYSOFF
+    Cursor getWeekDaysOff(int serverShopId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DAY_OFF_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_WEEK_DAYS_OFF
+                    + " WHERE " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //DATESOFF
+    Cursor getDatesOff(int serverShopId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_DATE_OFF_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_DATES_OFF
+                    + " WHERE " + COL_SERVER_SHOP_ID + " = " + serverShopId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     //SHOPS
     Cursor getShopById(int serverShopId) {
@@ -399,10 +485,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    Cursor getShopsByServerCityId(int serverCityId){
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_SERVER_SHOP_ID + " as " + _ID + " , *"
+                    + " FROM " + TABLE_SHOPS
+                    + " WHERE " + COL_VISIBILITY + " = 1"
+                    + " AND " + COL_SERVER_CITY_ID + " = " + serverCityId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     //ORDERS
 
-    public Cursor getOrders(int groupedStatus) {
+    Cursor getOrders(int groupedStatus) {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
@@ -501,7 +601,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     //DESCRIPTIONS
-
     Cursor getDescriptions(int dCategoryId) {
         db = this.getReadableDatabase();
         Cursor res = null;
@@ -562,6 +661,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         + " from " + TABLE_AMOUNTS
                         + " where " + COL_AMOUNT_TYPE_ID + " = " + amountTypeId, null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //AMOUNTS
+    Cursor getCities() {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+                res = db.rawQuery("select " + COL_SERVER_CITY_ID + " as " + _ID + " , *"
+                        + " from " + TABLE_CITIES, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -940,7 +1052,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     + " FROM " + TABLE_USERS
                     + " where " + COL_LAST_LOGGED_IN + " = " + IS_LOGGED_IN, null);
 
-
             while (res.moveToNext()) {
                 int userId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper._ID));
                 String email = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_EMAIL));
@@ -952,6 +1063,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int lastLoggedIn = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_LAST_LOGGED_IN));
                 int groupId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_GROUP_ID));
                 String userPhone = res.getString(res.getColumnIndexOrThrow(DataBaseHelper.COL_USER_PHONE));
+                int serverCityId = res.getInt(res.getColumnIndexOrThrow(DataBaseHelper.COL_SERVER_CITY_ID));
 
                 currentUser = new User(userId, email, password, userName);
                 currentUser.setServerUserId(serverUserId);
@@ -960,6 +1072,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 currentUser.setLastLoggedIn(lastLoggedIn);
                 currentUser.setGroupId(groupId);
                 currentUser.setUserPhone(userPhone);
+                currentUser.setServerCityId(serverCityId);
             }
             res.close();
 
@@ -969,10 +1082,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return currentUser;
     }
 
+
+
     //CATEGORIES
 
 
-    public int getGoodsToBuyNumber(int categoryId) {
+    int getGoodsToBuyNumber(int categoryId) {
         String countQuery = "SELECT " + TABLE_GOODS + ".* FROM " + TABLE_GOODS
                 + " WHERE " + TABLE_GOODS + "." + COL_CATEGORY_ID + " = " + categoryId
                 + " AND " + TABLE_GOODS + "." + COL_IS_TO_BUY + " = 1 "
@@ -1158,7 +1273,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    Cursor getAllCategoriesOverview() {
+    /*Cursor getAllCategoriesOverview() {
         db = this.getReadableDatabase();
         Cursor res = null;
         try {
@@ -1185,7 +1300,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return res;
-    }
+    }*/
 
 
     Cursor getCategoryById(int categoryId) {
@@ -1264,6 +1379,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             res = db.rawQuery("SELECT " + COL_GOOD_ID + " as " + _ID + " , * "
                     + " FROM " + TABLE_GOODS
                     + " where " + COL_GOOD_ID + " = " + goodId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Cursor getCityById(int serverCityId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("SELECT " + COL_SERVER_CITY_ID + " as " + _ID + " , * "
+                    + " FROM " + TABLE_CITIES
+                    + " where " + COL_SERVER_CITY_ID + " = " + serverCityId, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1710,8 +1838,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_LONGITUDE, shop.getLongitude());
         contentValues.put(COL_LATITUDE, shop.getLatitude());
         contentValues.put(COL_IS_DELIVERING, shop.getIsDelivering());
+        contentValues.put(COL_DELIVERY_DELAY, shop.getDeliveryDelay());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //WEEKDAYSOFF
+    boolean insertWeekDayOff(WeekDayOff weekDayOff) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DAY_OFF_ID, weekDayOff.getDayOffId());
+        contentValues.put(COL_DAY_OFF, weekDayOff.getDayOff());
+        contentValues.put(COL_SERVER_SHOP_ID, weekDayOff.getServerShopId());
+
+        long result = db.insertWithOnConflict(TABLE_WEEK_DAYS_OFF, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //DATEOFF
+    boolean insertDateOff(DateOff dateOff) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DATE_OFF_ID, dateOff.getDateOffId());
+        contentValues.put(COL_DATE_OFF, dateOff.getDateOffValue());
+        contentValues.put(COL_DATE_OFF_DESC, dateOff.getDateOffDesc());
+        contentValues.put(COL_SERVER_SHOP_ID, dateOff.getServerShopId());
+
+        long result = db.insertWithOnConflict(TABLE_DATES_OFF, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);
     }
 
@@ -1725,6 +1879,48 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_DESCRIPTIONS, null, contentValues);
         return (result != -1);
+    }
+
+    //USER LOCATIONS
+    boolean insertUserLocation(UserLocation userLocation) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_USER_LOCATION_ID, userLocation.getUserLocationId());
+        contentValues.put(COL_USER_ADDRESS, userLocation.getUserAddress());
+        contentValues.put(COL_USER_GPS_LOCATION, userLocation.getUserGpsLocation());
+        contentValues.put(COL_SERVER_USER_ID, userLocation.getServerUserId());
+
+        long result =db.insertWithOnConflict(TABLE_USER_LOCATIONS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //CITIES
+    boolean insertCity(City city) {
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_SERVER_CITY_ID, city.getServerCityId());
+        contentValues.put(COL_CITY_NAME, city.getCityName());
+        contentValues.put(COL_SERVER_COUNTRY_ID, city.getCountry().getServerCountryId());
+        contentValues.put(COL_LONGITUDE, city.getLongitude());
+        contentValues.put(COL_LATITUDE, city.getLatitude());
+
+        long result =db.insertWithOnConflict(TABLE_CITIES, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        return (result != -1);
+    }
+
+    //DESCRIPTIONS
+    Cursor getUserLocations(int serverUserId) {
+        db = this.getReadableDatabase();
+        Cursor res = null;
+        try {
+            res = db.rawQuery("select " + COL_USER_LOCATION_ID + " as " + _ID + " , *"
+                    + " from " + TABLE_USER_LOCATIONS
+                    + " where " + COL_SERVER_USER_ID + " = " + serverUserId, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     //AMOUNTS
@@ -1858,6 +2054,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SIGN_UP_TYPE, user.getSignUpType());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
         contentValues.put(COL_USER_PHONE, user.getUserPhone());
+        contentValues.put(COL_SERVER_CITY_ID, user.getServerCityId());
 
         if (user.getServerGroupId() != 0)
             contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
@@ -1876,6 +2073,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_GROUP_ID, user.getServerGroupId());
         contentValues.put(COL_LAST_LOGGED_IN, user.getLastLoggedIn());
         contentValues.put(COL_GROUP_ID, user.getGroupId());
+        contentValues.put(COL_SERVER_CITY_ID, user.getServerCityId());
 
         int affectedRows = 0;
         try {
@@ -1924,6 +2122,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SERVER_GOOD_ID, good.getServerGoodId());
         contentValues.put(COL_IS_ORDERED, good.getIsOrdered());
         contentValues.put(COL_USES_NUMBER, good.getUsesNumber());
+        contentValues.put(COL_PRICE_ID, good.getPriceId());
 
         long result = db.insert(TABLE_GOODS, null, contentValues);
         return (result != -1);
