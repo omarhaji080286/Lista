@@ -272,11 +272,12 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(country);
         parcel.writeInt(visibility);
         parcel.writeInt(isDelivering);
+        parcel.writeString(facebookUrl);
+        parcel.writeString(websiteUrl);
         parcel.writeTypedList(defaultCategories);
         parcel.writeTypedList(weekDaysOff);
         parcel.writeTypedList(datesOff);
-        parcel.writeString(facebookUrl);
-        parcel.writeString(websiteUrl);
+
 
     }
 

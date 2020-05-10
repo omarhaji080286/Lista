@@ -94,23 +94,20 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
 
         if (canGetOrder(shop) && orderInitiated) {
             holder.btnOrder.setVisibility(View.VISIBLE);
-            holder.btnOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, OrderActivity.class);
-                    //Intent intent = new Intent(context, OrderActivity.class);
-                    intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
-                    intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
-                    intent.putExtra(Constants.SHOP, shop);
+            holder.btnOrder.setOnClickListener(view -> {
+                Intent intent = new Intent(context, OrderActivity.class);
+                //Intent intent = new Intent(context, OrderActivity.class);
+                intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
+                intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
+                intent.putExtra(Constants.SHOP, shop);
 
-                    if(UtilsFunctions.isGPSEnabled(context)){
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
-                    } else {
-                        UtilsFunctions.enableGPS(((Activity) context), intent);
-                    }
-
+                if(UtilsFunctions.isGPSEnabled(context)){
+                    context.startActivity(intent);
+                    ((Activity) context).finish();
+                } else {
+                    UtilsFunctions.enableGPS(((Activity) context), intent);
                 }
+
             });
         } else {
             holder.btnOrder.setVisibility(View.GONE);
