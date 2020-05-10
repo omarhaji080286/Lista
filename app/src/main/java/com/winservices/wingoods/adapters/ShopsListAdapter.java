@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -25,6 +26,8 @@ import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
+
+import static com.winservices.wingoods.dbhelpers.DataBaseHelper.APP_IMG_URL;
 
 public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder> {
 
@@ -53,6 +56,17 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopType.setText(shop.getShopType().getShopTypeName());
         holder.shopPhone.setText(shop.getShopPhone());
         holder.city.setText(shop.getCity().getCityName());
+
+        if (shop.getFacebookUrl()!=null && !shop.getFacebookUrl().equals("null")){
+            String imgUrl = APP_IMG_URL + "facebook.png";
+            Picasso.get().load(imgUrl).into(holder.imgFaceBook);
+            holder.imgFaceBook.setVisibility(View.VISIBLE);
+            holder.container.setOnClickListener(view -> {
+                Intent fbIntent = UtilsFunctions.newFacebookIntent(context, shop.getFacebookUrl());
+                context.startActivity(fbIntent);
+            });
+        }
+
 
         if (shop.getIsDelivering()==Shop.IS_NOT_DELIVERING){
             holder.llDeliveryService.setVisibility(View.GONE);

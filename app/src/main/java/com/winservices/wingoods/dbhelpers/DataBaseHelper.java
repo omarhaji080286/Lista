@@ -46,14 +46,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private final static String webVersion = "lista_21"; //updated on 03/05/2020
 
     //TODO Lista LOCAL (compte root)
-    private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
+    /*private static final String HOST = "http://192.168.43.211/lista_local/"+webVersion+"/webservices/";
     static final String SHOPS_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/shopImages/";
-    public static final String APP_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/appImgs/";
+    public static final String APP_IMG_URL = "http://192.168.43.211/lista_local/lista_uploads/appImgs/";*/
 
     //TODO Lista LWS_PRE_PROD
-    /*private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
+    private static final String HOST = "http://lista-courses.com/lista_pre_prod/"+webVersion+"/webservices/";
     static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/shopImages/";
-    public static final String APP_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/appImgs/";*/
+    public static final String APP_IMG_URL = "http://www.lista-courses.com/lista_pre_prod/lista_uploads/appImgs/";
 
 
     //TODO Lista LWS_PROD
@@ -61,7 +61,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String SHOPS_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/shopImages/";
     public static final String APP_IMG_URL = "http://www.lista-courses.com/lista_prod/lista_uploads/appImgs/";*/
 
-    private final static int DATABASE_VERSION = 10; //updated on 03-05-2020
+    private final static int DATABASE_VERSION = 11; //updated on 10-05-2020
 
 
     static final String GOODS_TO_BUY_NUMBER = "goods_to_buy_number";
@@ -200,6 +200,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String COL_USER_ADDRESS = "user_address";
     static final String COL_USER_GPS_LOCATION = "user_gps_location";
     static final String TABLE_CITIES = "cities";
+    static final String COL_FACEBOOK_URL = "facebook_url";
+    static final String COL_WEBSITE_URL = "website_url";
 
     private static DataBaseHelper instance;
     private SQLiteDatabase db;
@@ -348,7 +350,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 "latitude REAL, " +
                 "shop_type_name TEXT, " +
                 "is_delivering INTEGER, " +
-                "delivery_delay INTEGER) ");
+                "delivery_delay INTEGER, " +
+                "facebook_url TEXT, " +
+                "website_url TEXT) ");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS week_days_off ( " +
                 "day_off_id INTEGER PRIMARY KEY, " +
@@ -403,6 +407,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         "latitude TEXT ) ");
                 db.execSQL("ALTER TABLE users ADD COLUMN server_city_id INTEGER");
                 db.execSQL("ALTER TABLE goods ADD COLUMN  price_id INTEGER");
+                db.execSQL("ALTER TABLE shops ADD COLUMN facebook_url TEXT");
+                db.execSQL("ALTER TABLE shops ADD COLUMN  website_url TEXT");
+                break;
+            case 10 :
+                db.execSQL("ALTER TABLE shops ADD COLUMN facebook_url TEXT");
+                db.execSQL("ALTER TABLE shops ADD COLUMN  website_url TEXT");
                 break;
             default:
                 db.execSQL("DROP TABLE IF EXISTS shops ");
@@ -1839,6 +1849,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_LATITUDE, shop.getLatitude());
         contentValues.put(COL_IS_DELIVERING, shop.getIsDelivering());
         contentValues.put(COL_DELIVERY_DELAY, shop.getDeliveryDelay());
+        contentValues.put(COL_FACEBOOK_URL, shop.getFacebookUrl());
+        contentValues.put(COL_WEBSITE_URL, shop.getWebsiteUrl());
 
         long result = db.insertWithOnConflict(TABLE_SHOPS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         return (result != -1);

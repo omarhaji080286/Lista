@@ -65,6 +65,8 @@ public class ShopsDataManager {
         String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
         int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
         int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
+        String facebookUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_FACEBOOK_URL));
+        String websiteUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_WEBSITE_URL));
 
         Shop shop = new Shop();
         shop.setServerShopId(serverShopId);
@@ -79,6 +81,8 @@ public class ShopsDataManager {
         shop.setLatitude(latitude);
         shop.setIsDelivering(isDelivering);
         shop.setDeliveryDelay(deliveryDelay);
+        shop.setFacebookUrl(facebookUrl);
+        shop.setWebsiteUrl(websiteUrl);
 
         shop.setDefaultCategories(getDCategories(serverShopId));
         shop.setWeekDaysOff(getWeekDaysOff(serverShopId));
@@ -189,6 +193,8 @@ public class ShopsDataManager {
                 String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
                 int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
                 int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
+                String facebookUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_FACEBOOK_URL));
+                String websiteUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_WEBSITE_URL));
 
                 Shop shop = new Shop();
                 shop.setServerShopId(serverShopId);
@@ -203,6 +209,8 @@ public class ShopsDataManager {
                 shop.setLatitude(latitude);
                 shop.setIsDelivering(isDelivering);
                 shop.setDeliveryDelay(deliveryDelay);
+                shop.setFacebookUrl(facebookUrl);
+                shop.setWebsiteUrl(websiteUrl);
 
                 Country country = new Country(serverCountryId, countryName);
                 shop.setCountry(country);
@@ -248,6 +256,8 @@ public class ShopsDataManager {
                 String shopTypeName = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_SHOP_TYPE_NAME));
                 int isDelivering = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_IS_DELIVERING));
                 int deliveryDelay = cursor.getInt(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_DELIVERY_DELAY));
+                String facebookUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_FACEBOOK_URL));
+                String websiteUrl = cursor.getString(cursor.getColumnIndexOrThrow(DataBaseHelper.COL_WEBSITE_URL));
 
                 Shop shop = new Shop();
                 shop.setServerShopId(serverShopId);
@@ -262,6 +272,8 @@ public class ShopsDataManager {
                 shop.setLatitude(latitude);
                 shop.setIsDelivering(isDelivering);
                 shop.setDeliveryDelay(deliveryDelay);
+                shop.setFacebookUrl(facebookUrl);
+                shop.setWebsiteUrl(websiteUrl);
 
                 Country country = new Country(serverCountryId, countryName);
                 shop.setCountry(country);

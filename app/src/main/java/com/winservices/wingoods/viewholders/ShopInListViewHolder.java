@@ -1,6 +1,7 @@
 package com.winservices.wingoods.viewholders;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -14,16 +15,16 @@ import com.winservices.wingoods.R;
 public class ShopInListViewHolder extends RecyclerView.ViewHolder {
 
     public TextView shopName, shopType, shopPhone, city;
-    public LinearLayout container;
+    public ConstraintLayout container;
     public Button btnOrder;
-    public ImageView imgShopIcon;
+    public ImageView imgShopIcon, imgFaceBook;
     public RecyclerView rvDCategories;
     public LinearLayoutCompat llDeliveryService;
 
     public ShopInListViewHolder(View itemView) {
         super(itemView);
 
-        container = itemView.findViewById(R.id.ll_container);
+        container = itemView.findViewById(R.id.clContainer);
         imgShopIcon = itemView.findViewById(R.id.img_shop_icon);
         rvDCategories = itemView.findViewById(R.id.rv_d_categories);
         shopName = itemView.findViewById(R.id.txt_shop_name);
@@ -32,6 +33,7 @@ public class ShopInListViewHolder extends RecyclerView.ViewHolder {
         city = itemView.findViewById(R.id.txt_shop_city);
         btnOrder = itemView.findViewById(R.id.btn_order);
         llDeliveryService = itemView.findViewById(R.id.llDeliveryService);
+        imgFaceBook = itemView.findViewById(R.id.imgFaceBook);
 
     }
 }
