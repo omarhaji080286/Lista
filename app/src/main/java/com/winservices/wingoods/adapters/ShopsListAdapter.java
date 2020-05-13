@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
 import com.winservices.wingoods.R;
 import com.winservices.wingoods.activities.OrderActivity;
 import com.winservices.wingoods.dbhelpers.CategoriesDataProvider;
@@ -25,6 +26,8 @@ import com.winservices.wingoods.utils.UtilsFunctions;
 import com.winservices.wingoods.viewholders.ShopInListViewHolder;
 
 import java.util.ArrayList;
+
+import static com.winservices.wingoods.dbhelpers.DataBaseHelper.APP_IMG_URL;
 
 public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder> {
 
@@ -54,6 +57,19 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
         holder.shopPhone.setText(shop.getShopPhone());
         holder.city.setText(shop.getCity().getCityName());
 
+        if (shop.getFacebookUrl()!=null && !shop.getFacebookUrl().equals("null") && !orderInitiated){
+            String imgUrl = APP_IMG_URL + "facebook.png";
+            Picasso.get().load(imgUrl).into(holder.imgFaceBook);
+            holder.imgFaceBook.setVisibility(View.VISIBLE);
+            holder.container.setOnClickListener(view -> {
+                Intent fbIntent = UtilsFunctions.newFacebookIntent(context, shop.getFacebookUrl());
+                context.startActivity(fbIntent);
+            });
+        } else {
+            holder.imgFaceBook.setVisibility(View.GONE);
+        }
+
+
         if (shop.getIsDelivering()==Shop.IS_NOT_DELIVERING){
             holder.llDeliveryService.setVisibility(View.GONE);
         }
@@ -78,23 +94,20 @@ public class ShopsListAdapter extends RecyclerView.Adapter<ShopInListViewHolder>
 
         if (canGetOrder(shop) && orderInitiated) {
             holder.btnOrder.setVisibility(View.VISIBLE);
-            holder.btnOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, OrderActivity.class);
-                    //Intent intent = new Intent(context, OrderActivity.class);
-                    intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
-                    intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
-                    intent.putExtra(Constants.SHOP, shop);
+            holder.btnOrder.setOnClickListener(view -> {
+                Intent intent = new Intent(context, OrderActivity.class);
+                //Intent intent = new Intent(context, OrderActivity.class);
+                intent.putExtra(Constants.ORDER_INITIATED, orderInitiated);
+                intent.putExtra(Constants.SELECTED_SHOP_ID, shop.getServerShopId());
+                intent.putExtra(Constants.SHOP, shop);
 
-                    if(UtilsFunctions.isGPSEnabled(context)){
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
-                    } else {
-                        UtilsFunctions.enableGPS(((Activity) context), intent);
-                    }
-
+                if(UtilsFunctions.isGPSEnabled(context)){
+                    context.startActivity(intent);
+                    ((Activity) context).finish();
+                } else {
+                    UtilsFunctions.enableGPS(((Activity) context), intent);
                 }
+
             });
         } else {
             holder.btnOrder.setVisibility(View.GONE);

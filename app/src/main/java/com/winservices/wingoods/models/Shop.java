@@ -47,6 +47,8 @@ public class Shop implements Parcelable {
     private int deliveryDelay;
     private List<WeekDayOff> weekDaysOff;
     private List<DateOff> datesOff;
+    private String facebookUrl;
+    private String websiteUrl;
 
     public Shop(Parcel input) {
         this.serverShopId = input.readInt();
@@ -61,6 +63,8 @@ public class Shop implements Parcelable {
         this.country = (Country) input.readSerializable();
         this.visibility = input.readInt();
         this.isDelivering = input.readInt();
+        this.facebookUrl = input.readString();
+        this.websiteUrl = input.readString();
         this.defaultCategories = new ArrayList<>();
         input.readTypedList(defaultCategories, DefaultCategory.CREATOR);
         this.weekDaysOff = new ArrayList<>();
@@ -80,6 +84,22 @@ public class Shop implements Parcelable {
         }
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_shop_image);
     }*/
+
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
 
     public List<WeekDayOff> getWeekDaysOff() {
         return weekDaysOff;
@@ -252,9 +272,12 @@ public class Shop implements Parcelable {
         parcel.writeSerializable(country);
         parcel.writeInt(visibility);
         parcel.writeInt(isDelivering);
+        parcel.writeString(facebookUrl);
+        parcel.writeString(websiteUrl);
         parcel.writeTypedList(defaultCategories);
         parcel.writeTypedList(weekDaysOff);
         parcel.writeTypedList(datesOff);
+
 
     }
 

@@ -417,6 +417,8 @@ public class Synchronizer {
             shop.setDefaultCategories(defaultCategories);
             shop.setIsDelivering(JSONShop.getInt("is_delivering"));
             shop.setDeliveryDelay(JSONShop.getInt("delivery_delay"));
+            shop.setFacebookUrl(JSONShop.getString("facebook_url"));
+            shop.setWebsiteUrl(JSONShop.getString("website_url"));
             shop.setWeekDaysOff(weekDaysOff);
             shop.setDatesOff(datesOff);
 
